@@ -66,8 +66,19 @@ $this->pageTitle = Yii::app()->name .' - '. $purchase->name;
     </div>
 </div>
 <div class="purchase_fullstory">
-    <?php echo $purchase->external->fullstory ?>
-    <?php if ($purchase->author_id == Yii::app()->user->getId() || (Yii::app()->user->checkAccess('purchases.purchases.edit') && Yii::app()->user->role == 'Администратор')): ?>
-
+    <?php if (Yii::app()->user->checkAccess('purchases.purchases.editSuper') ||
+              Yii::app()->user->checkAccess('purchases.purchases.editOwn', array('purchase' => $purchase))): ?>
+    <a class="purchase_edit_story tt" onclick="$(this).editor('simple', '/purchases/updateFullstory', {id: <?php echo $purchase->purchase_id ?>}); return false" title="<?php echo ($purchase->external && $purchase->external->fullstory) ? "Редактировать описание" : "Добавить новое описание" ?>">
     <?php endif; ?>
+        <?php echo ($purchase->external && $purchase->external->fullstory) ? nl2br($purchase->external->fullstory) : "Добавить описание" ?>
+    <?php if (Yii::app()->user->checkAccess('purchases.purchases.editSuper') ||
+    Yii::app()->user->checkAccess('purchases.purchases.editOwn', array('purchase' => $purchase))): ?>
+    </a>
+    <?php endif; ?>
+</div>
+<div class="purchase_goods">
+    <div class="clearfix">
+        <h4 class="left">Товары в данной закупке</h4>
+        <a class="right button">Добавить товар</a>
+    </div>
 </div>

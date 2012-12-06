@@ -142,4 +142,36 @@ class PurchasesController extends Controller {
         }
         else $this->render('edit', array('model' => $model));
     }
+
+    public function actionUpdateFullstory() {
+        $id = intval($_POST['id']);
+
+        $purchase = Purchase::model()->findByPk($id);
+        if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
+            Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('purchase' => $purchase)))
+        {
+            $ext = PurchaseExternal::model()->findByPk($id);
+
+            if (isset($_POST['text'])) {
+                if (!$ext) {
+                    $ext = new PurchaseExternal();
+                    $ext->purchase_id = $id;
+                    $ext->fullstory = $_POST['text'];
+                    $ext->save();
+                }
+                else {
+                    $ext->fullstory = trim($_POST['text']);
+                    $ext->save(true, array('fullstory'));
+                }
+
+                $arr = array('text' => nl2br($ext->fullstory), 'msg' => Yii::t('app', 'Изменения сохранены'));
+            }
+            else $arr = array('text' => ($ext) ? $ext->fullstory : '');
+
+            echo json_encode($arr);
+            exit;
+        }
+        else
+            throw new CHttpException(403, 'В доступе отказано');
+    }
 }

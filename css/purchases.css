@@ -67,6 +67,22 @@
     width: 160px;
 }
 
+.purchase_fullstory {
+    border-bottom: 1px solid #ddd;
+}
+.purchase_goods {
+    padding: 10px 0
+}
+
+a.purchase_edit_story {
+    display: block;
+    padding: 10px 0;
+    font-weight: normal;
+}
+a.purchase_edit_story:hover {
+    background: #f2f2f2;
+}
+
 /* Static Manager */
 #purchases_css {
     display: none;

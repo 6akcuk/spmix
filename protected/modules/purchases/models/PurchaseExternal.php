@@ -36,8 +36,8 @@ class PurchaseExternal extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('purchase_id, shortstory, fullstory', 'required'),
-			array('purchase_id', 'numerical', 'integerOnly'=>true),
+			array('purchase_id', 'required'),
+            array('purchase_id', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('purchase_id, shortstory, fullstory ', 'safe', 'on'=>'search'),

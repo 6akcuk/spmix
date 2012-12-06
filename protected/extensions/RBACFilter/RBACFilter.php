@@ -9,15 +9,20 @@
 
 class RBACFilter extends CFilter {
     protected function preFilter($filterChain) {
-        $ctrl = Yii::app()->controller;
-        $action = $ctrl->action;
-        $module = $ctrl->module;
 
-        $access = Yii::app()->user->checkAccess($module->name .'.'. $ctrl->id .'.'. $action->id);
+        $access = Yii::app()->user->checkAccess(self::getHierarchy());
 
         if (!$access) {
             throw new CHttpException(403, 'В доступе отказано');
         }
         return $access;
+    }
+
+    public static function getHierarchy() {
+        $ctrl = Yii::app()->controller;
+        $action = $ctrl->action;
+        $module = $ctrl->module;
+
+        return $module->name .'.'. $ctrl->id .'.'. $action->id;
     }
 }

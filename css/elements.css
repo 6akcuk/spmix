@@ -50,6 +50,17 @@ a.input_calendar span {
 .light_blue.btn:hover {
     background-color: #74c7f7;
     border: 2px solid #74c7f7;
+    color: #fff
+}
+
+.light_gray.btn {
+    background-color: #8899aa;
+    border: 2px solid #8899aa;
+}
+.light_gray.btn:hover {
+    background-color: #aaaaaa;
+    border: 2px solid #aaaaaa;
+    color: #fff
 }
 
 .light_green.btn {

@@ -285,3 +285,24 @@ div.olcm li a:hover {
 .filectrl input {
     visibility: hidden;
 }
+
+/* Text Editor */
+.editor_simple {
+    padding: 10px 0;
+}
+.editor_buttons {
+    padding-top: 10px
+}
+.editor_buttons .btn {
+    margin-right: 10px
+}
+
+/* Autosize */
+.autosize {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    visibility: hidden;
+    line-height: 13px;
+    word-wrap: break-word;
+}

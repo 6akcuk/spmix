@@ -15,6 +15,7 @@ class OperationForm extends CFormModel {
     public function rules() {
         return array(
             array('name, description', 'required'),
+            array('bizrule', 'safe'),
         );
     }
 

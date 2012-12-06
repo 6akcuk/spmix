@@ -103,7 +103,7 @@ class RolesController extends Controller {
                 $item = $authManager->getAuthItem($model->name);
 
                 if (!$item) {
-                    $authManager->createAuthItem($model->name, RbacItem::TYPE_OPERATION, $model->description);
+                    $authManager->createAuthItem($model->name, RbacItem::TYPE_OPERATION, $model->description, $model->bizrule);
                     $result['success'] = true;
                     $result['message'] = 'Операция <b>'. $model->name .'</b> успешно добавлена';
                 }

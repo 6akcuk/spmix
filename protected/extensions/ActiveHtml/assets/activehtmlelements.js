@@ -463,6 +463,117 @@ $.fn.calendar = function() {
     });
 };
 
+/* Text Editor */
+$.fn.editor = function(type, url, params)
+{
+    this.each(function()
+    {
+        var $this = $(this);
+        $this.hide();
+
+        if (type == 'simple')
+        {
+            var _e = {
+                cont: null,
+                init: function()
+                {
+                    _e.cont = $('<div/>').attr({class: 'editor_simple'}).insertBefore($this);
+                    _e.textarea = $('<textarea/>').attr({id: 'edtext_'+ getUUID()}).appendTo(_e.cont);
+
+                    ajax.post(url, params, _e.onInitDone);
+                },
+
+                onInitDone: function(r)
+                {
+                    _e.textarea.css({width: $this.parent().innerWidth() - 20})
+                        .val(r.text).focus().blur(_e.onBlurTextarea);
+
+                    _e.textarea.autosize({width: $this.parent().innerWidth() - 20});
+                    _e.textarea.keyup();
+                },
+                onUpdateDone: function(r) {
+                    _e.cont.remove();
+                    $this.show().html((r.text) ? r.text : 'Добавить описание');
+                    msi.show(r.msg);
+                },
+                onBlurTextarea: function()
+                {
+                    params = $.extend(params, {text: _e.textarea.val()});
+                    ajax.post(url, params, _e.onUpdateDone);
+                }
+            };
+
+            _e.init();
+        }
+    });
+};
+
+/* Autosize */
+/* Source from project: Petsface.ru */
+$.fn.autosize = function(options) {
+    this.each(function()
+    {
+        var settings = {
+                width: 200,
+                minheight: 30,
+                maxheight: 160,
+                lineHeight: '13px',
+                padding: 5
+            },
+            timeout = null,
+            enabled = true;
+
+        var ps = jQuery.extend(settings, options),
+            $this = $(this);
+
+        ps.id = '#'+ $this.attr('id');
+        if(!ps.element) ps.element = ps.id
+
+        oldValue = jQuery(ps.element).val();
+
+        function check(event) {
+            var html = jQuery(ps.element).val().replace(/\n/g, "<br>"),
+                autosize = jQuery('#autosize_'+ jQuery(ps.element).attr('name'));
+
+            if(event.type != 'keyup') {
+                if(event.keyCode == 13 && !event.ctrlKey && !event.altKey) {
+                    html += '\n';
+                }
+            }
+            if(html == oldValue) return;
+            oldValue = html;
+
+            autosize.html( html );
+
+            if(ps.maxheight) jQuery(ps.element).css('height', Math.max(ps.minheight, Math.min( (autosize.outerHeight() + (ps.padding+2)), ps.maxheight) ));
+            else jQuery(ps.element).css('height', Math.max(ps.minheight, (autosize.outerHeight() + (ps.padding+2)) ));
+
+            // покажем scroll при превышении высоты в 130
+            if(ps.maxheight) {
+                if( autosize.outerHeight() > ps.maxheight) jQuery(ps.element).css('overflow', 'auto');
+                else jQuery(ps.element).css('overflow', 'hidden');
+            }
+        }
+
+        function destroy() {
+            jQuery('#autosize_'+ ps.element).remove();
+            jQuery(ps.element).unbind('keyup').unbind('keydown').unbind('keypress');
+
+            enabled = false;
+        }
+
+        jQuery(ps.element).bind('keyup keydown keypress', check);
+
+        jQuery('<div id="autosize_'+ jQuery(ps.element).attr('name') +'" class="autosize"></div>')
+            .css({
+                width: ps.width,
+                padding: (ps.padding*2),
+                lineHeight: ps.lineHeight
+            })
+            .appendTo('#utils');
+    });
+}
+
 /* Search Field */
 
 /* Form Easy Control */
