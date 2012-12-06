@@ -1,0 +1,106 @@
+.profile-header {
+    padding: 7px 12px;
+    background: #f2f2f2
+}
+.profile-header .username {
+    font-size: 12px;
+    font-weight: bold;
+    color: #123;
+}
+.profile-header .userspecial {
+    font-size: 12px;
+    margin-left: 7px;
+    color: #bbb
+}
+.profile-header .useronline {
+    font-size: 12px;
+    font-weight: bold;
+    color: #bbb;
+}
+
+.profile-columns {
+    padding-top: 10px
+}
+.profile-left {
+    width: 250px;
+}
+.profile-right {
+    padding-left: 15px;
+    width: 485px;
+}
+
+.profile-photo {
+    padding-bottom: 10px
+}
+
+.profile-info {
+    padding-bottom: 10px;
+}
+.profile-info .label {
+    width: 135px;
+    color: #778899;
+}
+.profile-info .labeled {
+    width: 250px;
+    overflow: hidden;
+}
+.profile-info .labeled a {
+    font-weight: normal;
+}
+.profile-info .miniblock {
+    padding-top: 5px;
+}
+
+.profile-positive-rep {
+    color: #95b84d;
+}
+.profile-positive-rep a {
+    color: #95b84d;
+    margin-right: 5px
+}
+.profile-negative-rep {
+    color: #cd0a0a;
+}
+.profile-negative-rep a {
+    color: #cd0a0a;
+    margin-left: 5px
+}
+.profile-invite {
+    padding: 10px 0
+}
+.profile-invite .label {
+    width: 250px;
+    color: #bbb
+}
+.profile-invite .labeled {
+
+}
+.profile-invite-info {
+    display: inline-block;
+}
+
+.module-header {
+    background: #f2f2f2;
+    display: block;
+}
+.module-header .header-top {
+    background: #dee5eb;
+    overflow: hidden;
+    color: #45688e;
+    padding: 5px 10px
+}
+.module-header .header-bottom {
+    color: #667788;
+    font-weight: normal;
+    padding: 4px 10px;
+    border-bottom: 1px solid #f2f2f2;
+}
+.module-body {
+    overflow: hidden;
+    padding: 6px 0px 14px 0px
+}
+
+/* Static Manager */
+#profile_css {
+    display: none;
+}

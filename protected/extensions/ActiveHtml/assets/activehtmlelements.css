@@ -1,0 +1,287 @@
+#activehtmlelements_css {
+    display: none;
+}
+
+input.error {
+    border-color: #fc575e !important;
+}
+
+/* Input Placeholder */
+span.input_placeholder {
+    position: relative;
+    display: inline-block;
+}
+
+span.input_placeholder label {
+    display: none;
+    position: absolute;
+    cursor: text;
+}
+span.input_placeholder input {
+
+}
+
+/* Addon Calendar */
+a.input_calendar {
+    display: inline-block;
+    cursor: pointer;
+    border: 2px solid #d3d3d3;
+}
+a.input_calendar span {
+    display: inline-block;
+}
+/* Calendar */
+.calendar {
+    position: absolute;
+    background: #fff;
+    border: 3px solid #778899;
+    width: 210px;
+}
+.calendar .header a, .calendar .header span {
+    display: inline-block;
+}
+.calendar .header a {
+    width: 10px;
+    padding: 10px;
+    text-align: center;
+}
+.calendar .header a:hover {
+    background: #74c7f7;
+    color: #fff;
+}
+.calendar .header span {
+    width: 110px;
+    padding: 10px 20px;
+    text-align: center;
+    font-weight: bold;
+}
+.calendar ul.list li {
+    float: left;
+    display: inline-block;
+}
+.calendar ul.list li a, .calendar ul.list li em {
+    display: inline-block;
+    padding: 5px;
+    width: 20px;
+    text-align: center;
+}
+.calendar ul.weekdays li {
+    width: 20px;
+    padding: 5px;
+    text-align: center;
+}
+.calendar ul.list li a:hover {
+    background: #74c7f7;
+    color: #fff;
+}
+
+/* Tooltip */
+div.tooltip {
+    position: absolute;
+    padding: 10px;
+    background: #000;
+    color: #fff;
+    opacity: .7;
+    filter:alpha(opacity=70);
+    border-radius: 4px
+}
+
+/* Dropdown */
+div.dropdown {
+    display: inline-block;
+    text-align: left;
+    position: relative;
+}
+div.dropdown span.text {
+    float: left;
+    display: inline-block;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 8px 10px;
+    background: #ededf0;
+    min-width: 180px;
+}
+div.dropdown span.arrow {
+    float: right;
+    display: inline-block;
+    cursor: pointer;
+    padding: 8px 8px 8px 10px;
+    background: #54bbfc;
+    text-align: center;
+    color: #fff
+}
+div.dropdown:hover span.arrow {
+    background: #74c7f7;
+}
+div.dropdown ul {
+    display: none;
+    position: absolute;
+    background: #ededf0;
+    z-index: 99;
+}
+div.dropdown ul li a {
+    display: block;
+    padding: 8px 10px;
+}
+div.dropdown ul li a:hover {
+    background: #74c7f7;
+    color: #fff
+}
+
+/* Search Field */
+.search {
+    position: relative;
+    border: 3px solid #d3d3d3;
+    padding: 8px
+}
+.search .iconify {
+
+}
+.search input {
+    border: 0;
+    padding: 0
+}
+.search .progress {
+    position: absolute;
+    right: 8px;
+    top: 13px;
+    width: 32px;
+    height: 10px;
+    background: url('/../images/progress_small.gif') no-repeat;
+    display: none
+}
+
+
+/* Report Window */
+div.report_window {
+    position: absolute;
+    background: #f2f2f2;
+    padding: 25px;
+    width: 160px;
+    text-align: center;
+    line-height: 22px;
+    display: none;
+}
+
+div.report_window .close {
+    float: right;
+    margin-right: -14px;
+    margin-top: -17px;
+    color: #3c6b82;
+    font-size: 18px
+}
+div.report_window .close:hover {
+    color: #89a;
+}
+
+/* AJAX Exception Window */
+div.ajex {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    padding: 10px;
+    border-radius: 0 0 6px 0;
+    background: #f49ac1;
+    color: #123;
+    font-size: 14px;
+}
+
+/* Mini Save Informer */
+div.msi {
+    position: fixed;
+    top: 40px;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 10px;
+    border-radius: 4px;
+    background: #FFD324;
+}
+
+/* On Line Context Menu */
+div.olcm {
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    background: #F0F4FF;
+    border: 3px solid #8596a7;
+    z-index: 9;
+}
+div.olcm h4 {
+    margin: 0;
+    padding: 5px;
+    font-size: 14px;
+    background: #f0f4ff;
+}
+div.olcm li a {
+    display: block;
+    padding: 5px;
+    font-weight: normal;
+    background: #fff
+}
+div.olcm li a:hover {
+    background: #8596a7;
+    color: #fff
+}
+
+/* File Upload One Click */
+.fileupload {
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+}
+.fileupload .fileprogress {
+    display: none;
+    text-align: center;
+    min-width: 200px
+}
+.fileupload .filedata {
+    display: none;
+    position: relative;
+}
+.fileupload .filedata img + a {
+    position: absolute;
+    display: inline-block;
+    right: 0px;
+    top: 0px;
+    color: #fff;
+    padding: 5px;
+    background: #000;
+    opacity: 0.7;
+    filter: alpha(opacity=70);
+}
+.fileupload .filebutton {
+    position: relative;
+}
+.fileupload .filebutton input {
+    position: absolute;
+    right: 0;
+    opacity: 0.01;
+    filter: alpha(opacity=1);
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    font-size: 6.54em;
+    color: #444;
+}
+.fileupload .attach {
+    display: inline-block;
+    padding: 10px 15px;
+    cursor: pointer;
+    background: #54bbfc;
+    color: #fff
+}
+.fileupload .attach:hover {
+    background: #74c7f7
+}
+.filectrl {
+    position: absolute;
+}
+.filectrl iframe {
+    width: 1px;
+    height: 1px;
+    visibility: hidden;
+    position: absolute;
+}
+.filectrl input {
+    visibility: hidden;
+}

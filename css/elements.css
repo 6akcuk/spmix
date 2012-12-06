@@ -1,0 +1,177 @@
+#elements_css {
+    display: none;
+}
+
+#tabs {
+    background: #f0f1f4;
+    margin-bottom: 8px;
+    border: 1px solid #e6e7ea;
+    border-left: 6px solid #d0d5d9;
+    font-size: 16px;
+    line-height: 15px
+}
+#tabs a {
+    display: inline-block;
+    border-right: 1px solid transparent;
+    padding: 12px 14px;
+    position: relative;
+}
+#tabs a.selected {
+    background: #f9fafb;
+    color: #4bf;
+    border-color: #e6e7ea
+}
+
+
+span.input_placeholder label {
+    font-size: 20px;
+    color: #5d6266;
+}
+a.input_calendar span {
+    font-size: 20px;
+    padding: 10px;
+    color: #5d6266;
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px;
+    font-size: 18px;
+    font-weight: normal;
+    color: #fff;
+    cursor: pointer;
+    outline: none;
+}
+
+.light_blue.btn {
+    border: 2px solid #54bbfc;
+    background-color: #54bbfc;
+}
+.light_blue.btn:hover {
+    background-color: #74c7f7;
+    border: 2px solid #74c7f7;
+}
+
+.light_green.btn {
+    background: #95b84d;
+
+}
+.light_green.btn:hover {
+    background: #a8cc5e;
+    color: #fff
+}
+
+
+.button {
+    display: inline-block;
+    cursor: pointer;
+    padding: 7px 10px;
+    font-weight: bold;
+    line-height: 1;
+    color: #fff;
+    background: #345;
+    border: 0;
+    border-radius: 4px
+}
+.button:hover {
+    color: #fff;
+    background: #4bf
+}
+.button_full {
+    display: block;
+    font-size: 24px !important;
+    text-align: center;
+    padding: 10px 20px;
+    border-radius: 5px
+}
+
+#searchbar .search input {
+    width: 580px
+}
+
+#listmenu {
+    font-size: 12px;
+    padding: 8px 0;
+    margin-bottom: 16px
+}
+#listmenu a {
+    padding: 1px 3px;
+    font-weight: 400
+}
+#listmenu a.selected {
+    color: #4bf
+}
+
+table.data {
+    width: 100%;
+    line-height: 16px
+}
+table.data thead {
+    border-bottom: 3px solid #d3d3d3
+}
+table.data th, table.data td {
+    padding: 4px;
+    border-bottom: 1px dotted #c9c9c9
+}
+table.data tbody tr:hover {
+    background: #f8f8f8
+}
+table.data tr:last-child td, table.data tr:last-child th {
+    border-bottom: none
+}
+table.data th {
+    color: #acb1b4;
+    font-size: 13px;
+    line-height: 24px
+}
+table.data th.right, table.data td.right {
+    text-align: right !important
+}
+
+.pivots li {
+    overflow: hidden
+}
+.pivots li a {
+    display: block;
+    padding: 12px 0
+}
+.pivots li:first-child a {
+    padding-top: 0 !important
+}
+.pivots li a strong {
+    text-transform: none;
+    line-height: 24px;
+    font-size: 24px
+}
+.pivots li .go {
+    float: right;
+    display: block;
+    color: #d3d3d3;
+    line-height: 18px;
+    font-size: 14px
+}
+.pivots li a:hover .go {
+    color: #4bf
+}
+.pivots li + li {
+    border-top: 1px dotted #d3d3d3
+}
+
+.col_small .block li + li {
+    margin-top: 5px
+}
+.col_small .pivots li, .col_small .pivots li + li {
+    margin: 0
+}
+.col_small .pivots li a {
+    padding: 8px 0 5px
+}
+.col_small .pivots li a strong {
+    text-transform: none;
+    line-height: 18px;
+    font-size: 18px
+}
+.col_small .pivots li .go {
+    line-height: 18px;
+    font-size: 14px
+}

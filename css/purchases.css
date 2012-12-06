@@ -1,0 +1,73 @@
+#purchaseform {
+    position: relative;
+}
+
+#purchaseform input, #purchaseform .input_calendar {
+    width: 300px
+}
+
+#avatar {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+#avatar .iconify_x_a {
+    position: absolute;
+    top: 0;
+    right: 0;
+    color: #fff;
+    background: #000;
+    opacity: 0.7;
+    padding-right: 3px;
+    filter: alpha(opacity=70);
+}
+
+.purchase_columns .purchase_column:first-child {
+    margin-right: 40px;
+}
+.purchase_column .row label {
+    display: block;
+    padding-bottom: 10px;
+    font-size: 16px
+}
+
+#purchases {
+    padding: 10px 0
+}
+.purchase {
+    margin: 5px 0;
+    border-bottom: 1px solid #eeeeee;
+}
+.purchase:first-child {
+    margin-top: 0
+}
+.purchase .info a, .purchase .info span {
+    display: block;
+}
+
+.purchase_table {
+    padding: 5px 0 10px;
+    border-bottom: 1px solid #ddd
+}
+.purchase_table .photo {
+    width: 250px;
+}
+.purchase_table .td {
+    margin-left: 10px;
+    width: 240px;
+}
+.purchase_table .td > div {
+    padding: 5px 0px
+}
+.purchase_table .td .label {
+    width: 80px;
+}
+.purchase_table .td .labeled {
+    width: 160px;
+}
+
+/* Static Manager */
+#purchases_css {
+    display: none;
+}
