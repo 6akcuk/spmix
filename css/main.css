@@ -110,7 +110,7 @@ button, input[type="submit"], input[type="button"] {
 }
 /* End of null section */
 html {
-    color: #7b8084;
+    color: #d7e4c4;
     background: #fff;
     overflow-y: scroll;
 }
@@ -436,7 +436,7 @@ textarea {
     display: none;
     border: 3px solid #789;
     border-radius: 6px;
-    background: #f2f2f2;
+    background: #d7e4c4;
     z-index: 500;
 }
 
@@ -448,7 +448,7 @@ textarea {
 
 #top {
     padding: 0;
-    background: #4c8ab0;
+    background: #d7e4c4;
 }
 
 #top_intro {
