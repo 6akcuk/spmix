@@ -721,7 +721,10 @@ var Upload = {
     initFile: function(id, customChange) {
         $('<input/>')
             .attr({type: 'file', name: 'photo', id: 'file_upload_'+ id})
-            .change(function(){Upload.onStart(id)})
+            .change(function(){
+                if (customChange) customChange();
+                else Upload.onStart(id)
+            })
             .prependTo('#file_button_'+ id +' div.filebutton');
     },
     deleteFile: function(id) {
@@ -736,7 +739,7 @@ var Upload = {
             id = parseInt($button.attr('id').replace('file_button_', '')),
             filedata = $.parseJSON($button.prev().val());
 
-        if (filedata.x || filedata.doc) {
+        if (filedata && (filedata.x || filedata.doc)) {
             Upload.showData(id);
             Upload.renderData(id, filedata);
         }
@@ -795,6 +798,7 @@ var Upload = {
     },
     onDone: function(id, filedata) {
         $('#file_button_'+ id).prev('input').val(filedata);
+        $('#file_ctrl_'+ id).remove();
         Upload.showData(id);
         Upload.renderData(id, $.parseJSON(filedata));
         if (cur['fileDoneCustom'+ id]) cur['fileDoneCustom'+ id](filedata);

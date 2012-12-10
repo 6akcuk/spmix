@@ -29,7 +29,7 @@ return array(
 			'class'=>'system.gii.GiiModule',
 			'password'=>'s1a55j7',
 			// If removed, Gii defaults to localhost only. Edit carefully to taste.
-			'ipFilters'=>array('127.0.0.1','::1','95.105.42.165','92.50.166.78'),
+			'ipFilters'=>array('127.0.0.1','::1','136.169.156.108','92.50.166.78'),
 		),
         'users' => array(
             'onlineInterval' => 10, // сколько минут считать пользователя онлайн
@@ -69,6 +69,10 @@ return array(
                 'id<id:\d+>' => 'users/profiles',
                 '<controller:(users)>' => 'users/users/index',
                 '<controller:(users)>/<action:\w+>' => 'users/users/<action>',
+                '<controller:(goods)>/<action:\w+>' => 'purchases/goods/<action>',
+                'good<purchase_id:\d+>_<good_id:\d+>' => 'purchases/goods/show',
+                'good<purchase_id:\d+>_<good_id:\d+>/<action:\w+>' => 'purchases/goods/<action>',
+                'purchase<id:\d+>/<action:\w+>' => 'purchases/purchases/<action>',
                 'purchase<id:\d+>' => 'purchases/purchases/show',
                 '<controller:(purchases)>' => 'purchases/purchases/index',
                 '<controller:(purchases)>/<action:\w+>' => 'purchases/purchases/<action>',

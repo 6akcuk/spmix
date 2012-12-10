@@ -78,11 +78,12 @@ class PurchasesController extends Controller {
 
     public function actionShow($id) {
         $purchase = Purchase::model()->with('city', 'author', 'category')->findByPk($id);
+        $goods = Good::model()->with('image')->findAll('purchase_id = :purchase_id', array(':purchase_id' => $id));
 
         if (Yii::app()->request->isAjaxRequest) {
-            $this->pageHtml = $this->renderPartial('show', array('purchase' => $purchase), true);
+            $this->pageHtml = $this->renderPartial('show', array('purchase' => $purchase, 'goods' => $goods), true);
         }
-        else $this->render('show', array('purchase' => $purchase));
+        else $this->render('show', array('purchase' => $purchase, 'goods' => $goods));
     }
 
     public function actionCreate() {
@@ -170,6 +171,44 @@ class PurchasesController extends Controller {
 
             echo json_encode($arr);
             exit;
+        }
+        else
+            throw new CHttpException(403, 'В доступе отказано');
+    }
+
+    public function actionAddGood($id) {
+        $purchase = Purchase::model()->findByPk($id);
+
+        if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
+            Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('purchase' => $purchase)))
+        {
+            $model = new Good();
+            $model->purchase_id = $id;
+            $model->currency = 'RUR';
+
+            if(isset($_POST['Good']))
+            {
+                $model->attributes=$_POST['Good'];
+                $result = array();
+
+                if($model->validate() && $model->save()) {
+                    $result['success'] = true;
+                    $result['url'] = '/good'. $model->purchase_id .'_'. $model->good_id .'/edit';
+                }
+                else {
+                    foreach ($model->getErrors() as $attr => $error) {
+                        $result[ActiveHtml::activeId($model, $attr)] = $error;
+                    }
+                }
+
+                echo json_encode($result);
+                exit;
+            }
+
+            if (Yii::app()->request->isAjaxRequest) {
+                $this->pageHtml = $this->renderPartial('addgood', array('id' => $id, 'model' => $model), true);
+            }
+            else $this->render('addgood', array('id' => $id, 'model' => $model));
         }
         else
             throw new CHttpException(403, 'В доступе отказано');

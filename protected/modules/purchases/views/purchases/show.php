@@ -1,5 +1,8 @@
 <?php
-/** @var $purchase Purchase */
+/**
+ * @var $purchase Purchase
+ * @var $good Good
+ */
 
 Yii::app()->getClientScript()->registerCssFile('/css/purchases.css');
 Yii::app()->getClientScript()->registerScriptFile('/js/purchase.js');
@@ -79,6 +82,21 @@ $this->pageTitle = Yii::app()->name .' - '. $purchase->name;
 <div class="purchase_goods">
     <div class="clearfix">
         <h4 class="left">Товары в данной закупке</h4>
-        <a class="right button">Добавить товар</a>
+        <?php echo ActiveHtml::link('Добавить товар', '/purchase'. $purchase->purchase_id .'/addgood', array('class' => 'right button')) ?>
+    </div>
+    <div class="list">
+    <?php if (sizeof($goods) > 0): ?>
+    <?php foreach ($goods as $good): ?>
+        <div class="left good">
+            <h4>
+                <?php echo $good->name ?>
+                <?php echo ActiveHtml::link('', '/good'. $purchase->purchase_id .'_'. $good->good_id.'/edit', array('class' => 'right iconify_gear_a tt', 'title' => 'Редактировать товар')) ?>
+            </h4>
+            <?php if ($good->image): ?><div><?php echo ActiveHtml::showUploadImage($good->image->image) ?></div><?php endif; ?>
+            <div>Стоимость <?php echo ActiveHtml::price($good->price, $good->currency) ?></div>
+            <div><a class="button">Заказать</a></div>
+        </div>
+    <?php endforeach; ?>
+    <?php endif; ?>
     </div>
 </div>
