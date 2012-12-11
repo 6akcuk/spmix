@@ -29,5 +29,9 @@
     <li>
         <?php echo ActiveHtml::link('Создать закупку', '/purchases/create') ?>
     </li>
+    <li>
+        <?php echo ActiveHtml::link('Мои закупки', '/purchases/my') ?>
+    </li>
+
 </ul>
 <?php endif; ?>

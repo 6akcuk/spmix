@@ -41,5 +41,21 @@
         </div>
 
     </div>
+    <div class="slide">
+        <div class="wrapper">
+
+
+        </div>
+    </div>
+    <div class="main">
+        <div class="wrapper">
+
+        </div>
+    </div>
+    <div class="wrapper">
+        <div class="wrapper_content">
+
+        </div>
+    </div>
 </body>
 </html>

@@ -110,7 +110,7 @@ button, input[type="submit"], input[type="button"] {
 }
 /* End of null section */
 html {
-    color: #d7e4c4;
+    color: #557132;
     background: #fff;
     overflow-y: scroll;
 }
@@ -851,13 +851,11 @@ div.ls_columns div.column.options div {
 
 .wrapper {
     width: 1000px;
-    min-height: 1000px;
-    height: 100%;
     margin: 0 auto;
 }
 
 .top {
-    height: 200px;
+    padding-top: 20px;
 }
 
 .fl_l {
@@ -896,4 +894,38 @@ div.ls_columns div.column.options div {
 .login_button {
     margin-top: 38px;
     width: 70px;
+}
+
+.slide {
+    background: url('/images/slider.png') no-repeat center;
+    height: 245px;
+}
+
+
+.main {
+    background: url('/images/main.png') no-repeat center;
+    height:45px;
+}
+
+.wrapper_content {
+    min-height: 500px;
+    background: #fff;
+}
+
+.main_a ul {
+    padding: 4px 0px 4px 0px;
+}
+
+
+.main_a li {
+    float: left;
+    padding: 4px 20px 6px 20px;
+}
+
+.main_a li a {
+   color: #fff;
+}
+
+.main_a li:hover {
+    background: #557132;
 }
