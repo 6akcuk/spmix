@@ -22,68 +22,24 @@
         <title><?php echo CHtml::encode($this->pageTitle); ?></title>
     </head>
     <body>
-        <div id="global_progress_bg"></div>
-        <div id="global_progress" class="fixed">
-            <img src="<?php echo Yii::app()->request->baseUrl; ?>/images/2.gif" alt="" />
-        </div>
-        <div id="top">
-            <div class="wrap">
-                <div id="top_intro" class="clearfix">
-                    <div class="left">
-                        <h1>SPMix</h1>
-                    </div>
-                    <div class="right">
-                        <?php
-                            if (Yii::app()->user->getIsGuest()) {
-                                $this->widget('application.modules.users.components.LoginWidget');
-                            }
-                        ?>
-                    </div>
-                </div>
+    <div class="wrapper">
+        <div class='top'>
+            <div class="fl_l logo">
+                <a href="/" class="logo_a"></a>
             </div>
-        </div>
-        <div id="features">
-            <div class="wrap">
-                <div class="features_top">
-                    <h1>Что дает этот сайт?</h1>
-                    <ul class="grid clearfix">
-                        <li class="first">
-                            <img src="" alt="" />
-                            <h2>В разработке</h2>
-                            <p>Данная функция в разработке</p>
-                        </li>
-                        <li>
-                            <img src="" alt="" />
-                            <h2>В разработке</h2>
-                            <p>Данная функция в разработке</p>
-                        </li>
-                        <li>
-                            <img src="" alt="" />
-                            <h2>В разработке</h2>
-                            <p>Данная функция в разработке</p>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <div id="meetings">
-            <div class="wrap">
-                <h1>Все еще не с нами? Присоединяйтесь!</h1>
-                <div class="center">
+            <div class="fl_l login">
+                <?php
+                if (Yii::app()->user->getIsGuest()) {
+                    $this->widget('application.modules.users.components.LoginWidget');
+                }
+                ?>
+                <div class="login_reg">
                     <a href="/register" class="btn green">Зарегистрироваться</a>
                 </div>
             </div>
+            <div class="clear"></div>
         </div>
-        <div id="footer">
-            <div class="wrap">
-                <div class="footers_foot">
-                    <div id="legal">
-                        <p>
-                            Сделано с <a onclick="test_rw()" class="iconify love">k</a> и на базе <a href="http://yiiframework.com">Yii Framework</a>
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </body>
+
+    </div>
+</body>
 </html>

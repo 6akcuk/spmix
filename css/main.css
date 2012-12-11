@@ -120,6 +120,7 @@ body {
     font-size: 14px;
     line-height: 20px;
     min-width: 960px;
+    background: url('/images/bg.jpg') #ffffff;
 }
 
 body.progress {
@@ -184,9 +185,12 @@ input[type="text"] {
 
 input[type="text"], textarea, input[type="email"], input[type="password"], input[type="number"] {
     padding: 8px;
-    font-size: 14px;
+    font-size: 10px;
+    width: 157px;
+    height: 11px;
     color: #7b8084;
-    border: 2px solid lightgrey
+    background: url('/images/textarea_login.jpg');
+    border: 0;
 }
 
 input[type="email"], input[type="password"], input[type="number"] {
@@ -791,7 +795,7 @@ form h2 {
     font-size: 20px
 }
 form .row {
-    padding: 10px 0;
+    padding: 4px 0;
 }
 form .success {
     margin: 5px 0;
@@ -843,4 +847,40 @@ div.ls_columns div.column.options div {
 /* Static Manager */
 #main_css {
     display: none;
+}
+
+.wrapper {
+    width: 1000px;
+    min-height: 1000px;
+    height: 100%;
+    margin: 0 auto;
+}
+
+.top {
+    height: 200px;
+}
+
+.fl_l {
+    float: left;
+    }
+
+.clear {
+    clear: both;
+}
+
+.logo {
+    width: 700px;
+    margin-left: 20px;
+}
+
+.logo_a {
+    background: url('/images/logo.png');
+    display: block;
+    width: 696px;
+    height: 103px;
+    margib: 20px 0px;
+}
+
+.login {
+    margin-top:20px;
 }
