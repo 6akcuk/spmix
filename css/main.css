@@ -175,7 +175,7 @@ a {
 }
 
 a:hover, a:focus, a.selected {
-    color: #4bf
+    color: #d7e4c4;
 }
 
 
@@ -883,4 +883,9 @@ div.ls_columns div.column.options div {
 
 .login {
     margin-top:20px;
+}
+
+.login_reg {
+    background: #5d783c;
+    padding: 3px 20px 3px 20px;
 }
