@@ -889,3 +889,11 @@ div.ls_columns div.column.options div {
     background: #5d783c;
     padding: 3px 20px 3px 20px;
 }
+
+.login_text {
+    width: 200px;
+}
+.login_button {
+    margin-top: 38px;
+    width: 70px;
+}

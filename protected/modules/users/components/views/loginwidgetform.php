@@ -14,13 +14,18 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
     'action' => '/login',
     'enableClientValidation' => true,
 )); ?>
+<div class="fl_l login_text">
 <div class="row">
     <?php echo $form->inputPlaceholder($model, 'email'); ?>
 </div>
 <div class="row">
     <?php echo $form->inputPlaceholder($model, 'password'); ?>
 </div>
-<div class="row">
-    <?php echo ActiveHtml::submitButton('Войти', array('class' => 'btn light_blue', 'onclick' => 'return user.login()')); ?>
-</div>
+    </div>
+    <div class="fl_l login_button">
+        <div class="row">
+            <?php echo ActiveHtml::submitButton('Войти', array('class' => 'btn light_blue', 'onclick' => 'return user.login()')); ?>
+        </div>
+    </div>
+        <div class="clear"></div>
 <?php $this->endWidget(); ?>
