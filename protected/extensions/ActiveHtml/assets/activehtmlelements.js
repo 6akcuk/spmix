@@ -243,7 +243,7 @@ var input_ph = {
     },
     subscribe: function() {
         $(this).next().css({
-            top: $(this).css('paddingTop'),
+            //top: $(this).css('paddingTop'),
             left: $(this).css('paddingLeft'),
             display: (($(this).val() == '') ? 'block' : 'none')
         });
