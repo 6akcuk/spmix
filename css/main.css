@@ -187,10 +187,11 @@ input[type="text"], textarea, input[type="email"], input[type="password"], input
     padding: 8px;
     font-size: 10px;
     width: 157px;
-    height: 11px;
+    height: 9px;
     color: #7b8084;
     background: url('/images/textarea_login.jpg');
-    border: 0;
+    border: 1px solid #557132;
+
 }
 
 input[type="email"], input[type="password"], input[type="number"] {
