@@ -101,7 +101,7 @@ var Tooltip = {
     }
 };
 
-/* MSI */
+/* Minimal Save Informer */
 var msi = {
     show: function(msg) {
         var _popup = $('<div class="msi">'+ msg +'</div>').appendTo('body');
@@ -575,6 +575,23 @@ $.fn.autosize = function(options) {
     });
 }
 
+/* Tabs */
+$.fn.tabs = function()
+{
+    this.each(function()
+    {
+        var $this = $(this);
+        $(this).children('a').click(function()
+        {
+            var $link = $($this.attr('data-link'));
+            $this.children('a').removeClass('selected');
+            $link.children('div').hide();
+            $link.children($(this).attr('target')).show();
+            $(this).addClass('selected');
+        });
+    });
+}
+
 /* Search Field */
 
 /* Form Easy Control */
@@ -617,12 +634,12 @@ var FormMgr = {
 
 /* Static Manager */
 var stmgr = {
-    _css: new RegExp('.css$', 'ig'),
-    _js: new RegExp('.js$', 'ig'),
+    _css: new RegExp('.css', 'i'),
+    _js: new RegExp('.js', 'i'),
     _waiters: [],
     _iv: null,
     _ivWork: false,
-    _failover: 20,
+    _failover: 10,
 
     init: function() {
         stmgr._ivWork = true;
@@ -631,25 +648,37 @@ var stmgr = {
 
     wait: function() {
         if (!stmgr._waiters.length) {
+            stmgr._waiters = [];
             stmgr._ivWork = false;
             clearInterval(stmgr._iv);
             return;
         }
 
         $.each(stmgr._waiters, function(i, waiter) {
-            if (stmgr._css.test(waiter.n)) {
+            if (!waiter) return;
+
+            if (stmgr._css.test(waiter[0])) {
                 //alert(waiter.n);
                 //alert($('#'+ waiter.n +'_css').css('display'));
 
-                if ($('#'+ waiter.n.replace(/.css/ig, '') +'_css').css('display') == 'none') {
-                    stmgr.loaded(waiter.n);
-                    delete stmgr._waiters[i];
+                if ($('#'+ waiter[0].replace(/.css/ig, '') +'_css').css('display') == 'none') {
+                    stmgr.loaded(waiter[0]);
+                    stmgr._waiters.splice(i, 1);
                 }
-                else stmgr._waiters[i].c++;
+                else stmgr._waiters[i][1]++;
 
-                if (stmgr._waiters[i].c >= stmgr._failover) {
-                    delete stmgr._waiters[i];
-                    ajex.show('Не удалось загрузить '+ waiter.n +'');
+                if (stmgr._waiters[i][1] >= stmgr._failover) {
+                    stmgr._waiters.splice(i, 1);
+                    ajex.show('Не удалось загрузить '+ waiter[0] +'');
+                }
+            }
+            else if (stmgr._js.test(waiter[0])) {
+                if (staticFiles[waiter[0]].l == 1) stmgr._waiters.splice(i, 1);
+                else stmgr._waiters[i][1]++;
+
+                if (stmgr._waiters[i][1] >= stmgr._failover) {
+                    stmgr._waiters.splice(i, 1);
+                    ajex.show('Не удалось загрузить '+ waiter[0] +'');
                 }
             }
         });
@@ -657,19 +686,21 @@ var stmgr = {
 
     add: function(url, name, version) {
         if (staticFiles[name] && staticFiles[name].v == parseInt(version) && staticFiles[name].l) {
+            logger.add(name +' уже загружен');
             return;
         }
 
         logger.add('Загрузка '+ name +' версии '+ version);
 
         staticFiles[name] = {v: parseInt(version), l: 0};
-        stmgr._waiters.push({
-            n: name,
-            c: 0
-        });
+        stmgr._waiters.push([name, 0]);
         if (!stmgr._ivWork) stmgr.init();
 
+        logger.add(name+ ' в очереди ожидания');
+
         if (stmgr._css.test(name)) {
+            logger.add(name+ ' прошел тест на CSS');
+
             $('<div/>')
                 .attr('id', name.replace(/\.css/ig, '') + '_css')
                 .appendTo('#utils');
@@ -678,11 +709,12 @@ var stmgr = {
                 .attr({
                     type: 'text/css',
                     rel: 'stylesheet',
-                    href: 'http://spmix.ru'+ url
+                    href: url
                 })
                 .appendTo('head');
         }
         else if (stmgr._js.test(name)) {
+            logger.add(name+ ' прошел тест на JS');
             //alert('Adding '+ name +' '+ url);
 
             $('<script/>')
@@ -853,13 +885,11 @@ var nav = {
                     stmgr.add(st[0], st[1], st[2])
                 });
 
-                logger.showAll();
+                //logger.showAll();
 
                 $('title').html(response.title);
                 $('#content').html(response.html);
                 $('#content').trigger('contentChanged');
-
-                //logger.showAll();
             });
             request.fail(function(xhr, textStatus, errorThrown) {
                 $('body').removeClass('progress');
@@ -956,11 +986,14 @@ $().ready(function() {
         Upload.onDOMReady(this);
     });
 
+    $('div.tabs').tabs();
+
     $('#content').on('contentChanged', function() {
         input_ph.contentChanged.call(this);
         $('div.dropdown').dropdown();
         Tooltip.init();
         $('a.input_calendar').calendar();
+        $('div.tabs').tabs();
     });
 });
 

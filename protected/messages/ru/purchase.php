@@ -21,4 +21,6 @@ return array(
     'Cargo Forward' => 'Ждем груз',
     'Distribution' => 'Раздача',
     'Completed' => 'Завершено',
+
+
 );

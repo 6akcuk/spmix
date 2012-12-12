@@ -92,6 +92,7 @@ class PurchasesController extends Controller {
         if(isset($_POST['Purchase']))
         {
             $model->attributes=$_POST['Purchase'];
+            $model->city_id = Yii::app()->user->model->profile->city_id;
             $model->author_id = Yii::app()->user->getId();
             $result = array();
 
@@ -119,29 +120,111 @@ class PurchasesController extends Controller {
         $model = Purchase::model()->findByPk($id);
         $model->setScenario('edit');
 
-        if(isset($_POST['Purchase']))
+        if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
+            Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('purchase' => $model)))
         {
-            $model->attributes=$_POST['Purchase'];
-            $result = array();
-
-            if($model->validate() && $model->save()) {
-                $result['success'] = true;
-                $result['url'] = '/purchase'. $model->purchase_id;
-            }
-            else {
-                foreach ($model->getErrors() as $attr => $error) {
-                    $result[ActiveHtml::activeId($model, $attr)] = $error;
+            if(isset($_POST['Purchase']))
+            {
+                $history = array(
+                    'stop_date' => 'Изменена дата стопа с {from} на {to}',
+                    'state' => 'Изменен статус закупки с {from} на {to}',
+                    'min_sum' => 'Изменена мин. сумма заказа с {from} на {to}',
+                    'min_num' => 'Изменено мин. кол-во заказов с {from} на {to}',
+                    'org_tax' => 'Изменен % наценки организатора с {from} на {to}',
+                );
+                foreach ($history as $h => $m) {
+                    $cache[$h] = $model->$h;
                 }
+
+                $model->attributes=$_POST['Purchase'];
+                $result = array();
+
+                if($model->validate() && $model->save()) {
+                    foreach ($history as $h => $m) {
+                        if ($cache[$h] != $model->$h) {
+                            $ph = new PurchaseHistory();
+                            $ph->purchase_id = $id;
+                            $ph->author_id = Yii::app()->user->getId();
+                            $ph->msg = $m;
+
+                            $from = $cache[$h];
+                            $to = $model->$h;
+
+                            switch ($h) {
+                                case 'stop_date':
+                                    $from = ActiveHtml::date($from, false, true);
+                                    $to = ActiveHtml::date($to, false, true);
+                                    break;
+                                case 'state':
+                                    $from = Yii::t('purchase', $from);
+                                    $to = Yii::t('purchase', $to);
+                                    break;
+                                case 'min_sum':
+                                    $from = ActiveHtml::price($from);
+                                    $to = ActiveHtml::price($to);
+                                    break;
+                            }
+
+                            $ph->params = json_encode(array('{from}' => $from, '{to}' => $to));
+                            $ph->save();
+                        }
+                    }
+
+                    $result['success'] = true;
+                    $result['url'] = '/purchase'. $model->purchase_id;
+                }
+                else {
+                    foreach ($model->getErrors() as $attr => $error) {
+                        $result[ActiveHtml::activeId($model, $attr)] = $error;
+                    }
+                }
+
+                echo json_encode($result);
+                exit;
             }
 
-            echo json_encode($result);
+            if (Yii::app()->request->isAjaxRequest) {
+                $this->pageHtml = $this->renderPartial('edit', array('model' => $model), true);
+            }
+            else $this->render('edit', array('model' => $model));
+        }
+        else
+            throw new CHttpException(403, 'В доступе отказано');
+    }
+
+    public function actionDelete($id) {
+        $purchase = Purchase::model()->findByPk($id);
+
+        if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
+            Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('purchase' => $purchase)))
+        {
+            //TODO: Необходимо также сразу удалять товары
+            $purchase->on_delete = new CDbExpression('NOW()');
+            $purchase->save(true, array('on_delete'));
+
+            if (Yii::app()->request->isAjaxRequest) {
+                $this->pageHtml = $this->renderPartial('delete', array('purchase' => $purchase), true);
+            }
+            else $this->render('delete', array('purchase' => $purchase));
+        }
+        else
+            throw new CHttpException(403, 'В доступе отказано');
+    }
+
+    public function actionRestore($id) {
+        $purchase = Purchase::model()->resetScope()->findByPk($id);
+
+        if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
+            Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('purchase' => $purchase)))
+        {
+            $purchase->on_delete = NULL;
+            $purchase->save(true, array('on_delete'));
+
+            echo json_encode(array('url' => '/purchase'. $purchase->purchase_id));
             exit;
         }
-
-        if (Yii::app()->request->isAjaxRequest) {
-            $this->pageHtml = $this->renderPartial('edit', array('model' => $model), true);
-        }
-        else $this->render('edit', array('model' => $model));
+        else
+            throw new CHttpException(403, 'В доступе отказано');
     }
 
     public function actionUpdateFullstory() {

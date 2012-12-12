@@ -28,10 +28,6 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
             <?php echo $form->dropdown($model, 'category_id', PurchaseCategory::getDataArray()) ?>
         </div>
         <div class="row">
-            <?php echo $form->label($model, 'city_id') ?>
-            <?php echo $form->dropdown($model, 'city_id', City::getDataArray()) ?>
-        </div>
-        <div class="row">
             <?php echo $form->label($model, 'image') ?>
             <?php echo $form->upload($model, 'image', 'Прикрепить аватар', array('data-image' => 'a')) ?>
         </div>

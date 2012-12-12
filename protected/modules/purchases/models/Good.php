@@ -59,6 +59,12 @@ class Good extends CActiveRecord
 		);
 	}
 
+    public function defaultScope() {
+        return array(
+            'condition' => 't.on_delete IS NULL',
+        );
+    }
+
 	/**
 	 * @return array relational rules.
 	 */
@@ -90,33 +96,6 @@ class Good extends CActiveRecord
 			'sizes' => 'Размеры',
 			'colors' => 'Цвета',
 		);
-	}
-
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// Warning: Please modify the following code to remove attributes that
-		// should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('good_id',$this->good_id,true);
-		$criteria->compare('purchase_id',$this->purchase_id);
-		$criteria->compare('name',$this->name,true);
-		$criteria->compare('price',$this->price,true);
-		$criteria->compare('currency',$this->currency,true);
-		$criteria->compare('description',$this->description,true);
-		$criteria->compare('artikul',$this->artikul,true);
-		$criteria->compare('url',$this->url,true);
-		$criteria->compare('sizes',$this->sizes,true);
-		$criteria->compare('colors',$this->colors,true);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
 	}
 
     public function countImages()

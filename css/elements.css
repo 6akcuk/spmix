@@ -187,3 +187,8 @@ table.data th.right, table.data td.right {
     line-height: 18px;
     font-size: 14px
 }
+
+.big_informer {
+    text-align: center;
+    padding: 100px 50px;
+}

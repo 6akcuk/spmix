@@ -13,6 +13,12 @@ var Purchase = {
         return false;
     },
 
+    restore: function(id) {
+        ajax.post('/purchase'+ id +'/restore', null, function(r) {
+            nav.go(r.url, null, null);
+        });
+    },
+
     addgood: function() {
         FormMgr.submit('#addgoodform', 'right', function(r) {
             nav.go(r.url, null, null);
