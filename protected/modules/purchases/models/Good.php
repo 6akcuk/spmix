@@ -14,6 +14,8 @@
  * @property string $url
  * @property string $sizes
  * @property string $colors
+ * @property string $on_delete
+ *
  * @property Purchase $purchase
  * @property GoodImages $image
  * @property array $images

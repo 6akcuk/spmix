@@ -31,6 +31,7 @@
  * @property PurchaseCategory $category
  * @property PurchaseExternal $external
  * @property array $history
+ * @property array $oic
  */
 class Purchase extends CActiveRecord
 {
@@ -102,6 +103,7 @@ class Purchase extends CActiveRecord
             'author' => array(self::BELONGS_TO, 'Profile', 'author_id'),
             'external' => array(self::BELONGS_TO, 'PurchaseExternal', 'purchase_id'),
             'history' => array(self::HAS_MANY, 'PurchaseHistory', 'purchase_id', 'order' => 'history.datetime DESC'),
+            'oic' => array(self::HAS_MANY, 'PurchaseOic', 'purchase_id'),
 		);
 	}
 

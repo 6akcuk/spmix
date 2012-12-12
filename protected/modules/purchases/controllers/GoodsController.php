@@ -30,12 +30,56 @@ class GoodsController extends Controller {
 
     public function actionEdit($purchase_id, $good_id) {
         $purchase = Purchase::model()->findByPk($purchase_id);
-        $good = Good::model()->with('images')->findByPk($good_id);
 
-        if (Yii::app()->request->isAjaxRequest) {
-            $this->pageHtml = $this->renderPartial('edit', array('purchase' => $purchase, 'good' => $good), true);
+        if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
+            Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('purchase' => $purchase)))
+        {
+            $good = Good::model()->with('images')->findByPk($good_id);
+
+            if (Yii::app()->request->isAjaxRequest) {
+                $this->pageHtml = $this->renderPartial('edit', array('purchase' => $purchase, 'good' => $good), true);
+            }
+            else $this->render('edit', array('purchase' => $purchase, 'good' => $good));
         }
-        else $this->render('edit', array('purchase' => $purchase, 'good' => $good));
+        else
+            throw new CHttpException(403, 'В доступе отказано');
+    }
+
+    public function actionDelete($purchase_id, $good_id) {
+        $purchase = Purchase::model()->findByPk($purchase_id);
+
+        if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
+            Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('purchase' => $purchase)))
+        {
+            $good = Good::model()->findByPk($good_id);
+
+            $good->on_delete = new CDbExpression('NOW()');
+            $good->save(true, array('on_delete'));
+
+            echo json_encode(array('html' => 'Товар удален. <a onclick="Purchase.restoregood('. $purchase_id .', '. $good_id .')">Восстановить</a>'));
+            exit;
+        }
+        else
+            throw new CHttpException(403, 'В доступе отказано');
+    }
+
+    public function actionRestore($purchase_id, $good_id) {
+        $purchase = Purchase::model()->findByPk($purchase_id);
+
+        if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
+            Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('purchase' => $purchase)))
+        {
+            $good = Good::model()->resetScope()->findByPk($good_id);
+
+            $good->on_delete = NULL;
+            if ($good->save(true, array('on_delete')))
+                echo json_encode(array('success' => true));
+            else
+                echo json_encode(array('success' => false, 'html' => ''));
+            exit;
+        }
+        else
+            throw new CHttpException(403, 'В доступе отказано');
     }
 
     public function actionAddImage() {

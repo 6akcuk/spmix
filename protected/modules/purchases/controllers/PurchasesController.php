@@ -227,6 +227,57 @@ class PurchasesController extends Controller {
             throw new CHttpException(403, 'В доступе отказано');
     }
 
+    public function actionOic($id) {
+        $purchase = Purchase::model()->with('oic')->findByPk($id);
+
+        if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
+            Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('purchase' => $purchase)))
+        {
+            if (isset($_POST['PurchaseOic'])) {
+                PurchaseOic::model()->deleteAll('purchase_id = :purchase_id', array(':purchase_id' => $id));
+                $common_success = false;
+                $have_error = false;
+
+                foreach ($_POST['PurchaseOic']['price'] as $idx => $oiv) {
+                    $oic = $_POST['PurchaseOic'];
+
+                    $model = new PurchaseOic();
+                    $model->purchase_id = $id;
+                    $model->price = $oic['price'][$idx];
+                    $model->description = $oic['description'][$idx];
+                    if ($model->save()) {
+                        $common_success = true;
+                        $result = array(
+                            'success' => true,
+                            'url' => '/purchase'. $id .'/oic',
+                            'msg' => Yii::t('app', 'Изменения сохранены'),
+                        );
+                    }
+                    else {
+                        $have_error = true;
+                        foreach ($model->getErrors() as $attr => $error) {
+                            $result[ActiveHtml::activeId($model, $attr)] = $error;
+                        }
+                    }
+                }
+
+                echo json_encode(array(
+                    'success' => true,
+                    'url' => '/purchase'. $id .'/oic',
+                    'msg' => Yii::t('app', 'Изменения сохранены')
+                ));
+                exit;
+            }
+
+            if (Yii::app()->request->isAjaxRequest) {
+                $this->pageHtml = $this->renderPartial('oic', array('purchase' => $purchase), true);
+            }
+            else $this->render('oic', array('purchase' => $purchase));
+        }
+        else
+            throw new CHttpException(403, 'В доступе отказано');
+    }
+
     public function actionUpdateFullstory() {
         $id = intval($_POST['id']);
 

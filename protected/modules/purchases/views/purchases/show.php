@@ -70,8 +70,9 @@ $this->pageTitle = Yii::app()->name .' - '. $purchase->name;
         </div>
     </div>
     <div class="right">
+        <?php echo ActiveHtml::link('ЦВЗ', '/purchase'. $purchase->purchase_id .'/oic', array('class' => 'button')) ?>
         <?php echo ActiveHtml::link('Редактировать', '/purchase'. $purchase->purchase_id .'/edit', array('class' => 'button')) ?>
-        <?php echo ActiveHtml::link('Удалить', '/purchase'. $purchase->purchase_id .'/delete', array('class' => 'button')) ?>
+        <?php //echo ActiveHtml::link('Удалить', '/purchase'. $purchase->purchase_id .'/delete', array('class' => 'button')) ?>
     </div>
 </div>
 <div id="tabs" data-link="#tabs_content" class="tabs">
@@ -107,10 +108,10 @@ $this->pageTitle = Yii::app()->name .' - '. $purchase->name;
     <div class="list">
     <?php if (sizeof($goods) > 0): ?>
     <?php foreach ($goods as $good): ?>
-        <div class="left good">
+        <div id="good<?php echo $good->purchase_id ?>_<?php echo $good->good_id ?>" class="left good">
             <h4>
                 <?php echo ActiveHtml::link($good->name, '/good'. $good->purchase_id .'_'. $good->good_id) ?>
-                <a class="right iconify_x_a tt" title="Удалить товар" onclick="Purchase.deleteGood(<?php echo $good->purchase_id ?>, <?php echo $good->good_id ?>)"></a>
+                <a class="right iconify_x_a tt" title="Удалить товар" onclick="Purchase.deletegood(this, <?php echo $good->purchase_id ?>, <?php echo $good->good_id ?>)"></a>
                 <?php echo ActiveHtml::link('', '/good'. $purchase->purchase_id .'_'. $good->good_id.'/edit', array('class' => 'right iconify_gear_a tt', 'title' => 'Редактировать товар')) ?>
             </h4>
             <?php if ($good->image): ?><div><?php echo ActiveHtml::showUploadImage($good->image->image) ?></div><?php endif; ?>
