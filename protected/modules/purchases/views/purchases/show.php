@@ -89,7 +89,7 @@ $this->pageTitle = Yii::app()->name .' - '. $purchase->name;
     <?php foreach ($goods as $good): ?>
         <div class="left good">
             <h4>
-                <?php echo $good->name ?>
+                <?php echo ActiveHtml::link($good->name, '/good'. $good->purchase_id .'_'. $good->good_id) ?>
                 <?php echo ActiveHtml::link('', '/good'. $purchase->purchase_id .'_'. $good->good_id.'/edit', array('class' => 'right iconify_gear_a tt', 'title' => 'Редактировать товар')) ?>
             </h4>
             <?php if ($good->image): ?><div><?php echo ActiveHtml::showUploadImage($good->image->image) ?></div><?php endif; ?>

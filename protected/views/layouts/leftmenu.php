@@ -24,6 +24,13 @@
         <?php echo ActiveHtml::link('Мои настройки', '/settings') ?>
     </li>
 </ul>
+<?php if(Yii::app()->user->checkAccess('users.users.index')): ?>
+<ul>
+    <li>
+        <?php echo ActiveHtml::link('Пользователи', '/users') ?>
+    </li>
+</ul>
+<?php endif; ?>
 <?php if(Yii::app()->user->checkAccess('purchases.purchases.create')): ?>
 <ul class="orgmenu">
     <li>

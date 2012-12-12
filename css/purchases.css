@@ -51,7 +51,20 @@
     border-bottom: 1px solid #ddd
 }
 .purchase_table .photo {
+    position: relative;
     width: 250px;
+}
+.purchase_table .photo .subtitle {
+    position: absolute;
+    bottom: 6px;
+    display: block;
+    padding: 5px 10px;
+    width: 230px;
+    background: rgba(0, 0, 0, 0.5)
+}
+.purchase_table .photo .subtitle .text {
+    color: #fff;
+    font-size: 12px;
 }
 .purchase_table .td {
     margin-left: 10px;

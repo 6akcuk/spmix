@@ -53,5 +53,14 @@ var Purchase = {
         ajax.post('/goods/removeimage', {purchase_id: purchase_id, good_id: good_id, image_id: image_id}, function(r) {
             $this.parent().remove();
         });
+    },
+
+    showImages: function(good_id) {
+        ajax.post('/goods/getImages', {good_id: good_id}, function(list) {
+            Photoview.list('good'+ good_id, list);
+            Photoview.show('good'+ good_id);
+        });
     }
 };
+
+try {stmgr.loaded('purchase.js');}catch(e){}

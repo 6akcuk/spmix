@@ -19,6 +19,15 @@ class GoodsController extends Controller {
         );
     }
 
+    public function actionShow($purchase_id, $good_id) {
+        $good = Good::model()->with('image', 'purchase')->findByPk($good_id);
+
+        if (Yii::app()->request->isAjaxRequest) {
+            $this->pageHtml = $this->renderPartial('show', array('good' => $good), true);
+        }
+        else $this->render('show', array('good' => $good));
+    }
+
     public function actionEdit($purchase_id, $good_id) {
         $purchase = Purchase::model()->findByPk($purchase_id);
         $good = Good::model()->with('images')->findByPk($good_id);
@@ -68,5 +77,20 @@ class GoodsController extends Controller {
         }
         else
             throw new CHttpException(403, 'В доступе отказано');
+    }
+
+    public function actionGetImages() {
+        $images = GoodImages::model()->findAll('good_id = :good_id', array(':good_id' => $_POST['good_id']));
+        $array = array('items' => array());
+
+        /** @var GoodImages $image */
+        foreach ($images as $image) {
+            $array['items'][] = json_decode($image->image);
+        }
+
+        $array['count'] = sizeof($array['items']);
+
+        echo json_encode($array);
+        exit;
     }
 }

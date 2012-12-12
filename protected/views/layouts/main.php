@@ -32,7 +32,16 @@ Yii::app()->getClientScript()->registerCssFile('/css/elements.css');
     <img src="<?php echo Yii::app()->request->baseUrl; ?>/images/2.gif" alt="" />
 </div>
 
-<body>
+<div class="fixed pv_dark" id="layout_bg" style="display: none;"></div>
+<div class="fixed" id="layout_wrap" style="display: none;">
+    <div id="layout"></div>
+</div>
+
+<div class="fixed" id="box_bg" style="display: none;"></div>
+<div class="fixed" id="box_wrap" style="display: none;">
+    <div id="box_layout"></div>
+</div>
+
 <div class="wrapper">
     <div class='top'>
         <div class="fl_l logo">

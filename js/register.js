@@ -26,3 +26,5 @@ var register = {
         }
     }
 };
+
+try {stmgr.loaded('register.js');}catch(e){}

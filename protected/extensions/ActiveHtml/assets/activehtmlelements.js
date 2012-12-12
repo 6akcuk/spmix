@@ -92,6 +92,7 @@ var Tooltip = {
         Tooltip.cur = null;
     },
     init: function() {
+        $('div.tooltip').remove();
         $('.tt').mouseenter(function() {
                 Tooltip.show(this)
             }).mouseleave(function() {
@@ -616,8 +617,8 @@ var FormMgr = {
 
 /* Static Manager */
 var stmgr = {
-    _css: new RegExp('.css', 'ig'),
-    _js: new RegExp('.js', 'ig'),
+    _css: new RegExp('.css$', 'ig'),
+    _js: new RegExp('.js$', 'ig'),
     _waiters: [],
     _iv: null,
     _ivWork: false,
@@ -655,8 +656,9 @@ var stmgr = {
     },
 
     add: function(url, name, version) {
-        if (staticFiles[name] && staticFiles[name].v == parseInt(version) && staticFiles[name].l)
+        if (staticFiles[name] && staticFiles[name].v == parseInt(version) && staticFiles[name].l) {
             return;
+        }
 
         logger.add('Загрузка '+ name +' версии '+ version);
 
@@ -681,9 +683,13 @@ var stmgr = {
                 .appendTo('head');
         }
         else if (stmgr._js.test(name)) {
+            //alert('Adding '+ name +' '+ url);
+
             $('<script/>')
-                .attr('type', 'text/javascript')
-                .attr('src', url)
+                .attr({
+                    type: 'text/javascript',
+                    src: url
+                })
                 .appendTo('head');
         }
     },
@@ -843,9 +849,11 @@ var nav = {
                 $('body').removeClass('progress');
                 clearTimeout(nav._tmPage);
 
-                for (var i in response.static) {
-                    stmgr.add(response.static[i][0], response.static[i][1], response.static[i][2])
-                }
+                $.each(response.static, function(i, st) {
+                    stmgr.add(st[0], st[1], st[2])
+                });
+
+                logger.showAll();
 
                 $('title').html(response.title);
                 $('#content').html(response.html);

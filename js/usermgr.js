@@ -10,3 +10,5 @@ var UserMgr = {
         });
     }
 };
+
+try {stmgr.loaded('usermgr.js');}catch(e){}

@@ -431,7 +431,14 @@ class ClientScript extends CClientScript {
             if (!file_exists(Yii::app()->basePath .'/../'. $url)) return;
 
             $hash = hash_file('md5', Yii::app()->basePath .'/../'. $url);
-            $mgr = StaticManagerFileVersion::model()->findAll('scriptname = :name', array(':name' => $url), array('order' => 'version DESC', 'limit' => 3));
+
+            $criteria = new CDbCriteria();
+            $criteria->limit = 3;
+            $criteria->order = 'version DESC';
+            $criteria->condition = 'scriptname = :name';
+            $criteria->params = array(':name' => $url);
+
+            $mgr = StaticManagerFileVersion::model()->findAll($criteria);
             if (!$mgr) {
                 $mgr = new StaticManagerFileVersion();
                 $mgr->scriptname = $url;

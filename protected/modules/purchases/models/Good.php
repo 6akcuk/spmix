@@ -14,6 +14,7 @@
  * @property string $url
  * @property string $sizes
  * @property string $colors
+ * @property Purchase $purchase
  * @property GoodImages $image
  * @property array $images
  */
@@ -66,6 +67,7 @@ class Good extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+            'purchase' => array(self::BELONGS_TO, 'Purchase', 'purchase_id'),
             'image' => array(self::HAS_ONE, 'GoodImages', array('good_id' => 'good_id')),
             'images' => array(self::HAS_MANY, 'GoodImages', array('good_id' => 'good_id')),
 		);
@@ -116,4 +118,9 @@ class Good extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+
+    public function countImages()
+    {
+        return GoodImages::model()->count('good_id = :good_id', array(':good_id' => $this->good_id));
+    }
 }
