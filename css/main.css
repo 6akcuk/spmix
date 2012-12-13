@@ -798,6 +798,9 @@ form h2 {
 form .row {
     padding: 4px 0;
 }
+form .row a[class*="iconify_"] {
+    display: inline-block;
+}
 form .success {
     margin: 5px 0;
     padding: 10px;

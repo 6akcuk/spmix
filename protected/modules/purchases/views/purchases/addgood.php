@@ -16,26 +16,36 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
     'id' => 'addgoodform',
     'action' => $this->createUrl('/purchase'. $id .'/addgood'),
 )); ?>
-<div class="row">
-    <?php echo $form->inputPlaceholder($model, 'name') ?>
-</div>
-<div class="row">
-    <?php echo $form->inputPlaceholder($model, 'artikul') ?>
-</div>
-<div class="row">
-    <?php echo $form->inputPlaceholder($model, 'price') ?>
-</div>
-<div class="row">
-    <?php echo $form->inputPlaceholder($model, 'url') ?>
-</div>
-<div class="row">
-    <?php echo $form->inputPlaceholder($model, 'description') ?>
-</div>
-<div class="row">
-    <?php echo $form->inputPlaceholder($model, 'sizes') ?>
-</div>
-<div class="row">
-    <?php echo $form->inputPlaceholder($model, 'colors') ?>
+<div class="purchase_columns clearfix">
+    <div class="left purchase_column">
+        <div class="row">
+            <?php echo $form->inputPlaceholder($model, 'name') ?>
+        </div>
+        <div class="row">
+            <?php echo $form->inputPlaceholder($model, 'artikul') ?>
+        </div>
+        <div class="row">
+            <?php echo $form->inputPlaceholder($model, 'price') ?>
+        </div>
+        <div class="row">
+            <?php echo $form->inputPlaceholder($model, 'url') ?>
+        </div>
+        <div class="row">
+            <?php echo $form->inputPlaceholder($model, 'description') ?>
+        </div>
+    </div>
+    <div class="left purchase_column">
+        <div class="row">
+            <?php echo ActiveHtml::inputPlaceholder('Good[sizes][]', '', array('id' => '', 'placeholder' => 'Размер')) ?>
+            <a class="iconify_plus_a" onclick="sfar.add(this)"></a>
+            <a class="iconify_x_a" onclick="sfar.del(this)" style="display:none"></a>
+        </div>
+        <div class="row">
+            <?php echo ActiveHtml::inputPlaceholder('Good[colors][]', '', array('id' => '', 'placeholder' => 'Цвет')) ?>
+            <a class="iconify_plus_a" onclick="sfar.add(this)"></a>
+            <a class="iconify_x_a" onclick="sfar.del(this)" style="display:none"></a>
+        </div>
+    </div>
 </div>
 <div class="row">
     <?php echo ActiveHtml::submitButton('Добавить товар', array('class' => 'btn light_blue', 'onclick' => 'return Purchase.addgood()')); ?>

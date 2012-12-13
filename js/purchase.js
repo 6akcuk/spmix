@@ -91,17 +91,6 @@ var Purchase = {
         });
     },
 
-    addOic: function(cont) {
-        var $p = $(cont).parent(),
-            $c = $($p.clone()).insertAfter($p);
-        $c.find('input').val('');
-        $c.children('a.iconify_x_a').show();
-    },
-
-    deleteOic: function(cont) {
-        $(cont).parent().remove();
-    },
-
     saveOic: function() {
         FormMgr.submit('#oicform', 'right', function(r) {
             msi.show(r.msg);

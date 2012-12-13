@@ -25,16 +25,16 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
 <div class="row">
     <?php echo ActiveHtml::inputPlaceholder('PurchaseOic[price][]', $oic->price, array('id' => '', 'placeholder' => 'Цена')) ?>
     <?php echo ActiveHtml::inputPlaceholder('PurchaseOic[description][]', $oic->description, array('id' => '', 'placeholder' => 'Описание')) ?>
-    <a class="iconify_plus_a" onclick="Purchase.addOic(this)"></a>
-    <a class="iconify_x_a" onclick="Purchase.deleteOic(this)"></a>
+    <a class="iconify_plus_a" onclick="sfar.add(this)"></a>
+    <a class="iconify_x_a" onclick="sfar.del(this)"></a>
 </div>
 <?php endforeach; ?>
 <?php endif; ?>
 <div class="row">
     <?php echo ActiveHtml::inputPlaceholder('PurchaseOic[price][]', '', array('id' => '', 'placeholder' => 'Цена')) ?>
     <?php echo ActiveHtml::inputPlaceholder('PurchaseOic[description][]', '', array('id' => '', 'placeholder' => 'Описание')) ?>
-    <a class="iconify_plus_a" onclick="Purchase.addOic(this)"></a>
-    <a class="iconify_x_a" onclick="Purchase.deleteOic(this)" style="display:none"></a>
+    <a class="iconify_plus_a" onclick="sfar.add(this)"></a>
+    <a class="iconify_x_a" onclick="sfar.del(this)" style="display:none"></a>
 </div>
 <div class="row">
     <?php echo ActiveHtml::submitButton('Сохранить изменения', array('class' => 'btn light_blue', 'onclick' => 'return Purchase.saveOic()')); ?>

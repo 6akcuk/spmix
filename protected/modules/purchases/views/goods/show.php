@@ -1,6 +1,7 @@
 <?php
 /**
  * @var $good Good
+ * @var $form ActiveForm
  */
 
 Yii::app()->getClientScript()->registerCssFile('/css/purchases.css');
@@ -9,6 +10,23 @@ Yii::app()->getClientScript()->registerCssFile('/css/photoview.css');
 Yii::app()->getClientScript()->registerScriptFile('/js/photoview.js');
 
 $this->pageTitle = Yii::app()->name .' - '. $good->purchase->name .' - '. $good->name;
+
+$sizes = json_decode($good->sizes, true);
+$colors = json_decode($good->colors, true);
+$dd_sizes = array();
+$dd_colors = array();
+
+if (is_array($sizes)) {
+    foreach ($sizes as $size) {
+        $dd_sizes[$size] = $size;
+    }
+}
+if (is_array($colors)) {
+    foreach ($colors as $color) {
+        $dd_colors[$color] = $color;
+    }
+}
+
 ?>
 
 <h1><?php echo $good->name ?></h1>
@@ -25,29 +43,34 @@ $this->pageTitle = Yii::app()->name .' - '. $good->purchase->name .' - '. $good-
     <?php endif; ?>
     </div>
     <div class="left td">
-        <div class="clearfix">
-            <div class="left label">Артикул:</div>
-            <div class="left labeled"><?php echo $good->artikul ?></div>
-        </div>
+        <?php $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
+            'id' => 'orderform',
+            'action' => $this->createUrl('/good'. $good->purchase_id .'_'. $good->good_id .'/order'),
+        )); ?>
         <div class="clearfix">
             <div class="left label">Цена:</div>
             <div class="left labeled"><?php echo ActiveHtml::price($good->price, $good->currency) ?></div>
         </div>
         <div class="clearfix">
-            <div class="left label">URL:</div>
-            <div class="left labeled"><?php echo $good->url ?></div>
+            <div class="left label">Итог. цена:</div>
+            <div class="left labeled"><?php echo ActiveHtml::price(floatval($good->price) * ($good->purchase->org_tax / 100 + 1), $good->currency) ?></div>
         </div>
         <div class="clearfix">
-            <div class="left label">Размеры:</div>
-            <div class="left labeled"><?php echo $good->sizes ?></div>
+            <div class="left label">Размер:</div>
+            <div class="left labeled">
+                <?php echo $form->dropdown($order, 'size', $dd_sizes) ?>
+            </div>
         </div>
         <div class="clearfix">
-            <div class="left label">Цвета:</div>
-            <div class="left labeled"><?php echo $good->colors ?></div>
+            <div class="left label">Цвет:</div>
+            <div class="left labeled">
+                <?php echo $form->dropdown($order, 'color', $dd_colors) ?>
+            </div>
         </div>
         <div class="clearfix">
             <a class="button">Заказать</a>
         </div>
+        <?php $this->endWidget(); ?>
     </div>
 </div>
 <div class="purchase_fullstory">

@@ -9,6 +9,8 @@
  * @property integer $good_id
  * @property integer $customer_id
  * @property string $creation_date
+ * @property string $size
+ * @property string $color
  * @property integer $amount
  * @property string $price
  * @property string $total_price
@@ -20,6 +22,10 @@
  */
 class Order extends CActiveRecord
 {
+    const STATUS_AWAITING = 'Awaiting';
+    const STATUS_CANCELED = 'Canceled';
+    const STATUS_PAID = 'Paid';
+
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
@@ -46,7 +52,7 @@ class Order extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('purchase_id, good_id, customer_id, creation_date, amount, price, total_price, client_comment, org_comment, status, oic, anonymous', 'required'),
+			array('purchase_id, good_id, customer_id, size, color, amount, price, total_price', 'required', 'on' => 'create'),
 			array('purchase_id, good_id, customer_id, amount, anonymous', 'numerical', 'integerOnly'=>true),
 			array('price, total_price', 'length', 'max'=>10),
 			array('client_comment, org_comment', 'length', 'max'=>200),
@@ -80,44 +86,26 @@ class Order extends CActiveRecord
 			'good_id' => 'Good',
 			'customer_id' => 'Customer',
 			'creation_date' => 'Creation Date',
-			'amount' => 'Amount',
-			'price' => 'Price',
-			'total_price' => 'Total Price',
-			'client_comment' => 'Client Comment',
-			'org_comment' => 'Org Comment',
-			'status' => 'Status',
-			'oic' => 'Oic',
-			'anonymous' => 'Anonymous',
+            'size' => 'Размер',
+            'color' => 'Цвет',
+			'amount' => 'Количество',
+			'price' => 'Цена',
+			'total_price' => 'Итог. цена',
+			'client_comment' => 'Комментарий для организатора',
+			'org_comment' => 'Комментарий организатора',
+			'status' => 'Статус',
+			'oic' => 'ЦВЗ',
+			'anonymous' => 'Анонимно',
 		);
 	}
 
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// Warning: Please modify the following code to remove attributes that
-		// should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('order_id',$this->order_id);
-		$criteria->compare('purchase_id',$this->purchase_id);
-		$criteria->compare('good_id',$this->good_id);
-		$criteria->compare('customer_id',$this->customer_id);
-		$criteria->compare('creation_date',$this->creation_date,true);
-		$criteria->compare('amount',$this->amount);
-		$criteria->compare('price',$this->price,true);
-		$criteria->compare('total_price',$this->total_price,true);
-		$criteria->compare('client_comment',$this->client_comment,true);
-		$criteria->compare('org_comment',$this->org_comment,true);
-		$criteria->compare('status',$this->status,true);
-		$criteria->compare('oic',$this->oic,true);
-		$criteria->compare('anonymous',$this->anonymous);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
-	}
+    public function beforeSave() {
+        if (parent::beforeSave()) {
+            if ($this->isNewRecord) {
+                $this->creation_date = date("Y-m-d H:i:s");
+                $this->status = self::STATUS_AWAITING;
+            }
+        }
+        else return false;
+    }
 }

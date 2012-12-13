@@ -592,6 +592,20 @@ $.fn.tabs = function()
     });
 }
 
+/* Simple Field Add/Remove */
+var sfar = {
+    add: function(plus) {
+        var $p = $(plus).parent(),
+            $c = $($p.clone()).insertAfter($p);
+        $c.find('input').val('');
+        $c.children('a.iconify_x_a').show();
+    },
+
+    del: function(x) {
+        $(x).parent().remove();
+    }
+};
+
 /* Search Field */
 
 /* Form Easy Control */

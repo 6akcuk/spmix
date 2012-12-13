@@ -95,8 +95,8 @@ class Good extends CActiveRecord
 			'description' => 'Описание',
 			'artikul' => 'Артикул',
 			'url' => 'URL',
-			'sizes' => 'Размеры',
-			'colors' => 'Цвета',
+			'sizes' => 'Размер',
+			'colors' => 'Цвет',
 		);
 	}
 

@@ -21,11 +21,12 @@ class GoodsController extends Controller {
 
     public function actionShow($purchase_id, $good_id) {
         $good = Good::model()->with('image', 'purchase')->findByPk($good_id);
+        $order = new Order('create');
 
         if (Yii::app()->request->isAjaxRequest) {
-            $this->pageHtml = $this->renderPartial('show', array('good' => $good), true);
+            $this->pageHtml = $this->renderPartial('show', array('good' => $good, 'order' => $order), true);
         }
-        else $this->render('show', array('good' => $good));
+        else $this->render('show', array('good' => $good, 'order' => $order));
     }
 
     public function actionEdit($purchase_id, $good_id) {
@@ -35,6 +36,34 @@ class GoodsController extends Controller {
             Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('purchase' => $purchase)))
         {
             $good = Good::model()->with('images')->findByPk($good_id);
+
+            if (isset($_POST['Good'])) {
+                $good->attributes=$_POST['Good'];
+                $good->sizes = json_encode($_POST['Good']['sizes']);
+                $good->colors = json_encode($_POST['Good']['colors']);
+
+                $psizes = json_decode($purchase->sizes, true);
+                $sizes = $_POST['Good']['sizes'];
+
+                $psizes = array_merge($psizes, $sizes);
+                sort($psizes);
+
+                if($good->validate() && $good->save()) {
+                    $purchase->sizes = json_encode($psizes);
+                    $purchase->save(true, array('sizes'));
+
+                    $result['success'] = true;
+                    $result['url'] = '/good'. $purchase_id .'_'. $good_id .'/edit';
+                }
+                else {
+                    foreach ($good->getErrors() as $attr => $error) {
+                        $result[ActiveHtml::activeId($good, $attr)] = $error;
+                    }
+                }
+
+                echo json_encode($result);
+                exit;
+            }
 
             if (Yii::app()->request->isAjaxRequest) {
                 $this->pageHtml = $this->renderPartial('edit', array('purchase' => $purchase, 'good' => $good), true);

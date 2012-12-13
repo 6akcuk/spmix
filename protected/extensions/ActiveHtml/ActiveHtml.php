@@ -31,9 +31,15 @@ class ActiveHtml extends CHtml {
     public static function inputPlaceholder($name, $value = '', $htmlOptions = array()) {
         ActiveHtml::publishAssets();
 
+        if (isset($htmlOptions['placeholder'])) {
+            $placeholder = $htmlOptions['placeholder'];
+            unset($htmlOptions['placeholder']);
+        }
+        else $placeholder = '';
+
         return self::openTag('span', array('class' => 'input_placeholder')) .
             self::inputField('text', $name, $value, $htmlOptions) .
-            self::label((isset($htmlOptions['placeholder'])) ? $htmlOptions['placeholder'] : '', $name, $htmlOptions) .
+            self::label($placeholder, $name) .
             self::closeTag('span');
     }
 

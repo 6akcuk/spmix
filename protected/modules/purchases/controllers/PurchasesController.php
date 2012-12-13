@@ -323,9 +323,20 @@ class PurchasesController extends Controller {
             if(isset($_POST['Good']))
             {
                 $model->attributes=$_POST['Good'];
+                $model->sizes = json_encode($_POST['Good']['sizes']);
+                $model->colors = json_encode($_POST['Good']['colors']);
                 $result = array();
 
+                $psizes = json_decode($purchase->sizes, true);
+                $sizes = $_POST['Good']['sizes'];
+
+                $psizes = array_merge($psizes, $sizes);
+                sort($psizes);
+
                 if($model->validate() && $model->save()) {
+                    $purchase->sizes = json_encode($psizes);
+                    $purchase->save(true, array('sizes'));
+
                     $result['success'] = true;
                     $result['url'] = '/good'. $model->purchase_id .'_'. $model->good_id .'/edit';
                 }
