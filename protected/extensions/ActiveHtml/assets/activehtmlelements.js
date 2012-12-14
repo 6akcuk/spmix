@@ -250,7 +250,7 @@ var input_ph = {
         });
     },
     contentChanged: function() {
-        $('#content span.input_placeholder input')
+        $('#content span.input_placeholder input, #content span.input_placeholder textarea')
             .focus(input_ph.focus)
             .blur(input_ph.blur)
             .each(input_ph.subscribe);
@@ -518,23 +518,22 @@ $.fn.autosize = function(options) {
                 width: 200,
                 minheight: 30,
                 maxheight: 160,
-                lineHeight: '13px',
+                lineHeight: '16px',
                 padding: 5
             },
             timeout = null,
             enabled = true;
 
-        var ps = jQuery.extend(settings, options),
+        var ps = $.extend(settings, options),
             $this = $(this);
 
         ps.id = '#'+ $this.attr('id');
-        if(!ps.element) ps.element = ps.id
-
-        oldValue = jQuery(ps.element).val();
+        if ($this.attr('maxheight')) ps.maxheight = parseInt($this.attr('maxheight'));
+        oldValue = $this.val();
 
         function check(event) {
-            var html = jQuery(ps.element).val().replace(/\n/g, "<br>"),
-                autosize = jQuery('#autosize_'+ jQuery(ps.element).attr('name'));
+            var html = $this.val().replace(/\n/g, "<br>"),
+                autosize = $('#autosize_'+ $this.attr('name'));
 
             if(event.type != 'keyup') {
                 if(event.keyCode == 13 && !event.ctrlKey && !event.altKey) {
@@ -544,28 +543,30 @@ $.fn.autosize = function(options) {
             if(html == oldValue) return;
             oldValue = html;
 
+            alert(autosize);
+
             autosize.html( html );
 
-            if(ps.maxheight) jQuery(ps.element).css('height', Math.max(ps.minheight, Math.min( (autosize.outerHeight() + (ps.padding+2)), ps.maxheight) ));
-            else jQuery(ps.element).css('height', Math.max(ps.minheight, (autosize.outerHeight() + (ps.padding+2)) ));
+            if(ps.maxheight) $this.css('height', Math.max(ps.minheight, Math.min( (autosize.outerHeight() + (ps.padding+2)), ps.maxheight) ));
+            else $this.css('height', Math.max(ps.minheight, (autosize.outerHeight() + (ps.padding+2)) ));
 
             // покажем scroll при превышении высоты в 130
             if(ps.maxheight) {
-                if( autosize.outerHeight() > ps.maxheight) jQuery(ps.element).css('overflow', 'auto');
-                else jQuery(ps.element).css('overflow', 'hidden');
+                if( autosize.outerHeight() > ps.maxheight) $this.css('overflow', 'auto');
+                else $this.css('overflow', 'hidden');
             }
         }
 
         function destroy() {
-            jQuery('#autosize_'+ ps.element).remove();
-            jQuery(ps.element).unbind('keyup').unbind('keydown').unbind('keypress');
+            $('#autosize_'+ ps.element).remove();
+            $this.unbind('keyup').unbind('keydown').unbind('keypress');
 
             enabled = false;
         }
 
-        jQuery(ps.element).bind('keyup keydown keypress', check);
+        $this.bind('keyup keydown keypress', check);
 
-        jQuery('<div id="autosize_'+ jQuery(ps.element).attr('name') +'" class="autosize"></div>')
+        $('<div id="autosize_'+ $this.attr('name') +'" class="autosize"></div>')
             .css({
                 width: ps.width,
                 padding: (ps.padding*2),
@@ -986,7 +987,7 @@ $().ready(function() {
         .mouseenter(hmss.mouseenter)
         .mouseleave(hmss.mouseleave);
 
-    $('span.input_placeholder input')
+    $('span.input_placeholder input, span.input_placeholder textarea')
         .focus(input_ph.focus)
         .blur(input_ph.blur)
         .each(input_ph.subscribe);
@@ -1001,6 +1002,7 @@ $().ready(function() {
     });
 
     $('div.tabs').tabs();
+    $('.smarttext textarea').autosize();
 
     $('#content').on('contentChanged', function() {
         input_ph.contentChanged.call(this);
@@ -1008,6 +1010,9 @@ $().ready(function() {
         Tooltip.init();
         $('a.input_calendar').calendar();
         $('div.tabs').tabs();
+
+        $('div.autosize').remove();
+        $('.smarttext textarea').autosize();
     });
 });
 

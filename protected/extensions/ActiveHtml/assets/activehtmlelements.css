@@ -306,3 +306,7 @@ div.olcm li a:hover {
     line-height: 13px;
     word-wrap: break-word;
 }
+
+.smarttext textarea {
+    overflow: hidden;
+}

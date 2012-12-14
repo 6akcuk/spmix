@@ -55,19 +55,20 @@ if (is_array($colors)) {
             <div class="left label">Итог. цена:</div>
             <div class="left labeled"><?php echo ActiveHtml::price(floatval($good->price) * ($good->purchase->org_tax / 100 + 1), $good->currency) ?></div>
         </div>
-        <div class="clearfix">
-            <div class="left label">Размер:</div>
-            <div class="left labeled">
-                <?php echo $form->dropdown($order, 'size', $dd_sizes) ?>
-            </div>
+        <div class="row">
+            <?php echo $form->dropdown($order, 'size', $dd_sizes) ?>
         </div>
-        <div class="clearfix">
-            <div class="left label">Цвет:</div>
-            <div class="left labeled">
-                <?php echo $form->dropdown($order, 'color', $dd_colors) ?>
-            </div>
+        <div class="row">
+            <?php echo $form->dropdown($order, 'color', $dd_colors) ?>
         </div>
-        <div class="clearfix">
+        <div class="row">
+            <?php echo $form->inputPlaceholder($order, 'amount') ?>
+        </div>
+        <div class="row">
+            <?php echo $form->smartTextarea($order, 'client_comment', array('maxheight' => 250)) ?>
+        </div>
+
+        <div class="row">
             <a class="button">Заказать</a>
         </div>
         <?php $this->endWidget(); ?>

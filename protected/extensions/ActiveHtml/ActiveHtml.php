@@ -53,6 +53,31 @@ class ActiveHtml extends CHtml {
             self::closeTag('span');
     }
 
+    public static function smartTextarea($name, $value = '', $htmlOptions = array()) {
+        ActiveHtml::publishAssets();
+
+        if (isset($htmlOptions['placeholder'])) {
+            $placeholder = $htmlOptions['placeholder'];
+            unset($htmlOptions['placeholder']);
+        }
+        else $placeholder = '';
+
+        return self::openTag('span', array('class' => 'input_placeholder smarttext')) .
+            self::textArea($name, $value, $htmlOptions) .
+            self::label($placeholder, $name) .
+            self::closeTag('span');
+    }
+
+    public static function activeSmartTextarea($model, $attribute, $htmlOptions = array()) {
+        ActiveHtml::publishAssets();
+
+        self::resolveNameID($model, $attribute, $htmlOptions);
+        return self::openTag('span', array('class' => 'input_placeholder smarttext')) .
+            self::activeTextArea($model, $attribute, $htmlOptions) .
+            self::activeLabel($model, $attribute) .
+            self::closeTag('span');
+    }
+
     public static function dropdown($name, $default = '', $value = '', $data = array(), $htmlOptions = array()) {
         ActiveHtml::publishAssets();
 

@@ -211,6 +211,7 @@ input[type="text"][disabled], textarea[disabled], input[type="email"][disabled],
 textarea {
     font-family: sans-serif;
     line-height: 16px;
+    min-height: 50px;
     resize: vertical
 }
 

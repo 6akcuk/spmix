@@ -23,4 +23,8 @@ class ActiveForm extends CActiveForm {
     public function upload($model, $attribute, $label ='', $htmlOptions = array()) {
         return ActiveHtml::activeUpload($model, $attribute, $label, $htmlOptions);
     }
+
+    public function smartTextarea($model, $attribute, $htmlOptions = array()) {
+        return ActiveHtml::activeSmartTextarea($model, $attribute, $htmlOptions);
+    }
 }
