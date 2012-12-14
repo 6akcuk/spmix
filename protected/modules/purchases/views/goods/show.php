@@ -29,7 +29,10 @@ if (is_array($colors)) {
 
 ?>
 
-<h1><?php echo $good->name ?></h1>
+<h1>
+    <?php echo $good->name ?>
+    <?php echo ActiveHtml::link('Редактировать', '/good'. $good->purchase_id .'_'. $good->good_id .'/edit', array('class' => 'button right')) ?>
+</h1>
 <div class="purchase_table clearfix">
     <div class="left photo">
     <?php if($good->image): ?>

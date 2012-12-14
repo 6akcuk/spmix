@@ -168,8 +168,11 @@ class SiteController extends Controller
         $pc->generateCode();
         $pc->save();
 
+        $sms = new SmsDelivery(Yii::app()->params['smsUsername'], Yii::app()->params['smsPassword']);
+        $sms->SendMessage($pc->phone, Yii::app()->params['smsNumber'], 'Ваш код регистрации '. $pc->code);
+
         echo json_encode(array(
-            'message' => 'Код отправлен '. $pc->code,
+            'message' => 'Код отправлен',
         ));
         exit;
     }

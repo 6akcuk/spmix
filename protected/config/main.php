@@ -21,6 +21,7 @@ return array(
         'application.modules.users.components.*',
         'application.modules.users.components.views.*',
         'ext.ActiveHtml.*',
+        'ext.SmsDelivery.*',
 	),
 
 	'modules'=>array(
@@ -121,5 +122,8 @@ return array(
 	'params'=>array(
 		// this is used in contact page
 		'adminEmail'=>'webmaster@example.com',
+        'smsUsername' => '24314_spmix',
+        'smsPassword' => 'jbS!D?z',
+        'smsNumber' => 'SPMIX',
 	),
 );

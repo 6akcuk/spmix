@@ -515,7 +515,6 @@ $.fn.autosize = function(options) {
     this.each(function()
     {
         var settings = {
-                width: 200,
                 minheight: 30,
                 maxheight: 160,
                 lineHeight: '16px',
@@ -525,16 +524,25 @@ $.fn.autosize = function(options) {
             enabled = true;
 
         var ps = $.extend(settings, options),
-            $this = $(this);
+            $this = $(this),
+            $as = $('<div/>')
+                .attr({
+                    class: 'autosize'
+                })
+                .css({
+                    width: $this.width(),
+                    fontSize: $this.css('fontSize'),
+                    padding: (ps.padding*2),
+                    lineHeight: ps.lineHeight
+                })
+                .appendTo('#utils');
 
-        ps.id = '#'+ $this.attr('id');
-        if ($this.attr('maxheight')) ps.maxheight = parseInt($this.attr('maxheight'));
         oldValue = $this.val();
+        if ($this.attr('maxheight')) ps.maxheight = parseInt($this.attr('maxheight'));
+        ps.id = '#'+ $this.attr('id');
 
         function check(event) {
-            var html = $this.val().replace(/\n/g, "<br>"),
-                autosize = $('#autosize_'+ $this.attr('name'));
-
+            var html = $this.val().replace(/\n/g, "<br>");
             if(event.type != 'keyup') {
                 if(event.keyCode == 13 && !event.ctrlKey && !event.altKey) {
                     html += '\n';
@@ -543,36 +551,26 @@ $.fn.autosize = function(options) {
             if(html == oldValue) return;
             oldValue = html;
 
-            alert(autosize);
+            $as.html(html);
 
-            autosize.html( html );
+            if(ps.maxheight) $this.css('height', Math.max(ps.minheight, Math.min( ($as.outerHeight() + (ps.padding+2)), ps.maxheight) ));
+            else $this.css('height', Math.max(ps.minheight, ($as.outerHeight() + (ps.padding+2)) ));
 
-            if(ps.maxheight) $this.css('height', Math.max(ps.minheight, Math.min( (autosize.outerHeight() + (ps.padding+2)), ps.maxheight) ));
-            else $this.css('height', Math.max(ps.minheight, (autosize.outerHeight() + (ps.padding+2)) ));
-
-            // покажем scroll при превышении высоты в 130
+            // покажем scroll при превышении высоты
             if(ps.maxheight) {
-                if( autosize.outerHeight() > ps.maxheight) $this.css('overflow', 'auto');
+                if($as.outerHeight() > ps.maxheight) $this.css('overflow', 'auto');
                 else $this.css('overflow', 'hidden');
             }
         }
 
         function destroy() {
-            $('#autosize_'+ ps.element).remove();
+            $as.remove();
             $this.unbind('keyup').unbind('keydown').unbind('keypress');
 
             enabled = false;
         }
 
         $this.bind('keyup keydown keypress', check);
-
-        $('<div id="autosize_'+ $this.attr('name') +'" class="autosize"></div>')
-            .css({
-                width: ps.width,
-                padding: (ps.padding*2),
-                lineHeight: ps.lineHeight
-            })
-            .appendTo('#utils');
     });
 }
 

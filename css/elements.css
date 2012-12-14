@@ -79,6 +79,7 @@ a.input_calendar span {
     cursor: pointer;
     padding: 7px 10px;
     font-weight: bold;
+    font-size: 14px;
     line-height: 1;
     color: #fff;
     background: #345;
