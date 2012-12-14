@@ -19,7 +19,10 @@ foreach ($cities as $city) {
                 <?php echo ActiveHtml::link('Данные для входа', '/register/step3') ?>
             </li>
             <li>
-                <?php echo ActiveHtml::link('Завершение регистрации', '/register/step4') ?>
+                <?php echo ActiveHtml::link('Соглашение', '/register/step4') ?>
+            </li>
+            <li>
+                <?php echo ActiveHtml::link('Завершение регистрации', '/register/step5') ?>
             </li>
         </ul>
     </div>

@@ -83,7 +83,7 @@ class SiteController extends Controller
                 $user->setState('regform', $model->attributes);
 
                 // Непосредственно регистрируем пользователя
-                if ($step == 4) {
+                if ($step == 5) {
                     $user->clearStates();
 
                     $user = new User();
@@ -100,6 +100,7 @@ class SiteController extends Controller
                         $profile->city_id = $model->city;
                         $profile->attributes = $model->attributes;
                         $profile->user_id = $user->id;
+                        $profile->sms_notify = 1;
                         $pstatus = $profile->save();
 
                         if ($pstatus) {
@@ -131,6 +132,10 @@ class SiteController extends Controller
                     }
                 }
                 else {
+                    if ($step == 4) {
+                        $this->actionSendSMSRegister();
+                    }
+
                     $result['success'] = true;
                     $result['step'] = $step;
                 }
@@ -162,18 +167,31 @@ class SiteController extends Controller
     }
 
     public function actionSendSMSRegister() {
-        PhoneConfirmation::model()->deleteAll('phone = :phone', array(':phone' => $_POST['phone']));
-        $pc = new PhoneConfirmation();
-        $pc->phone = $_POST['phone'];
-        $pc->generateCode();
-        $pc->save();
+        $user = Yii::app()->user;
+        $model = new RegisterForm('step4');
+        $model->attributes = $user->getState('regform', null);
 
-        $sms = new SmsDelivery(Yii::app()->params['smsUsername'], Yii::app()->params['smsPassword']);
-        $sms->SendMessage($pc->phone, Yii::app()->params['smsNumber'], 'Ваш код регистрации '. $pc->code);
+        if ($model->phone) {
+            PhoneConfirmation::model()->deleteAll('phone = :phone', array(':phone' => $model->phone));
+            $pc = new PhoneConfirmation();
+            $pc->phone = $model->phone;
+            $pc->generateCode();
+            $pc->save();
 
-        echo json_encode(array(
-            'message' => 'Код отправлен',
-        ));
+            $sms = new SmsDelivery(Yii::app()->params['smsUsername'], Yii::app()->params['smsPassword']);
+            $sms->SendMessage($pc->phone, Yii::app()->params['smsNumber'], 'Ваш код регистрации '. $pc->code);
+
+            echo json_encode(array(
+                'success' => 'true',
+                'step' => 4,
+                'message' => 'Код отправлен',
+            ));
+        }
+        else {
+            echo json_encode(array(
+                'message' => 'Данные неверны',
+            ));
+        }
         exit;
     }
 }

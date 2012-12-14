@@ -16,6 +16,7 @@ class RegisterForm extends CFormModel {
     public $email;
     public $password;
     public $phone;
+    public $agreement;
     public $confirm;
 
     /**
@@ -36,8 +37,10 @@ class RegisterForm extends CFormModel {
             array('email', 'unique', 'on' => 'step3', 'className' => 'User', 'message' => '{attribute} \'{value}\' уже используется'),
             array('password', 'length', 'on' => 'step3', 'min' => 3),
             // Step 4 Scenario
-            array('city, gender, lastname, firstname, middlename, email, password, phone, confirm', 'required', 'on' => 'step4', 'message' => '{attribute} не может быть пустым'),
-            array('confirm', 'checkConfirm', 'on' => 'step4'),
+            array('city, gender, lastname, firstname, middlename, email, password, phone, agreement', 'required', 'on' => 'step4', 'message' => '{attribute} не может быть пустым'),
+            // Step 5 Scenario
+            array('city, gender, lastname, firstname, middlename, email, password, phone, agreement, confirm', 'required', 'on' => 'step5', 'message' => '{attribute} не может быть пустым'),
+            array('confirm', 'checkConfirm', 'on' => 'step5'),
         );
     }
 
@@ -65,6 +68,7 @@ class RegisterForm extends CFormModel {
             'email' => 'E-Mail',
             'password' => 'Пароль',
             'phone' => 'Мобильный телефон',
+            'agreement' => 'Я согласен получать информационную и рекламную рассылку в виде смс-сообщений на указанный номер телефона',
             'confirm' => 'Код подтверждения',
         );
     }

@@ -15,14 +15,22 @@
                 <?php echo ActiveHtml::link('Данные для входа', '/register/step3') ?>
             </li>
             <li>
-                <?php echo ActiveHtml::link('Завершение регистрации', '/register/step4', array('class' => 'selected')) ?>
+                <?php echo ActiveHtml::link('Соглашение', '/register/step4', array('class' => 'selected')) ?>
+            </li>
+            <li>
+                <?php echo ActiveHtml::link('Завершение регистрации', '/register/step5') ?>
             </li>
         </ul>
     </div>
     <div class="right">
-        <h3>Завершение регистрации</h3>
+        <h3>Соглашение</h3>
         <p>
-            Чтобы завершить регистрацию, укажите свой мобильный телефон, на который придет код подтверждения
+            Настоящим соглашением подтверждается, что Абонент, персональные данные которого являются предметом
+            соглашения, выражает свое согласие на получение сообщений информационного и рекламного содержания.
+        </p>
+        <p>
+            Для отзыва согласия необходимо в настройках аккаунта отключить отправку смс сообщений или же по запросу в
+            техническую поддержку.
         </p>
         <?php /** @var $form ActiveForm */
         $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
@@ -35,13 +43,15 @@
             <a id="sendCodeLink" onclick="register.sendCode(true)" title="Повторно отправить код подтверждения" class="tt iconify_refresh_a" style="display:none"></a>
         </div>
         <div class="row">
-            <?php echo $form->inputPlaceholder($model, 'confirm') ?>
+            <input type="checkbox" name="RegisterForm[agreement]" value="1"<?php if($model->agreement) echo " checked" ?>/>
+            <?php echo $form->label($model, 'agreement') ?>
         </div>
         <?php $this->endWidget(); ?>
         <div class="buttons clearfix">
             <div class="right">
                 <a class="btn light_green" onclick="register.next()">
-                    Завершить
+                    Далее
+                    <span class="iconify_next_a"></span>
                 </a>
             </div>
         </div>
