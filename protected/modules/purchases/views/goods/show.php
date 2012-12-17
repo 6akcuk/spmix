@@ -2,6 +2,7 @@
 /**
  * @var $good Good
  * @var $form ActiveForm
+ * @var $oic PurchaseOic
  */
 
 Yii::app()->getClientScript()->registerCssFile('/css/purchases.css');
@@ -15,6 +16,7 @@ $sizes = json_decode($good->sizes, true);
 $colors = json_decode($good->colors, true);
 $dd_sizes = array();
 $dd_colors = array();
+$dd_oic = array();
 
 if (is_array($sizes)) {
     foreach ($sizes as $size) {
@@ -24,6 +26,12 @@ if (is_array($sizes)) {
 if (is_array($colors)) {
     foreach ($colors as $color) {
         $dd_colors[$color] = $color;
+    }
+}
+
+if (is_array($good->oic)) {
+    foreach ($good->oic as $oic) {
+        $dd_oic[$oic->description .' '. ActiveHtml::price($oic->price)] = $oic->pk;
     }
 }
 
@@ -50,14 +58,6 @@ if (is_array($colors)) {
             'id' => 'orderform',
             'action' => $this->createUrl('/good'. $good->purchase_id .'_'. $good->good_id .'/order'),
         )); ?>
-        <div class="clearfix">
-            <div class="left label">Цена:</div>
-            <div class="left labeled"><?php echo ActiveHtml::price($good->price, $good->currency) ?></div>
-        </div>
-        <div class="clearfix">
-            <div class="left label">Итог. цена:</div>
-            <div class="left labeled"><?php echo ActiveHtml::price(floatval($good->price) * ($good->purchase->org_tax / 100 + 1), $good->currency) ?></div>
-        </div>
         <div class="row">
             <?php echo $form->dropdown($order, 'size', $dd_sizes) ?>
         </div>
@@ -70,9 +70,28 @@ if (is_array($colors)) {
         <div class="row">
             <?php echo $form->smartTextarea($order, 'client_comment', array('maxheight' => 250)) ?>
         </div>
-
         <div class="row">
-            <a class="button">Заказать</a>
+            <?php echo $form->checkBox($order, 'anonymous') ?>
+            <?php echo $form->label($order, 'anonymous') ?>
+        </div>
+        <div class="row">
+            Вы можете выбрать Центр Выдачи Заказов, если хотите самостоятельно забрать свой заказ <br/>
+            <?php echo $form->dropdown($order, 'oic', $dd_oic) ?>
+        </div>
+        <div class="clearfix">
+            <div class="left label">Цена:</div>
+            <div class="left labeled"><?php echo ActiveHtml::price($good->price, $good->currency) ?></div>
+        </div>
+        <div class="clearfix">
+            <div class="left label">Орг. сбор:</div>
+            <div class="left labeled"><?php echo $good->purchase->org_tax .'% - '. ActiveHtml::price($good->price * $good->purchase->org_tax / 100, $good->currency) ?></div>
+        </div>
+        <div class="clearfix">
+            <div class="left label">Итог. цена:</div>
+            <div class="left labeled"><?php echo ActiveHtml::price(floatval($good->price) * ($good->purchase->org_tax / 100 + 1), $good->currency) ?></div>
+        </div>
+        <div class="row">
+            <a class="button" onclick="return Purchase.order()">Заказать</a>
         </div>
         <?php $this->endWidget(); ?>
     </div>

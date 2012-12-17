@@ -97,6 +97,14 @@ var Purchase = {
             nav.go(r.url, null, null);
         });
         return false;
+    },
+
+    order: function() {
+        FormMgr.submit('#orderform', 'right', function(r) {
+            msi.show(r.msg);
+            nav.go(r.url, null, null);
+        });
+        return false;
     }
 };
 

@@ -19,6 +19,7 @@
  * @property Purchase $purchase
  * @property GoodImages $image
  * @property array $images
+ * @property array $oic
  */
 class Good extends CActiveRecord
 {
@@ -78,6 +79,7 @@ class Good extends CActiveRecord
             'purchase' => array(self::BELONGS_TO, 'Purchase', 'purchase_id'),
             'image' => array(self::HAS_ONE, 'GoodImages', array('good_id' => 'good_id')),
             'images' => array(self::HAS_MANY, 'GoodImages', array('good_id' => 'good_id')),
+            'oic' => array(self::HAS_MANY, 'PurchaseOic', array('purchase_id' => 'purchase_id')),
 		);
 	}
 

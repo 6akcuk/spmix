@@ -19,8 +19,48 @@ class GoodsController extends Controller {
         );
     }
 
+    public function actionOrder($purchase_id, $good_id) {
+        $order = new Order('create');
+
+        if(isset($_POST['Order']))
+        {
+            /** @var $good Good */
+            $good = Good::model()->with('purchase')->findByPk($good_id);
+
+            $order->attributes = $_POST['Order'];
+            $order->purchase_id = $purchase_id;
+            $order->good_id = $good_id;
+            $order->customer_id = Yii::app()->user->getId();
+            $order->price = $good->price;
+            $price = floatval($good->price) * ($good->purchase->org_tax / 100 + 1);
+
+            if ($order->oic) {
+                $oic = PurchaseOic::model()->findByPk($order->oic);
+                $price += floatval($oic->price);
+
+                $order->oic = $oic->price .' - '. $oic->description;
+            }
+
+            $order->total_price = $price * intval($order->amount);
+            $result = array();
+
+            if($order->validate() && $order->save()) {
+                $result['success'] = true;
+                $result['url'] = '/purchases/edit/'. $order->purchase_id;
+            }
+            else {
+                foreach ($order->getErrors() as $attr => $error) {
+                    $result[ActiveHtml::activeId($order, $attr)] = $error;
+                }
+            }
+
+            echo json_encode($result);
+            exit;
+        }
+    }
+
     public function actionShow($purchase_id, $good_id) {
-        $good = Good::model()->with('image', 'purchase')->findByPk($good_id);
+        $good = Good::model()->with('image', 'purchase', 'oic')->findByPk($good_id);
         $order = new Order('create');
 
         if (Yii::app()->request->isAjaxRequest) {
@@ -42,7 +82,7 @@ class GoodsController extends Controller {
                 $good->sizes = json_encode($_POST['Good']['sizes']);
                 $good->colors = json_encode($_POST['Good']['colors']);
 
-                $psizes = json_decode($purchase->sizes, true);
+                $psizes = ($purchase->sizes) ? json_decode($purchase->sizes, true) : array();
                 $sizes = $_POST['Good']['sizes'];
 
                 $psizes = array_merge($psizes, $sizes);

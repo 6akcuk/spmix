@@ -75,6 +75,7 @@ return array(
                 'good<purchase_id:\d+>_<good_id:\d+>/<action:\w+>' => 'purchases/goods/<action>',
                 'purchase<id:\d+>/<action:\w+>' => 'purchases/purchases/<action>',
                 'purchase<id:\d+>' => 'purchases/purchases/show',
+                'shopping' => 'purchases/shopping',
                 '<controller:(purchases)>' => 'purchases/purchases/index',
                 '<controller:(purchases)>/<action:\w+>' => 'purchases/purchases/<action>',
                 '<controller:(purchases)>/<action:\w+>/<id:\d+>' => 'purchases/purchases/<action>',

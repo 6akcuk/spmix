@@ -58,10 +58,7 @@ class Order extends CActiveRecord
 			array('client_comment, org_comment', 'length', 'max'=>200),
 			array('status', 'length', 'max'=>8),
 			array('oic', 'length', 'max'=>100),
-			// The following rule is used by search().
-			// Please remove those attributes that should not be searched.
-			array('order_id, purchase_id, good_id, customer_id, creation_date, amount, price, total_price, client_comment, org_comment, status, oic, anonymous', 'safe', 'on'=>'search'),
-		);
+	    );
 	}
 
 	/**
@@ -72,6 +69,7 @@ class Order extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+            'good' => array(self::BELONGS_TO, 'Good', 'good_id'),
 		);
 	}
 
@@ -105,6 +103,8 @@ class Order extends CActiveRecord
                 $this->creation_date = date("Y-m-d H:i:s");
                 $this->status = self::STATUS_AWAITING;
             }
+
+            return true;
         }
         else return false;
     }
