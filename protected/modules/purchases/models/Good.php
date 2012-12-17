@@ -14,7 +14,7 @@
  * @property string $url
  * @property string $sizes
  * @property string $colors
- * @property string $on_delete
+ * @property string $good_delete
  *
  * @property Purchase $purchase
  * @property GoodImages $image
@@ -64,7 +64,7 @@ class Good extends CActiveRecord
 
     public function defaultScope() {
         return array(
-            'condition' => 't.on_delete IS NULL',
+            'condition' => 'good_delete IS NULL',
         );
     }
 

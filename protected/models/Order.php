@@ -19,6 +19,8 @@
  * @property string $status
  * @property string $oic
  * @property integer $anonymous
+ *
+ * @property Good $good
  */
 class Order extends CActiveRecord
 {

@@ -77,6 +77,7 @@ class SiteController extends Controller
 
         if (isset($_POST['RegisterForm'])) {
             $model->attributes=$_POST['RegisterForm'];
+            $model->phone = preg_replace('#[^0-9]#', '', $model->phone);
             $result = array();
 
             if($model->validate()) {
@@ -89,6 +90,7 @@ class SiteController extends Controller
                     $user = new User();
                     /** @var $user User */
                     $user->email = $model->email;
+                    $user->login = $model->login;
                     $salt = $user->generateSalt();
                     $password = $model->password;
                     $user->password = $user->hashPassword($password, $salt);
@@ -99,6 +101,7 @@ class SiteController extends Controller
                         $profile = new Profile();
                         $profile->city_id = $model->city;
                         $profile->attributes = $model->attributes;
+                        $profile->phone = '7'. $profile->phone;
                         $profile->user_id = $user->id;
                         $profile->sms_notify = 1;
                         $pstatus = $profile->save();
@@ -114,7 +117,7 @@ class SiteController extends Controller
                             $loginform->login();
 
                             $result['success'] = true;
-                            $result['step'] = 4;
+                            $result['step'] = 5;
                             $result['id'] = $user->id;
                         }
                         else {
@@ -174,7 +177,7 @@ class SiteController extends Controller
         if ($model->phone) {
             PhoneConfirmation::model()->deleteAll('phone = :phone', array(':phone' => $model->phone));
             $pc = new PhoneConfirmation();
-            $pc->phone = $model->phone;
+            $pc->phone = '7'. $model->phone;
             $pc->generateCode();
             $pc->save();
 

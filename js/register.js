@@ -8,7 +8,7 @@
 var register = {
     next: function() {
         FormMgr.submit('#regform', 'left', function(r) {
-            if (r.step < 4) nav.go('/register/step'+ (r.step+1), null, {});
+            if (r.step < 5) nav.go('/register/step'+ (r.step+1), null, {});
             else location.href = '/id'+ r.id;
         });
     },

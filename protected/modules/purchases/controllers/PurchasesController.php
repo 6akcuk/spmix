@@ -199,8 +199,8 @@ class PurchasesController extends Controller {
             Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('purchase' => $purchase)))
         {
             //TODO: Необходимо также сразу удалять товары
-            $purchase->on_delete = new CDbExpression('NOW()');
-            $purchase->save(true, array('on_delete'));
+            $purchase->purchase_delete = new CDbExpression('NOW()');
+            $purchase->save(true, array('purchase_delete'));
 
             if (Yii::app()->request->isAjaxRequest) {
                 $this->pageHtml = $this->renderPartial('delete', array('purchase' => $purchase), true);
@@ -217,8 +217,8 @@ class PurchasesController extends Controller {
         if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
             Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('purchase' => $purchase)))
         {
-            $purchase->on_delete = NULL;
-            $purchase->save(true, array('on_delete'));
+            $purchase->purchase_delete = NULL;
+            $purchase->save(true, array('purchase_delete'));
 
             echo json_encode(array('url' => '/purchase'. $purchase->purchase_id));
             exit;

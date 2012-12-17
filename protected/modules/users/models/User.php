@@ -5,6 +5,7 @@
  *
  * The followings are the available columns in table 'users':
  * @property string $id
+ * @property string $login
  * @property string $email
  * @property string $password
  * @property string $usergroup
@@ -46,6 +47,7 @@ class User extends CActiveRecord
 		return array(
 			array('email, password, salt', 'required'),
 			array('email', 'email'),
+            array('login', 'length', 'min' => 3, 'max' => 30),
             array('hash', 'length', 'max' => 50),
             array('salt', 'length', 'min' => 6, 'max' => 20),
 		);
@@ -71,6 +73,7 @@ class User extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
+            'login' => 'Логин',
 			'email' => 'E-Mail',
 			'password' => 'Пароль',
 			'hash' => 'Cookie Hash',

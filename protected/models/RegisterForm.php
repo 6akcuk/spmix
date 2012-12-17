@@ -13,6 +13,7 @@ class RegisterForm extends CFormModel {
     public $lastname;
     public $firstname;
     public $middlename;
+    public $login;
     public $email;
     public $password;
     public $phone;
@@ -32,21 +33,24 @@ class RegisterForm extends CFormModel {
             array('city, gender, lastname, firstname, middlename', 'required', 'on' => 'step2', 'message' => 'Заполните поле {attribute}'),
             array('lastname, firstname, middlename', 'length', 'on' => 'step2', 'min' => 2),
             // Step 3 Scenario
-            array('city, gender, lastname, firstname, middlename, email, password', 'required', 'on' => 'step3', 'message' => '{attribute} не может быть пустым'),
+            array('city, gender, lastname, firstname, middlename, login, email, password', 'required', 'on' => 'step3', 'message' => '{attribute} не может быть пустым'),
+            array('login', 'length', 'min' => 3, 'max' => 30),
+            array('login', 'unique', 'on' => 'step3', 'className' => 'User'),
             array('email', 'email', 'on' => 'step3'),
             array('email', 'unique', 'on' => 'step3', 'className' => 'User', 'message' => '{attribute} \'{value}\' уже используется'),
             array('password', 'length', 'on' => 'step3', 'min' => 3),
             // Step 4 Scenario
-            array('city, gender, lastname, firstname, middlename, email, password, phone, agreement', 'required', 'on' => 'step4', 'message' => '{attribute} не может быть пустым'),
+            array('city, gender, lastname, firstname, middlename, login, email, password, phone, agreement', 'required', 'on' => 'step4', 'message' => '{attribute} не может быть пустым'),
+            array('phone', 'length', 'on' => 'step4', 'min' => 10),
             // Step 5 Scenario
-            array('city, gender, lastname, firstname, middlename, email, password, phone, agreement, confirm', 'required', 'on' => 'step5', 'message' => '{attribute} не может быть пустым'),
+            array('city, gender, lastname, firstname, middlename, login, email, password, phone, agreement, confirm', 'required', 'on' => 'step5', 'message' => '{attribute} не может быть пустым'),
             array('confirm', 'checkConfirm', 'on' => 'step5'),
         );
     }
 
     public function checkConfirm($attribute, $params) {
         if (!$this->hasErrors()) {
-            $pc = PhoneConfirmation::model()->find('phone = :phone', array(':phone' => $this->phone));
+            $pc = PhoneConfirmation::model()->find('phone = :phone', array(':phone' => '7'. $this->phone));
             if ($pc->code != $this->confirm)
                 $this->addError('confirm', 'Код подтверждения не совпадает с указанным');
         }
@@ -65,6 +69,7 @@ class RegisterForm extends CFormModel {
             'lastname' => 'Фамилия',
             'firstname' => 'Имя',
             'middlename' => 'Отчество',
+            'login' => 'Логин',
             'email' => 'E-Mail',
             'password' => 'Пароль',
             'phone' => 'Мобильный телефон',

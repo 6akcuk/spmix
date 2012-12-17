@@ -34,6 +34,9 @@
         )); ?>
         <input type="hidden" name="step" value="3" />
         <div class="row">
+            <?php echo $form->inputPlaceholder($model, 'login') ?>
+        </div>
+        <div class="row">
             <?php echo $form->inputPlaceholder($model, 'email') ?>
         </div>
         <div class="row">

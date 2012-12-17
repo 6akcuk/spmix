@@ -39,7 +39,7 @@ $this->pageTitle = Yii::app()->name .' - '. $purchase->name;
             </div>
             <div class="clearfix">
                 <div class="left label">Организатор:</div>
-                <div class="left labeled"><?php echo ActiveHtml::link($purchase->author->lastname .' '. $purchase->author->firstname, '/id'. $purchase->author->user_id) ?></div>
+                <div class="left labeled"><?php echo ActiveHtml::link((Yii::app()->user->checkAccess('global.fullnameView')) ? $purchase->author->profile->firstname .' '. $purchase->author->profile->lastname : $purchase->author->login, '/id'. $purchase->author_id) ?></div>
             </div>
         </div>
         <div class="left td">
@@ -65,7 +65,7 @@ $this->pageTitle = Yii::app()->name .' - '. $purchase->name;
             </div>
             <div class="clearfix">
                 <div class="left label">Репутация:</div>
-                <div class="left labeled"><?php echo $purchase->author->positive_rep ?> | <?php echo $purchase->author->negative_rep ?></div>
+                <div class="left labeled"><?php echo $purchase->author->profile->positive_rep ?> | <?php echo $purchase->author->profile->negative_rep ?></div>
             </div>
         </div>
     </div>
@@ -115,8 +115,7 @@ $this->pageTitle = Yii::app()->name .' - '. $purchase->name;
                 <?php echo ActiveHtml::link('', '/good'. $purchase->purchase_id .'_'. $good->good_id.'/edit', array('class' => 'right iconify_gear_a tt', 'title' => 'Редактировать товар')) ?>
             </h4>
             <?php if ($good->image): ?><div><?php echo ActiveHtml::showUploadImage($good->image->image) ?></div><?php endif; ?>
-            <div>Стоимость <?php echo ActiveHtml::price($good->price, $good->currency) ?></div>
-            <div><a class="button">Заказать</a></div>
+            <div class="price"><?php echo ActiveHtml::price($good->price, $good->currency) ?></div>
         </div>
     <?php endforeach; ?>
     <?php endif; ?>

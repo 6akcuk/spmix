@@ -39,7 +39,7 @@
         )); ?>
         <input type="hidden" name="step" value="4" />
         <div class="row">
-            <?php echo $form->inputPlaceholder($model, 'phone', array('onblur' => 'register.sendCode(false)')) ?>
+            +7 <?php echo $form->inputPlaceholder($model, 'phone') ?>
             <a id="sendCodeLink" onclick="register.sendCode(true)" title="Повторно отправить код подтверждения" class="tt iconify_refresh_a" style="display:none"></a>
         </div>
         <div class="row">

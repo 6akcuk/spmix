@@ -5,20 +5,31 @@ $title = Yii::app()->name;
 Yii::app()->getClientScript()->registerCssFile('/css/profile.css');
 
 if ($userinfo)
-    $title .= ' - ' . $userinfo->profile->lastname .' '. $userinfo->profile->firstname .' '. $userinfo->profile->middlename;
+    $title .= ' - ' .
+        ((Yii::app()->user->checkAccess('global.fullnameView'))
+            ? $userinfo->profile->lastname .' '. $userinfo->profile->firstname .' '. $userinfo->profile->middlename
+            : $userinfo->login .' '. $userinfo->profile->firstname);
 
 $this->pageTitle = $title;
 ?>
 <div class="profile-header clearfix">
-    <span class="left username"><?php echo $userinfo->profile->firstname ?> <?php echo $userinfo->profile->lastname ?></span>
+    <span class="left username">
+        <?php if (Yii::app()->user->checkAccess('global.fullnameView')): ?>
+        <?php echo $userinfo->profile->firstname ?> <?php echo $userinfo->profile->lastname ?>
+        <?php else: ?>
+        <?php echo $userinfo->login ?> <?php echo $userinfo->profile->firstname ?>
+        <?php endif; ?>
+    </span>
     <?php if ($userinfo->role->itemname == 'Организатор'): ?><span class="left userspecial">(Организатор)</span><?php endif; ?>
+    <?php if ($userinfo->role->itemname == 'Модератор'): ?><span class="left userspecial">(Модератор)</span><?php endif; ?>
+    <?php if ($userinfo->role->itemname == 'Администратор'): ?><span class="left userspecial">(Администратор)</span><?php endif; ?>
     <span class="right useronline">
         <?php
         if ($userinfo->isOnline()) {
             echo "Online";
         }
         else {
-            echo "был". (($userinfo->profile->gender == 'Female') ? "а" : "") ." в сети назад";
+            echo "был". (($userinfo->profile->gender == 'Female') ? "а" : "") ." в сети ". ActiveHtml::timeback($userinfo->lastvisit);
         }
         ?>
     </span>
@@ -51,10 +62,10 @@ $this->pageTitle = $title;
             </div>
             <div class="clearfix miniblock">
                 <div class="label left">
-                    Зарегистрирован:
+                    Зарегистрирован<?php echo (($userinfo->profile->gender == 'Female') ? "а" : "") ?>:
                 </div>
                 <div class="labeled left">
-                    <?php echo ActiveHtml::link($userinfo->regdate, '/search?c[regdate]='. $userinfo->regdate) ?>
+                    <?php echo ActiveHtml::link(ActiveHtml::date($userinfo->regdate), '/search?c[regdate]='. $userinfo->regdate) ?>
                 </div>
             </div>
             <div class="clearfix miniblock">

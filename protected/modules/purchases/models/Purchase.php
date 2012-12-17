@@ -24,10 +24,10 @@
  * @property integer $mod_confirmation
  * @property string $mod_reason
  * @property string $sizes
- * @property string $on_delete
+ * @property string $purchase_delete
  *
  * @property City $city
- * @property Profile $author
+ * @property User $author
  * @property PurchaseCategory $category
  * @property PurchaseExternal $external
  * @property array $history
@@ -100,7 +100,7 @@ class Purchase extends CActiveRecord
 		return array(
             'city' => array(self::HAS_ONE, 'City', array('id' => 'city_id')),
             'category' => array(self::BELONGS_TO, 'PurchaseCategory', 'category_id'),
-            'author' => array(self::BELONGS_TO, 'Profile', 'author_id'),
+            'author' => array(self::BELONGS_TO, 'User', 'author_id'),
             'external' => array(self::BELONGS_TO, 'PurchaseExternal', 'purchase_id'),
             'history' => array(self::HAS_MANY, 'PurchaseHistory', 'purchase_id', 'order' => 'history.datetime DESC'),
             'oic' => array(self::HAS_MANY, 'PurchaseOic', 'purchase_id'),
@@ -137,7 +137,7 @@ class Purchase extends CActiveRecord
 
     public function defaultScope() {
         return array(
-            'condition' => 't.on_delete IS NULL',
+            'condition' => 'purchase_delete IS NULL',
         );
     }
 

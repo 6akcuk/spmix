@@ -46,7 +46,8 @@ class GoodsController extends Controller {
 
             if($order->validate() && $order->save()) {
                 $result['success'] = true;
-                $result['url'] = '/purchases/edit/'. $order->purchase_id;
+                $result['msg'] = Yii::t('purchase', 'Заказ добавлен в список покупок');
+                $result['url'] = '/shopping';
             }
             else {
                 foreach ($order->getErrors() as $attr => $error) {
@@ -122,8 +123,8 @@ class GoodsController extends Controller {
         {
             $good = Good::model()->findByPk($good_id);
 
-            $good->on_delete = new CDbExpression('NOW()');
-            $good->save(true, array('on_delete'));
+            $good->good_delete = new CDbExpression('NOW()');
+            $good->save(true, array('good_delete'));
 
             echo json_encode(array('html' => 'Товар удален. <a onclick="Purchase.restoregood('. $purchase_id .', '. $good_id .')">Восстановить</a>'));
             exit;
@@ -140,8 +141,8 @@ class GoodsController extends Controller {
         {
             $good = Good::model()->resetScope()->findByPk($good_id);
 
-            $good->on_delete = NULL;
-            if ($good->save(true, array('on_delete')))
+            $good->good_delete = NULL;
+            if ($good->save(true, array('good_delete')))
                 echo json_encode(array('success' => true));
             else
                 echo json_encode(array('success' => false, 'html' => ''));

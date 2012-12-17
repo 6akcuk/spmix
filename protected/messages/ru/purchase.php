@@ -22,5 +22,6 @@ return array(
     'Distribution' => 'Раздача',
     'Completed' => 'Завершено',
 
+    'Awaiting' => 'Ожидание оплаты',
 
 );

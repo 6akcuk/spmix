@@ -223,13 +223,11 @@ class ActiveHtml extends CHtml {
     }
 
     // время назад
-    function timeOld($date)
+    public static function timeback($date, $useTimezone = false)
     {
-        global $lang, $is_logged, $social_id;
-
         // включение часового пояса
-        if($is_logged && $useTimezone) $timezone = new DateTimeZone( $social_id->getTimezone() );
-        else $timezone = new DateTimeZone( 'Europe/London' ); //GMT - но вроде надо другой пояс использовать
+        if(!Yii::app()->user->getIsGuest() && $useTimezone) $timezone = new DateTimeZone('');
+        else $timezone = new DateTimeZone( 'Europe/Moscow' ); //GMT - но вроде надо другой пояс использовать
 
         $md = new DateTime($date);
         $md->setTimezone( $timezone );
@@ -243,25 +241,25 @@ class ActiveHtml extends CHtml {
         $sec = $now - $ext;
 
         if($sec <= 59) {
-            return $sec .' '. morph_plural($sec, array('секунду', 'секунды', 'секунд')) .' назад';
+            return Yii::t('app', '{n} секунду|{n} секунды|{n} секунд', $sec) .' '. Yii::t('app', 'назад');
         }
 
         $min = floor($sec / 60);
 
         if($min <= 59) {
-            return $min .' '. morph_plural($min, array('минуту', 'минуты', 'минут')) .' назад';
+            return Yii::t('app', '{n} минуту|{n} минуты|{n} минут', $min) .' '. Yii::t('app', 'назад');
         }
 
         $hour = floor($min / 60);
 
         if($hour <= 23) {
-            return $hour .' '. morph_plural($hour, array('час', 'часа', 'часов')) .' назад';
+            return Yii::t('app', '{n} час|{n} часа|{n} часов', $hour) .' '. Yii::t('app', 'назад');
         }
 
         $days = floor($hour / 24);
 
         if($days <= 31) {
-            return $days .' '. morph_plural($days, array('день', 'дня', 'дней')) .' назад';
+            return Yii::t('app', '{n} день|{n} дня|{n} дней', $days) .' '. Yii::t('app', 'назад');
         }
     }
 }
