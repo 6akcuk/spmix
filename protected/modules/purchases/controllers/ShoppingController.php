@@ -54,4 +54,12 @@ class ShoppingController extends Controller {
         }
         else $this->render('index', array('orders' => $orders, 'purchases' => $purchases, 'stat' => $stat));
     }
+
+    public function actionOrders() {
+        $criteria = new CDbCriteria();
+        $criteria->addCondition('author_id = :author_id');
+        $criteria->params[':author_id'] = Yii::app()->user->getId();
+
+        $purchases = Purchase::model()->with('orders')->findAllBy($criteria);
+    }
 }

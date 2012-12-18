@@ -77,7 +77,7 @@ class PurchasesController extends Controller {
     }
 
     public function actionShow($id) {
-        $purchase = Purchase::model()->with('city', 'author', 'category')->findByPk($id);
+        $purchase = Purchase::model()->with('city', 'author', 'category', 'ordersNum', 'ordersSum')->findByPk($id);
         $goods = Good::model()->with('image')->findAll('purchase_id = :purchase_id', array(':purchase_id' => $id));
 
         if (Yii::app()->request->isAjaxRequest) {

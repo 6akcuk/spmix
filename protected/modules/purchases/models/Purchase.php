@@ -32,6 +32,9 @@
  * @property PurchaseExternal $external
  * @property array $history
  * @property array $oic
+ *
+ * @property string $ordersNum
+ * @property string $ordersSum
  */
 class Purchase extends CActiveRecord
 {
@@ -104,6 +107,9 @@ class Purchase extends CActiveRecord
             'external' => array(self::BELONGS_TO, 'PurchaseExternal', 'purchase_id'),
             'history' => array(self::HAS_MANY, 'PurchaseHistory', 'purchase_id', 'order' => 'history.datetime DESC'),
             'oic' => array(self::HAS_MANY, 'PurchaseOic', 'purchase_id'),
+            'orders' => array(self::HAS_MANY, 'Order', 'purchase_id'),
+            'ordersNum' => array(self::STAT, 'Order', 'purchase_id'),
+            'ordersSum' => array(self::STAT, 'Order', 'purchase_id', 'select' => 'SUM(total_price)'),
 		);
 	}
 

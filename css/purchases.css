@@ -113,6 +113,23 @@ a.purchase_edit_story:hover {
     filter: alpha(opacity=70);
 }
 
+.bar {
+    margin-top: 5px;
+    position: relative;
+    width: 250px;
+}
+.bar .barline {
+    float: left;
+    height: 25px;
+    background: #E6EFC2;
+}
+.bar span {
+    position: absolute;
+    top: 4px;
+    left: 116px;
+    color: #112233;
+}
+
 /* Static Manager */
 #purchases_css {
     display: none;

@@ -8,6 +8,10 @@ Yii::app()->getClientScript()->registerCssFile('/css/purchases.css');
 Yii::app()->getClientScript()->registerScriptFile('/js/purchase.js');
 
 $this->pageTitle = Yii::app()->name .' - '. $purchase->name;
+
+$sum_perc = ceil((floatval($purchase->min_sum) > 0) ? ($purchase->ordersSum / $purchase->min_sum) * 100 : 0);
+$num_perc = ceil((floatval($purchase->min_num) > 0) ? ($purchase->ordersNum / $purchase->min_num) * 100 : 0);
+
 ?>
 
 <h1><?php echo $purchase->name ?></h1>
@@ -69,7 +73,16 @@ $this->pageTitle = Yii::app()->name .' - '. $purchase->name;
             </div>
         </div>
     </div>
+    <div class="left">
+        <?php if ($num_perc > 0 || $sum_perc > 0): ?>
+        <div class="bar">
+            <div class="barline" style="width: <?php echo ($num_perc > $sum_perc) ? $num_perc : $sum_perc ?>%"></div>
+            <span><?php echo ($num_perc > $sum_perc) ? $num_perc : $sum_perc ?>%</span>
+        </div>
+        <?php endif; ?>
+    </div>
     <div class="right">
+        <?php echo ActiveHtml::link('Список заказов', '/shopping/orders'. $purchase->purchase_id, array('class' => 'button')) ?>
         <?php echo ActiveHtml::link('ЦВЗ', '/purchase'. $purchase->purchase_id .'/oic', array('class' => 'button')) ?>
         <?php echo ActiveHtml::link('Редактировать', '/purchase'. $purchase->purchase_id .'/edit', array('class' => 'button')) ?>
         <?php //echo ActiveHtml::link('Удалить', '/purchase'. $purchase->purchase_id .'/delete', array('class' => 'button')) ?>
@@ -77,7 +90,7 @@ $this->pageTitle = Yii::app()->name .' - '. $purchase->name;
 </div>
 <div id="tabs" data-link="#tabs_content" class="tabs">
     <a target="div.purchase_fullstory" class="selected">Описание</a>
-    <a target="div.purchase_customers">Заказчики</a>
+    <a target="div.purchase_customers">Статистика</a>
     <a target="div.purchase_history">История действий</a>
 </div>
 <div id="tabs_content">
@@ -91,6 +104,10 @@ $this->pageTitle = Yii::app()->name .' - '. $purchase->name;
         Yii::app()->user->checkAccess('purchases.purchases.editOwn', array('purchase' => $purchase))): ?>
         </a>
         <?php endif; ?>
+    </div>
+    <div class="purchase_customers" style="display: none">
+        <div>Сделано всего заказов: <b><?php echo $purchase->ordersNum ?></b></div>
+        <div>Сделано заказов на общую сумму: <b><?php echo ActiveHtml::price($purchase->ordersSum) ?></b></div>
     </div>
     <div class="purchase_history" style="display: none">
         <?php if ($purchase->history): ?>
