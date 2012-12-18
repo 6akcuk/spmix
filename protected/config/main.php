@@ -68,6 +68,7 @@ return array(
                 'register/step<step:\d+>' => 'site/register',
                 'register/sendSMS' => 'site/sendSMSRegister',
                 'id<id:\d+>' => 'users/profiles',
+                'edit' => 'users/profiles/edit',
                 '<controller:(users)>' => 'users/users/index',
                 '<controller:(users)>/<action:\w+>' => 'users/users/<action>',
                 '<controller:(goods)>/<action:\w+>' => 'purchases/goods/<action>',

@@ -19,7 +19,7 @@ $this->pageTitle = Yii::app()->name .' - Мои закупки';
             <input type="text" name="q" data-url="" value="" />
             <div class="progress"></div>
         </div>
-        <?php $this->renderPartial('_list', array('purchases' => $purchases)) ?>
+        <?php $this->renderPartial('_listtable', array('purchases' => $purchases)) ?>
     </div>
     <div class="left column options">
         <div>

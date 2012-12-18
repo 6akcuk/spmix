@@ -1011,6 +1011,11 @@ $().ready(function() {
 
         $('div.autosize').remove();
         $('.smarttext textarea').autosize();
+
+        $('div.fileupload').each(function()
+        {
+            Upload.onDOMReady(this);
+        });
     });
 });
 

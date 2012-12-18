@@ -1,6 +1,7 @@
 <ul>
     <li>
         <?php echo ActiveHtml::link('Моя страница', '/id'. Yii::app()->user->getId()) ?>
+        <?php echo ActiveHtml::link('ред.', '/edit', array('class' => 'right')) ?>
     </li>
     <li>
         <?php echo ActiveHtml::link('Мои друзья', '/friends') ?>

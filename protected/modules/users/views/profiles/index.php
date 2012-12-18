@@ -37,7 +37,12 @@ $this->pageTitle = $title;
 <div class="profile-columns clearfix">
     <div class="left profile-left">
         <div class="profile-photo">
+            <?php $photo = json_decode($userinfo->profile->photo, true); ?>
+            <?php if (is_array($photo) && sizeof($photo)): ?>
+            <?php echo ActiveHtml::showUploadImage($userinfo->profile->photo, 'a') ?>
+            <?php else: ?>
             <img src="/images/camera_a.gif" width="250" alt="" />
+            <?php endif; ?>
         </div>
         <div class="module">
             <a href="/friends?id=<?php echo $userinfo->id ?>" onclick="return nav.go(this, event, {noback: false})" class="module-header">
@@ -111,6 +116,16 @@ $this->pageTitle = $title;
                 <form action="/inviteBySMS" method="post">
 
                 </form>
+            </div>
+        </div>
+        <div class="module">
+            <a class="module-header">
+                <div class="header-top">
+                    О себе
+                </div>
+            </a>
+            <div class="module-body">
+                <?php echo nl2br($userinfo->profile->about) ?>
             </div>
         </div>
     </div>

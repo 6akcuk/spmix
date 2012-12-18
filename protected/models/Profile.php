@@ -18,7 +18,9 @@
  * @property integer $sms_notify
  * @property string $about
  * @property string $gender
+ *
  * @property City $city
+ * @property ProfilePaydetail $paydetails
  */
 class Profile extends CActiveRecord
 {
@@ -50,7 +52,8 @@ class Profile extends CActiveRecord
 		return array(
 			array('user_id, lastname, firstname, middlename, phone, city_id, gender', 'required'),
 			array('user_id, city_id, positive_rep, negative_rep, email_notify, sms_notify', 'numerical', 'integerOnly'=>true),
-			array('lastname, photo', 'length', 'max'=>128),
+			array('lastname', 'length', 'max'=>128),
+            array('photo', 'length', 'max'=>255),
 			array('firstname, middlename', 'length', 'max'=>64),
 			array('phone', 'length', 'max'=>32),
 			array('status, about', 'length', 'max'=>255),
@@ -70,6 +73,7 @@ class Profile extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
             'city' => array(self::HAS_ONE, 'City', array('id' => 'city_id')),
+            'paydetails' => array(self::HAS_MANY, 'ProfilePaydetail', array('user_id' => 'user_id')),
 		);
 	}
 
@@ -80,19 +84,19 @@ class Profile extends CActiveRecord
 	{
 		return array(
 			'user_id' => 'User',
-			'lastname' => 'Lastname',
-			'firstname' => 'Firstname',
-			'middlename' => 'Middlename',
-			'phone' => 'Phone',
-			'photo' => 'Photo',
-			'city_id' => 'City',
+			'lastname' => 'Фамилия',
+			'firstname' => 'Имя',
+			'middlename' => 'Отчество',
+			'phone' => 'Моб. телефон',
+			'photo' => 'Фотография',
+			'city_id' => 'Город',
 			'positive_rep' => 'Positive Rep',
 			'negative_rep' => 'Negative Rep',
-			'status' => 'Status',
-			'email_notify' => 'Email Notify',
-			'sms_notify' => 'Sms Notify',
-			'about' => 'About',
-			'gender' => 'Gender',
+			'status' => 'Статус',
+			'email_notify' => 'Получать оповещения по электронной почте',
+			'sms_notify' => 'Получать SMS-оповещения',
+			'about' => 'О себе',
+			'gender' => 'Пол',
 		);
 	}
 
