@@ -120,7 +120,7 @@ body {
     font-size: 14px;
     line-height: 20px;
     min-width: 960px;
-    background: url('/images/bg.jpg') #ffffff;
+    background: url('/images/bg.jpg') repeat-x #ffffff;
 }
 
 body.progress {
@@ -185,11 +185,11 @@ input[type="text"] {
 
 input[type="text"], textarea, input[type="email"], input[type="password"], input[type="number"] {
     padding: 8px;
-    font-size: 10px;
+    font-size: 12px;
     width: 157px;
     height: 9px;
     color: #7b8084;
-    background: url('/images/textarea_login.jpg');
+    background: url('/images/textarea_login.jpg') #fefffa repeat-x top;
     border: 1px solid #557132;
 
 }
@@ -909,7 +909,7 @@ div.ls_columns div.column.options div {
 
 .main {
     background: url('/images/main.png') no-repeat center;
-    height:45px;
+    height:48px;
 }
 
 .wrapper_content {
