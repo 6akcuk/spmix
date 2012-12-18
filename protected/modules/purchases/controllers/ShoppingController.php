@@ -60,6 +60,17 @@ class ShoppingController extends Controller {
         $criteria->addCondition('author_id = :author_id');
         $criteria->params[':author_id'] = Yii::app()->user->getId();
 
-        $purchases = Purchase::model()->with('orders')->findAllBy($criteria);
+        $purchases = Purchase::model()->with('orders', 'ordersNum', 'ordersSum')->findAll($criteria);
+
+        if (Yii::app()->request->isAjaxRequest) {
+            $this->pageHtml = $this->renderPartial('orders', array('purchases' => $purchases), true);
+        }
+        else $this->render('orders', array('purchases' => $purchases));
+    }
+
+    public function actionPurchaseOrders($id) {
+        $purchase = Purchase::model()->findByPk($id);
+
+
     }
 }
