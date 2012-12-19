@@ -39,7 +39,11 @@ if (is_array($good->oic)) {
 
 <h1>
     <?php echo $good->name ?>
+    <?php if (Yii::app()->user->checkAccess('purchases.goods.edit') &&
+              (Yii::app()->user->checkAccess('purchases.goods.editSuper') ||
+               Yii::app()->user->checkAccess('purchases.goods.editOwn', array('purchase' => $good->purchase)))): ?>
     <?php echo ActiveHtml::link('Редактировать', '/good'. $good->purchase_id .'_'. $good->good_id .'/edit', array('class' => 'button right')) ?>
+    <?php endif; ?>
 </h1>
 <div class="purchase_table clearfix">
     <div class="left photo">
@@ -91,7 +95,13 @@ if (is_array($good->oic)) {
             <div class="left labeled"><?php echo ActiveHtml::price(floatval($good->price) * ($good->purchase->org_tax / 100 + 1), $good->currency) ?></div>
         </div>
         <div class="row">
+            <?php if (in_array($good->purchase->state, array(Purchase::STATE_CALL_STUDY, Purchase::STATE_ORDER_COLLECTION, Purchase::STATE_REORDER))): ?>
             <a class="button" onclick="return Purchase.order()">Заказать</a>
+            <?php else: ?>
+            <div class="error">
+                Заказ товаров приостановлен
+            </div>
+            <?php endif; ?>
         </div>
         <?php $this->endWidget(); ?>
     </div>

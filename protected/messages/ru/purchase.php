@@ -22,6 +22,10 @@ return array(
     'Distribution' => 'Раздача',
     'Completed' => 'Завершено',
 
+    'Proceeding' => 'В обработке',
+    'Refused' => 'Отказ',
+    'Accepted' => 'Принят орг-ом',
     'Awaiting' => 'Ожидание оплаты',
-
+    'Paid' => 'Оплачен',
+    'Delivered' => 'Выдан',
 );

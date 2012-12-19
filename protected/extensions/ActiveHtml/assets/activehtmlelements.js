@@ -623,6 +623,7 @@ var FormMgr = {
                 else {
                     var scs = $('<div/>').addClass('success').insertAfter($form.children('h2'));
                     scs.html(response.message);
+                    if (response.msg) msi.show(response.msg);
                 }
             }
             else {

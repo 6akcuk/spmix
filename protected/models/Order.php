@@ -21,11 +21,15 @@
  * @property integer $anonymous
  *
  * @property Good $good
+ * @property Purchase $purchase
  */
 class Order extends CActiveRecord
 {
+    const STATUS_PROCEEDING = 'Proceeding';
+    const STATUS_REFUSED = 'Refused';
+    const STATUS_ACCEPTED = 'Accepted';
+    const STATUS_DELIVERED = 'Delivered';
     const STATUS_AWAITING = 'Awaiting';
-    const STATUS_CANCELED = 'Canceled';
     const STATUS_PAID = 'Paid';
 
 	/**
@@ -55,10 +59,11 @@ class Order extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('purchase_id, good_id, customer_id, size, color, amount, price, total_price', 'required', 'on' => 'create'),
+            array('purchase_id, good_id, customer_id, size, color, amount, price, total_price', 'required', 'on' => 'edit'),
 			array('purchase_id, good_id, customer_id, amount, anonymous', 'numerical', 'integerOnly'=>true),
 			array('price, total_price', 'length', 'max'=>10),
 			array('client_comment, org_comment', 'length', 'max'=>200),
-			array('status', 'length', 'max'=>8),
+			array('status', 'length', 'max'=>12),
 			array('oic', 'length', 'max'=>100),
 	    );
 	}
@@ -72,6 +77,7 @@ class Order extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
             'good' => array(self::BELONGS_TO, 'Good', 'good_id'),
+            'purchase' => array(self::BELONGS_TO, 'Purchase', 'purchase_id'),
 		);
 	}
 
@@ -109,5 +115,16 @@ class Order extends CActiveRecord
             return true;
         }
         else return false;
+    }
+
+    public static function getStatusDataArray() {
+        return array(
+            'В обработке' => self::STATUS_PROCEEDING,
+            'Отказ' => self::STATUS_REFUSED,
+            'Принят орг-ом' => self::STATUS_ACCEPTED,
+            'Ожидание оплаты' => self::STATUS_AWAITING,
+            'Получен' => self::STATUS_DELIVERED,
+            'Оплачен' => self::STATUS_PAID,
+        );
     }
 }

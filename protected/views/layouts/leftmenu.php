@@ -10,7 +10,7 @@
         <?php echo ActiveHtml::link('Мои сообщения', '/im') ?>
     </li>
     <li>
-        <?php echo ActiveHtml::link('Мои покупки', '/shopping') ?>
+        <?php echo ActiveHtml::link('Мои покупки', '/orders') ?>
     </li>
     <li>
         <?php echo ActiveHtml::link('Мой пристрой', '/annexe') ?>

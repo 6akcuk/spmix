@@ -13,12 +13,9 @@ $this->pageTitle = Yii::app()->name .' - Мои покупки';
 <h1>Мои покупки</h1>
 
 <div id="tabs">
-    <?php echo (Yii::app()->user->checkAccess('purchases.purchases.create'))
-        ? ActiveHtml::link('Покупки', '/shopping', array('class' => 'selected'))
-        : ActiveHtml::link('Заказы', '/shopping', array('class' => 'selected')) ?>
-    <?php echo ActiveHtml::link('Платежи', '/shopping/payments') ?>
-    <?php if (Yii::app()->user->checkAccess('purchases.purchases.create'))
-        echo ActiveHtml::link('Заказы', '/shopping/orders') ?>
+    <?php echo ActiveHtml::link('Текущие заказы', '/orders', array('class' => 'selected')) ?>
+    <?php echo ActiveHtml::link('Ожидают оплаты'. (($awaitingNum > 0) ? ' ('. $awaitingNum .')' : ''), '/orders/awaiting') ?>
+    <?php echo ActiveHtml::link('Платежи', '/orders/payments') ?>
 </div>
 <table class="data">
     <thead>

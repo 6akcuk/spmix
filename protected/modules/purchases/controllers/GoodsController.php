@@ -27,33 +27,46 @@ class GoodsController extends Controller {
             /** @var $good Good */
             $good = Good::model()->with('purchase')->findByPk($good_id);
 
-            $order->attributes = $_POST['Order'];
-            $order->purchase_id = $purchase_id;
-            $order->good_id = $good_id;
-            $order->customer_id = Yii::app()->user->getId();
-            $order->price = $good->price;
-            $price = floatval($good->price) * ($good->purchase->org_tax / 100 + 1);
+            if (
+                in_array(
+                    $good->purchase->state,
+                    array(
+                        Purchase::STATE_CALL_STUDY,
+                        Purchase::STATE_ORDER_COLLECTION,
+                        Purchase::STATE_REORDER
+                    )
+                )
+            )
+            {
+                $order->attributes = $_POST['Order'];
+                $order->purchase_id = $purchase_id;
+                $order->good_id = $good_id;
+                $order->customer_id = Yii::app()->user->getId();
+                $order->price = $good->price;
+                $price = floatval($good->price) * ($good->purchase->org_tax / 100 + 1);
 
-            if ($order->oic) {
-                $oic = PurchaseOic::model()->findByPk($order->oic);
-                $price += floatval($oic->price);
+                if ($order->oic) {
+                    $oic = PurchaseOic::model()->findByPk($order->oic);
+                    $price += floatval($oic->price);
 
-                $order->oic = $oic->price .' - '. $oic->description;
-            }
+                    $order->oic = $oic->price .' - '. $oic->description;
+                }
 
-            $order->total_price = $price * intval($order->amount);
-            $result = array();
+                $order->total_price = $price * intval($order->amount);
+                $result = array();
 
-            if($order->validate() && $order->save()) {
-                $result['success'] = true;
-                $result['msg'] = Yii::t('purchase', 'Заказ добавлен в список покупок');
-                $result['url'] = '/shopping';
-            }
-            else {
-                foreach ($order->getErrors() as $attr => $error) {
-                    $result[ActiveHtml::activeId($order, $attr)] = $error;
+                if($order->validate() && $order->save()) {
+                    $result['success'] = true;
+                    $result['msg'] = Yii::t('purchase', 'Заказ добавлен в список покупок');
+                    $result['url'] = '/shopping';
+                }
+                else {
+                    foreach ($order->getErrors() as $attr => $error) {
+                        $result[ActiveHtml::activeId($order, $attr)] = $error;
+                    }
                 }
             }
+            else $result[''] = '';
 
             echo json_encode($result);
             exit;
