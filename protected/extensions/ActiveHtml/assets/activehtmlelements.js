@@ -247,6 +247,8 @@ var input_ph = {
             top: parseInt($(this).css('paddingTop')) / 2,
             left: $(this).css('paddingLeft'),
             display: (($(this).val() == '') ? 'block' : 'none')
+        }).click(function() {
+            $(this).prev().focus();
         });
     },
     contentChanged: function() {
@@ -256,6 +258,24 @@ var input_ph = {
             .each(input_ph.subscribe);
     }
 };
+
+$.fn.inputPlaceholder = function() {
+    this.each(function()
+    {
+        $(this).focus(function() {
+            $(this).next().hide();
+        }).blur(function() {
+            if ($.trim($(this).val()) == '') $(this).next().show();
+        });
+        $(this).next().css({
+            top: parseInt($(this).css('paddingTop')) / 2,
+            left: $(this).css('paddingLeft'),
+            display: (($(this).val() == '') ? 'block' : 'none')
+        }).click(function() {
+            $(this).prev().focus();
+        });
+    });
+}
 
 /* Select menu */
 var dropdown = {
@@ -300,6 +320,8 @@ $.fn.dropdown = function() {
             t.html($(this).text());
             h.val($(this).attr('data-value'));
             hideDDMenu();
+
+            if (c.attr('onchange')) eval(c.attr('onchange'));
         });
     });
 }
@@ -596,7 +618,7 @@ var sfar = {
     add: function(plus) {
         var $p = $(plus).parent(),
             $c = $($p.clone()).insertAfter($p);
-        $c.find('input').val('');
+        $c.find('input').val('').inputPlaceholder();
         $c.children('a.iconify_x_a').show();
     },
 
@@ -624,6 +646,7 @@ var FormMgr = {
                     var scs = $('<div/>').addClass('success').insertAfter($form.children('h2'));
                     scs.html(response.message);
                     if (response.msg) msi.show(response.msg);
+                    if (response.url) nav.go(response.url);
                 }
             }
             else {
@@ -919,6 +942,7 @@ var nav = {
             nav._tmPage = setTimeout(function() {
                 //$.jGrowl('Соединение с сервером разорвано, перезагрузите страницу', {theme: 'danger'});
                 ajex.show('Соединение с сервером разорвано, перезагрузите страницу');
+                $('body').removeClass('progress');
             }, 3000);
         }
         return false;
@@ -986,10 +1010,7 @@ $().ready(function() {
         .mouseenter(hmss.mouseenter)
         .mouseleave(hmss.mouseleave);
 
-    $('span.input_placeholder input, span.input_placeholder textarea')
-        .focus(input_ph.focus)
-        .blur(input_ph.blur)
-        .each(input_ph.subscribe);
+    $('span.input_placeholder input, span.input_placeholder textarea').inputPlaceholder();
 
     $('div.dropdown').dropdown();
     $('a.input_calendar').calendar();
@@ -1004,7 +1025,7 @@ $().ready(function() {
     $('.smarttext textarea').autosize();
 
     $('#content').on('contentChanged', function() {
-        input_ph.contentChanged.call(this);
+        $('#content span.input_placeholder input, #content span.input_placeholder textarea').inputPlaceholder();
         $('div.dropdown').dropdown();
         Tooltip.init();
         $('a.input_calendar').calendar();

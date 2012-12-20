@@ -367,7 +367,7 @@ class ClientScript extends CClientScript {
      */
     public function registerCssFile($url,$media='')
     {
-        if (!stristr("assets", $url)) {
+        //if (!stristr("assets", $url)) {
             if (!file_exists(Yii::app()->basePath .'/../'. $url)) return;
 
             $hash = hash_file('md5', Yii::app()->basePath .'/../'. $url);
@@ -408,8 +408,8 @@ class ClientScript extends CClientScript {
                     $v = $mgri->version;
                 }
             }
-        }
-        else $v = 1;
+        //}
+        //else $v = 1;
 
         $this->hasScripts=true;
         $this->cssFiles[$url .'?v='. $v] = $media;
@@ -434,7 +434,7 @@ class ClientScript extends CClientScript {
      */
     public function registerScriptFile($url, $position = null, $priority = null)
     {
-        if (!preg_match("/assets/ui", $url)) {
+        //if (!preg_match("/assets/ui", $url)) {
             if (!file_exists(Yii::app()->basePath .'/../'. $url)) return;
 
             $hash = hash_file('md5', Yii::app()->basePath .'/../'. $url);
@@ -475,8 +475,8 @@ class ClientScript extends CClientScript {
                     $v = $mgri->version;
                 }
             }
-        }
-        else $v = 1;
+        //}
+        //else $v = 1;
 
         if($position===null)
             $position=$this->defaultScriptFilePosition;

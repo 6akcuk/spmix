@@ -91,7 +91,9 @@ class ActiveHtml extends CHtml {
         }
         if (!isset($current)) $current = $default;
 
-        return self::openTag('div', array('class' => 'dropdown')) .
+        $htmlOptions = ActiveHtml::addClass('dropdown', $htmlOptions);
+
+        return self::openTag('div', $htmlOptions) .
             self::hiddenField($name, $value) .
             self::openTag('span', array('class' => 'text')) .
                 $current .

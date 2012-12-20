@@ -35,7 +35,11 @@ $this->pageTitle = Yii::app()->name .' - Мои покупки, ожидающи
         <td><?php echo $order->amount ?></td>
         <td><?php echo ActiveHtml::price($order->total_price) ?></td>
         <td>
+        <?php if ($order->payment): ?>
+            <?php echo ActiveHtml::link('Платеж #'. $order->payment->payment_id .' от '. ActiveHtml::date($order->payment->datetime, true, true), '/payment'. $order->payment->payment_id) ?>
+        <?php else: ?>
             <?php echo ActiveHtml::link('Оплатить', '/orders/createPayment?id='. $order->order_id, array('class' => 'button')) ?>
+        <?php endif; ?>
         </td>
     </tr>
     <?php endforeach; ?>

@@ -13,6 +13,9 @@
  */
 class OrderPayment extends CActiveRecord
 {
+    const STATUS_AWAITING = 'Awaiting';
+    const STATUS_PERFORMED = 'Performed';
+
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
@@ -39,7 +42,7 @@ class OrderPayment extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('order_id, datetime, status, pay_id, description', 'required'),
+			array('order_id, pay_id, description', 'required', 'on' => 'create'),
 			array('order_id, pay_id', 'length', 'max'=>10),
 			array('status', 'length', 'max'=>9),
 			array('description', 'length', 'max'=>200),
@@ -68,33 +71,22 @@ class OrderPayment extends CActiveRecord
 		return array(
 			'payment_id' => 'Payment',
 			'order_id' => 'Order',
-			'datetime' => 'Datetime',
-			'status' => 'Status',
-			'pay_id' => 'Pay',
-			'description' => 'Description',
+			'datetime' => 'Дата платежа',
+			'status' => 'Статус',
+			'pay_id' => 'Реквизиты',
+			'description' => 'Информация о платеже',
 		);
 	}
 
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// Warning: Please modify the following code to remove attributes that
-		// should not be searched.
+    public function beforeSave() {
+        if (parent::beforeSave()) {
+            if ($this->getIsNewRecord()) {
+                $this->datetime = date("Y-m-d H:i:s");
+                $this->status = self::STATUS_AWAITING;
+            }
 
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('payment_id',$this->payment_id,true);
-		$criteria->compare('order_id',$this->order_id,true);
-		$criteria->compare('datetime',$this->datetime,true);
-		$criteria->compare('status',$this->status,true);
-		$criteria->compare('pay_id',$this->pay_id,true);
-		$criteria->compare('description',$this->description,true);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
-	}
+            return true;
+        }
+        else return false;
+    }
 }

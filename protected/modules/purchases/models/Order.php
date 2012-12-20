@@ -22,6 +22,7 @@
  *
  * @property Good $good
  * @property Purchase $purchase
+ * @property OrderPayment $payment
  */
 class Order extends CActiveRecord
 {
@@ -78,6 +79,7 @@ class Order extends CActiveRecord
 		return array(
             'good' => array(self::BELONGS_TO, 'Good', 'good_id'),
             'purchase' => array(self::BELONGS_TO, 'Purchase', 'purchase_id'),
+            'payment' => array(self::HAS_ONE, 'OrderPayment', 'order_id')
 		);
 	}
 
