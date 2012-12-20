@@ -78,7 +78,7 @@ return array(
                 'purchase<id:\d+>' => 'purchases/purchases/show',
                 'order<order_id:\d+>' => 'purchases/orders/show',
                 'orders' => 'purchases/orders',
-                'orders<id:\d+>' => 'purchases/orders',
+                'orders<purchase_id:\d+>' => 'purchases/orders/purchase',
                 'orders/<action:\w+>' => 'purchases/orders/<action>',
                 '<controller:(purchases)>' => 'purchases/purchases/index',
                 '<controller:(purchases)>/<action:\w+>' => 'purchases/purchases/<action>',

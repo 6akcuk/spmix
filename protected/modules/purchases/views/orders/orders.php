@@ -1,6 +1,5 @@
 <?php
 /**
- * @var $purchase Purchase
  * @var $order Order
  */
 
@@ -11,46 +10,38 @@ $this->pageTitle = Yii::app()->name .' - Заказы';
 ?>
 
 <h1>Заказы</h1>
-
-<div id="tabs">
-    <?php echo (Yii::app()->user->checkAccess('purchases.purchases.create'))
-    ? ActiveHtml::link('Покупки', '/shopping')
-    : ActiveHtml::link('Заказы', '/shopping') ?>
-    <?php echo ActiveHtml::link('Платежи', '/shopping/payments') ?>
-    <?php if (Yii::app()->user->checkAccess('purchases.purchases.create'))
-    echo ActiveHtml::link('Заказы', '/shopping/orders', array('class' => 'selected')) ?>
-</div>
-<table class="data">
+<table>
     <thead>
     <tr>
-        <th>№</th>
-        <th>Закупка / Заказ</th>
-        <th>Статус</th>
-        <th>Кол-во</th>
-        <th>Цена</th>
+        <td>
+            <input type="checkbox" />
+        </td>
+        <td>#</td><td>Дата заказа</td><td>Товар</td><td>Цвет</td><td>Размер</td><td>Заказчик</td>
+        <td>Город</td><td>Репутация</td><td>Статус</td><td>Кол-во</td><td>Стоимость</td>
     </tr>
     </thead>
-    <tbody>
-    <?php foreach ($purchases as $purchase): ?>
+    <tbody id="orders">
+    <?php foreach ($orders as $order): ?>
     <tr>
-        <td><?php echo $purchase->purchase_id ?></td>
+        <td><?php echo ActiveHtml::checkBox('select['. $order->order_id .']') ?></td>
         <td>
-            <?php echo ActiveHtml::link($purchase->name, '/purchase'. $purchase->purchase_id) ?>
-            (<?php echo $purchase->ordersNum ?>)
+            <?php echo ActiveHtml::link('Зак№'. $order->order_id, '/order'. $order->order_id) ?><br/>
+            <?php if ($order->payment): ?>
+            <?php echo ActiveHtml::link('Платеж №'. $order->payment->payment_id .' от '. ActiveHtml::date($order->payment->datetime, false, true), '/payment'. $order->payment->payment_id) ?>
+            <?php echo Yii::t('purchase', $order->payment->status) ?>
+            <?php endif; ?>
         </td>
-        <td><?php echo Yii::t('purchase', $purchase->state) ?></td>
-        <td></td>
-        <td><?php echo ActiveHtml::price($purchase->ordersSum) ?></td>
+        <td><?php echo ActiveHtml::date($order->creation_date) ?></td>
+        <td><?php echo ActiveHtml::link($order->good->name, '/good'. $order->purchase_id .'_'. $order->good_id) ?></td>
+        <td><?php echo $order->color ?></td>
+        <td><?php echo $order->size ?></td>
+        <td><?php echo $order->customer->login .' '. $order->customer->profile->firstname .' '. $order->customer->profile->lastname ?></td>
+        <td><?php echo $order->customer->profile->city->name ?></td>
+        <td><?php echo $order->customer->profile->positive_rep .' | '. $order->customer->profile->negative_rep ?></td>
+        <td><?php echo Yii::t('purchase', $order->status) ?></td>
+        <td><?php echo $order->amount ?></td>
+        <td><?php echo ActiveHtml::price($order->total_price) ?></td>
     </tr>
-        <?php foreach ($purchase->orders as $order): ?>
-        <tr>
-            <td><?php echo $order->order_id ?></td>
-            <td><?php echo ActiveHtml::link($order->good->name, '/order'. $order->order_id) ?></td>
-            <td><?php echo Yii::t('purchase', $order->status) ?></td>
-            <td><?php echo $order->amount ?></td>
-            <td><?php echo ActiveHtml::price($order->total_price) ?></td>
-        </tr>
-        <?php endforeach; ?>
     <?php endforeach; ?>
     </tbody>
 </table>

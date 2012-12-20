@@ -68,7 +68,7 @@ class PurchasesController extends Controller {
             $criteria->addCondition('category_id = :category_id');
         }
 
-        $purchases = Purchase::model()->with('city', 'ordersNum', 'ordersSum')->findAll($criteria);
+        $purchases = Purchase::model()->with('city', 'ordersNum', 'ordersSum', 'goodsNum')->findAll($criteria);
 
         if (Yii::app()->request->isAjaxRequest) {
             $this->pageHtml = $this->renderPartial('my', array('purchases' => $purchases), true);

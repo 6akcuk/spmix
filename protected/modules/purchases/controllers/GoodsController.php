@@ -58,7 +58,7 @@ class GoodsController extends Controller {
                 if($order->validate() && $order->save()) {
                     $result['success'] = true;
                     $result['msg'] = Yii::t('purchase', 'Заказ добавлен в список покупок');
-                    $result['url'] = '/shopping';
+                    $result['url'] = '/orders';
                 }
                 else {
                     foreach ($order->getErrors() as $attr => $error) {

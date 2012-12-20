@@ -35,6 +35,7 @@
  *
  * @property string $ordersNum
  * @property string $ordersSum
+ * @property string $goodsNum
  */
 class Purchase extends CActiveRecord
 {
@@ -110,6 +111,7 @@ class Purchase extends CActiveRecord
             'orders' => array(self::HAS_MANY, 'Order', 'purchase_id'),
             'ordersNum' => array(self::STAT, 'Order', 'purchase_id'),
             'ordersSum' => array(self::STAT, 'Order', 'purchase_id', 'select' => 'SUM(total_price)'),
+            'goodsNum' => array(self::STAT, 'Good', 'purchase_id'),
 		);
 	}
 

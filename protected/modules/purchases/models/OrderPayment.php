@@ -6,15 +6,19 @@
  * The followings are the available columns in table 'orders_payments':
  * @property string $payment_id
  * @property string $order_id
+ * @property integer $payer_id
  * @property string $datetime
  * @property string $status
  * @property string $pay_id
  * @property string $description
+ *
+ * @property Order $order
+ * @property ProfilePaydetail $paydetails
  */
 class OrderPayment extends CActiveRecord
 {
-    const STATUS_AWAITING = 'Awaiting';
-    const STATUS_PERFORMED = 'Performed';
+    const STATUS_AWAITING = 'Awaiting payment';
+    const STATUS_PERFORMED = 'Performed payment';
 
 	/**
 	 * Returns the static model of the specified AR class.
@@ -60,6 +64,8 @@ class OrderPayment extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+            'order' => array(self::BELONGS_TO, 'Order', 'order_id'),
+            'paydetails' => array(self::HAS_ONE, 'ProfilePaydetail', 'pay_id'),
 		);
 	}
 

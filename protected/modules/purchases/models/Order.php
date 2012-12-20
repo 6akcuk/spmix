@@ -20,6 +20,7 @@
  * @property string $oic
  * @property integer $anonymous
  *
+ * @property User $customer
  * @property Good $good
  * @property Purchase $purchase
  * @property OrderPayment $payment
@@ -77,6 +78,7 @@ class Order extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+            'customer' => array(self::BELONGS_TO, 'User', 'customer_id', 'with' => 'profile'),
             'good' => array(self::BELONGS_TO, 'Good', 'good_id'),
             'purchase' => array(self::BELONGS_TO, 'Purchase', 'purchase_id'),
             'payment' => array(self::HAS_ONE, 'OrderPayment', 'order_id')
@@ -111,7 +113,7 @@ class Order extends CActiveRecord
         if (parent::beforeSave()) {
             if ($this->isNewRecord) {
                 $this->creation_date = date("Y-m-d H:i:s");
-                $this->status = self::STATUS_AWAITING;
+                $this->status = self::STATUS_PROCEEDING;
             }
 
             return true;

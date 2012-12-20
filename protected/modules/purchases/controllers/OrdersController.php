@@ -104,6 +104,37 @@ class OrdersController extends Controller {
             );
     }
 
+    public function actionPurchase($purchase_id) {
+        $purchase = Purchase::model()->findByPk($purchase_id);
+
+        if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
+            Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('purchase' => $purchase))) {
+            $criteria = new CDbCriteria();
+            $criteria->addCondition('t.purchase_id = :purchase_id');
+            $criteria->params[':purchase_id'] = $purchase_id;
+
+            $orders = Order::model()->with('good', 'customer', 'payment')->findAll($criteria);
+
+            if (Yii::app()->request->isAjaxRequest) {
+                $this->pageHtml = $this->renderPartial(
+                    'orders',
+                    array(
+                        'orders' => $orders,
+                    ),
+                    true);
+            }
+            else
+                $this->render(
+                    'orders',
+                    array(
+                        'orders' => $orders,
+                    )
+                );
+        }
+        else
+            throw new CHttpException(403, 'В доступе отказано');
+    }
+
     public function actionShow($order_id) {
         $order = Order::model()->with('good', 'purchase')->findByPk($order_id);
 
@@ -151,9 +182,11 @@ class OrdersController extends Controller {
 
                     if ($order->oic) {
                         $oic = PurchaseOic::model()->findByPk($order->oic);
-                        $price += floatval($oic->price);
+                        if ($oic) {
+                            $price += floatval($oic->price);
 
-                        $order->oic = $oic->price .' - '. $oic->description;
+                            $order->oic = $oic->price .' - '. $oic->description;
+                        }
                     }
 
                     $order->total_price = $price * intval($order->amount);
@@ -257,6 +290,22 @@ class OrdersController extends Controller {
 
     public function actionPayments() {
         $criteria = new CDbCriteria();
-        $criteria->addCondition('');
+        $criteria->addCondition('payer_id = :payer_id');
+        $criteria->params[':payer_id'] = Yii::app()->user->getId();
+        $criteria->order = 'datetime DESC';
+
+        $payments = OrderPayment::model()->with('order', 'paydetails')->findAll($criteria);
+        $awaitingNum = Order::model()->count('customer_id = :customer_id AND status = :status', array(':customer_id' => Yii::app()->user->getId(), ':status' => Order::STATUS_AWAITING));
+
+        if (Yii::app()->request->isAjaxRequest) {
+            $this->pageHtml = $this->renderPartial('payments', array(
+                'payments' => $payments,
+                'awaitingNum' => $awaitingNum,
+            ), true);
+        }
+        else $this->render('payments', array(
+            'payments' => $payments,
+            'awaitingNum' => $awaitingNum,
+        ));
     }
 }
