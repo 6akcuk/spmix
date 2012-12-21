@@ -308,4 +308,45 @@ class OrdersController extends Controller {
             'awaitingNum' => $awaitingNum,
         ));
     }
+
+    public function actionPayment($payment_id) {
+        /** @var $payment OrderPayment */
+        $payment = OrderPayment::model()->with('order', 'order.purchase')->findByPk($payment_id);
+
+        if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
+            //Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('order' => $payment->order)) ||
+            Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Org', array('purchase' => $payment->order->purchase))) {
+            if (isset($_POST['OrderPayment'])) {
+                $cache['status'] = $payment->status;
+                $payment->attributes = $_POST['OrderPayment'];
+
+                if ($cache['status'] == OrderPayment::STATUS_AWAITING &&
+                    $payment->status == OrderPayment::STATUS_PERFORMED) {
+                    $payment->order->status = Order::STATUS_PAID;
+                    $payment->order->save(true, array('status'));
+                }
+
+                if ($payment->save()) {
+                    $result['success'] = true;
+                    $result['msg'] = 'Статус платежа и заказа успешно изменены';
+                    $result['url'] = '/orders'. $payment->order->purchase_id;
+                }
+                else {
+                    foreach ($payment->getErrors() as $attr => $error) {
+                        $result[ActiveHtml::activeId($payment, $attr)] = $error;
+                    }
+                }
+
+                echo json_encode($result);
+                exit;
+            }
+
+            if (Yii::app()->request->isAjaxRequest) {
+                $this->pageHtml = $this->renderPartial('payment', array('payment' => $payment), true);
+            }
+            else $this->render('payment', array('payment' => $payment));
+        }
+        else
+            throw new CHttpException(403, 'В доступе отказано');
+    }
 }

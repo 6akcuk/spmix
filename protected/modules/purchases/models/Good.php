@@ -6,6 +6,7 @@
  * The followings are the available columns in table 'goods':
  * @property string $good_id
  * @property integer $purchase_id
+ * @property integer $is_quick
  * @property string $name
  * @property string $price
  * @property string $currency
@@ -49,8 +50,9 @@ class Good extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('purchase_id, name, price, currency', 'required'),
-			array('purchase_id', 'numerical', 'integerOnly'=>true),
+			array('purchase_id, name, price, currency', 'required', 'on' => 'create'),
+            array('purchase_id, name, artikul, price, is_quick, sizes, colors', 'required', 'on' => 'quick'),
+			array('purchase_id, is_quick', 'numerical', 'integerOnly'=>true),
 			array('name', 'length', 'max'=>100),
 			array('price', 'length', 'max'=>10),
 			array('currency', 'length', 'max'=>3),
@@ -65,6 +67,14 @@ class Good extends CActiveRecord
     public function defaultScope() {
         return array(
             'condition' => 'good_delete IS NULL',
+        );
+    }
+
+    public function scopes() {
+        return array(
+            'quick' => array(
+                'condition' => 'is_quick = 0'
+            )
         );
     }
 

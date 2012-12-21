@@ -80,6 +80,7 @@ return array(
                 'orders' => 'purchases/orders',
                 'orders<purchase_id:\d+>' => 'purchases/orders/purchase',
                 'orders/<action:\w+>' => 'purchases/orders/<action>',
+                'payment<payment_id:\d+>' => 'purchases/orders/payment',
                 '<controller:(purchases)>' => 'purchases/purchases/index',
                 '<controller:(purchases)>/<action:\w+>' => 'purchases/purchases/<action>',
                 '<controller:(purchases)>/<action:\w+>/<id:\d+>' => 'purchases/purchases/<action>',

@@ -48,7 +48,7 @@ class OrderPayment extends CActiveRecord
 		return array(
 			array('order_id, pay_id, description', 'required', 'on' => 'create'),
 			array('order_id, pay_id', 'length', 'max'=>10),
-			array('status', 'length', 'max'=>9),
+			array('status', 'length', 'max'=>20),
 			array('description', 'length', 'max'=>200),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
@@ -83,6 +83,13 @@ class OrderPayment extends CActiveRecord
 			'description' => 'Информация о платеже',
 		);
 	}
+
+    public static function getStatusArray() {
+        return array(
+            Yii::t('purchase', self::STATUS_AWAITING) => self::STATUS_AWAITING,
+            Yii::t('purchase', self::STATUS_PERFORMED) => self::STATUS_PERFORMED,
+        );
+    }
 
     public function beforeSave() {
         if (parent::beforeSave()) {

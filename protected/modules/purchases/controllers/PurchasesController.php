@@ -78,7 +78,7 @@ class PurchasesController extends Controller {
 
     public function actionShow($id) {
         $purchase = Purchase::model()->with('city', 'author', 'category', 'ordersNum', 'ordersSum')->findByPk($id);
-        $goods = Good::model()->with('image')->findAll('purchase_id = :purchase_id', array(':purchase_id' => $id));
+        $goods = Good::model()->quick()->with('image')->findAll('purchase_id = :purchase_id', array(':purchase_id' => $id));
 
         if (Yii::app()->request->isAjaxRequest) {
             $this->pageHtml = $this->renderPartial('show', array('purchase' => $purchase, 'goods' => $goods), true);
@@ -310,13 +310,75 @@ class PurchasesController extends Controller {
             throw new CHttpException(403, 'В доступе отказано');
     }
 
+    public function actionQuick($id) {
+        $purchase = Purchase::model()->findByPk($id);
+        $good = new Good('quick');
+        $order = new Order('quick');
+
+        if (isset($_POST['Good'])) {
+            $good->attributes = $_POST['Good'];
+            $good->purchase_id = $id;
+            $good->currency = 'RUR';
+            $good->sizes = json_encode(array($good->sizes));
+            $good->colors = json_encode(array($good->colors));
+            $good->is_quick = 1;
+
+            if ($good->validate()) {
+                $order->attributes = $_POST['Order'];
+                $order->purchase_id = $id;
+                $order->customer_id = Yii::app()->user->getId();
+                $order->size = $_POST['Good']['sizes'];
+                $order->color = $_POST['Good']['colors'];
+                $order->price = $good->price;
+                $price = floatval($good->price) * ($good->purchase->org_tax / 100 + 1);
+
+                if ($order->oic) {
+                    $oic = PurchaseOic::model()->findByPk($order->oic);
+                    $price += floatval($oic->price);
+
+                    $order->oic = $oic->price .' - '. $oic->description;
+                }
+
+                $order->total_price = $price * intval($order->amount);
+
+                if($order->validate()) {
+                    $good->save();
+                    $order->good_id = $good->good_id;
+                    $order->save();
+
+                    $result['success'] = true;
+                    $result['msg'] = Yii::t('purchase', 'Заказ добавлен в список покупок');
+                    $result['url'] = '/orders';
+                }
+                else {
+                    foreach ($order->getErrors() as $attr => $error) {
+                        $result[ActiveHtml::activeId($order, $attr)] = $error;
+                    }
+                }
+            }
+            else {
+                foreach ($good->getErrors() as $attr => $error) {
+                    $result[ActiveHtml::activeId($good, $attr)] = $error;
+                }
+            }
+
+            echo json_encode($result);
+            exit;
+        }
+
+        if (Yii::app()->request->isAjaxRequest) {
+            $this->pageHtml = $this->renderPartial('quick', array('purchase' => $purchase, 'good' => $good, 'order' => $order), true);
+        }
+        else $this->render('quick', array('purchase' => $purchase, 'good' => $good, 'order' => $order));
+    }
+
     public function actionAddGood($id) {
         $purchase = Purchase::model()->findByPk($id);
 
         if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
             Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('purchase' => $purchase)))
         {
-            $model = new Good();
+            $model = new Good('create');
             $model->purchase_id = $id;
             $model->currency = 'RUR';
 

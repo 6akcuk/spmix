@@ -82,10 +82,11 @@ $num_perc = ceil((floatval($purchase->min_num) > 0) ? ($purchase->ordersNum / $p
         <?php endif; ?>
     </div>
     <div class="right">
+        <?php echo ActiveHtml::link('Быстрый заказ', '/purchase'. $purchase->purchase_id .'/quick', array('class' => 'button')) ?>
     <?php if (Yii::app()->user->checkAccess('purchases.purchases.edit') &&
               (Yii::app()->user->checkAccess('purchases.purchases.editSuper') ||
                Yii::app()->user->checkAccess('purchases.purchases.editOwn', array('purchase' => $purchase)))): ?>
-        <?php echo ActiveHtml::link('Список заказов', '/shopping/orders'. $purchase->purchase_id, array('class' => 'button')) ?>
+        <?php echo ActiveHtml::link('Список заказов', '/orders'. $purchase->purchase_id, array('class' => 'button')) ?>
         <?php echo ActiveHtml::link('ЦВЗ', '/purchase'. $purchase->purchase_id .'/oic', array('class' => 'button')) ?>
         <?php echo ActiveHtml::link('Редактировать', '/purchase'. $purchase->purchase_id .'/edit', array('class' => 'button')) ?>
         <?php //echo ActiveHtml::link('Удалить', '/purchase'. $purchase->purchase_id .'/delete', array('class' => 'button')) ?>
