@@ -135,7 +135,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h1 {
-    font-size: 36px
+    font-size: 20px
 }
 
 h2 {
@@ -168,7 +168,6 @@ p:first-child, p.first {
 
 
 a {
-    font-weight: 700;
     color: #123;
     text-decoration: none;
     cursor: pointer
@@ -934,3 +933,4 @@ div.ls_columns div.column.options div {
 .main_a li:hover {
     background: #557132;
 }
+

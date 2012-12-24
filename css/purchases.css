@@ -29,7 +29,7 @@
 .purchase_column .row label {
     display: block;
     padding-bottom: 10px;
-    font-size: 16px
+    font-size: 12px
 }
 
 #purchases {
@@ -42,8 +42,12 @@
 .purchase:first-child {
     margin-top: 0
 }
-.purchase .info a, .purchase .info span {
+.purchase .info span {
     display: block;
+}
+.purchase .info a:hover {
+    color: #254a10;
+    text-decoration: underline;
 }
 
 .purchase_table {
@@ -68,13 +72,13 @@
 }
 .purchase_table .td {
     margin-left: 10px;
-    width: 240px;
+    width: 235px;
 }
 .purchase_table .td > div {
     padding: 5px 0px
 }
 .purchase_table .td .label {
-    width: 80px;
+    margin-right: 10px;
 }
 .purchase_table .td .labeled {
     width: 160px;
@@ -134,4 +138,17 @@ a.purchase_edit_story:hover {
 /* Static Manager */
 #purchases_css {
     display: none;
+}
+
+table td {
+    padding: 4px;
+    border: 1px #c2c2c2 solid;
+}
+
+.photo {
+    margin: 4px 4px 4px 0px;
+}
+
+.list_name {
+    font-weight: 700;
 }
