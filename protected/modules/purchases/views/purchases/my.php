@@ -17,7 +17,7 @@ foreach (Purchase::getStateDataArray() as $state) {
 </h1>
 
 <div class="clearfix">
-    <div class="left">
+    <div class="left sortlimit">
         Выводить по:
         <?php echo ActiveHtml::link('10', '/purchases/my?c[limit]=10', ($c['limit'] == 10) ? array('class' => 'selected') : array()) ?>
         <?php echo ActiveHtml::link('30', '/purchases/my?c[limit]=30', ($c['limit'] == 30) ? array('class' => 'selected') : array()) ?>
@@ -33,7 +33,7 @@ foreach (Purchase::getStateDataArray() as $state) {
     </div>
 </div>
 
-<table>
+<table class="mytable">
     <thead>
     <tr>
         <td>ID</td><td>Создана</td><td>Категория</td><td>Название</td><td>Статус</td><td>Стоп заказов</td>

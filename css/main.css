@@ -173,8 +173,12 @@ a {
     cursor: pointer
 }
 
-a:hover, a:focus, a.selected {
-    color: #d7e4c4;
+a:hover {
+    color: #23480d;
+}
+
+a:focus, a.selected {
+    color: #005b01;
 }
 
 
@@ -923,14 +927,18 @@ div.ls_columns div.column.options div {
 
 .main_a li {
     float: left;
+
+}
+
+.main_a li a  {
     padding: 4px 20px 6px 20px;
-}
+    display: block;
+    color: #fff;
+    }
 
-.main_a li a {
-   color: #fff;
-}
+.main_a li a:hover  {
+    background: #00641c;
+    color: #fff;
 
-.main_a li:hover {
-    background: #557132;
 }
 

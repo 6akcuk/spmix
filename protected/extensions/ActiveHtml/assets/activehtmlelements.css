@@ -130,7 +130,7 @@ div.dropdown ul li a {
     padding: 4px 5px 4px 10px;
 }
 div.dropdown ul li a:hover {
-    background: #74c7f7;
+    background: #508033;
     color: #fff
 }
 
@@ -271,10 +271,13 @@ div.olcm li a:hover {
 }
 .fileupload .attach {
     display: inline-block;
-    padding: 10px 15px;
+    padding: 2px 8px 2px 8px;
     cursor: pointer;
-    background: #54bbfc;
-    color: #fff
+    border: 0;
+    font-size: 12px;
+    background: url('/images/login_bttn.jpg');
+    color: #fff;
+
 }
 .fileupload .attach:hover {
     background: #74c7f7

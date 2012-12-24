@@ -29,8 +29,9 @@ span.input_placeholder label {
     font-size: 12px;
     color: #557132;
 }
+
 a.input_calendar span {
-    font-size: 20px;
+    font-size: 14px;
     padding: 10px;
     color: #5d6266;
 }
@@ -194,3 +195,13 @@ table.data th.right, table.data td.right {
     text-align: center;
     padding: 100px 50px;
 }
+
+.sortlimit a
+{
+    padding: 4px;
+    border: 1px solid #c2c2c2;
+}
+.sortlimit {
+    margin-right: 10px;
+}
+

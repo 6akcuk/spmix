@@ -3,7 +3,7 @@
 }
 
 #purchaseform input, #purchaseform .input_calendar {
-    width: 300px
+
 }
 
 #avatar {
@@ -29,7 +29,7 @@
 .purchase_column .row label {
     display: block;
     padding-bottom: 10px;
-    font-size: 12px
+    font-size: 14px
 }
 
 #purchases {
@@ -80,8 +80,10 @@
 .purchase_table .td .label {
     margin-right: 10px;
 }
-.purchase_table .td .labeled {
-    width: 160px;
+.purchase_table .td .labeled a:hover {
+    color: #000;
+    text-decoration: underline;
+
 }
 
 .purchase_fullstory {
@@ -151,4 +153,8 @@ table td {
 
 .list_name {
     font-weight: 700;
+}
+
+.mytable {
+    margin-top: 10px;
 }

@@ -18,7 +18,7 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
 <div class="row">
     <?php echo $form->inputPlaceholder($model, 'name') ?>
 </div>
-<div class="row">
+<div class="row clearfix">
     <?php echo $form->dropdown($model, 'category_id', PurchaseCategory::getDataArray()) ?>
 </div>
 <div class="row">
@@ -27,7 +27,7 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
 <div class="row">
     <?php echo $form->inputCalendar($model, 'stop_date') ?>
 </div>
-<div class="row">
+<div class="row clearfix">
     <?php echo $form->dropdown($model, 'status', Purchase::getStatusDataArray()) ?>
 </div>
 <div class="row">

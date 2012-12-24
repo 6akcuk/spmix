@@ -27,7 +27,7 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
             <?php echo $form->label($model, 'category_id') ?>
             <?php echo $form->dropdown($model, 'category_id', PurchaseCategory::getDataArray()) ?>
         </div>
-        <div class="row">
+        <div class="row clearfix">
             <?php echo $form->label($model, 'image') ?>
             <?php echo $form->upload($model, 'image', 'Прикрепить аватар', array('data-image' => 'a')) ?>
         </div>
@@ -45,7 +45,7 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
             <?php echo $form->label($model, 'state') ?>
             <?php echo $form->dropdown($model, 'state', Purchase::getStateDataArray()) ?>
         </div>
-        <div class="row">
+        <div class="row clearfix">
             <?php echo $form->label($model, 'min_sum') ?>
             <?php echo $form->inputPlaceholder($model, 'min_sum') ?>
         </div>
