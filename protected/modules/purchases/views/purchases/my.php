@@ -32,7 +32,15 @@ foreach (Purchase::getStateDataArray() as $state) {
 
     </div>
 </div>
-
+<div class="clearfix">
+    <div class="left">
+        <?php echo ActiveHtml::inputPlaceholder(
+        'c[id]',
+        (isset($c['id'])) ? $c['id'] : '',
+        array('placeholder' => 'ID', '')
+    ); ?>
+    </div>
+</div>
 <table class="mytable">
     <thead>
     <tr>
