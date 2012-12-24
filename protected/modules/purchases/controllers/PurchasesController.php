@@ -117,6 +117,32 @@ class PurchasesController extends Controller {
         else $this->render('create', array('model' => $model));
     }
 
+    public function actionUpdateState($id) {
+        $model = Purchase::model()->findByPk($id);
+
+        if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
+            Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('purchase' => $model)))
+        {
+            $states = Purchase::getStateDataArray();
+            $model->state = $states[$_POST['state']];
+
+            if ($model->save()) {
+                $result['success'] = true;
+                $result['msg'] = 'Изменения сохранены';
+            }
+            else {
+                foreach ($model->getErrors() as $attr => $error) {
+                    $result[ActiveHtml::activeId($model, $attr)] = $error;
+                }
+            }
+
+            echo json_encode($result);
+            exit;
+        }
+        else
+            throw new CHttpException(403, 'В доступе отказано');
+    }
+
     public function actionEdit($id) {
         $model = Purchase::model()->findByPk($id);
         $model->setScenario('edit');

@@ -79,7 +79,7 @@ class Purchase extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-            array('name, author_id, category_id, city_id, stop_date, status, image', 'required', 'on' => 'create'),
+            array('name, author_id, category_id, city_id, status', 'required', 'on' => 'create'),
             array('name, author_id, category_id, stop_date, status, state, min_sum, min_num, org_tax', 'required', 'on' => 'edit'),
 
 			array('author_id, category_id, city_id, min_num, vip, mod_confirmation', 'numerical', 'integerOnly'=>true),
@@ -147,6 +147,12 @@ class Purchase extends CActiveRecord
         return array(
             'condition' => 'purchase_delete IS NULL',
         );
+    }
+    
+    public function getMinimalPercentage() {
+        $sum_perc = ceil((floatval($this->min_sum) > 0) ? ($this->ordersSum / $this->min_sum) * 100 : 0);
+        $num_perc = ceil((floatval($this->min_num) > 0) ? ($this->ordersNum / $this->min_num) * 100 : 0);
+        return ($num_perc > $sum_perc) ? $num_perc : $sum_perc;
     }
 
     public static function getStatusDataArray() {

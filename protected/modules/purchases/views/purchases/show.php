@@ -8,10 +8,6 @@ Yii::app()->getClientScript()->registerCssFile('/css/purchases.css');
 Yii::app()->getClientScript()->registerScriptFile('/js/purchase.js');
 
 $this->pageTitle = Yii::app()->name .' - '. $purchase->name;
-
-$sum_perc = ceil((floatval($purchase->min_sum) > 0) ? ($purchase->ordersSum / $purchase->min_sum) * 100 : 0);
-$num_perc = ceil((floatval($purchase->min_num) > 0) ? ($purchase->ordersNum / $purchase->min_num) * 100 : 0);
-
 ?>
 
 <h1><?php echo $purchase->name ?></h1>
@@ -74,10 +70,10 @@ $num_perc = ceil((floatval($purchase->min_num) > 0) ? ($purchase->ordersNum / $p
         </div>
     </div>
     <div class="left">
-        <?php if ($num_perc > 0 || $sum_perc > 0): ?>
+        <?php if ($purchase->getMinimalPercentage() > 0): ?>
         <div class="bar">
-            <div class="barline" style="width: <?php echo ($num_perc > $sum_perc) ? $num_perc : $sum_perc ?>%"></div>
-            <span><?php echo ($num_perc > $sum_perc) ? $num_perc : $sum_perc ?>%</span>
+            <div class="barline" style="width: <?php echo $purchase->getMinimalPercentage() ?>%"></div>
+            <span><?php echo $purchase->getMinimalPercentage() ?>%</span>
         </div>
         <?php endif; ?>
     </div>

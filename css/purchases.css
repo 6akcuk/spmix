@@ -117,6 +117,7 @@ a.purchase_edit_story:hover {
     margin-top: 5px;
     position: relative;
     width: 250px;
+    overflow: hidden;
 }
 .bar .barline {
     float: left;

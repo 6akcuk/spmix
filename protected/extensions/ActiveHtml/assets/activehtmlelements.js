@@ -959,7 +959,8 @@ var nav = {
                 //$.jGrowl('Соединение с сервером разорвано, перезагрузите страницу', {theme: 'danger'});
                 ajex.show('Соединение с сервером разорвано, перезагрузите страницу');
                 $('body').removeClass('progress');
-            }, 3000);
+                request.abort();
+            }, 5000);
         }
         return false;
     },
