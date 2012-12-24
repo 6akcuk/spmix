@@ -891,8 +891,101 @@ var nav = {
     _ivCheck: null,
     _tmPage: null,
     curLoc: false,
+    objLoc: {},
 
-    go: function(loc, event, opts) {
+    q2obj: function(qa) {
+        if (!qa) return {};
+        var query = {} , dec = function(str) {
+            return decodeURIComponent(str);
+        };
+        qa = qa.split('&');
+        $.each(qa, function(i, a) {
+            var t = a.split('=');
+            if (t[0]) {
+                var v = dec(t[1] + '');
+                if (t[0].substr(t.length - 2) == '[]') {
+                    var k = dec(t[0].substr(0, t.length - 2));
+                    if (!query[k]) {
+                        query[k] = [];
+                    }
+                    query[k].push(v);
+                }
+                else if (t[0].match(/(\[|\])/g)) {
+                    var k = t[0].split('['),
+                        n = dec(k[0]),
+                        m = dec(k[1].replace(']', ''));
+                    if (!query[n]) {
+                        query[n] = {};
+                    }
+                    query[n][m] = v;
+                } else {
+                    query[dec(t[0])] = v;
+                }
+            }
+        });
+        return query;
+    },
+    obj2q: function(qa) {
+        var query = [], enc = function(str) {
+            return encodeURIComponent(str);
+        };
+
+        for (var key in qa) {
+            if (qa[key] == null || $.isFunction(qa[key])) continue;
+            if ($.isArray(qa[key])) {
+                for (var i = 0, c = 0, l = qa[key].length; i < l; ++i) {
+                    if (qa[key][i] == null || $.isFunction(qa[key][i])) {
+                        continue;
+                    }
+                    query.push(enc(key) + '[' + c + ']=' + enc(qa[key][i]));
+                    ++c;
+                }
+            }
+            else if ($.isPlainObject(qa[key])) {
+                for(var i in qa[key]) {
+                    query.push(enc(key) + '['+ enc(i) +']=' + enc(qa[key][i]));
+                }
+            } else {
+                query.push(enc(key) + '=' + enc(qa[key]));
+            }
+        }
+        query.sort();
+        return query.join('&');
+    },
+    revoke: function(qa, str) {
+        qa = qa.split('&');
+        $.each(qa, function(i, a) {
+            if (!a) return;
+            var t = a.split('='),
+                s = str.split('=');
+
+            if (t[0] == s[0]) qa.splice(i, 1);
+        });
+        return qa.join('&');
+    },
+    query: function(loc, opts) {
+        var a = loc.split('?'),
+            curLoc = nav.curLoc.split('?'),
+            obj = nav.q2obj(a[1]),
+            curObj = nav.q2obj(curLoc[1]);
+
+        if (a[1]) {
+            if (a[0] != curLoc[0]) nav.objLoc = {};
+            $.extend(true, nav.objLoc, curObj, obj);
+            q = nav.obj2q(nav.objLoc);
+            if (opts.revoke) {
+                q = nav.revoke(q, a[1]);
+                nav.objLoc = nav.q2obj(q);
+            }
+            a[1] = q;
+            return a.join('?');
+        }
+        else {
+            nav.objLoc = {};
+            return loc;
+        }
+    },
+    go: function(loc, event, _opts) {
         if (loc.tagName && loc.tagName.toLowerCase() == 'a' && loc.href) {
             if (loc.target == '_blank') {
                 return;
@@ -903,14 +996,32 @@ var nav = {
         loc = loc.replace(new RegExp('(http://'+ A.host + ')', 'i'), '');
 
         if (loc) {
-            //showGlobalPrg();
+            var opts = {
+                same: false,
+                container: '#content',
+                revoke: false
+            };
+            opts = $.extend(opts, _opts);
+
+            loc = nav.query(loc, opts);
             nav.curLoc = loc;
             location.hash = loc;
+
+            var where = loc.split('?');
+            if (where[1]) {
+                where.url = where[0];
+                where.params = where[1];
+            }
+            else {
+                where.url = loc;
+                where.params = '';
+            }
 
             var request = $.ajax({
                 type: 'POST',
                 dataType: 'json',
-                url: loc
+                url: where.url,
+                data: where.params
             });
             $('body').addClass('progress');
 
@@ -930,7 +1041,7 @@ var nav = {
                 //logger.showAll();
 
                 $('title').html(response.title);
-                $('#content').html(response.html);
+                $(opts.container).html(response.html);
                 if (response.widescreen) {
                     $('#body > div.wrap > div.maincolumns > div.smallcolumn').hide();
                     $('#content').removeClass('largecolumn');
@@ -969,13 +1080,14 @@ var nav = {
         var loc = location.hash.replace(/^#/i, '');
         if (loc == nav.curLoc) return;
         if (loc != '' && !loc.match(/^\//i)) return;
+        if (loc == '') return;
 
         nav.curLoc = loc;
         nav.go(loc);
     },
 
     init: function() {
-        nav.curLoc = location.pathname.replace(/^\/{1}/i, '');
+        nav.curLoc = location.pathname;//.replace(/^\/{1}/i, '');
         clearInterval(nav._ivCheck);
         nav._ivCheck = setInterval(nav.check, 200);
     }

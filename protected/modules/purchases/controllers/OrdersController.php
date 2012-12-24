@@ -115,6 +115,7 @@ class OrdersController extends Controller {
 
             $orders = Order::model()->with('good', 'customer', 'payment')->findAll($criteria);
 
+            $this->wideScreen = true;
             if (Yii::app()->request->isAjaxRequest) {
                 $this->pageHtml = $this->renderPartial(
                     'orders',
@@ -122,7 +123,6 @@ class OrdersController extends Controller {
                         'orders' => $orders,
                     ),
                     true);
-                $this->wideScreen = true;
             }
             else
                 $this->render(

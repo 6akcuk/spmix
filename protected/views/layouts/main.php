@@ -86,10 +86,10 @@ Yii::app()->getClientScript()->registerCssFile('/css/elements.css');
         <div id="body">
             <div class="wrap">
                 <div class="maincolumns clearfix">
-                    <div class="smallcolumn">
+                    <div class="smallcolumn"<?php if(Yii::app()->controller->wideScreen): ?> style="display:none"<?php endif; ?>>
                         <?php echo $this->renderPartial('//layouts/leftmenu') ?>
                     </div>
-                    <div id="content" class="largecolumn">
+                    <div id="content" class="<?php if(!Yii::app()->controller->wideScreen): ?>largecolumn<?php endif; ?>">
                         <?php echo $content; ?>
                     </div>
                 </div>

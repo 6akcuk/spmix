@@ -182,13 +182,16 @@ class ActiveHtml extends CHtml {
         ActiveHtml::publishAssets();
 
         if (!isset($htmlOptions['onclick']) && $url != '#') {
-            if (!isset($htmlOptions['noback'])) $noback = true;
-            else {
-                $noback =  $htmlOptions['noback'];
-                unset($htmlOptions['noback']);
+            if (isset($htmlOptions['nav'])) {
+                $nav = $htmlOptions['nav'];
+                $navi = array();
+                foreach ($nav as $i => $a) {
+                    $navi[] = $i .": ". (is_string($a) ? "'". $a ."'" : $a);
+                }
+                unset($htmlOptions['nav']);
             }
 
-            $htmlOptions['onclick'] = 'return nav.go(this, event, {noback: '. $noback .'});';
+            $htmlOptions['onclick'] = 'return nav.go(this, event, '. (isset($navi) ? '{'. implode(", ", $navi) .'}' : 'null') .');';
         }
 
         return parent::link($text, $url, $htmlOptions);

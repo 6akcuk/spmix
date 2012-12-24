@@ -52,8 +52,11 @@ class PurchasesController extends Controller {
     }
 
     public function actionMy() {
+        $c = (isset($_REQUEST['c'])) ? $_REQUEST['c'] : array();
+        if (!isset($c['limit'])) $c['limit'] = 30;
+
         $criteria = new CDbCriteria();
-        $criteria->limit = 20;
+        $criteria->limit = $c['limit'];
         $criteria->offset = (isset($c['offset'])) ? intval($c['offset']) : 0;
         $criteria->addCondition('author_id = :author_id');
         $criteria->params[':author_id'] = Yii::app()->user->getId();
@@ -63,6 +66,11 @@ class PurchasesController extends Controller {
             $criteria->addCondition('state = :state');
         }
 
+        if (isset($c['completed'])) {
+            $criteria->params[':completed'] = Purchase::STATE_COMPLETED;
+            $criteria->addCondition('state != :completed');
+        }
+
         if (isset($c['category_id'])) {
             $criteria->params[':category_id'] = $c['category_id'];
             $criteria->addCondition('category_id = :category_id');
@@ -70,11 +78,11 @@ class PurchasesController extends Controller {
 
         $purchases = Purchase::model()->with('city', 'ordersNum', 'ordersSum', 'goodsNum')->findAll($criteria);
 
+        $this->wideScreen = true;
         if (Yii::app()->request->isAjaxRequest) {
-            $this->pageHtml = $this->renderPartial('my', array('purchases' => $purchases), true);
-            $this->wideScreen = true;
+            $this->pageHtml = $this->renderPartial('my', array('purchases' => $purchases, 'c' => $c), true);
         }
-        else $this->render('my', array('purchases' => $purchases));
+        else $this->render('my', array('purchases' => $purchases, 'c' => $c));
     }
 
     public function actionShow($id) {
@@ -416,11 +424,14 @@ class PurchasesController extends Controller {
                 $model->colors = json_encode($_POST['Good']['colors']);
                 $result = array();
 
-                $psizes = json_decode($purchase->sizes, true);
-                $sizes = $_POST['Good']['sizes'];
+                if ($purchase->sizes) {
+                    $psizes = json_decode($purchase->sizes, true);
+                    $sizes = $_POST['Good']['sizes'];
 
-                $psizes = array_merge($psizes, $sizes);
-                sort($psizes);
+                    $psizes = array_merge($psizes, $sizes);
+                    sort($psizes);
+                }
+                else $psizes = array();
 
                 if($model->validate() && $model->save()) {
                     $purchase->sizes = json_encode($psizes);

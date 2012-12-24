@@ -19,14 +19,20 @@ foreach (Purchase::getStateDataArray() as $state) {
 <div class="clearfix">
     <div class="left">
         Выводить по:
-            <a onclick="">10</a>
+        <?php echo ActiveHtml::link('10', '/purchases/my?c[limit]=10', ($c['limit'] == 10) ? array('class' => 'selected') : array()) ?>
+        <?php echo ActiveHtml::link('30', '/purchases/my?c[limit]=30', ($c['limit'] == 30) ? array('class' => 'selected') : array()) ?>
+        <?php echo ActiveHtml::link('50', '/purchases/my?c[limit]=50', ($c['limit'] == 50) ? array('class' => 'selected') : array()) ?>
+        <?php echo ActiveHtml::link('100', '/purchases/my?c[limit]=100', ($c['limit'] == 100) ? array('class' => 'selected') : array()) ?>
+    </div>
+    <div class="left">
+        <input<?php if(isset($c['completed'])) echo ' checked="true"' ?> id="dont_show" type="checkbox" onchange="return nav.go('/purchases/my?c[completed]=0', event, {revoke: !this.checked})" />
+        <label for="dont_show">не отображать завершенные закупки</label>
+    </div>
+    <div class="right">
+
     </div>
 </div>
-<div class="search">
-    <span class="iconify iconify_search_b"></span>
-    <input type="text" name="q" data-url="" value="" />
-    <div class="progress"></div>
-</div>
+
 <table>
     <thead>
     <tr>
