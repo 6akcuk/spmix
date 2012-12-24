@@ -91,28 +91,34 @@ div.dropdown {
     display: inline-block;
     text-align: left;
     position: relative;
+    float: left;
 }
 div.dropdown span.text {
     float: left;
     display: inline-block;
     font-size: 14px;
     cursor: pointer;
-    padding: 8px 10px;
+    padding: 4px 5px 4px 10px;
     background: #ededf0;
-    min-width: 180px;
+    min-width: 120px;
 }
 div.dropdown span.arrow {
     float: right;
     display: inline-block;
     cursor: pointer;
-    padding: 8px 8px 8px 10px;
-    background: #54bbfc;
+    padding: 4px 4px 4px 5px;
+    background: #254a10;
     text-align: center;
-    color: #fff
+    color: #fff;
 }
 div.dropdown:hover span.arrow {
-    background: #74c7f7;
+    background: #447229;
 }
+
+div.dropdown_down {
+    margin-bottom: 10px;
+}
+
 div.dropdown ul {
     display: none;
     position: absolute;
@@ -121,7 +127,7 @@ div.dropdown ul {
 }
 div.dropdown ul li a {
     display: block;
-    padding: 8px 10px;
+    padding: 4px 5px 4px 10px;
 }
 div.dropdown ul li a:hover {
     background: #74c7f7;

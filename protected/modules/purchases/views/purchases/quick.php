@@ -47,8 +47,10 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
 </div>
 <div class="row">
     Вы можете выбрать Центр Выдачи Заказов, если хотите самостоятельно забрать свой заказ <br/>
-    <?php echo $form->dropdown($order, 'oic', $dd_oic) ?>
 </div>
+    <div class="row clearfix">
+    <?php echo $form->dropdown($order, 'oic', $dd_oic) ?>
+    </div>
 <div class="row">
     <?php echo ActiveHtml::submitButton('Заказать товар', array('class' => 'btn light_blue', 'onclick' => 'return FormMgr.submit(\'#quickform\')')); ?>
 </div>
