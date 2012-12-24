@@ -14,6 +14,7 @@ class Controller extends CController
     public $menu = array();
 
     public $pageHtml = '';
+    public $wideScreen = false;
 
     public function init() {
         if (Yii::app()->controller->id == "site" && Yii::app()->user->getIsGuest()) {

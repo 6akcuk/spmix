@@ -122,6 +122,7 @@ class OrdersController extends Controller {
                         'orders' => $orders,
                     ),
                     true);
+                $this->wideScreen = true;
             }
             else
                 $this->render(

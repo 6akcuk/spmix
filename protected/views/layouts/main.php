@@ -83,7 +83,6 @@ Yii::app()->getClientScript()->registerCssFile('/css/elements.css');
 </div>
 <div class="wrapper">
     <div class="wrapper_content">
-
         <div id="body">
             <div class="wrap">
                 <div class="maincolumns clearfix">

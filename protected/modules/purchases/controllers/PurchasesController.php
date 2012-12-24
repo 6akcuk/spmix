@@ -72,6 +72,7 @@ class PurchasesController extends Controller {
 
         if (Yii::app()->request->isAjaxRequest) {
             $this->pageHtml = $this->renderPartial('my', array('purchases' => $purchases), true);
+            $this->wideScreen = true;
         }
         else $this->render('my', array('purchases' => $purchases));
     }

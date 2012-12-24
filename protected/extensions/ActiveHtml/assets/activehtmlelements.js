@@ -915,6 +915,11 @@ var nav = {
             $('body').addClass('progress');
 
             request.done(function(response, status, xhr) {
+                if (response.guest && A.user_id > 0) {
+                    location.href = A.host;
+                    return;
+                }
+
                 $('body').removeClass('progress');
                 clearTimeout(nav._tmPage);
 
@@ -926,6 +931,17 @@ var nav = {
 
                 $('title').html(response.title);
                 $('#content').html(response.html);
+                if (response.widescreen) {
+                    $('#body > div.wrap > div.maincolumns > div.smallcolumn').hide();
+                    $('#content').removeClass('largecolumn');
+                }
+                else {
+                    if (!$('#content').hasClass('largecolumn')) {
+                        $('#body > div.wrap > div.maincolumns > div.smallcolumn').show();
+                        $('#content').addClass('largecolumn');
+                    }
+                }
+
                 $('#content').trigger('contentChanged');
             });
             request.fail(function(xhr, textStatus, errorThrown) {

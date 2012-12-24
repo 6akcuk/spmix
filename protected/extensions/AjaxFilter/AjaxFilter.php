@@ -10,14 +10,19 @@
 class AjaxFilter extends CFilter {
     protected function postFilter($filterChain) {
         if (Yii::app()->request->isAjaxRequest) {
-            echo json_encode(
-                array(
-                    'html' => Yii::app()->controller->pageHtml,
-                    'title' => Yii::app()->controller->pageTitle,
-                    'static' => Yii::app()->getClientScript()->renderAjax(),
-                )
+            $return = array(
+                'html' => Yii::app()->controller->pageHtml,
+                'title' => Yii::app()->controller->pageTitle,
+                'static' => Yii::app()->getClientScript()->renderAjax(),
             );
 
+            if (Yii::app()->controller->wideScreen)
+                $return['widescreen'] = true;
+
+            if (Yii::app()->user->getIsGuest())
+                $return['guest'] = true;
+
+            echo json_encode($return);
             Yii::app()->end();
         }
     }
