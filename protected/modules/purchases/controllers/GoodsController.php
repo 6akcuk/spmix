@@ -73,6 +73,61 @@ class GoodsController extends Controller {
         }
     }
 
+    public function actionPurchase($purchase_id, $offset = 0) {
+        $purchase = Purchase::model()->findByPk($purchase_id);
+
+        if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
+            Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('purchase' => $purchase)))
+        {
+            $c = (isset($_REQUEST['c'])) ? $_REQUEST['c'] : array();
+            if (!isset($c['limit'])) $c['limit'] = 30;
+
+            $criteria = new CDbCriteria();
+            $criteria->limit = $c['limit'];
+            $criteria->offset = $offset;
+            $criteria->addCondition('t.purchase_id = :purchase_id');
+            $criteria->params[':purchase_id'] = $purchase_id;
+
+            if (isset($c['id'])) {
+                $criteria->addSearchCondition('t.good_id', $c['id']);
+            }
+            if (isset($c['artikul'])) {
+                $criteria->addSearchCondition('t.artikul', $c['artikul']);
+            }
+            if (isset($c['name'])) {
+                $criteria->addSearchCondition('t.name', $c['name']);
+            }
+            if (isset($c['price'])) {
+                $criteria->addSearchCondition('t.price', $c['price']);
+            }
+
+            $goods = Good::model()->findAll($criteria);
+
+            $this->wideScreen = true;
+            if (Yii::app()->request->isAjaxRequest) {
+                $this->pageHtml = $this->renderPartial(
+                    'purchase',
+                    array(
+                        'purchase' => $purchase,
+                        'goods' => $goods,
+                        'c' => $c,
+                    ),
+                    true);
+            }
+            else
+                $this->render(
+                    'purchase',
+                    array(
+                        'purchase' => $purchase,
+                        'goods' => $goods,
+                        'c' => $c,
+                    )
+                );
+        }
+        else
+            throw new CHttpException(403, 'В доступе отказано');
+    }
+
     public function actionShow($purchase_id, $good_id) {
         $good = Good::model()->with('image', 'purchase', 'oic')->findByPk($good_id);
         $order = new Order('create');

@@ -51,15 +51,33 @@ class PurchasesController extends Controller {
         else $this->render('index', array('purchases' => $purchases));
     }
 
-    public function actionMy() {
+    public function actionMy($offset = 0) {
         $c = (isset($_REQUEST['c'])) ? $_REQUEST['c'] : array();
         if (!isset($c['limit'])) $c['limit'] = 30;
 
         $criteria = new CDbCriteria();
         $criteria->limit = $c['limit'];
-        $criteria->offset = (isset($c['offset'])) ? intval($c['offset']) : 0;
+        $criteria->offset = $offset;
         $criteria->addCondition('author_id = :author_id');
         $criteria->params[':author_id'] = Yii::app()->user->getId();
+        $criteria->order = 'create_date DESC';
+
+        if (isset($c['id'])) {
+            //$criteria->params[':id'] = $c['id'];
+            $criteria->addSearchCondition('t.purchase_id', $c['id']);
+        }
+
+        if (isset($c['create_date'])) {
+            $criteria->params[':create_date'] = $c['create_date'];
+            $next_date = new DateTime($c['create_date']);
+            $next_date->add(new DateInterval("P1D"));
+            $criteria->params[':next_date'] = $next_date->format('Y-m-d');
+            $criteria->addCondition('create_date >= :create_date AND create_date < :next_date');
+        }
+
+        if (isset($c['name'])) {
+            $criteria->addSearchCondition('t.name', $c['name']);
+        }
 
         if (isset($c['state'])) {
             $criteria->params[':state'] = $c['state'];

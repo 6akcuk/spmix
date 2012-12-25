@@ -149,6 +149,30 @@ class RolesController extends Controller {
         ));
     }
 
+    public function actionAddItemChild() {
+        $role = $_POST['role'];
+        $item = $_POST['item'];
+
+        /** @var $auth IAuthManager */
+        $auth = Yii::app()->getAuthManager();
+        $success = $auth->addItemChild($role, $item);
+
+        echo json_encode(array('msg' => ($success) ? 'Изменения сохранены' : 'Ошибка при сохранении'));
+        exit;
+    }
+
+    public function actionRemoveItemChild() {
+        $role = $_POST['role'];
+        $item = $_POST['item'];
+
+        /** @var $auth IAuthManager */
+        $auth = Yii::app()->getAuthManager();
+        $auth->removeItemChild($role, $item);
+
+        echo json_encode(array('msg' => 'Изменения сохранены'));
+        exit;
+    }
+
     public function actionSyncRoleItems() {
         /** @var $child RbacItemChild */
         $role = $_POST['role'];
@@ -158,7 +182,7 @@ class RolesController extends Controller {
         $changed = false;
 
         /** @var $auth IAuthManager */
-        $auth = Yii::app()->getAuthManager();
+        /*$auth = Yii::app()->getAuthManager();
 
         foreach ($roleChilds as $child) {
             if (!in_array($child->child, $items)) {
@@ -173,7 +197,7 @@ class RolesController extends Controller {
                 $changed = true;
             }
         }
-
+*/
         if ($changed) echo json_encode(array('msg' => 'Изменения сохранены'));
         else echo json_encode(array());
         exit;

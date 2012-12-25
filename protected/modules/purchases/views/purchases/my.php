@@ -32,12 +32,42 @@ foreach (Purchase::getStateDataArray() as $state) {
 
     </div>
 </div>
-<div class="clearfix">
+<div class="clearfix filters">
     <div class="left">
     <?php echo ActiveHtml::inputPlaceholder(
         'c[id]',
         (isset($c['id'])) ? $c['id'] : '',
-        array('placeholder' => 'ID', 'data-filter' => true)
+        array('placeholder' => 'ID')
+    ); ?>
+    </div>
+    <div class="left">
+    <?php echo ActiveHtml::inputCalendar(
+        'c[create_date]',
+        (isset($c['create_date'])) ? $c['create_date'] : '',
+        'Создана'
+    ); ?>
+    </div>
+    <div class="left">
+        <?php echo ActiveHtml::dropdown(
+        'c[category_id]',
+        'Категория',
+        (isset($c['category_id'])) ? $c['category_id'] : '',
+        PurchaseCategory::getDataArray()
+    ); ?>
+    </div>
+    <div class="left">
+        <?php echo ActiveHtml::inputPlaceholder(
+        'c[name]',
+        (isset($c['name'])) ? $c['name'] : '',
+        array('placeholder' => 'Название')
+    ); ?>
+    </div>
+    <div class="left">
+    <?php echo ActiveHtml::dropdown(
+        'c[state]',
+        'Статус',
+        (isset($c['state'])) ? $c['state'] : '',
+        Purchase::getStateDataArray()
     ); ?>
     </div>
 </div>

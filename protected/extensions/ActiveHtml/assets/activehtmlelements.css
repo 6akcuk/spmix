@@ -23,12 +23,19 @@ span.input_placeholder input {
 
 /* Addon Calendar */
 a.input_calendar {
+    position: relative;
     display: inline-block;
     cursor: pointer;
     border: 2px solid #d3d3d3;
 }
 a.input_calendar span {
     display: inline-block;
+}
+a.input_calendar em {
+    position: absolute;
+    display: none;
+    right: 0;
+    top: -5px;
 }
 /* Calendar */
 .calendar {

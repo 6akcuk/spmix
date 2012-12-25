@@ -84,6 +84,7 @@ class ActiveHtml extends CHtml {
         $items = array();
 
         if (sizeof($data) > 0) {
+            $items[] = '<li><a data-value="" class="default">'. $default .'</a></li>';
             foreach ($data as $nm => $vl) {
                 $items[] = '<li><a data-value="'. $vl .'">'. $nm .'</a></li>';
                 if ($vl == $value) $current = $nm;
@@ -121,6 +122,8 @@ class ActiveHtml extends CHtml {
         ActiveHtml::publishAssets();
 
         return self::openTag('a', array('class' => 'input_calendar tt')) .
+            self::openTag('em', array('class' => 'iconify_x_a')) .
+            self::closeTag('em') .
             self::inputField('hidden', $name, $value, $htmlOptions) .
             self::openTag('span') .
                 $label .

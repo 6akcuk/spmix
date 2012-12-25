@@ -321,7 +321,8 @@ $.fn.dropdown = function() {
             h.val($(this).attr('data-value'));
             hideDDMenu();
 
-            if (c.attr('onchange')) eval(c.attr('onchange'));
+            //if (c.attr('onchange'))
+            h.change();// eval(c.attr('onchange'));
         });
     });
 }
@@ -415,7 +416,9 @@ $.fn.calendar = function() {
 
                 over.attr('title', _c.default);
                 over.children('input').val(year +'-'+ (month+1) +'-'+ date);
+                over.children('input').blur(); // позволяет вызывать пользовательские события
                 over.children('span').html(date + ' '+ _c.lmonths[month] + ' '+ year);
+                over.children('em').show();
                 _c.hide();
             },
 
@@ -454,7 +457,14 @@ $.fn.calendar = function() {
                 $('body').unbind('click', _c.hide);
                 c.remove();
             },
-
+            clear: function(e) {
+                e.stopPropagation();
+                over.children('em').hide();
+                over.children('span').html(_c.default);
+                over.attr('title', '');
+                over.children('input').val('');
+                over.children('input').blur(); // позволяет вызывать пользовательские события
+            },
             checkPreinit: function() {
                 var dt = over.find('input').val(),
                     data = [];
@@ -463,6 +473,7 @@ $.fn.calendar = function() {
                     data = dt.split('-');
                     var date = data[2], month = parseInt(data[1]) - 1, year = parseInt(data[0]);
                     _c.curMY = [month, year];
+                    over.children('em').show();
                     over.children('span').html(date + ' '+ _c.lmonths[month] + ' '+ year);
                     over.attr('title', _c.default);
                 }
@@ -477,6 +488,7 @@ $.fn.calendar = function() {
         }
 
         over.click(Calendar.show);
+        over.children('em').click(Calendar.clear);
         Calendar.default = over.find('span').text();
 
         if (Calendar.isFirst) {
@@ -885,7 +897,31 @@ var Upload = {
 
 /* Search Filters */
 $.fn.filters = function() {
+    this.each(function()
+    {
+        var $el = $(this).children();
 
+        if ($el.hasClass('input_placeholder')) {
+            var $this = $el.find('input');
+            $this.blur(function() {
+                nav.go('?'+ $this.attr('name') +'='+ $this.val(), event, {revoke: ($this.val() == '')});
+            }).keypress(function(ev) {
+                if (ev.keyCode == 13) nav.go('?'+ $this.attr('name') +'='+ $this.val());
+            });
+        }
+        else if ($el.hasClass('input_calendar')) {
+            var $this = $el.find('input');
+            $this.blur(function() {
+                nav.go('?'+ $this.attr('name') +'='+ $this.val(), event, {revoke: ($this.val() == '')});
+            });
+        }
+        else if ($el.hasClass('dropdown')) {
+            var $this = $el.find('input');
+            $this.change(function() {
+                nav.go('?'+ $this.attr('name') +'='+ $this.val(), event, {revoke: ($this.val() == '')});
+            });
+        }
+    });
 }
 
 /* Navigation Object */
@@ -973,6 +1009,7 @@ var nav = {
             curObj = nav.q2obj(curLoc[1]);
 
         if (a[1]) {
+            if (a[0] == '') a[0] = curLoc[0];
             if (a[0] != curLoc[0]) nav.objLoc = {};
             $.extend(true, nav.objLoc, curObj, obj);
             q = nav.obj2q(nav.objLoc);
@@ -1155,6 +1192,7 @@ $().ready(function() {
 
     $('div.tabs').tabs();
     $('.smarttext textarea').autosize();
+    $('div.filters > div').filters();
 
     $('#content').on('contentChanged', function() {
         $('#content span.input_placeholder input, #content span.input_placeholder textarea').inputPlaceholder();
@@ -1170,6 +1208,8 @@ $().ready(function() {
         {
             Upload.onDOMReady(this);
         });
+
+        $('div.filters > div').filters();
     });
 });
 

@@ -39,7 +39,7 @@ var LinkRoleOperation = {
     },
     edit: function(role) {
         var olHtml = ['<ul class="blocks">'], rolHtml = ['<ul class="blocks">'];
-        LinkRoleOperation.initSync(role);
+        //LinkRoleOperation.initSync(role);
 
         $.each(operationsList, function(i, op) {
             olHtml.push('<li><a id="op-'+ op[0] +'" style="display: '+ (LinkRoleOperation.isRoleItem(role, op[0]) ? 'none' : 'block') +'" onclick="LinkRoleOperation.addChild(\''+ role +'\', \''+ op[0] +'\')">'+ op[0] +'<span class="iconify">&</span></a></li>');
@@ -58,6 +58,10 @@ var LinkRoleOperation = {
         roleChilds[role].push(item);
         $(document.getElementById('op-'+ item)).hide();
         $('<li id="li-'+ item +'"><a onclick="LinkRoleOperation.removeChild(\''+ role +'\', \''+ item +'\')">'+ item +'<span class="iconify">*</span></a></li>').appendTo('#content .dualblocks div.right ul');
+
+        ajax.post('/users/roles/addItemChild', {role: role, item: item}, function(r) {
+            if (r.msg) msi.show(r.msg);
+        });
     },
     removeChild: function(role, item) {
         $(document.getElementById('op-'+ item)).show();
@@ -66,5 +70,11 @@ var LinkRoleOperation = {
         $.each(roleChilds[role], function(i, child) {
             if (child == item) delete roleChilds[role][i];
         });
+
+        ajax.post('/users/roles/removeItemChild', {role: role, item: item}, function(r) {
+            if (r.msg) msi.show(r.msg);
+        });
     }
 };
+
+try {stmgr.loaded('link-role-operation.js');}catch(e){}

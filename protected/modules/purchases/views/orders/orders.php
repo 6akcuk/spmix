@@ -1,15 +1,96 @@
 <?php
 /**
  * @var $order Order
+ * @var $purchase Purchase
  */
 
 Yii::app()->getClientScript()->registerCssFile('/css/purchases.css');
 Yii::app()->getClientScript()->registerScriptFile('/js/purchase.js');
 
-$this->pageTitle = Yii::app()->name .' - Заказы';
+$this->pageTitle = Yii::app()->name .' - Заказы к закупке #'. $purchase->purchase_id;
 ?>
 
-<h1>Заказы</h1>
+<h1>Заказы к закупке #<?php echo $purchase->purchase_id ?> "<?php echo $purchase->name ?>"</h1>
+
+<div class="clearfix">
+    <div class="left sortlimit">
+        Выводить по:
+        <?php echo ActiveHtml::link('10', '/orders'. $purchase->purchase_id .'?c[limit]=10', ($c['limit'] == 10) ? array('class' => 'selected') : array()) ?>
+        <?php echo ActiveHtml::link('30', '/orders'. $purchase->purchase_id .'?c[limit]=30', ($c['limit'] == 30) ? array('class' => 'selected') : array()) ?>
+        <?php echo ActiveHtml::link('50', '/orders'. $purchase->purchase_id .'?c[limit]=50', ($c['limit'] == 50) ? array('class' => 'selected') : array()) ?>
+        <?php echo ActiveHtml::link('100', '/orders'. $purchase->purchase_id .'?c[limit]=100', ($c['limit'] == 100) ? array('class' => 'selected') : array()) ?>
+    </div>
+    <div class="right">
+
+    </div>
+</div>
+<div class="clearfix filters">
+    <div class="left">
+        <?php echo ActiveHtml::inputPlaceholder(
+        'c[id]',
+        (isset($c['id'])) ? $c['id'] : '',
+        array('placeholder' => 'ID')
+    ); ?>
+    </div>
+    <div class="left">
+        <?php echo ActiveHtml::inputCalendar(
+        'c[creation_date]',
+        (isset($c['creation_date'])) ? $c['creation_date'] : '',
+        'Дата заказа'
+    ); ?>
+    </div>
+    <div class="left">
+        <?php echo ActiveHtml::inputPlaceholder(
+        'c[good]',
+        (isset($c['good'])) ? $c['good'] : '',
+        array('placeholder' => 'Товар')
+    ); ?>
+    </div>
+    <div class="left">
+        <?php echo ActiveHtml::inputPlaceholder(
+        'c[artikul]',
+        (isset($c['artikul'])) ? $c['artikul'] : '',
+        array('placeholder' => 'Артикул')
+    ); ?>
+    </div>
+    <div class="left">
+        <?php echo ActiveHtml::inputPlaceholder(
+        'c[size]',
+        (isset($c['size'])) ? $c['size'] : '',
+        array('placeholder' => 'Размер')
+    ); ?>
+    </div>
+    <div class="left">
+        <?php echo ActiveHtml::inputPlaceholder(
+        'c[color]',
+        (isset($c['color'])) ? $c['color'] : '',
+        array('placeholder' => 'Цвет')
+    ); ?>
+    </div>
+    <div class="left">
+        <?php echo ActiveHtml::inputPlaceholder(
+        'c[name]',
+        (isset($c['name'])) ? $c['name'] : '',
+        array('placeholder' => 'Заказчик')
+    ); ?>
+    </div>
+    <div class="left">
+        <?php echo ActiveHtml::dropdown(
+        'c[city_id]',
+        'Город',
+        (isset($c['city_id'])) ? $c['city_id'] : '',
+        City::getDataArray()
+    ); ?>
+    </div>
+    <div class="left">
+        <?php echo ActiveHtml::dropdown(
+        'c[status]',
+        'Статус',
+        (isset($c['status'])) ? $c['status'] : '',
+        Order::getStatusDataArray()
+    ); ?>
+    </div>
+</div>
 <table>
     <thead>
     <tr>

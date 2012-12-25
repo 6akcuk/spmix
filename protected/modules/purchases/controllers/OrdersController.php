@@ -104,14 +104,57 @@ class OrdersController extends Controller {
             );
     }
 
-    public function actionPurchase($purchase_id) {
+    public function actionPurchase($purchase_id, $offset = 0) {
         $purchase = Purchase::model()->findByPk($purchase_id);
 
         if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
             Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('purchase' => $purchase))) {
+            $c = (isset($_REQUEST['c'])) ? $_REQUEST['c'] : array();
+            if (!isset($c['limit'])) $c['limit'] = 30;
+
             $criteria = new CDbCriteria();
+            $criteria->limit = $c['limit'];
+            $criteria->offset = $offset;
             $criteria->addCondition('t.purchase_id = :purchase_id');
             $criteria->params[':purchase_id'] = $purchase_id;
+            $criteria->order = 'creation_date DESC';
+
+            if (isset($c['id'])) {
+                $criteria->addSearchCondition('t.order_id', $c['id']);
+            }
+
+            if (isset($c['creation_date'])) {
+                $criteria->params[':create_date'] = $c['creation_date'];
+                $next_date = new DateTime($c['creation_date']);
+                $next_date->add(new DateInterval("P1D"));
+                $criteria->params[':next_date'] = $next_date->format('Y-m-d');
+                $criteria->addCondition('creation_date >= :create_date AND creation_date < :next_date');
+            }
+
+            if (isset($c['good'])) {
+                $criteria->addSearchCondition('good.name', $c['good']);
+            }
+            if (isset($c['artikul'])) {
+                $criteria->addSearchCondition('good.artikul', $c['artikul']);
+            }
+            if (isset($c['size'])) {
+                $criteria->addSearchCondition('t.size', $c['size']);
+            }
+            if (isset($c['color'])) {
+                $criteria->addSearchCondition('t.color', $c['color']);
+            }
+            if (isset($c['name'])) {
+                $criteria->addSearchCondition('profile.lastname', $c['name']);
+                $criteria->addSearchCondition('profile.firstname', $c['name'], true, 'OR');
+            }
+            if (isset($c['city_id'])) {
+                $criteria->params[':city_id'] = $c['city_id'];
+                $criteria->addCondition('profile.city_id = :city_id');
+            }
+            if (isset($c['status'])) {
+                $criteria->params[':status'] = $c['status'];
+                $criteria->addCondition('t.status = :status');
+            }
 
             $orders = Order::model()->with('good', 'customer', 'payment')->findAll($criteria);
 
@@ -120,7 +163,9 @@ class OrdersController extends Controller {
                 $this->pageHtml = $this->renderPartial(
                     'orders',
                     array(
+                        'purchase' => $purchase,
                         'orders' => $orders,
+                        'c' => $c,
                     ),
                     true);
             }
@@ -128,7 +173,9 @@ class OrdersController extends Controller {
                 $this->render(
                     'orders',
                     array(
+                        'purchase' => $purchase,
                         'orders' => $orders,
+                        'c' => $c,
                     )
                 );
         }

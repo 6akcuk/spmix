@@ -15,7 +15,7 @@
         </a>
     </td>
     <td><?php echo ActiveHtml::date($purchase->stop_date, false, true) ?></td>
-    <td><?php echo Yii::t('purchase', '{n} товар|{n} товара|{n} товаров', $purchase->goodsNum) ?></td>
+    <td><?php echo ActiveHtml::link(Yii::t('purchase', '{n} товар|{n} товара|{n} товаров', $purchase->goodsNum), '/goods'. $purchase->purchase_id) ?></td>
     <td>
         <?php echo ActiveHtml::link(Yii::t('purchase', '{n} заказ|{n} заказа|{n} заказов', $purchase->ordersNum), '/orders'. $purchase->purchase_id) ?>
         <br/>
