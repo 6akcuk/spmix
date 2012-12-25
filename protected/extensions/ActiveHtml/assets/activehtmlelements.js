@@ -627,8 +627,6 @@ var sfar = {
     }
 };
 
-/* Search Field */
-
 /* Form Easy Control */
 var FormMgr = {
     submit: function(el, pos, onDone) {
@@ -884,6 +882,11 @@ var Upload = {
         report_window.create('#file_button_'+ id, 'left', message);
     }
 };
+
+/* Search Filters */
+$.fn.filters = function() {
+
+}
 
 /* Navigation Object */
 /* Great respect for VK.com developers */

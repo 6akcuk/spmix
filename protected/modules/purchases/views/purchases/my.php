@@ -34,10 +34,10 @@ foreach (Purchase::getStateDataArray() as $state) {
 </div>
 <div class="clearfix">
     <div class="left">
-        <?php echo ActiveHtml::inputPlaceholder(
+    <?php echo ActiveHtml::inputPlaceholder(
         'c[id]',
         (isset($c['id'])) ? $c['id'] : '',
-        array('placeholder' => 'ID', '')
+        array('placeholder' => 'ID', 'data-filter' => true)
     ); ?>
     </div>
 </div>
