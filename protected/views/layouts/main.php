@@ -1,8 +1,8 @@
 <?php
 Yii::app()->getClientScript()->registerScriptFile('/js/jquery-1.8.2.min.js');
 Yii::app()->getClientScript()->registerScriptFile('/js/main.js');
-Yii::app()->getClientScript()->registerCssFile('/css/main.css');
-Yii::app()->getClientScript()->registerCssFile('/css/elements.css');
+Yii::app()->getClientScript()->registerCssFile('/css/main.css', '', 'before purchases.css');
+Yii::app()->getClientScript()->registerCssFile('/css/elements.css', '', 'before main.css');
 
 $app=Yii::app();
 $request = $app->getRequest();
@@ -54,7 +54,7 @@ $cookies = $request->getCookies();
         </div>
         <div class="fl_l login">
             <div class="clearfix">
-                <?php echo ActiveHtml::dropdown('cur_city', 'Город', $cookies['cur_city'], City::getDataArray()) ?>
+                <?php echo ActiveHtml::dropdown('cur_city', 'Город', ($cookies['cur_city']) ? $cookies['cur_city']->value : '', City::getDataArray()) ?>
             </div>
         </div>
         <div class="clear"></div>

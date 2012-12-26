@@ -19,12 +19,23 @@ class PurchasesController extends Controller {
         );
     }
 
-    public function actionIndex($c = array()) {
+    public function actionIndex($offset = 0) {
+        $cookies = Yii::app()->getRequest()->getCookies();
+        $c = (isset($_REQUEST['c'])) ? $_REQUEST['c'] : array();
+
         $criteria = new CDbCriteria();
         $criteria->limit = 20;
-        $criteria->offset = (isset($c['offset'])) ? intval($c['offset']) : 0;
-        $criteria->addCondition('t.city_id = :city_id');
-        $criteria->params[':city_id'] = Yii::app()->user->model->profile->city_id;
+        $criteria->offset = $offset;
+        $criteria->order = 'create_date DESC';
+
+        if ($cookies['cur_city']) {
+            $criteria->addCondition('t.city_id = :city_id');
+            $criteria->params[':city_id'] = $cookies['cur_city']->value;
+        }
+        elseif (!Yii::app()->user->getIsGuest()) {
+            $criteria->addCondition('t.city_id = :city_id');
+            $criteria->params[':city_id'] = Yii::app()->user->model->profile->city_id;
+        }
 
         if (!isset($c['state'])) {
             $criteria->params[':state'] = Purchase::STATE_ORDER_COLLECTION;
@@ -46,9 +57,9 @@ class PurchasesController extends Controller {
         $purchases = Purchase::model()->with('city', 'author')->findAll($criteria);
 
         if (Yii::app()->request->isAjaxRequest) {
-            $this->pageHtml = $this->renderPartial('index', array('purchases' => $purchases), true);
+            $this->pageHtml = $this->renderPartial('index', array('purchases' => $purchases, 'c' => $c), true);
         }
-        else $this->render('index', array('purchases' => $purchases));
+        else $this->render('index', array('purchases' => $purchases, 'c' => $c));
     }
 
     public function actionMy($offset = 0) {

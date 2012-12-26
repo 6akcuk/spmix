@@ -57,6 +57,7 @@ return array(
             'itemTable' => 'rbac_items',
             'itemChildTable' => 'rbac_item_childs',
             'assignmentTable' => 'rbac_assignments',
+            'defaultRoles' => array('Гость'),
         ),
 
 		'urlManager'=>array(

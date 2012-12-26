@@ -13,7 +13,7 @@ $().ajaxError(function(xhr) {
 
 $().ready(function() {
     $('input[name="cur_city"]').change(function() {
-        ajex.post('/setcity', {city_id: $(this).val()}, function(r) {
+        ajax.post('/setcity', {city_id: $(this).val()}, function(r) {
             if (r.success) location.href = location.href;
         });
     });

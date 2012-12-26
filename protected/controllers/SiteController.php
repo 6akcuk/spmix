@@ -29,7 +29,11 @@ class SiteController extends Controller
 
     public function actionSetCity() {
         $cookies = Yii::app()->getRequest()->getCookies();
-        $cookies->add('cur_city', intval($_POST['city_id']));
+        $cookies->remove('cur_city');
+
+        $city = new CHttpCookie('cur_city', intval($_POST['city_id']));
+        $city->expire = time() + (60 * 60 * 24 * 30 * 12 * 20);
+        $cookies->add('cur_city', $city);
 
         echo json_encode(array('success' => true, 'msg' => 'Изменения сохранены'));
         exit;

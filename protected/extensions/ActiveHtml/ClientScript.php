@@ -103,6 +103,39 @@ class ClientScript extends CClientScript {
         );
     }
 
+    protected function orderCss()
+    {
+        foreach ($this->cssFiles as $key => $script) {
+            if (!$script['priority'])
+                continue;
+
+            $priority = trim($script['priority']);
+            $priorities = (strstr($priority, ',')) ? explode(",", $priority) : array($priority);
+
+            foreach ($priorities as $priority) {
+                if ($priority[0] == 'b') {
+                    $move = 'before';
+                    $scriptName = substr($priority, 7);
+                }
+                elseif ($priority[0] == 'a') {
+                    $move = 'after';
+                    $scriptName = substr($priority, 6);
+                }
+
+                $tpos = $this->getKeyScriptInList($this->cssFiles, $scriptName);
+                if (($move == 'after' && $tpos > $key) || ($move == 'before' && $tpos < $key)) {
+                    $needAnotherStep = true;
+
+                    $buffer = $this->cssFiles[$key];
+                    $scripts[$key] = $this->cssFiles[$tpos];
+                    $scripts[$tpos] = $buffer;
+
+                    $buffer = null;
+                }
+            }
+        }
+    }
+
     protected function orderScripts()
     {
         $needAnotherStep = true;
@@ -250,10 +283,10 @@ class ClientScript extends CClientScript {
             $html.=CHtml::metaTag($meta['content'],null,null,$meta)."\n";
         foreach($this->linkTags as $link)
             $html.=CHtml::linkTag(null,null,null,null,$link)."\n";
-        foreach($this->cssFiles as $url=>$media) {
-            $html.=CHtml::cssFile($url,$media)."\n";
+        foreach($this->cssFiles as $css) {
+            $html.=CHtml::cssFile($css['url'],$css['media'])."\n";
 
-            $al = $this->parseAjaxRepresentation($url);
+            $al = $this->parseAjaxRepresentation($css['url']);
             $staticFiles[] = "'". $al['scriptname'] ."': {v: ". $al['version'] .", l: 1}";
         }
         foreach($this->css as $css) {
@@ -365,7 +398,7 @@ class ClientScript extends CClientScript {
      * @param string $media media that the CSS file should be applied to. If empty, it means all media types.
      * @return CClientScript the CClientScript object itself (to support method chaining, available since version 1.1.5).
      */
-    public function registerCssFile($url,$media='')
+    public function registerCssFile($url,$media='',$priority = null)
     {
         //if (!stristr("assets", $url)) {
             if (!file_exists(Yii::app()->basePath .'/../'. $url)) return;
@@ -412,7 +445,7 @@ class ClientScript extends CClientScript {
         //else $v = 1;
 
         $this->hasScripts=true;
-        $this->cssFiles[$url .'?v='. $v] = $media;
+        $this->cssFiles[] = array('url' => $url .'?v='. $v, 'media' => $media, 'priority' => $priority);
         $params=func_get_args();
         $this->recordCachingAction('clientScript','registerCssFile',$params);
         return $this;
