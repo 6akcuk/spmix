@@ -10,20 +10,19 @@ $nextoffset = ($page < $maxpage) ? $this->offset + $this->delta : $this->offsets
     <ul>
         <? if ($page > 4) :?>
         <li class="disabled">
-            <? $this->url['offset'] = $prevoffset; ?>
-            <? echo CHtml::link('&laquo;', $this->url, array('onclick' => 'return nav.go(this, event)')); ?>
+            <? //$this->url['offset'] = $prevoffset; ?>
+            <? echo ActiveHtml::link('&laquo;', $this->url .'?offset='. $prevoffset); ?>
         </li>
         <? endif; ?>
         <? for ($i=$minpage; $i<=$maxpage; $i++): ?>
         <li<? if ($page == $i): ?> class="active"<? endif; ?>>
-            <? $this->url['offset'] = ($i * $this->delta) - $this->delta; ?>
-            <? echo CHtml::link($i, $this->url, array('onclick' => 'return nav.go(this, event)')); ?>
+            <? $offset = ($i * $this->delta) - $this->delta; ?>
+            <? echo ActiveHtml::link($i, $this->url .'?offset='. $offset); ?>
         </li>
         <? endfor; ?>
         <? if ($pages > $maxpage): ?>
         <li>
-            <? $this->url['offset'] = $nextoffset; ?>
-            <? echo CHtml::link('&raquo;', $this->url, array('onclick' => 'return nav.go(this, event)')); ?>
+            <? echo ActiveHtml::link('&raquo;', $this->url .'?offset='. $nextoffset); ?>
         </li>
         <? endif; ?>
     </ul>

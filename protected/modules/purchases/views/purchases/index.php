@@ -20,7 +20,14 @@ $this->pageTitle = Yii::app()->name .' - Закупки';
         <div class="left dropdown_down">
             <?php echo ActiveHtml::dropdown('c[category_id]', 'Категория', (isset($c['category_id'])) ? $c['category_id'] : '', PurchaseCategory::getDataArray()) ?>
         </div>
-
+        <div class="right">
+        <?php /*$this->widget('Paginator', array(
+            'url' => '/purchases',
+            'offset' => $offset,
+            'offsets' => 1,
+            'delta' => 20,
+        ));*/ ?>
+        </div>
     </div>
     <?php $this->renderPartial('_list', array('purchases' => $purchases)) ?>
 </div>
