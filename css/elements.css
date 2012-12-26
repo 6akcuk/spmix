@@ -31,8 +31,8 @@ span.input_placeholder label {
 }
 
 a.input_calendar span {
-    font-size: 14px;
-    padding: 10px;
+    font-size: 12px;
+    padding: 4px;
     color: #5d6266;
 }
 
@@ -205,3 +205,6 @@ table.data th.right, table.data td.right {
     margin-right: 10px;
 }
 
+.filters {
+    margin: 10px 0px;
+}

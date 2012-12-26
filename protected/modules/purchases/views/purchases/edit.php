@@ -59,11 +59,11 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
         </div>
         <div class="row">
             <?php echo $form->label($model, 'supplier_url') ?>
-            <?php echo $form->inputPlaceholder($model, 'supplier_url') ?>
+            <?php echo $form->textfield($model, 'supplier_url') ?>
         </div>
         <div class="row">
             <?php echo $form->label($model, 'price_url') ?>
-            <?php echo $form->inputPlaceholder($model, 'price_url') ?>
+            <?php echo $form->textfield($model, 'price_url') ?>
         </div>
     </div>
 </div>

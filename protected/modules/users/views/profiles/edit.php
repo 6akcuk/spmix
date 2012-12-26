@@ -20,22 +20,32 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
     <div class="left">
         <div class="row">
             <?php echo $form->label($userinfo->profile, 'firstname') ?>
+        </div>
+        <div class="row">
             <?php echo $form->inputPlaceholder($userinfo->profile, 'firstname') ?>
         </div>
         <div class="row">
             <?php echo $form->label($userinfo->profile, 'lastname') ?>
+        </div>
+        <div class="row">
             <?php echo $form->inputPlaceholder($userinfo->profile, 'lastname') ?>
         </div>
         <div class="row">
             <?php echo $form->label($userinfo->profile, 'middlename') ?>
+        </div>
+        <div class="row">
             <?php echo $form->inputPlaceholder($userinfo->profile, 'middlename') ?>
         </div>
         <div class="row">
             <?php echo $form->label($userinfo->profile, 'photo') ?>
+        </div>
+        <div class="row">
             <?php echo $form->upload($userinfo->profile, 'photo', 'Загрузить фотографию', array('data-image' => 'a')) ?>
         </div>
         <div class="row">
             <?php echo $form->label($userinfo->profile, 'about') ?>
+        </div>
+        <div class="row">
             <?php echo $form->smartTextarea($userinfo->profile, 'about') ?>
         </div>
     </div>
