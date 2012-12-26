@@ -35,7 +35,7 @@ $cookies = $request->getCookies();
             </div>
             <div class="fl_l login">
                 <div class="clearfix">
-                <?php echo ActiveHtml::dropdown('cur_city', 'Город', $cookies['cur_city'], City::getDataArray()) ?>
+                <?php echo ActiveHtml::dropdown('cur_city', 'Город', ($cookies['cur_city']) ? $cookies['cur_city']->value : '', City::getDataArray()) ?>
                 </div>
                 <?php
                 if (Yii::app()->user->getIsGuest()) {
@@ -52,12 +52,11 @@ $cookies = $request->getCookies();
     <div class="slide">
         <div class="wrapper">
 
-
         </div>
     </div>
     <div class="main">
         <div class="wrapper">
-
+            <?php $this->widget('application.modules.purchases.components.NewPurchases') ?>
         </div>
     </div>
     <div class="wrapper">
