@@ -452,6 +452,11 @@ class PurchasesController extends Controller {
                 else $psizes = array();
 
                 if($model->validate() && $model->save()) {
+                    $image = new GoodImages();
+                    $image->good_id = $model->good_id;
+                    $image->image = $_POST['image'];
+                    $image->save();
+
                     $purchase->sizes = json_encode($psizes);
                     $purchase->save(true, array('sizes'));
 

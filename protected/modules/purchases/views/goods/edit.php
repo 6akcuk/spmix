@@ -37,9 +37,6 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
         <div class="row">
             <?php echo $form->inputPlaceholder($good, 'url') ?>
         </div>
-        <div class="row">
-            <?php echo $form->inputPlaceholder($good, 'description') ?>
-        </div>
     </div>
     <div class="left purchase_column">
         <?php if(is_array($sizes)): ?>
@@ -75,6 +72,9 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
             <a class="iconify_x_a" onclick="sfar.del(this)" style="display:none"></a>
         </div>
     </div>
+</div>
+<div class="row">
+    <?php echo $form->smartTextarea($good, 'description', array('style' => 'width: 365px')) ?>
 </div>
 <div class="row">
     <?php echo ActiveHtml::submitButton('Сохранить изменения', array('class' => 'btn light_blue', 'onclick' => 'return Purchase.editgood()')); ?>

@@ -31,7 +31,7 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
             <?php echo $form->inputPlaceholder($model, 'url') ?>
         </div>
         <div class="row">
-            <?php echo $form->inputPlaceholder($model, 'description') ?>
+            <?php echo ActiveHtml::upload('image', '', 'Прикрепить фотографию') ?>
         </div>
     </div>
     <div class="left purchase_column">
@@ -46,6 +46,9 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
             <a class="iconify_x_a" onclick="sfar.del(this)" style="display:none"></a>
         </div>
     </div>
+</div>
+<div class="row">
+    <?php echo $form->smartTextarea($model, 'description', array('style' => 'width: 365px')) ?>
 </div>
 <div class="row">
     <?php echo ActiveHtml::submitButton('Добавить товар', array('class' => 'btn light_blue', 'onclick' => 'return Purchase.addgood()')); ?>

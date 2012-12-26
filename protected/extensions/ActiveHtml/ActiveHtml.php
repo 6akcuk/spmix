@@ -86,8 +86,10 @@ class ActiveHtml extends CHtml {
         if (sizeof($data) > 0) {
             $items[] = '<li><a data-value="" class="default">'. $default .'</a></li>';
             foreach ($data as $nm => $vl) {
-                $items[] = '<li><a data-value="'. $vl .'">'. $nm .'</a></li>';
-                if ($vl == $value) $current = $nm;
+                if ($nm) {
+                    $items[] = '<li><a data-value="'. $vl .'">'. $nm .'</a></li>';
+                    if ($vl == $value) $current = $nm;
+                }
             }
         }
         if (!isset($current)) $current = $default;

@@ -29,7 +29,16 @@ foreach (Purchase::getStateDataArray() as $state) {
         <label for="dont_show">не отображать завершенные закупки</label>
     </div>
     <div class="right">
-
+    <? $this->widget('Paginator', array(
+        'offsets' => $model->imagesCountRN,
+        'offset' => $offset,
+        'delta' => 18,
+        'url' => array(
+            '/photosessions/associate',
+            'id' => $model->id,
+            'offset' => $offset,
+        )
+    )); ?>
     </div>
 </div>
 <div class="clearfix filters">
