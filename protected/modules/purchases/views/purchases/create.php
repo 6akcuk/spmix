@@ -1,3 +1,4 @@
+<div class="create">
 <?php
 /** @var $userinfo User */
 
@@ -8,7 +9,6 @@ $this->pageTitle = Yii::app()->name .' - Создание новой закуп�
 ?>
 
 <h1>Создание новой закупки</h1>
-
 <?php
 /** @var $form ActiveForm */
 $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
@@ -34,3 +34,4 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
     <?php echo ActiveHtml::submitButton('Создать закупку', array('class' => 'btn light_blue', 'onclick' => 'return Purchase.create()')); ?>
 </div>
 <?php $this->endWidget(); ?>
+</div>

@@ -882,9 +882,9 @@ div.ls_columns div.column.options div {
 .logo_a {
     background: url('/images/logo.png');
     display: block;
-    width: 696px;
+    width: 469px;
     height: 103px;
-    margib: 20px 0px;
+
 }
 
 .login {
@@ -895,6 +895,7 @@ div.ls_columns div.column.options div {
     background: #5d783c;
     padding: 3px 20px 3px 20px;
 }
+
 
 .login_text {
     width: 200px;

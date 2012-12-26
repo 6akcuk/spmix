@@ -1,4 +1,5 @@
-<?php
+<div class="create">
+    <?php
 /** @var $model Purchase */
 
 Yii::app()->getClientScript()->registerCssFile('/css/purchases.css');
@@ -31,7 +32,7 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
             <?php echo $form->inputPlaceholder($model, 'url') ?>
         </div>
         <div class="row">
-            <?php echo ActiveHtml::upload('image', '', 'Прикрепить фотографию') ?>
+            <?php echo ActiveHtml::upload('image', '', 'Прикрепить фотографию', array('data-image' => 'a')) ?>
         </div>
     </div>
     <div class="left purchase_column">
@@ -48,9 +49,10 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
     </div>
 </div>
 <div class="row">
-    <?php echo $form->smartTextarea($model, 'description', array('style' => 'width: 365px')) ?>
+    <?php echo $form->smartTextarea($model, 'description', array('style' => 'width: 520px')) ?>
 </div>
 <div class="row">
     <?php echo ActiveHtml::submitButton('Добавить товар', array('class' => 'btn light_blue', 'onclick' => 'return Purchase.addgood()')); ?>
 </div>
 <?php $this->endWidget(); ?>
+    </div>

@@ -158,3 +158,134 @@ table td {
 .mytable {
     margin-top: 10px;
 }
+
+.create a.input_calendar {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    padding: 4px 8px 8px 8px;
+    font-size: 12px;
+    width: 231px;
+    height: 13px;
+    color: #7b8084;
+    background: url('/images/textarea_login.jpg') #fefffa repeat-x top;
+    border: 1px solid #557132;
+}
+.create a.input_calendar span {
+    display: inline-block;
+}
+.create a.input_calendar em {
+    position: absolute;
+    display: none;
+    right: 0;
+    top: -5px;
+}
+
+.create div.dropdown {
+    display: inline-block;
+    text-align: left;
+    position: relative;
+    float: left;
+    margin: 4px 0px;
+}
+.create div.dropdown span.text {
+    float: left;
+    display: inline-block;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 4px 5px 4px 10px;
+    background: #ededf0;
+    min-width: 211px;
+}
+.create div.dropdown span.arrow {
+    float: right;
+    display: inline-block;
+    cursor: pointer;
+    padding: 4px 4px 4px 5px;
+    background: #254a10;
+    text-align: center;
+    color: #fff;
+}
+.create div.dropdown:hover span.arrow {
+    background: #447229;
+}
+
+.create div.dropdown_down {
+    margin-bottom: 10px;
+}
+
+.create div.dropdown ul {
+    display: none;
+    position: absolute;
+    background: #ededf0;
+    z-index: 99;
+}
+.create div.dropdown ul li a {
+    display: block;
+    padding: 4px 5px 4px 10px;
+}
+.create div.dropdown ul li a:hover {
+    background: #508033;
+    color: #fff
+}
+
+.create .fileupload .filebutton {
+    position: relative;
+}
+.create .fileupload .filebutton input {
+    position: absolute;
+    right: 0;
+    opacity: 0.01;
+    filter: alpha(opacity=1);
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    font-size: 6.54em;
+    color: #444;
+    min-width: 194px;
+}
+.create .fileupload .attach {
+    display: inline-block;
+    padding: 2px 8px 2px 8px;
+    cursor: pointer;
+    border: 0;
+    font-size: 12px;
+    background: url('/images/login_bttn.jpg');
+    color: #fff;
+    width: 233px;
+    text-align: center;
+}
+.create .fileupload .attach:hover {
+    background: #74c7f7
+}
+
+.create .light_blue.btn {
+    border: 0;
+    background: url('/images/login_bttn.jpg');
+    color: #fff;
+    height: 25px;
+    width: 249px;
+}
+.create .light_blue.btn:hover {
+    color: #fff
+}
+
+.create input[type='text'], textarea {
+    padding: 8px;
+    font-size: 12px;
+    width: 231px;
+    height: 9px;
+    color: #7b8084;
+    background: url('/images/textarea_login.jpg') #fefffa repeat-x top;
+    border: 1px solid #557132;
+
+}
+.purchase_name {
+    background: #70973f;
+    color: #fff;
+    padding: 4px 20px 4px 20px;
+}
+.purchase_name a {
+    font-weight: 700;
+    color: #fff;
+}

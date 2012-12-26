@@ -26,7 +26,13 @@ a.input_calendar {
     position: relative;
     display: inline-block;
     cursor: pointer;
-    border: 1px solid #d3d3d3;
+    padding: 4px 8px 8px 8px;
+    font-size: 12px;
+    width: 105px;
+    height: 13px;
+    color: #7b8084;
+    background: url('/images/textarea_login.jpg') #fefffa repeat-x top;
+    border: 1px solid #557132;
 }
 a.input_calendar span {
     display: inline-block;
@@ -37,6 +43,7 @@ a.input_calendar em {
     right: 0;
     top: -5px;
 }
+
 /* Calendar */
 .calendar {
     position: absolute;
@@ -99,6 +106,7 @@ div.dropdown {
     text-align: left;
     position: relative;
     float: left;
+    margin: 4px 0px;
 }
 div.dropdown span.text {
     float: left;

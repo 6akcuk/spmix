@@ -1,3 +1,4 @@
+<div class="create">
 <?php
 /** @var $purchase Purchase */
 
@@ -55,3 +56,4 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
     <?php echo ActiveHtml::submitButton('Заказать товар', array('class' => 'btn light_blue', 'onclick' => 'return FormMgr.submit(\'#quickform\')')); ?>
 </div>
 <?php $this->endWidget(); ?>
+    </div>

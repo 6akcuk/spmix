@@ -1,3 +1,4 @@
+<div class="my">
 <?php
 /** @var $model Purchase */
 
@@ -29,20 +30,87 @@ foreach (Purchase::getStateDataArray() as $state) {
         <label for="dont_show">не отображать завершенные закупки</label>
     </div>
     <div class="right">
-
+    <? /*$this->widget('Paginator', array(
+        'offsets' => $model->imagesCountRN,
+        'offset' => $offset,
+        'delta' => 18,
+        'url' => array(
+            '/photosessions/associate',
+            'id' => $model->id,
+            'offset' => $offset,
+        )
+    ));*/ ?>
     </div>
 </div>
-<div class="filters clearfix">
-    <div class="left">
-        <?php echo ActiveHtml::inputPlaceholder(
+
+<div class="clearfix">
+    <table class="bezborder" style="margin-top: 4px">
+        <thead>
+        <tr>
+            <td>Категория:</td>
+            <td>   <div class="filters_my_category">
+                <?php echo ActiveHtml::dropdown(
+                'c[category_id]',
+                'Категория',
+                (isset($c['category_id'])) ? $c['category_id'] : '',
+                PurchaseCategory::getDataArray()
+            ); ?>
+            </div></td>
+        </tr>
+        <tr>
+            <td>Статус:</td>
+            <td>
+                <div class="filters_my_status">
+                <?php echo ActiveHtml::dropdown(
+                'c[state]',
+                'Статус',
+                (isset($c['state'])) ? $c['state'] : '',
+                Purchase::getStateDataArray()
+            ); ?>
+            </div></td>
+        </tr>
+        </thead>
+
+    <table class="mytable">
+        <thead>
+        <tr>
+        <td>
+    <div class="filters_my_id">
+    <?php echo ActiveHtml::inputPlaceholder(
         'c[id]',
         (isset($c['id'])) ? $c['id'] : '',
-        array('placeholder' => 'ID', '')
+        array('placeholder' => 'ID')
     ); ?>
     </div>
+            <td>
+    <div class="filters_my_date">
+    <?php echo ActiveHtml::inputCalendar(
+        'c[create_date]',
+        (isset($c['create_date'])) ? $c['create_date'] : '',
+        'Создана'
+    ); ?>
+    </div>
+            </td>
+        <td>
+            <div class="filters_my_name">
+                <?php echo ActiveHtml::inputPlaceholder(
+                'c[name]',
+                (isset($c['name'])) ? $c['name'] : '',
+                array('placeholder' => 'Название')
+            ); ?>
+            </div>
+            </td>
+        <td>
+
+            </td>
+        <td>
+       </td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+</tr>
 </div>
-<table class="mytable">
-    <thead>
     <tr>
         <td>ID</td><td>Создана</td><td>Категория</td><td>Название</td><td>Статус</td><td>Стоп заказов</td>
         <td>Кол-во товаров</td><td>Заказы</td><td>% от мин</td>
@@ -64,3 +132,4 @@ function changeState(el) {
     });
 }
 </script>
+    </div>

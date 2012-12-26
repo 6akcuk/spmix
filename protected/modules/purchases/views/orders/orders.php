@@ -30,80 +30,125 @@ $this->pageTitle = Yii::app()->name .' - Заказы к закупке #'. $pur
     </div>
 </div>
 <div class="clearfix filters">
-    <div class="left">
+    <table class="bezborder">
+        <thead>
+        <tr>
+            <td>
+                Фильтр по городу :
+            </td>
+            <td>
+                <div class="filter_order_gorod">
+                <?php echo ActiveHtml::dropdown(
+                'c[city_id]',
+                'Город',
+                (isset($c['city_id'])) ? $c['city_id'] : '',
+                City::getDataArray()
+            ); ?>
+            </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Фильтр по статусу:
+            </td>
+            <td>
+                <div class="filter_order_status">
+                    <?php echo ActiveHtml::dropdown(
+                    'c[status]',
+                    'Статус',
+                    (isset($c['status'])) ? $c['status'] : '',
+                    Order::getStatusDataArray()
+                ); ?>
+                </div>
+            </td>
+        </tr>
+        </thead>
+    </table>
+    <table>
+        <thead>
+        <tr>
+    <td>
+        </td>
+            <td>
+
+    <div class="left filter_order_id">
         <?php echo ActiveHtml::inputPlaceholder(
         'c[id]',
         (isset($c['id'])) ? $c['id'] : '',
         array('placeholder' => 'ID')
     ); ?>
     </div>
-    <div class="left">
+    </td>
+    <td>
+    <div class="left filter_order_date">
         <?php echo ActiveHtml::inputCalendar(
         'c[creation_date]',
         (isset($c['creation_date'])) ? $c['creation_date'] : '',
         'Дата заказа'
     ); ?>
     </div>
-    <div class="left">
+    </td>
+    <td>
+    <div class="left filter_order_tovar">
         <?php echo ActiveHtml::inputPlaceholder(
         'c[good]',
         (isset($c['good'])) ? $c['good'] : '',
         array('placeholder' => 'Товар')
     ); ?>
     </div>
-    <div class="left">
+    </td>
+    <td>
+    <div class="left filter_order_artikul">
         <?php echo ActiveHtml::inputPlaceholder(
         'c[artikul]',
         (isset($c['artikul'])) ? $c['artikul'] : '',
         array('placeholder' => 'Артикул')
     ); ?>
     </div>
-    <div class="left">
-        <?php echo ActiveHtml::inputPlaceholder(
-        'c[size]',
-        (isset($c['size'])) ? $c['size'] : '',
-        array('placeholder' => 'Размер')
-    ); ?>
-    </div>
-    <div class="left">
-        <?php echo ActiveHtml::inputPlaceholder(
-        'c[color]',
-        (isset($c['color'])) ? $c['color'] : '',
-        array('placeholder' => 'Цвет')
-    ); ?>
-    </div>
-    <div class="left">
+    </td>
+    <td>
+        <div class="left filter_order_cvet">
+            <?php echo ActiveHtml::inputPlaceholder(
+            'c[color]',
+            (isset($c['color'])) ? $c['color'] : '',
+            array('placeholder' => 'Цвет')
+        ); ?>
+        </div>
+    </td>
+    <td>
+        <div class="left filter_order_razmer">
+            <?php echo ActiveHtml::inputPlaceholder(
+            'c[size]',
+            (isset($c['size'])) ? $c['size'] : '',
+            array('placeholder' => 'Размер')
+        ); ?>
+        </div>
+    </td>
+    <td>
+    <div class="left filter_order_zakaz">
         <?php echo ActiveHtml::inputPlaceholder(
         'c[name]',
         (isset($c['name'])) ? $c['name'] : '',
         array('placeholder' => 'Заказчик')
     ); ?>
     </div>
-    <div class="left">
-        <?php echo ActiveHtml::dropdown(
-        'c[city_id]',
-        'Город',
-        (isset($c['city_id'])) ? $c['city_id'] : '',
-        City::getDataArray()
-    ); ?>
-    </div>
-    <div class="left">
-        <?php echo ActiveHtml::dropdown(
-        'c[status]',
-        'Статус',
-        (isset($c['status'])) ? $c['status'] : '',
-        Order::getStatusDataArray()
-    ); ?>
-    </div>
+    </td>
+    <td>
+    </td>
+            <td></td>
+    <td>
+    </td>
+            <td></td>
+            <td>
+            </td>
+    </tr>
 </div>
-<table>
-    <thead>
     <tr>
         <td>
             <input type="checkbox" />
         </td>
         <td>#</td><td>Дата заказа</td><td>Товар</td><td>Артикул</td><td>Цвет</td><td>Размер</td><td>Заказчик</td>
-        <td>Город</td><td>Репутация</td><td>Статус</td><td>Кол-во</td><td>Стоимость</td>
+        <td>Город</td><td>Реп.</td><td>Статус</td><td>Кол</td><td>Стоимость</td>
     </tr>
     </thead>
     <tbody id="orders">
@@ -117,7 +162,7 @@ $this->pageTitle = Yii::app()->name .' - Заказы к закупке #'. $pur
             <?php echo Yii::t('purchase', $order->payment->status) ?>
             <?php endif; ?>
         </td>
-        <td><?php echo ActiveHtml::date($order->creation_date) ?></td>
+        <td><?php echo ActiveHtml::date($order->creation_date, false) ?></td>
         <td><?php echo ActiveHtml::link($order->good->name, '/good'. $order->purchase_id .'_'. $order->good_id) ?></td>
         <td><?php echo $order->good->artikul ?></td>
         <td><?php echo $order->color ?></td>

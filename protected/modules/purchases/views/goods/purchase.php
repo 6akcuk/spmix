@@ -29,38 +29,52 @@ $this->pageTitle = Yii::app()->name .' - Товары к закупке #'. $pur
 
     </div>
 </div>
-<div class="clearfix filters">
-    <div class="left">
+
+        <table style="margin-top: 10px">
+            <thead>
+            <tr>
+                <td>
+    <div class="filter_order_id">
         <?php echo ActiveHtml::inputPlaceholder(
         'c[id]',
         (isset($c['id'])) ? $c['id'] : '',
         array('placeholder' => 'ID')
     ); ?>
     </div>
-    <div class="left">
-        <?php echo ActiveHtml::inputPlaceholder(
-        'c[artikul]',
-        (isset($c['artikul'])) ? $c['artikul'] : '',
-        array('placeholder' => 'Артикул')
-    ); ?>
-    </div>
-    <div class="left">
-        <?php echo ActiveHtml::inputPlaceholder(
-        'c[name]',
-        (isset($c['name'])) ? $c['name'] : '',
-        array('placeholder' => 'Название')
-    ); ?>
-    </div>
-    <div class="left">
-        <?php echo ActiveHtml::inputPlaceholder(
-        'c[price]',
-        (isset($c['price'])) ? $c['price'] : '',
-        array('placeholder' => 'Цена')
-    ); ?>
-    </div>
-</div>
-<table>
-    <thead>
+        </td><td>
+
+
+        </td>
+        <td>
+            <div class="filter_order_artikul">
+                <?php echo ActiveHtml::inputPlaceholder(
+                'c[artikul]',
+                (isset($c['artikul'])) ? $c['artikul'] : '',
+                array('placeholder' => 'Артикул')
+            ); ?>
+            </div>
+        </td>
+        <td>
+            <div class="left">
+                <?php echo ActiveHtml::inputPlaceholder(
+                'c[name]',
+                (isset($c['name'])) ? $c['name'] : '',
+                array('placeholder' => 'Название')
+            ); ?>
+            </div>
+        </td>
+                <td>
+                    <div class="filter_order_cena">
+                        <?php echo ActiveHtml::inputPlaceholder(
+                        'c[price]',
+                        (isset($c['price'])) ? $c['price'] : '',
+                        array('placeholder' => 'Цена')
+                    ); ?>
+                    </div></td>
+                <td></td>
+                <td></td>
+                <td></td>
+</tr>
     <tr>
         <td>ID</td><td>Изображение</td><td>Артикул</td><td>Название</td><td>Цена</td><td>Ряды</td>
         <td>Кол-во заказов</td><td>Сумма заказов</td>

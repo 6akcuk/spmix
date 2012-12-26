@@ -1,7 +1,8 @@
-<?php
+<div class="create">
+    <?php
 /** @var $model Purchase */
 
-Yii::app()->getClientScript()->registerCssFile('/css/purchases.css');
+    Yii::app()->getClientScript()->registerCssFile('/css/purchases.css');
 Yii::app()->getClientScript()->registerScriptFile('/js/purchase.js');
 
 $this->pageTitle = Yii::app()->name .' - Редактирование закупки';
@@ -71,3 +72,4 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
     <?php echo ActiveHtml::submitButton('Сохранить изменения', array('class' => 'btn light_blue', 'onclick' => 'return Purchase.edit()')); ?>
 </div>
 <?php $this->endWidget(); ?>
+    </div>

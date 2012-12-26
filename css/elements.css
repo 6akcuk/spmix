@@ -32,7 +32,7 @@ span.input_placeholder label {
 
 a.input_calendar span {
     font-size: 12px;
-    padding: 4px;
+    padding: 0px 4px 4px 4px;
     color: #5d6266;
 }
 
@@ -207,4 +207,48 @@ table.data th.right, table.data td.right {
 
 .filters {
     margin: 10px 0px;
+}
+
+.filter_order_id input {
+    width: 40px;
+}
+
+.filter_order_tovar input {
+    width: 80px;
+}
+
+
+.filter_order_artikul input {
+    width: 40px;
+}
+
+.filter_order_cvet input {
+    width: 60px;
+}
+
+.filter_order_razmer input {
+    width: 40px;
+}
+.filter_order_cena input {
+    width: 100px;
+}
+.filter_order_zakaz input {
+    width: 100px;
+}
+
+.bezborder td {
+    border: 0px;
+}
+
+.filters table
+{
+    font-size: 10px;
+}
+
+.filters_my_id input {
+    width: 40px;
+}
+
+.filters_my_create input {
+    width: 80px;
 }
