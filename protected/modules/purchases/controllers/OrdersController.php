@@ -104,6 +104,55 @@ class OrdersController extends Controller {
             );
     }
 
+    public function actionPurchase2Excel($purchase_id) {
+        /** @var $purchase Purchase */
+        $purchase = Purchase::model()->findByPk($purchase_id);
+
+        if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
+            Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('purchase' => $purchase))) {
+
+            $criteria = new CDbCriteria();
+            $criteria->addCondition('t.purchase_id = :purchase_id');
+            $criteria->params[':purchase_id'] = $purchase_id;
+            $criteria->order = 'creation_date DESC';
+
+            $orders = Order::model()->with('good', 'customer', 'payment')->findAll($criteria);
+
+            header('Content-Disposition: attachment; filename="zakazi.xls"');
+            header("Content-Type: application/vnd.ms-excel");
+            header ("HTTP/1.1 200 OK");
+
+            $excel = new Excel();
+            $excel->line(array(
+                'ID', 'Товар', 'Артикул', 'Размер', 'Цвет', 'Время заказа', 'Анонимно', 'Заказал',
+                'Имя', 'Фамилия', 'Город', 'Цена', 'Орг.сбор', 'Цена + орг.сбор', 'Кол-во', 'Цена (итог)',
+                'Цена + орг.сбор (итог)', 'Оплачено', 'Комментарии организатора', 'Комментарии для организатора',
+                'Телефон', 'Ряд', 'Ряд', 'Ссылка', 'Тел.из профиля', 'Статус заказа'
+            ));
+
+            /** @var $order Order */
+            foreach ($orders as $order) {
+                $excel->line(array(
+                    $order->order_id, $order->good->name, $order->good->artikul, $order->size,
+                    $order->color, ActiveHtml::date($order->creation_date, true, true),
+                    (($order->anonymous) ? 'Да' : 'Нет'), $order->customer->login,
+                    $order->customer->profile->firstname, $order->customer->profile->lastname,
+                    $order->customer->profile->city->name, $order->good->price, $purchase->org_tax,
+                    $purchase->getPriceWithTax($order->good->price), $order->amount, ($order->good->price * $order->amount),
+                    $purchase->getPriceWithTax($order->good->price * $order->amount),
+                    (($order->payment && $order->payment->status == OrderPayment::STATUS_PERFORMED) ? 'Да' : 'Нет'),
+                    $order->org_comment, $order->client_comment, $order->customer->profile->phone, 0, '',
+                    $order->good->url, $order->customer->profile->phone, Yii::t('purchase', $order->status)
+                ));
+            }
+
+            echo $excel->close();
+            exit;
+        }
+        else
+            throw new CHttpException(403, 'В доступе отказано');
+    }
+
     public function actionPurchase($purchase_id, $offset = 0) {
         $purchase = Purchase::model()->findByPk($purchase_id);
 

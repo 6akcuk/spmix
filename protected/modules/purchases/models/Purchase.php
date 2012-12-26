@@ -155,6 +155,10 @@ class Purchase extends CActiveRecord
         return ($num_perc > $sum_perc) ? $num_perc : $sum_perc;
     }
 
+    public function getPriceWithTax($price) {
+        return floatval($price) * ($this->org_tax / 100 + 1);
+    }
+
     public static function getStatusDataArray() {
         return array(
             'Минимум' => self::STATUS_MINIMUM,

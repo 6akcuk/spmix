@@ -3,6 +3,11 @@ Yii::app()->getClientScript()->registerScriptFile('/js/jquery-1.8.2.min.js');
 Yii::app()->getClientScript()->registerScriptFile('/js/main.js');
 Yii::app()->getClientScript()->registerCssFile('/css/main.css');
 Yii::app()->getClientScript()->registerCssFile('/css/elements.css');
+
+$app=Yii::app();
+$request = $app->getRequest();
+/** @var $cookies CCookieCollection */
+$cookies = $request->getCookies();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -48,9 +53,8 @@ Yii::app()->getClientScript()->registerCssFile('/css/elements.css');
             <a href="/" class="logo_a"></a>
         </div>
         <div class="fl_l login">
-            <div class="left gsearch">
-                <input type="text" id="gsearch" name="q" value="" />
-                <a class="iconify_search_a"></a>
+            <div class="clearfix">
+                <?php echo ActiveHtml::dropdown('cur_city', 'Город', $cookies['cur_city'], City::getDataArray()) ?>
             </div>
         </div>
         <div class="clear"></div>

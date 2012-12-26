@@ -27,6 +27,14 @@ class SiteController extends Controller
         $this->render('index');
 	}
 
+    public function actionSetCity() {
+        $cookies = Yii::app()->getRequest()->getCookies();
+        $cookies->add('cur_city', intval($_POST['city_id']));
+
+        echo json_encode(array('success' => true, 'msg' => 'Изменения сохранены'));
+        exit;
+    }
+
     public function actionError() {
         if($error=Yii::app()->errorHandler->error)
         {

@@ -1,3 +1,9 @@
+<?php
+$app=Yii::app();
+$request = $app->getRequest();
+/** @var $cookies CCookieCollection */
+$cookies = $request->getCookies();
+?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -28,6 +34,9 @@
                 <a href="/" class="logo_a"></a>
             </div>
             <div class="fl_l login">
+                <div class="clearfix">
+                <?php echo ActiveHtml::dropdown('cur_city', 'Город', $cookies['cur_city'], City::getDataArray()) ?>
+                </div>
                 <?php
                 if (Yii::app()->user->getIsGuest()) {
                     $this->widget('application.modules.users.components.LoginWidget');
@@ -39,7 +48,6 @@
             </div>
             <div class="clear"></div>
         </div>
-
     </div>
     <div class="slide">
         <div class="wrapper">

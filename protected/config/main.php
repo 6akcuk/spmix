@@ -22,6 +22,7 @@ return array(
         'application.modules.users.components.views.*',
         'ext.ActiveHtml.*',
         'ext.SmsDelivery.*',
+        'ext.Excel.*',
 	),
 
 	'modules'=>array(
@@ -62,6 +63,7 @@ return array(
 			'urlFormat'=>'path',
             'showScriptName' => false,
 			'rules'=>array(
+                'setcity' => 'site/setcity',
                 'login' => 'site/login',
                 'logout' => 'site/logout',
                 'register' => 'site/register',
@@ -80,6 +82,7 @@ return array(
                 'order<order_id:\d+>' => 'purchases/orders/show',
                 'orders' => 'purchases/orders',
                 'orders<purchase_id:\d+>' => 'purchases/orders/purchase',
+                'orders<purchase_id:\d+>/excel' => 'purchases/orders/purchase2Excel',
                 'orders/<action:\w+>' => 'purchases/orders/<action>',
                 'payment<payment_id:\d+>' => 'purchases/orders/payment',
                 '<controller:(purchases)>' => 'purchases/purchases/index',

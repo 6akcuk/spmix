@@ -11,17 +11,12 @@ $().ajaxError(function(xhr) {
     ajex.show('Общая ошибка соединения с сервером');
 });
 
-function test_rw() {
-    report_window.create('#login-form', 'left', 'Неверный логин или пароль');
-}
-
 $().ready(function() {
-    /* GSearch */
-    $('#gsearch').focus(function() {
-            $(this).parent().addClass('focused');
-        }).blur(function() {
-            $(this).parent().removeClass('focused');
+    $('input[name="cur_city"]').change(function() {
+        ajex.post('/setcity', {city_id: $(this).val()}, function(r) {
+            if (r.success) location.href = location.href;
         });
+    });
 });
 
 try {stmgr.loaded('main.js');}catch(e){}

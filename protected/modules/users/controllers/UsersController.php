@@ -21,7 +21,7 @@ class UsersController extends Controller {
 
     public function actionIndex($offset = 0) {
         $criteria = new CDbCriteria();
-        $criteria->limit = 10;
+        $criteria->limit = 100;
         $criteria->offset = $offset;
 
         if (isset($_POST['q']) && !empty($_POST['q'])) {

@@ -10,7 +10,12 @@ Yii::app()->getClientScript()->registerScriptFile('/js/purchase.js');
 $this->pageTitle = Yii::app()->name .' - Заказы к закупке #'. $purchase->purchase_id;
 ?>
 
-<h1>Заказы к закупке #<?php echo $purchase->purchase_id ?> "<?php echo $purchase->name ?>"</h1>
+<h1>
+    Заказы к закупке #<?php echo $purchase->purchase_id ?> "<?php echo $purchase->name ?>"
+    <div class="right">
+        <?php echo CHtml::link('Сохранить в Excel', '/orders'. $purchase->purchase_id .'/excel', array('class' => 'button')) ?>
+    </div>
+</h1>
 
 <div class="clearfix">
     <div class="left sortlimit">
