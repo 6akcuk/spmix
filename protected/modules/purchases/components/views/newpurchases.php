@@ -19,8 +19,18 @@
         </div>
         <div><a href="/purchase<?php echo $purchase->purchase_id ?>"><?php echo $purchase->name ?></a></div>
         <div>
-            <?php echo ActiveHtml::showUploadImage($purchase->image) ?>
+            <table>
+                <thead>
+                    <tr>
+                        <td>
+                            <?php echo ActiveHtml::showUploadImage($purchase->image) ?>
+                            </td>
+                        <td>
             <?php echo ($purchase->external) ? nl2br(mb_substr($purchase->external->fullstory, 0, 50, 'utf-8')) : '' ?>
+                </td>
+                </tr>
+                </thead>
+                </table>
         </div>
     </div>
     <?php endforeach; ?>

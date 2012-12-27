@@ -8,6 +8,7 @@ Yii::app()->getClientScript()->registerScriptFile('/js/purchase.js');
 $this->pageTitle = Yii::app()->name .' - Добавление нового товара';
 ?>
 
+
 <h1>Добавить новый товар</h1>
 
 <?php

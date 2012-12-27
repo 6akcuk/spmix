@@ -8,6 +8,7 @@ Yii::app()->getClientScript()->registerScriptFile('/js/purchase.js');
 $this->pageTitle = Yii::app()->name .' - Создание новой закупки';
 ?>
 
+
 <h1>Создание новой закупки</h1>
 <?php
 /** @var $form ActiveForm */

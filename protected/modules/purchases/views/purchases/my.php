@@ -92,6 +92,9 @@ foreach (Purchase::getStateDataArray() as $state) {
     </div>
             </td>
         <td>
+
+            </td>
+        <td>
             <div rel="filters" class="filters_my_name">
                 <?php echo ActiveHtml::inputPlaceholder(
                 'c[name]',
@@ -99,9 +102,6 @@ foreach (Purchase::getStateDataArray() as $state) {
                 array('placeholder' => 'Название')
             ); ?>
             </div>
-            </td>
-        <td>
-
             </td>
         <td>
        </td>

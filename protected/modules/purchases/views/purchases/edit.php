@@ -8,6 +8,7 @@ Yii::app()->getClientScript()->registerScriptFile('/js/purchase.js');
 $this->pageTitle = Yii::app()->name .' - Редактирование закупки';
 ?>
 
+
 <h1>Редактирование закупки</h1>
 
 <?php

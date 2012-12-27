@@ -1,3 +1,4 @@
+<div class="create">
 <?php
 /**
  * @var $purchase Purchase
@@ -13,9 +14,9 @@ $this->pageTitle = Yii::app()->name .' - Редактирование товар
 $sizes = json_decode($good->sizes, true);
 $colors = json_decode($good->colors, true);
 ?>
-
-<h1>Редактировать товар</h1>
-
+<div class="clearfix">
+ <h1 class="left">Редактировать товар</h1> <h1 class="left" style="margin-left: 300px">Настройка рядов</h1>
+</div>
 <?php
 /** @var $form ActiveForm */
 
@@ -74,7 +75,7 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
     </div>
 </div>
 <div class="row">
-    <?php echo $form->smartTextarea($good, 'description', array('style' => 'width: 365px')) ?>
+    <?php echo $form->smartTextarea($good, 'description', array('style' => 'width: 520px')) ?>
 </div>
 <div class="row">
     <?php echo ActiveHtml::submitButton('Сохранить изменения', array('class' => 'btn light_blue', 'onclick' => 'return Purchase.editgood()')); ?>
@@ -93,3 +94,4 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
     </div>
 <?php endforeach; ?>
 </div>
+    </div>
