@@ -943,3 +943,28 @@ div.ls_columns div.column.options div {
 
 }
 
+.mainorders {
+    padding-top: 80px;
+}
+.main h1 {
+    color: #fff;
+    padding: 6px 20px 4px 20px;
+
+}
+.mainsmall {
+    font-size: 10px;
+    font-color: #6e953e;
+}
+
+.mainblock {
+    width: 230px;
+    min-height: 250px;
+    padding: 4px;
+    border: 1px solid #c2c2c2;
+    margin: 5px;
+}
+
+.articles {
+    padding: 20px;
+    background: #fff;
+}
