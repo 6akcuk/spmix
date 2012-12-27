@@ -48,7 +48,7 @@ foreach (Purchase::getStateDataArray() as $state) {
         <thead>
         <tr>
             <td>Категория:</td>
-            <td>   <div class="filters_my_category">
+            <td>   <div rel="filters" class="filters_my_category">
                 <?php echo ActiveHtml::dropdown(
                 'c[category_id]',
                 'Категория',
@@ -60,7 +60,7 @@ foreach (Purchase::getStateDataArray() as $state) {
         <tr>
             <td>Статус:</td>
             <td>
-                <div class="filters_my_status">
+                <div rel="filters" class="filters_my_status">
                 <?php echo ActiveHtml::dropdown(
                 'c[state]',
                 'Статус',
@@ -75,7 +75,7 @@ foreach (Purchase::getStateDataArray() as $state) {
         <thead>
         <tr>
         <td>
-    <div class="filters_my_id">
+    <div rel="filters" class="filters_my_id">
     <?php echo ActiveHtml::inputPlaceholder(
         'c[id]',
         (isset($c['id'])) ? $c['id'] : '',
@@ -83,7 +83,7 @@ foreach (Purchase::getStateDataArray() as $state) {
     ); ?>
     </div>
             <td>
-    <div class="filters_my_date">
+    <div rel="filters" class="filters_my_date">
     <?php echo ActiveHtml::inputCalendar(
         'c[create_date]',
         (isset($c['create_date'])) ? $c['create_date'] : '',
@@ -92,7 +92,7 @@ foreach (Purchase::getStateDataArray() as $state) {
     </div>
             </td>
         <td>
-            <div class="filters_my_name">
+            <div rel="filters" class="filters_my_name">
                 <?php echo ActiveHtml::inputPlaceholder(
                 'c[name]',
                 (isset($c['name'])) ? $c['name'] : '',

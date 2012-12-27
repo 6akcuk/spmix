@@ -34,7 +34,7 @@ $this->pageTitle = Yii::app()->name .' - Товары к закупке #'. $pur
             <thead>
             <tr>
                 <td>
-    <div class="filter_order_id">
+    <div rel="filters" class="filter_order_id">
         <?php echo ActiveHtml::inputPlaceholder(
         'c[id]',
         (isset($c['id'])) ? $c['id'] : '',
@@ -46,7 +46,7 @@ $this->pageTitle = Yii::app()->name .' - Товары к закупке #'. $pur
 
         </td>
         <td>
-            <div class="filter_order_artikul">
+            <div rel="filters" class="filter_order_artikul">
                 <?php echo ActiveHtml::inputPlaceholder(
                 'c[artikul]',
                 (isset($c['artikul'])) ? $c['artikul'] : '',
@@ -55,7 +55,7 @@ $this->pageTitle = Yii::app()->name .' - Товары к закупке #'. $pur
             </div>
         </td>
         <td>
-            <div class="left">
+            <div rel="filters" class="left">
                 <?php echo ActiveHtml::inputPlaceholder(
                 'c[name]',
                 (isset($c['name'])) ? $c['name'] : '',
@@ -64,7 +64,7 @@ $this->pageTitle = Yii::app()->name .' - Товары к закупке #'. $pur
             </div>
         </td>
                 <td>
-                    <div class="filter_order_cena">
+                    <div rel="filters" class="filter_order_cena">
                         <?php echo ActiveHtml::inputPlaceholder(
                         'c[price]',
                         (isset($c['price'])) ? $c['price'] : '',

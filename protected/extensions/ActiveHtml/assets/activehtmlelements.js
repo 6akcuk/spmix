@@ -1192,7 +1192,7 @@ $().ready(function() {
 
     $('div.tabs').tabs();
     $('.smarttext textarea').autosize();
-    $('div.filters > div').filters();
+    $('[rel="filters"]').filters();
 
     $('#content').on('contentChanged', function() {
         $('#content span.input_placeholder input, #content span.input_placeholder textarea').inputPlaceholder();
@@ -1209,7 +1209,7 @@ $().ready(function() {
             Upload.onDOMReady(this);
         });
 
-        $('div.filters > div').filters();
+        $('[rel="filters"]').filters();
     });
 });
 
