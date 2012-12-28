@@ -638,6 +638,28 @@ var sfar = {
         $(x).parent().remove();
     }
 };
+/* Simple Block Add/Remove */
+var sbar = {
+    _i: 1,
+    add: function(b) {
+        var $c = $('#block0').clone(),
+            i = sbar._i++;
+        $c.insertBefore($(b).parent());
+        $c.find('[sbar="sub"]').each(function(i, e) {
+            if (i > 0) $(e).remove();
+        });
+        $c.attr('id', 'block'+ i);
+        $c.find('input').each(function(idx, inp) {
+            $(inp).attr('name', $(inp).attr('name').replace(/\d+/g, i));
+            $(inp).val('').inputPlaceholder();
+        });
+        $c.find('div.row:first-child a.iconify_x_a').show();
+    },
+
+    del: function(x) {
+        $(x).parent().parent().remove();
+    }
+}
 
 /* Form Easy Control */
 var FormMgr = {

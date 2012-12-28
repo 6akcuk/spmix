@@ -7,8 +7,6 @@ Yii::app()->getClientScript()->registerScriptFile('/js/purchase.js');
 
 $this->pageTitle = Yii::app()->name .' - Добавление нового товара';
 ?>
-
-
 <h1>Добавить новый товар</h1>
 
 <?php
@@ -37,15 +35,24 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
         </div>
     </div>
     <div class="left purchase_column">
-        <div class="row">
-            <?php echo ActiveHtml::inputPlaceholder('Good[sizes][]', '', array('id' => '', 'placeholder' => 'Размер')) ?>
-            <a class="iconify_plus_a" onclick="sfar.add(this)"></a>
-            <a class="iconify_x_a" onclick="sfar.del(this)" style="display:none"></a>
+        <h3>Размерная сетка</h3>
+        <div>
+            <?php echo $form->checkBox($model, 'is_range') ?>
+            <?php echo $form->label($model, 'is_range') ?>
+        </div>
+        <div id="block0" class="row">
+            <div class="row">
+                <?php echo ActiveHtml::inputPlaceholder('size[0]', '', array('id' => '', 'placeholder' => 'Размер')) ?>
+                <a class="iconify_x_a" onclick="sbar.del(this)" style="display:none"></a>
+            </div>
+            <div sbar="sub" class="row" style="margin-left: 20px">
+                <?php echo ActiveHtml::inputPlaceholder('color[0][]', '', array('id' => '', 'placeholder' => 'Цвет')) ?>
+                <a class="iconify_plus_a" onclick="sfar.add(this)"></a>
+                <a class="iconify_x_a" onclick="sfar.del(this)" style="display:none"></a>
+            </div>
         </div>
         <div class="row">
-            <?php echo ActiveHtml::inputPlaceholder('Good[colors][]', '', array('id' => '', 'placeholder' => 'Цвет')) ?>
-            <a class="iconify_plus_a" onclick="sfar.add(this)"></a>
-            <a class="iconify_x_a" onclick="sfar.del(this)" style="display:none"></a>
+            <a onclick="sbar.add(this)" class="button"><span class="iconify_plus_a"></span> Добавить еще размер</a>
         </div>
     </div>
 </div>

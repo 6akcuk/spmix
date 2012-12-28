@@ -133,6 +133,7 @@ $this->pageTitle = Yii::app()->name .' - '. $purchase->name;
                 <?php echo ActiveHtml::link('', '/good'. $purchase->purchase_id .'_'. $good->good_id.'/edit', array('class' => 'right iconify_gear_a tt', 'title' => 'Редактировать товар')) ?>
             </h4>
             <?php if ($good->image): ?><div><?php echo ActiveHtml::showUploadImage($good->image->image) ?></div><?php endif; ?>
+            <?php if ($good->is_range): ?>Ряды<?php endif; ?>
             <div class="price"><?php echo ActiveHtml::price($good->price, $good->currency) ?></div>
         </div>
     <?php endforeach; ?>

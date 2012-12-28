@@ -25,7 +25,7 @@ class GoodsController extends Controller {
         if(isset($_POST['Order']))
         {
             /** @var $good Good */
-            $good = Good::model()->with('purchase')->findByPk($good_id);
+            $good = Good::model()->with('purchase', 'grid')->findByPk($good_id);
 
             if (
                 in_array(
@@ -41,6 +41,7 @@ class GoodsController extends Controller {
                 $order->attributes = $_POST['Order'];
                 $order->purchase_id = $purchase_id;
                 $order->good_id = $good_id;
+                $order->color = ($order->grid_id) ? $_POST['color'][$order->grid_id] : '';
                 $order->customer_id = Yii::app()->user->getId();
                 $order->price = $good->price;
                 $price = floatval($good->price) * ($good->purchase->org_tax / 100 + 1);
@@ -56,6 +57,75 @@ class GoodsController extends Controller {
                 $result = array();
 
                 if($order->validate() && $order->save()) {
+                    if ($good->is_range) {
+                        $rcriteria = new CDbCriteria();
+                        $rcriteria->addCondition('purchase_id = :purchase_id AND good_id = :good_id');
+                        $rcriteria->params[':purchase_id'] = $purchase_id;
+                        $rcriteria->params[':good_id'] = $good_id;
+                        $rcriteria->addCondition('filled = 0');
+
+                        /** @var $grid GoodGrid */
+                        foreach ($good->grid as $grid) {
+                            $gridsizes[$grid->grid_id] = $grid->size;
+                        }
+
+                        $ranges = GoodRange::model()->findAll($rcriteria);
+                        // если имеются незаполненные ряды
+                        if ($ranges) {
+                            /** @var $range GoodRange */
+                            $added = false;
+                            foreach ($ranges as $range) {
+                                $rg = json_decode($range->grid, true);
+                                $fillnum = 0;
+
+                                foreach ($rg as &$_range) {
+                                    if ($_range[1]) $fillnum++;
+
+                                    if ($_range[0] == $gridsizes[$order->grid_id]) {
+                                        if ($_range[1] === null) {
+                                            $fillnum++;
+                                            $_range[1] = $order->order_id;
+                                            $added = true;
+                                            break;
+                                        }
+                                    }
+                                }
+
+                                if ($added) {
+                                    if ($fillnum == sizeof($rg)) $range->filled = 1;
+                                    $range->grid = json_encode($rg);
+                                    $range->save();
+
+                                    $order->range_id = $range->range_id;
+                                    $order->save(true, array('range_id'));
+
+                                    break;
+                                }
+                            }
+                        }
+
+                        // если еще не был создан ни один ряд, либо все заполнены, добавляем новый
+                        // если в незаполненных рядах, текущий размер уже занят, создаем новый ряд
+                        if (!$ranges || !$added) {
+                            $rg = array();
+                            $fillnum = 1;
+
+                            foreach ($good->grid as $grid) {
+                                $rg[] = array($grid->size, ($grid->size == $gridsizes[$order->grid_id]) ? $order->order_id : null);
+                            }
+
+                            $range = new GoodRange();
+                            $range->purchase_id = $purchase_id;
+                            $range->good_id = $good_id;
+                            $range->grid = json_encode($rg);
+                            if ($fillnum == sizeof($rg)) $range->filled = 1;
+                            $range->save();
+
+                            $order->range_id = $range->range_id;
+                            $order->save(true, array('range_id'));
+                        }
+                    }
+
                     $result['success'] = true;
                     $result['msg'] = Yii::t('purchase', 'Заказ добавлен в список покупок');
                     $result['url'] = '/orders';
@@ -129,7 +199,7 @@ class GoodsController extends Controller {
     }
 
     public function actionShow($purchase_id, $good_id) {
-        $good = Good::model()->with('image', 'purchase', 'oic')->findByPk($good_id);
+        $good = Good::model()->with('image', 'grid', 'ranges', 'purchase', 'oic', 'orders', 'orders.customer', 'ordersNum')->findByPk($good_id);
         $order = new Order('create');
 
         if (Yii::app()->request->isAjaxRequest) {
@@ -144,23 +214,27 @@ class GoodsController extends Controller {
         if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
             Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('purchase' => $purchase)))
         {
-            $good = Good::model()->with('images')->findByPk($good_id);
+            $good = Good::model()->with('grid', 'images')->findByPk($good_id);
 
             if (isset($_POST['Good'])) {
                 $good->attributes=$_POST['Good'];
-                $good->sizes = json_encode($_POST['Good']['sizes']);
-                $good->colors = json_encode($_POST['Good']['colors']);
 
-                $psizes = ($purchase->sizes) ? json_decode($purchase->sizes, true) : array();
-                $sizes = $_POST['Good']['sizes'];
+                foreach ($_POST['size'] as $idx => $size) {
+                    $colors = $_POST['color'][$idx];
 
-                $psizes = array_merge($psizes, $sizes);
-                sort($psizes);
+                    $grid = GoodGrid::model()->find('good_id = :good_id AND size = :size', array(':good_id' => $good_id, ':size' => $size));
+                    if (!$grid) {
+                        $grid = new GoodGrid('create');
+                        $grid->purchase_id = $id;
+                        $grid->good_id = $model->good_id;
+                        $grid->size = $size;
+                    }
+
+                    $grid->colors = json_encode($colors);
+                    $grid->save();
+                }
 
                 if($good->validate() && $good->save()) {
-                    $purchase->sizes = json_encode($psizes);
-                    $purchase->save(true, array('sizes'));
-
                     $result['success'] = true;
                     $result['url'] = '/good'. $purchase_id .'_'. $good_id .'/edit';
                 }

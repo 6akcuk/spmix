@@ -48,8 +48,8 @@ class ClientScript extends CClientScript {
 
         $staticFiles = array();
 
-        foreach ($this->cssFiles as $url=>$media) {
-            $al = $this->parseAjaxRepresentation($url);
+        foreach ($this->cssFiles as $css) {
+            $al = $this->parseAjaxRepresentation($css['url']);
             $staticFiles[] = array($al['url'], $al['scriptname'], $al['version']);
         }
         foreach ($this->scriptFiles as $pos => $scripts) {

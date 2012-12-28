@@ -7,20 +7,24 @@
  * @property string $good_id
  * @property integer $purchase_id
  * @property integer $is_quick
+ * @property integer $is_range
  * @property string $name
  * @property string $price
  * @property string $currency
  * @property string $description
  * @property string $artikul
  * @property string $url
- * @property string $sizes
- * @property string $colors
  * @property string $good_delete
  *
  * @property Purchase $purchase
+ * @property array $grid
+ * @property array $ranges
  * @property GoodImages $image
  * @property array $images
  * @property array $oic
+ * @property array $orders
+ * @property integer $ordersNum
+ * @property float $ordersSum
  */
 class Good extends CActiveRecord
 {
@@ -51,13 +55,14 @@ class Good extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('purchase_id, name, price, currency', 'required', 'on' => 'create'),
-            array('purchase_id, name, artikul, price, is_quick, sizes, colors', 'required', 'on' => 'quick'),
+            array('purchase_id, name, artikul, price, is_quick', 'required', 'on' => 'quick'),
 			array('purchase_id, is_quick', 'numerical', 'integerOnly'=>true),
+            array('is_range', 'safe'),
 			array('name', 'length', 'max'=>100),
 			array('price', 'length', 'max'=>10),
 			array('currency', 'length', 'max'=>3),
 			array('artikul', 'length', 'max'=>50),
-			array('url, sizes, colors', 'length', 'max'=>200),
+			array('url', 'length', 'max'=>200),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('good_id, purchase_id, name, price, currency, description, artikul, url, sizes, colors', 'safe', 'on'=>'search'),
@@ -87,9 +92,12 @@ class Good extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
             'purchase' => array(self::BELONGS_TO, 'Purchase', 'purchase_id'),
+            'grid' => array(self::HAS_MANY, 'GoodGrid', array('good_id' => 'good_id')),
+            'ranges' => array(self::HAS_MANY, 'GoodRange', array('good_id' => 'good_id')),
             'image' => array(self::HAS_ONE, 'GoodImages', array('good_id' => 'good_id')),
             'images' => array(self::HAS_MANY, 'GoodImages', array('good_id' => 'good_id')),
             'oic' => array(self::HAS_MANY, 'PurchaseOic', array('purchase_id' => 'purchase_id')),
+            'orders' => array(self::HAS_MANY, 'Order', 'good_id'),
             'ordersNum' => array(self::STAT, 'Order', 'good_id'),
             'ordersSum' => array(self::STAT, 'Order', 'good_id', 'select' => 'SUM(total_price)'),
 		);
@@ -103,6 +111,7 @@ class Good extends CActiveRecord
 		return array(
 			'good_id' => 'Good',
 			'purchase_id' => 'Purchase',
+            'is_range' => 'Использовать ряды',
 			'name' => 'Название',
 			'price' => 'Цена',
 			'currency' => 'Валюта',

@@ -449,27 +449,24 @@ class PurchasesController extends Controller {
             if(isset($_POST['Good']))
             {
                 $model->attributes=$_POST['Good'];
-                $model->sizes = json_encode($_POST['Good']['sizes']);
-                $model->colors = json_encode($_POST['Good']['colors']);
                 $result = array();
 
-                if ($purchase->sizes) {
-                    $psizes = json_decode($purchase->sizes, true);
-                    $sizes = $_POST['Good']['sizes'];
-
-                    $psizes = array_merge($psizes, $sizes);
-                    sort($psizes);
-                }
-                else $psizes = array();
-
                 if($model->validate() && $model->save()) {
+                    foreach ($_POST['size'] as $idx => $size) {
+                        $colors = $_POST['color'][$idx];
+
+                        $grid = new GoodGrid('create');
+                        $grid->purchase_id = $id;
+                        $grid->good_id = $model->good_id;
+                        $grid->size = $size;
+                        $grid->colors = json_encode($colors);
+                        $grid->save();
+                    }
+
                     $image = new GoodImages();
                     $image->good_id = $model->good_id;
                     $image->image = $_POST['image'];
                     $image->save();
-
-                    $purchase->sizes = json_encode($psizes);
-                    $purchase->save(true, array('sizes'));
 
                     $result['success'] = true;
                     $result['url'] = '/good'. $model->purchase_id .'_'. $model->good_id .'/edit';

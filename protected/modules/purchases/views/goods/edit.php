@@ -4,19 +4,16 @@
  * @var $purchase Purchase
  * @var $good Good
  * @var $image GoodImages
+ * @var $grid GoodGrid
  */
 
 Yii::app()->getClientScript()->registerCssFile('/css/purchases.css');
 Yii::app()->getClientScript()->registerScriptFile('/js/purchase.js');
 
 $this->pageTitle = Yii::app()->name .' - Редактирование товара';
-
-$sizes = json_decode($good->sizes, true);
-$colors = json_decode($good->colors, true);
 ?>
-<div class="clearfix">
- <h1 class="left">Редактировать товар</h1> <h1 class="left" style="margin-left: 300px">Настройка рядов</h1>
-</div>
+<h1>Редактировать товар</h1>
+
 <?php
 /** @var $form ActiveForm */
 
@@ -40,37 +37,43 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
         </div>
     </div>
     <div class="left purchase_column">
-        <?php if(is_array($sizes)): ?>
-        <?php foreach($sizes as $size): ?>
-        <?php if ($size): ?>
-        <div class="row">
-            <?php echo ActiveHtml::inputPlaceholder('Good[sizes][]', $size, array('id' => '', 'placeholder' => 'Размер')) ?>
-            <a class="iconify_plus_a" onclick="sfar.add(this)"></a>
-            <a class="iconify_x_a" onclick="sfar.del(this)"></a>
+        <h3>Размерная сетка</h3>
+        <div>
+            <?php echo $form->checkBox($good, 'is_range') ?>
+            <?php echo $form->label($good, 'is_range') ?>
         </div>
-        <?php endif; ?>
+        <?php if ($good->grid): ?>
+        <?php foreach ($good->grid as $idx => $grid): ?>
+        <?php $colors = json_decode($grid->colors, true); ?>
+        <div id="block<?php echo $idx ?>" class="row">
+            <div class="row">
+                <?php echo ActiveHtml::inputPlaceholder('size['. $idx .']', $grid->size, array('id' => '', 'placeholder' => 'Размер')) ?>
+                <a class="iconify_x_a" onclick="sbar.del(this)"<?php if($idx == 0): ?> style="display:none"<?php endif; ?>></a>
+            </div>
+            <?php foreach($colors as $cidx => $color): ?>
+            <div sbar="sub" class="row" style="margin-left: 20px">
+                <?php echo ActiveHtml::inputPlaceholder('color['. $idx .'][]', $color, array('id' => '', 'placeholder' => 'Цвет')) ?>
+                <a class="iconify_plus_a" onclick="sfar.add(this)"></a>
+                <a class="iconify_x_a" onclick="sfar.del(this)"<?php if($cidx == 0): ?> style="display:none"<?php endif; ?>></a>
+            </div>
+            <?php endforeach; ?>
+        </div>
         <?php endforeach; ?>
-        <?php endif; ?>
-        <div class="row">
-            <?php echo ActiveHtml::inputPlaceholder('Good[sizes][]', '', array('id' => '', 'placeholder' => 'Размер')) ?>
-            <a class="iconify_plus_a" onclick="sfar.add(this)"></a>
-            <a class="iconify_x_a" onclick="sfar.del(this)" style="display:none"></a>
-        </div>
-        <?php if(is_array($colors)): ?>
-        <?php foreach($colors as $color): ?>
-        <?php if ($color): ?>
-        <div class="row">
-            <?php echo ActiveHtml::inputPlaceholder('Good[colors][]', $color, array('id' => '', 'placeholder' => 'Цвет')) ?>
-            <a class="iconify_plus_a" onclick="sfar.add(this)"></a>
-            <a class="iconify_x_a" onclick="sfar.del(this)"></a>
+        <?php else: ?>
+        <div id="block0" class="row">
+            <div class="row">
+                <?php echo ActiveHtml::inputPlaceholder('size[0]', '', array('id' => '', 'placeholder' => 'Размер')) ?>
+                <a class="iconify_x_a" onclick="sbar.del(this)" style="display:none"></a>
+            </div>
+            <div sbar="sub" class="row" style="margin-left: 20px">
+                <?php echo ActiveHtml::inputPlaceholder('color[0][]', '', array('id' => '', 'placeholder' => 'Цвет')) ?>
+                <a class="iconify_plus_a" onclick="sfar.add(this)"></a>
+                <a class="iconify_x_a" onclick="sfar.del(this)" style="display:none"></a>
+            </div>
         </div>
         <?php endif; ?>
-        <?php endforeach; ?>
-        <?php endif; ?>
         <div class="row">
-            <?php echo ActiveHtml::inputPlaceholder('Good[colors][]', '', array('id' => '', 'placeholder' => 'Цвет')) ?>
-            <a class="iconify_plus_a" onclick="sfar.add(this)"></a>
-            <a class="iconify_x_a" onclick="sfar.del(this)" style="display:none"></a>
+            <a onclick="sbar.add(this)" class="button"><span class="iconify_plus_a"></span> Добавить еще размер</a>
         </div>
     </div>
 </div>
