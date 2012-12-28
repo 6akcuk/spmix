@@ -135,13 +135,7 @@ if ($good->oic) {
         </tr>
         </thead>
         <tbody>
-        <?php foreach ($good->ranges as $row => $range): ?>
-        <tr>
-            <td>Ряд <?php echo ($row+1) ?></td>
-            <?php ?>
-            <td><?php echo ($range->filled) ? 'Да' : 'Нет' ?></td>
-        </tr>
-        <?php endforeach; ?>
+
         </tbody>
         </table>
     </div>
