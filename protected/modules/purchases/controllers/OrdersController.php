@@ -187,7 +187,7 @@ class OrdersController extends Controller {
                 $criteria->addSearchCondition('good.artikul', $c['artikul']);
             }
             if (isset($c['size'])) {
-                $criteria->addSearchCondition('t.size', $c['size']);
+                $criteria->addSearchCondition('grid.size', $c['size']);
             }
             if (isset($c['color'])) {
                 $criteria->addSearchCondition('t.color', $c['color']);
@@ -205,7 +205,7 @@ class OrdersController extends Controller {
                 $criteria->addCondition('t.status = :status');
             }
 
-            $orders = Order::model()->with('good', 'customer', 'payment')->findAll($criteria);
+            $orders = Order::model()->with('good', 'customer', 'payment', 'grid')->findAll($criteria);
 
             $this->wideScreen = true;
             if (Yii::app()->request->isAjaxRequest) {
@@ -265,7 +265,7 @@ class OrdersController extends Controller {
                     }
 
                     $history = array(
-                        'size' => 'Изменен размер с {from} на {to}',
+                        //'size' => 'Изменен размер с {from} на {to}',
                         'color' => 'Изменен цвет с {from} на {to}',
                         'amount' => 'Изменено количество товара с {from} на {to}',
                         'total_price' => 'Изменена итог. цена с {from} на {to}',
@@ -275,6 +275,7 @@ class OrdersController extends Controller {
                         $cache[$h] = $order->$h;
                     }
                     $order->attributes = $_POST['Order'];
+                    $order->color = ($order->grid_id) ? $_POST['color'][$order->grid_id] : '';
                     $price = floatval($order->good->price) * ($order->good->purchase->org_tax / 100 + 1);
 
                     if ($order->oic) {

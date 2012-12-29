@@ -642,7 +642,7 @@ var sfar = {
 var sbar = {
     _i: 1,
     add: function(b) {
-        var $c = $('#block0').clone(),
+        var $c = $($('[rel="sbar"]')[0]).clone(),
             i = sbar._i++;
         $c.insertBefore($(b).parent());
         $c.find('[sbar="sub"]').each(function(i, e) {

@@ -40,10 +40,13 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
             <?php echo $form->checkBox($model, 'is_range') ?>
             <?php echo $form->label($model, 'is_range') ?>
         </div>
-        <div id="block0" class="row">
+        <div id="block0" rel="sbar" class="row">
             <div class="row">
                 <?php echo ActiveHtml::inputPlaceholder('size[0]', '', array('id' => '', 'placeholder' => 'Размер')) ?>
                 <a class="iconify_x_a" onclick="sbar.del(this)" style="display:none"></a>
+            </div>
+            <div rel="range" class="row" style="display:none">
+                <?php echo ActiveHtml::inputPlaceholder('allowed[0]', '', array('id' => '', 'placeholder' => 'Количество на ряд')) ?>
             </div>
             <div sbar="sub" class="row" style="margin-left: 20px">
                 <?php echo ActiveHtml::inputPlaceholder('color[0][]', '', array('id' => '', 'placeholder' => 'Цвет')) ?>
@@ -63,4 +66,11 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
     <?php echo ActiveHtml::submitButton('Добавить товар', array('class' => 'btn light_blue', 'onclick' => 'return Purchase.addgood()')); ?>
 </div>
 <?php $this->endWidget(); ?>
-    </div>
+</div>
+<script type="text/javascript">
+$().ready(function() {
+    $('#Good_is_range').click(function() {
+        ($(this).attr('checked')) ? $('[rel="range"]').show() : $('[rel="range"]').hide();
+    });
+});
+</script>

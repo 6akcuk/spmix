@@ -11,25 +11,24 @@ Yii::app()->getClientScript()->registerScriptFile('/js/photoview.js');
 
 $this->pageTitle = Yii::app()->name .' - Заказ #'. $order->order_id .' - '. $order->good->name;
 
-$sizes = json_decode($order->good->sizes, true);
-$colors = json_decode($order->good->colors, true);
 $dd_sizes = array();
 $dd_colors = array();
 $dd_oic = array();
 
-if (is_array($sizes)) {
-    foreach ($sizes as $size) {
-        $dd_sizes[$size] = $size;
-    }
-}
-if (is_array($colors)) {
-    foreach ($colors as $color) {
-        $dd_colors[$color] = $color;
+$good = $order->good;
+
+if ($good->grid) {
+    foreach ($good->grid as $grid) {
+        $colors = json_decode($grid->colors, true);
+        $dd_sizes[$grid->size] = $grid->grid_id;
+        foreach ($colors as $color) {
+            $dd_colors[$grid->grid_id][$color] = $color;
+        }
     }
 }
 
-if (is_array($order->good->oic)) {
-    foreach ($order->good->oic as $oic) {
+if ($good->oic) {
+    foreach ($good->oic as $oic) {
         $dd_oic[$oic->description .' '. ActiveHtml::price($oic->price)] = $oic->pk;
     }
 }
@@ -56,12 +55,18 @@ if (is_array($order->good->oic)) {
         <?php endif; ?>
     </div>
     <div class="left td">
+        <?php if ($good->grid): ?>
         <div class="row">
-            <?php echo $form->dropdown($order, 'size', $dd_sizes) ?>
+            <?php echo $form->dropdown($order, 'grid_id', $dd_sizes) ?>
         </div>
         <div class="row">
-            <?php echo $form->dropdown($order, 'color', $dd_colors) ?>
+            <?php foreach ($dd_colors as $grid_id => $colors): ?>
+            <div id="dd<?php echo $grid_id ?>" rel="colors" class="row" style="display:<?php echo ($order->grid_id == $grid_id) ? 'block' : 'none' ; ?>">
+                <?php echo ActiveHtml::dropdown('color['. $grid_id .']', 'Цвет', $order->color, $colors) ?>
+            </div>
+            <?php endforeach; ?>
         </div>
+        <?php endif; ?>
         <div class="row">
             <?php echo $form->inputPlaceholder($order, 'amount') ?>
         </div>
@@ -77,10 +82,12 @@ if (is_array($order->good->oic)) {
             <?php echo $form->checkBox($order, 'anonymous') ?>
             <?php echo $form->label($order, 'anonymous') ?>
         </div>
+        <?php if($good->oic): ?>
         <div class="row">
             Вы можете выбрать Центр Выдачи Заказов, если хотите самостоятельно забрать свой заказ <br/>
             <?php echo $form->dropdown($order, 'oic', $dd_oic) ?>
         </div>
+        <?php endif; ?>
         <div class="clearfix">
             <div class="left label">Цена:</div>
             <div class="left labeled"><?php echo ActiveHtml::price($order->good->price, $order->good->currency) ?></div>

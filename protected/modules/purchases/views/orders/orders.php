@@ -166,7 +166,7 @@ $this->pageTitle = Yii::app()->name .' - Заказы к закупке #'. $pur
         <td><?php echo ActiveHtml::link($order->good->name, '/good'. $order->purchase_id .'_'. $order->good_id) ?></td>
         <td><?php echo $order->good->artikul ?></td>
         <td><?php echo $order->color ?></td>
-        <td><?php echo $order->size ?></td>
+        <td><?php echo ($order->grid) ? $order->grid->size : '' ?></td>
         <td><?php echo $order->customer->login .' '. $order->customer->profile->firstname .' '. $order->customer->profile->lastname ?></td>
         <td><?php echo $order->customer->profile->city->name ?></td>
         <td><?php echo $order->customer->profile->positive_rep .' | '. $order->customer->profile->negative_rep ?></td>

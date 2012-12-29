@@ -131,12 +131,12 @@ class GoodsController extends Controller {
 
     public function actionShow($purchase_id, $good_id) {
         $good = Good::model()->with('image', 'grid', 'purchase', 'oic', 'orders', 'orders.customer', 'ordersNum')->findByPk($good_id);
-        $order = new Order('create');
+        $orderc = new Order('create');
 
         if (Yii::app()->request->isAjaxRequest) {
-            $this->pageHtml = $this->renderPartial('show', array('good' => $good, 'order' => $order), true);
+            $this->pageHtml = $this->renderPartial('show', array('good' => $good, 'orderc' => $orderc), true);
         }
-        else $this->render('show', array('good' => $good, 'order' => $order));
+        else $this->render('show', array('good' => $good, 'orderc' => $orderc));
     }
 
     public function actionEdit($purchase_id, $good_id) {
@@ -150,19 +150,38 @@ class GoodsController extends Controller {
             if (isset($_POST['Good'])) {
                 $good->attributes=$_POST['Good'];
 
-                foreach ($_POST['size'] as $idx => $size) {
-                    $colors = $_POST['color'][$idx];
-
-                    $grid = GoodGrid::model()->find('good_id = :good_id AND size = :size', array(':good_id' => $good_id, ':size' => $size));
-                    if (!$grid) {
-                        $grid = new GoodGrid('create');
-                        $grid->purchase_id = $id;
-                        $grid->good_id = $model->good_id;
-                        $grid->size = $size;
+                foreach ($_POST['grid'] as $idx => $id) {
+                    if (!isset($_POST['size'][$idx])) {
+                        GoodGrid::model()->deleteByPk($id);
+                        continue;
                     }
 
+                    $size = $_POST['size'][$idx];
+                    $colors = $_POST['color'][$idx];
+
+                    $grid = GoodGrid::model()->findByPk($id);
                     $grid->colors = json_encode($colors);
+                    $grid->allowed = $_POST['allowed'][$idx];
                     $grid->save();
+
+                    unset($_POST['size'][$idx]);
+                    unset($_POST['color'][$idx]);
+                    unset($_POST['allowed'][$idx]);
+                }
+                // были добавлены новые размеры
+                if (sizeof($_POST['size'])) {
+                    foreach ($_POST['size'] as $idx => $size) {
+                        $grid = GoodGrid::model()->find('good_id = :good_id AND size = :size', array(':good_id' => $good_id, ':size' => $size));
+                        if (!$grid) {
+                            $grid = new GoodGrid('create');
+                            $grid->purchase_id = $purchase_id;
+                            $grid->good_id = $good_id;
+                            $grid->size = $size;
+                            $grid->allowed = $_POST['allowed'][$idx];
+                            $grid->colors = json_encode($_POST['color'][$idx]);
+                            $grid->save();
+                        }
+                    }
                 }
 
                 if($good->validate() && $good->save()) {

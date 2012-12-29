@@ -8,6 +8,7 @@
  * @property integer $purchase_id
  * @property string $good_id
  * @property string $size
+ * @property integer $allowed
  * @property string $colors
  */
 class GoodGrid extends CActiveRecord

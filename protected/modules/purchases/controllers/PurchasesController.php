@@ -383,16 +383,12 @@ class PurchasesController extends Controller {
             $good->attributes = $_POST['Good'];
             $good->purchase_id = $id;
             $good->currency = 'RUR';
-            $good->sizes = json_encode(array($good->sizes));
-            $good->colors = json_encode(array($good->colors));
             $good->is_quick = 1;
 
             if ($good->validate()) {
                 $order->attributes = $_POST['Order'];
                 $order->purchase_id = $id;
                 $order->customer_id = Yii::app()->user->getId();
-                $order->size = $_POST['Good']['sizes'];
-                $order->color = $_POST['Good']['colors'];
                 $order->price = $good->price;
                 $price = floatval($good->price) * ($good->purchase->org_tax / 100 + 1);
 
@@ -407,7 +403,20 @@ class PurchasesController extends Controller {
 
                 if($order->validate()) {
                     $good->save();
+
+                    if ($_POST['size']) {
+                        $grid = new GoodGrid('create');
+                        $grid->purchase_id = $id;
+                        $grid->good_id = $good->good_id;
+                        $grid->size = $_POST['size'];
+                        $grid->colors = json_encode(array($_POST['color']));
+                        $grid->save();
+
+                        $order->grid_id = $grid->grid_id;
+                    }
+
                     $order->good_id = $good->good_id;
+                    $order->color = $_POST['color'];
                     $order->save();
 
                     $result['success'] = true;
@@ -459,6 +468,7 @@ class PurchasesController extends Controller {
                         $grid->purchase_id = $id;
                         $grid->good_id = $model->good_id;
                         $grid->size = $size;
+                        $grid->allowed = $_POST['allowed'][$idx];
                         $grid->colors = json_encode($colors);
                         $grid->save();
                     }

@@ -34,9 +34,11 @@ $this->pageTitle = Yii::app()->name .' - Платежи';
         <td><?php echo ActiveHtml::link($payment->order->good->name, '/order'. $payment->order_id) ?></td>
         <td><?php echo Yii::t('purchase', $payment->status) ?></td>
         <td>
-            <?php echo $payment->paydetails->paysystem_name ?>
+            <?php if ($payment->paydetails): ?>
+            <?php echo $payment->paydetails->paysystem_nam ?>
             <?php echo nl2br($payment->paydetails->paysystem_details) ?>
             <br/><br/>
+            <?php endif; ?>
             <?php echo nl2br($payment->description) ?>
         </td>
     </tr>

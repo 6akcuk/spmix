@@ -35,10 +35,10 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
     <?php echo $form->inputPlaceholder($good, 'price') ?>
 </div>
 <div class="row">
-    <?php echo $form->inputPlaceholder($good, 'sizes') ?>
+    <?php echo ActiveHtml::inputPlaceholder('size', '', array('placeholder' => 'Размер')) ?>
 </div>
 <div class="row">
-    <?php echo $form->inputPlaceholder($good, 'colors') ?>
+    <?php echo ActiveHtml::inputPlaceholder('color', '', array('placeholder' => 'Цвет')) ?>
 </div>
 <div class="row">
     <?php echo $form->inputPlaceholder($order, 'amount') ?>
@@ -46,12 +46,14 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
 <div class="row">
     <?php echo $form->smartTextarea($order, 'client_comment') ?>
 </div>
+<?php if ($purchase->oic): ?>
 <div class="row">
     Вы можете выбрать Центр Выдачи Заказов, если хотите самостоятельно забрать свой заказ <br/>
 </div>
-    <div class="row clearfix">
+<div class="row clearfix">
     <?php echo $form->dropdown($order, 'oic', $dd_oic) ?>
-    </div>
+</div>
+<?php endif; ?>
 <div class="row">
     <?php echo ActiveHtml::submitButton('Заказать товар', array('class' => 'btn light_blue', 'onclick' => 'return FormMgr.submit(\'#quickform\')')); ?>
 </div>

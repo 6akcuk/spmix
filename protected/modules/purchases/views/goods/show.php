@@ -35,6 +35,65 @@ if ($good->oic) {
     }
 }
 
+$gridsizes = array();
+/** @var $grid GoodGrid */
+foreach ($good->grid as $grid) {
+    $gridsizes[$grid->grid_id] = $grid->size;
+}
+
+$ranges = null;
+$cur_range = 1;
+foreach ($good->orders as $order) {
+    for ($i=1; $i<=$order->amount; $i++) {
+        $added = false;
+
+        if ($ranges === null) {
+            $ranges[$cur_range] = array();
+            foreach ($good->grid as $grid) {
+                for($k=1; $k<=$grid->allowed; $k++) {
+                    if (!$added && $grid->size == $gridsizes[$order->grid_id]) {
+                        $added = true;
+                        $o = $order;
+                    }
+                    else $o = null;
+                    $ranges[$cur_range][] = array($grid->size, $o);
+                }
+            }
+
+            $cur_range++;
+            continue;
+        }
+        else {
+            foreach ($ranges as $range => &$sizes) {
+                foreach ($sizes as &$_size) {
+                    if ($_size[1] == null && $_size[0] == $gridsizes[$order->grid_id]) {
+                        $_size[1] = $order;
+
+                        $added = true;
+                        break 2;
+                    }
+                }
+            }
+
+            if (!$added) {
+                $ranges[$cur_range] = array();
+                foreach ($good->grid as $grid) {
+                    for($k=1; $k<=$grid->allowed; $k++) {
+                        if (!$added && $grid->size == $gridsizes[$order->grid_id]) {
+                            $added = true;
+                            $o = $order;
+                        }
+                        else $o = null;
+                        $ranges[$cur_range][] = array($grid->size, $o);
+                    }
+                }
+
+                $cur_range++;
+            }
+        }
+    }
+}
+
 ?>
 
 <h1>
@@ -64,7 +123,7 @@ if ($good->oic) {
         )); ?>
         <?php if ($good->grid): ?>
         <div class="row">
-            <?php echo $form->dropdown($order, 'grid_id', $dd_sizes) ?>
+            <?php echo $form->dropdown($orderc, 'grid_id', $dd_sizes) ?>
         </div>
         <div class="row">
         <?php foreach ($dd_colors as $grid_id => $colors): ?>
@@ -75,19 +134,19 @@ if ($good->oic) {
         </div>
         <?php endif; ?>
         <div class="row">
-            <?php echo $form->inputPlaceholder($order, 'amount') ?>
+            <?php echo $form->inputPlaceholder($orderc, 'amount') ?>
         </div>
         <div class="row">
-            <?php echo $form->smartTextarea($order, 'client_comment', array('maxheight' => 250)) ?>
+            <?php echo $form->smartTextarea($orderc, 'client_comment', array('maxheight' => 250)) ?>
         </div>
         <div class="row">
-            <?php echo $form->checkBox($order, 'anonymous') ?>
-            <?php echo $form->label($order, 'anonymous') ?>
+            <?php echo $form->checkBox($orderc, 'anonymous') ?>
+            <?php echo $form->label($orderc, 'anonymous') ?>
         </div>
         <?php if($good->oic): ?>
         <div class="row">
             Вы можете выбрать Центр Выдачи Заказов, если хотите самостоятельно забрать свой заказ <br/>
-            <?php echo $form->dropdown($order, 'oic', $dd_oic) ?>
+            <?php echo $form->dropdown($orderc, 'oic', $dd_oic) ?>
         </div>
         <?php endif; ?>
         <div class="clearfix">
@@ -129,13 +188,26 @@ if ($good->oic) {
         <tr>
             <td>Строки/Столбцы</td>
             <?php foreach ($good->grid as $grid): ?>
+            <?php for($i=1; $i<=$grid->allowed; $i++): ?>
             <td><?php echo $grid->size ?></td>
+            <?php endfor; ?>
             <?php endforeach; ?>
             <td>Собран</td>
         </tr>
         </thead>
         <tbody>
-
+        <?php if ($ranges): ?>
+        <?php foreach ($ranges as $range => $sizes): ?>
+        <?php $filled = 0; ?>
+        <tr>
+            <td>Ряд <?php echo $range ?></td>
+            <?php foreach ($sizes as $size): ?>
+            <td><?php if ($size[1]) { echo ($size[1]->anonymous) ? 'анонимно' : ActiveHtml::link($size[1]->customer->login, '/id'. $size[1]->customer_id); $filled++; } ?></td>
+            <?php endforeach; ?>
+            <td><?php echo ($filled == sizeof($sizes)) ? 'Да' : 'Нет'; ?></td>
+        </tr>
+        <?php endforeach; ?>
+        <?php endif; ?>
         </tbody>
         </table>
     </div>

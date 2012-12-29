@@ -88,7 +88,7 @@ $this->pageTitle = Yii::app()->name .' - Товары к закупке #'. $pur
         <td><?php echo $good->artikul ?></td>
         <td><?php echo ActiveHtml::link($good->name, '/good'. $good->purchase_id .'_'. $good->good_id) ?></td>
         <td><?php echo ActiveHtml::price($good->price) ?></td>
-        <td></td>
+        <td><?php echo ($good->is_range) ? 'Да' : 'Нет' ; ?></td>
         <td><?php echo Yii::t('purchase', '{n} заказ|{n} заказа|{n} заказов', $good->ordersNum) ?></td>
         <td><?php echo ActiveHtml::price($good->ordersSum) ?></td>
     </tr>

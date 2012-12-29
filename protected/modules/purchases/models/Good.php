@@ -92,7 +92,7 @@ class Good extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
             'purchase' => array(self::BELONGS_TO, 'Purchase', 'purchase_id'),
-            'grid' => array(self::HAS_MANY, 'GoodGrid', array('good_id' => 'good_id')),
+            'grid' => array(self::HAS_MANY, 'GoodGrid', array('good_id' => 'good_id'), 'order' => 'size'),
             'ranges' => array(self::HAS_MANY, 'GoodRange', array('good_id' => 'good_id')),
             'image' => array(self::HAS_ONE, 'GoodImages', array('good_id' => 'good_id')),
             'images' => array(self::HAS_MANY, 'GoodImages', array('good_id' => 'good_id')),

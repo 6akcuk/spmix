@@ -44,11 +44,15 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
         </div>
         <?php if ($good->grid): ?>
         <?php foreach ($good->grid as $idx => $grid): ?>
+        <input type="hidden" name="grid[<?php echo $idx ?>]" value="<?php echo $grid->grid_id ?>" />
         <?php $colors = json_decode($grid->colors, true); ?>
-        <div id="block<?php echo $idx ?>" class="row">
+        <div id="block<?php echo $idx ?>" rel="sbar" class="row">
             <div class="row">
                 <?php echo ActiveHtml::inputPlaceholder('size['. $idx .']', $grid->size, array('id' => '', 'placeholder' => 'Размер')) ?>
-                <a class="iconify_x_a" onclick="sbar.del(this)"<?php if($idx == 0): ?> style="display:none"<?php endif; ?>></a>
+                <a class="iconify_x_a" onclick="sbar.del(this)"></a>
+            </div>
+            <div rel="range" class="row" style="dispay:<?php echo ($good->is_range) ? "block" : "none"; ?>">
+                <?php echo ActiveHtml::inputPlaceholder('allowed['. $idx .']', $grid->allowed, array('id' => '', 'placeholder' => 'Количество на ряд')) ?>
             </div>
             <?php foreach($colors as $cidx => $color): ?>
             <div sbar="sub" class="row" style="margin-left: 20px">
