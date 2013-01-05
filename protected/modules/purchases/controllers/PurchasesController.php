@@ -22,9 +22,10 @@ class PurchasesController extends Controller {
     public function actionIndex($offset = 0) {
         $cookies = Yii::app()->getRequest()->getCookies();
         $c = (isset($_REQUEST['c'])) ? $_REQUEST['c'] : array();
+        if (isset($_POST['offset'])) $offset = $_POST['offset'];
 
         $criteria = new CDbCriteria();
-        $criteria->limit = 20;
+        $criteria->limit = Yii::app()->controller->module->purchasesPerPage;
         $criteria->offset = $offset;
         $criteria->order = 'create_date DESC';
 
@@ -54,12 +55,26 @@ class PurchasesController extends Controller {
             $criteria->addCondition('category_id = :category_id');
         }
 
-        $purchases = Purchase::model()->with('city', 'author')->findAll($criteria);
+        $purchases = Purchase::model()->with('city', 'author', 'ordersNum', 'ordersSum')->findAll($criteria);
+
+        $criteria->limit = 0;
+        $purchasesNum = Purchase::model()->count($criteria);
 
         if (Yii::app()->request->isAjaxRequest) {
-            $this->pageHtml = $this->renderPartial('index', array('purchases' => $purchases, 'c' => $c), true);
+            if (isset($_POST['pages'])) {
+                $this->pageHtml = $this->renderPartial('_list', array(
+                    'purchases' => $purchases,
+                    'offset' => $offset,
+                ), true);
+            }
+            else $this->pageHtml = $this->renderPartial('index', array(
+                'purchases' => $purchases,
+                'c' => $c,
+                'offset' => $offset,
+                'offsets' => $purchasesNum,
+            ), true);
         }
-        else $this->render('index', array('purchases' => $purchases, 'c' => $c));
+        else $this->render('index', array('purchases' => $purchases, 'c' => $c, 'offset' => $offset, 'offsets' => $purchasesNum,));
     }
 
     public function actionMy($offset = 0) {
@@ -114,14 +129,31 @@ class PurchasesController extends Controller {
         else $this->render('my', array('purchases' => $purchases, 'c' => $c));
     }
 
-    public function actionShow($id) {
+    public function actionShow($id, $offset = 0) {
         $purchase = Purchase::model()->with('city', 'author', 'category', 'ordersNum', 'ordersSum')->findByPk($id);
-        $goods = Good::model()->quick()->with('image')->findAll('purchase_id = :purchase_id', array(':purchase_id' => $id));
+        if (isset($_POST['offset'])) $offset = $_POST['offset'];
+
+        $criteria = new CDbCriteria();
+        $criteria->limit = Yii::app()->controller->module->goodsPerPage;
+        $criteria->offset = $offset;
+        $criteria->addCondition('purchase_id = :purchase_id');
+        $criteria->params[':purchase_id'] = $id;
+
+        $goods = Good::model()->quick()->with('image')->findAll($criteria);
+
+        $criteria->limit = 0;
+        $goodsNum = Good::model()->quick()->count($criteria);
 
         if (Yii::app()->request->isAjaxRequest) {
-            $this->pageHtml = $this->renderPartial('show', array('purchase' => $purchase, 'goods' => $goods), true);
+            if (isset($_POST['pages'])) {
+                $this->pageHtml = $this->renderPartial('_goodlist', array(
+                    'goods' => $goods,
+                    'offset' => $offset,
+                ), true);
+            }
+            else $this->pageHtml = $this->renderPartial('show', array('purchase' => $purchase, 'goods' => $goods, 'offset' => $offset, 'offsets' => $goodsNum), true);
         }
-        else $this->render('show', array('purchase' => $purchase, 'goods' => $goods));
+        else $this->render('show', array('purchase' => $purchase, 'goods' => $goods, 'offset' => $offset, 'offsets' => $goodsNum));
     }
 
     public function actionCreate() {

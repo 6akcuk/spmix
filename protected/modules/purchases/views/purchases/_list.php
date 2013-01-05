@@ -1,7 +1,8 @@
 <?php /** @var $purchase Purchase */ ?>
-<div id="purchases">
+<?php $page = ($offset + Yii::app()->controller->module->purchasesPerPage) / Yii::app()->controller->module->purchasesPerPage ?>
+<?php $added = false; ?>
 <?php foreach ($purchases as $purchase): ?>
-    <div class="purchase clearfix">
+    <div<?php if(!$added) { echo ' rel="page-'. $page .'"'; $added = true; } ?> class="purchase clearfix">
         <div class="purchase_name">
             <span class="list_name"><?php echo ActiveHtml::link($purchase->name, '/purchase'. $purchase->purchase_id) ?></span>
         </div>
@@ -13,7 +14,10 @@
             <span>Город: <?php echo $purchase->city->name ?></span>
             <span>Дата стопа: <?php echo ActiveHtml::date($purchase->stop_date, false) ?></span>
             <span>Статус: <?php echo Yii::t('purchase', $purchase->state) ?></span>
+            <span>
+                Кол-во заказов: <?php echo $purchase->ordersNum ?>
+                <div class="right"><?php echo $purchase->getMinimalPercentage() ?> %</div>
+            </span>
         </div>
     </div>
 <?php endforeach; ?>
-</div>

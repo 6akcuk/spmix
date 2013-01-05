@@ -334,3 +334,30 @@ div.olcm li a:hover {
 .smarttext textarea {
     overflow: hidden;
 }
+
+/* Up me */
+.stl {
+    cursor: pointer
+}
+#stl_left {
+    top: 0;
+    left: 0;
+    z-index: 3
+}
+#stl_bg {
+    width: 100px;
+    height: 100%;
+    padding: 13px 0px;
+    opacity: .5;
+    filter: alpha(opacity=50);
+}
+#stl_bg.hover {
+    background: #00641c;
+}
+#stl_text {
+    display: block;
+    padding: 0px 20px;
+    margin-left: 15px;
+    margin-right: 31px;
+    font-weight: bold;
+}

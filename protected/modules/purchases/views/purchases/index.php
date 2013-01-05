@@ -4,7 +4,11 @@
 Yii::app()->getClientScript()->registerCssFile('/css/purchases.css');
 Yii::app()->getClientScript()->registerScriptFile('/js/purchase.js');
 
+Yii::app()->getClientScript()->registerCssFile('/css/pagination.css');
+Yii::app()->getClientScript()->registerScriptFile('/js/pagination.js');
+
 $this->pageTitle = Yii::app()->name .' - Закупки';
+$delta = Yii::app()->controller->module->purchasesPerPage;
 ?>
 
 <h1>
@@ -21,13 +25,16 @@ $this->pageTitle = Yii::app()->name .' - Закупки';
             <?php echo ActiveHtml::dropdown('c[category_id]', 'Категория', (isset($c['category_id'])) ? $c['category_id'] : '', PurchaseCategory::getDataArray()) ?>
         </div>
         <div class="right">
-        <?php /*$this->widget('Paginator', array(
+        <?php $this->widget('Paginator', array(
             'url' => '/purchases',
             'offset' => $offset,
-            'offsets' => 1,
-            'delta' => 20,
-        ));*/ ?>
+            'offsets' => $offsets,
+            'delta' => $delta,
+        )); ?>
         </div>
     </div>
-    <?php $this->renderPartial('_list', array('purchases' => $purchases)) ?>
+    <div id="purchases" rel="pagination">
+    <?php $this->renderPartial('_list', array('purchases' => $purchases, 'offset' => $offset)) ?>
+    </div>
+    <? if ($offset + $delta < $offsets && $offsets > $delta): ?><a id="pg_more" class="pg_more" onclick="Paginator.showMore()">Еще закупки</a><? endif; ?>
 </div>

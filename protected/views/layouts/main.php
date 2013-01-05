@@ -47,6 +47,12 @@ $cookies = $request->getCookies();
     <div id="box_layout"></div>
 </div>
 
+<div class="fixed stl" id="stl_left" style="display:none">
+    <div id="stl_bg">
+        <nobr id="stl_text"><span class="iconify_up_a"></span> Наверх</nobr>
+    </div>
+</div>
+
 <div class="wrapper">
     <div class='top'>
         <div class="fl_l logo">

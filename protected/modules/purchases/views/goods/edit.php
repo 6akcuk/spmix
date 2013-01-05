@@ -1,4 +1,3 @@
-<div class="create">
 <?php
 /**
  * @var $purchase Purchase
@@ -69,6 +68,9 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
                 <?php echo ActiveHtml::inputPlaceholder('size[0]', '', array('id' => '', 'placeholder' => 'Размер')) ?>
                 <a class="iconify_x_a" onclick="sbar.del(this)" style="display:none"></a>
             </div>
+            <div rel="range" class="row" style="display:none">
+                <?php echo ActiveHtml::inputPlaceholder('allowed[0]', '', array('id' => '', 'placeholder' => 'Количество на ряд')) ?>
+            </div>
             <div sbar="sub" class="row" style="margin-left: 20px">
                 <?php echo ActiveHtml::inputPlaceholder('color[0][]', '', array('id' => '', 'placeholder' => 'Цвет')) ?>
                 <a class="iconify_plus_a" onclick="sfar.add(this)"></a>
@@ -101,4 +103,10 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
     </div>
 <?php endforeach; ?>
 </div>
-    </div>
+<script type="text/javascript">
+$().ready(function() {
+    $('#Good_is_range').change(function() {
+        ($(this).attr('checked')) ? $('[rel="range"]').show() : $('[rel="range"]').hide();
+    });
+});
+</script>

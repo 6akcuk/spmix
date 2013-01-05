@@ -30,9 +30,13 @@
     position: relative;
 }
 .pv_content table {
-    margin: 0px auto;
-    border-collapse: separate;
-    border-spacing: 0px;
+    margin: 0px auto !important;
+    border-collapse: separate !important;
+    border-spacing: 0px !important;
+}
+.pv_content table td {
+    border-width: 0 !important;
+    padding: 0px !important;
 }
 
 .pv_content .sidesh {

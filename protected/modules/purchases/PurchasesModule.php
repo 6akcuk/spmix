@@ -2,6 +2,9 @@
 
 class PurchasesModule extends CWebModule
 {
+    public $purchasesPerPage = 20;
+    public $goodsPerPage = 50;
+
 	public function init()
 	{
 		// this method is called when the module is being created

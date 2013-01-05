@@ -64,6 +64,10 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
             <?php echo $form->textfield($model, 'supplier_url') ?>
         </div>
         <div class="row">
+            <?php echo $form->label($model, 'hide_supplier') ?>
+            <?php echo $form->checkBox($model, 'hide_supplier') ?>
+        </div>
+        <div class="row">
             <?php echo $form->label($model, 'price_url') ?>
             <?php echo $form->textfield($model, 'price_url') ?>
         </div>

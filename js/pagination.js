@@ -2,59 +2,86 @@ var Paginator = {
     opts: {},
     landmarks: [],
 
+    onWindowResize: function() {
+        var $pg = $('div.pagination'),
+            ofs = $pg.offset();
+
+        A.pgFixed.css({
+            left: ofs.left
+        });
+        Paginator.initPages();
+    },
+
     init: function(opts) {
         var $pg = $('div.pagination'),
             ofs = $pg.offset();
-        Paginator.opts = opts || {};
+        Paginator.opts = $.extend(Paginator.opts, opts || {});
 
         if (!ofs) return;
 
-        if (opts && opts.offset !== null) un.offset = un.offset || opts.offset;
-        un.pgFixed = $('<div/>').addClass('pg_fixed')
-            .attr('id', 'pg_fixed')
-            .css({
-                display: 'none'
-            });
-        un.pgFixed.html('<div class="pg_fixed_content"></div>');
-        un.pgFixedContent = un.pgFixed.find('div.pg_fixed_content');
+        A.pgTarget = opts.target;
+        A.pgUrl = opts.url;
+        A.pgDelta = opts.delta;
+        A.offset = opts.offset;
+        A.pgPage = (A.offset + A.pgDelta) / A.pgDelta;
+        A.pgPages = opts.pages;
+        A.pgFixedNoMore = false;
 
-        un.pgFixed.appendTo(document.body);
+        if (A.pgInit) $(window).scrollTop(0);
+        else {
+            A.pgFixed = $('<div/>').addClass('pg_fixed')
+                .attr('id', 'pg_fixed')
+                .css({
+                    display: 'none',
+                    left: ofs.left
+                });
+            A.pgFixed.html('<div class="pg_fixed_bg"></div><div class="pg_fixed_content"></div>');
+            A.pgFixedBg = A.pgFixed.find('div.pg_fixed_bg');
+            A.pgFixedContent = A.pgFixed.find('div.pg_fixed_content');
 
-        un.pgFixedTop = ofs.top;
-        un.pgFixedLoaded = {};
-        un.pgFixedLoaded[(un.offset + Paginator.opts.delta) / Paginator.opts.delta] = true;
+            A.pgFixed.appendTo(document.body);
 
-        Paginator.initPages();
+            A.pgFixedTop = ofs.top;
+            A.pgBusy = false;
+            A.pgInit = true;
+
+            Paginator.attach();
+        }
+
         Paginator.scanLandmarks();
-        Paginator.attach();
+        Paginator.initPages();
     },
 
     initPages: function() {
-        var page = (un.offset + Paginator.opts.delta) / Paginator.opts.delta,
+        var page = (A.offset + A.pgDelta) / A.pgDelta,
             html = [],
             minPage = 1, maxPage = 1;
 
         if (page > 3) minPage = page - 2;
         maxPage = (page < Paginator.opts.pages - 2) ? page + 2 : Paginator.opts.pages;
 
-        if (page > 3) html.push('<a class="pg_fixed_arr" href="'+ Paginator.opts.url +'?offset=0" onclick="return Paginator.nav(this, event)">&laquo;</a>');
+        if (page > 3) html.push('<a class="pg_fixed_arr" href="'+ Paginator.opts.url +'?offset=0" onclick="return nav.go(this, event, {paginator: true})">&laquo;</a>');
         for(var i=minPage; i<=maxPage; i++) {
-            var offset = i * Paginator.opts.delta - Paginator.opts.delta,
-                cls = (offset == un.offset) ? 'pg_fixed_lnk_sel' : 'pg_fixed_lnk';
-            if (cls == 'pg_fixed_lnk' && un.pgFixedLoaded[i]) cls = 'pg_fixed_lnk_fill';
-            html.push('<a class="'+ cls +'" href="'+ Paginator.opts.url +'?offset='+ offset +'" onclick="return Paginator.nav(this, event)">'+ i +'</a>');
+            var offset = i * A.pgDelta - A.pgDelta,
+                cls = (i == A.pgPage) ? 'pg_fixed_lnk_sel' : 'pg_fixed_lnk';
+            if (cls == 'pg_fixed_lnk' && Paginator.landmarks[i] && Paginator.landmarks[i].top) cls = 'pg_fixed_lnk_fill';
+            html.push('<a class="'+ cls +'" href="'+ Paginator.opts.url +'?offset='+ offset +'" onclick="return nav.go(this, event, {paginator: true})">'+ i +'</a>');
         }
         if (Paginator.opts.pages > maxPage) {
-            var offset = maxPage * Paginator.opts.delta - Paginator.opts.delta;
-            html.push('<a class="pg_fixed_arr" href="'+ Paginator.opts.url +'?offset='+ offset +'" onclick="return Paginator.nav(this, event)">&raquo;</a>');
+            var offset = maxPage * A.pgDelta - A.pgDelta;
+            html.push('<a class="pg_fixed_arr" href="'+ Paginator.opts.url +'?offset='+ offset +'" onclick="return nav.go(this, event, {paginator: true})">&raquo;</a>');
         }
 
-        un.pgFixedContent.html(html.join(''));
+        A.pgFixedContent.html(html.join(''));
+        A.pgFixedBg.css({width: A.pgFixedContent.outerWidth(), height: A.pgFixedContent.outerHeight()});
     },
 
     scanLandmarks: function() {
-        $('li[data-paginator*="page"]').each(function(idx, val) {
-            Paginator.landmarks[idx] = {top: $(this).offset().top, target: $(this)};
+        Paginator.landmarks = [];
+
+        $('[rel*="page"]').each(function(idx, val) {
+            var pg = parseInt($(this).attr('rel').split('-').pop());
+            Paginator.landmarks[pg] = {top: $(this).offset().top, target: $(this)};
         });
     },
 
@@ -63,30 +90,26 @@ var Paginator = {
     },
 
     scrollResize: function(evt) {
-        var $win = $(window), st = $win.scrollTop() + $win.height(),
-            $pgMore = $('a.pg_more'), mrt = $pgMore.offset().top;
+        var $win = $(window), scr = $win.scrollTop(), st = scr + $win.height(),
+            $pgMore = $('a.pg_more'), mrt = ($pgMore.offset()) ? $pgMore.offset().top : 0;
 
-        if (st > un.pgFixedTop && !un.pgFixedVisible) {
-            un.pgFixed.stop().fadeIn();
-            un.pgFixedVisible = true;
+        if (scr > A.pgFixedTop && !A.pgFixedVisible) {
+            A.pgFixed.stop(true, true).fadeIn();
+            A.pgFixedVisible = true;
+            Paginator.initPages();
         }
-        else if(st <= un.pgFixedTop && un.pgFixedVisible) {
-            un.pgFixed.stop().fadeOut();
-            un.pgFixedVisible = false;
+        else if(scr <= A.pgFixedTop && A.pgFixedVisible) {
+            A.pgFixed.stop(true, true).fadeOut();
+            A.pgFixedVisible = false;
         }
 
-        if (!un.pgFixedNoMore && st >= mrt - 150) Paginator.preload();
+        if (!A.pgFixedNoMore && st >= mrt - 150) Paginator.preload();
 
-        for (var i=0; i<Paginator.landmarks.length; i++) {
-            var lm = Paginator.landmarks[i];
-
-            if (st >= lm.top && (!Paginator.landmarks[i+1] || st < Paginator.landmarks[i+1].top)) {
-                var pg = parseInt(lm.target.attr('data-paginator').split('-').pop()),
-                    offset = (pg * Paginator.opts.delta) - Paginator.opts.delta;
-
-                if (offset != un.offset) {
-                    un.offset = offset;
-                    //alert(st + ' ' + lm.top + ' '+ un.offset + ' '+ pg);
+        for(var pg in Paginator.landmarks) {
+            var lm = Paginator.landmarks[pg];
+            if (st >= lm.top && (!Paginator.landmarks[pg+1] || st < Paginator.landmarks[pg+1].top)) {
+                if (pg != A.pgPage) {
+                    A.pgPage = pg;
                     Paginator.initPages();
                 }
             }
@@ -94,31 +117,58 @@ var Paginator = {
     },
 
     preload: function() {
-        var nextOffset = un.offset + Paginator.opts.delta,
-            nextPage = (nextOffset + Paginator.opts.delta) / Paginator.opts.delta;
+        var curPage = (A.offset + A.pgDelta) / A.pgDelta,
+            nextOffset = A.offset + A.pgDelta,
+            nextPage = (nextOffset + A.pgDelta) / A.pgDelta;
 
-        if (un.pgFixedLoaded[nextPage]) return;
-        un.pgFixedLoaded[nextPage] = true;
+        if (A.pgFixedNoMore) return;
+        if (Paginator.landmarks[nextPage]) return;
+        if (A.pgBusy) return;
+        A.pgBusy = true;
 
-        if (nextPage == Paginator.opts.pages) {
-            un.pgFixedNoMore = true;
+        if (curPage == A.pgPages || nextPage == A.pgPages) {
+            A.pgFixedNoMore = true;
             $('a.pg_more').hide();
+
+            if (curPage == A.pgPages) {
+                A.pgBusy = false;
+                return;
+            }
         }
 
-        $.post(Paginator.opts.url +'?offset='+ nextOffset, {}, function(r,s,x) {
-            $(r).appendTo(Paginator.opts.target);
-            Paginator.initPages();
-            Paginator.scanLandmarks();
+        var loc = (nav.curLoc.match(/\?/)) ? nav.curLoc.split('?') : [nav.curLoc, ''],
+            obj = nav.q2obj(loc[1]);
+
+        $.extend(obj, {offset: nextOffset, pages: 1});
+        loc[1] = nav.obj2q(obj);
+        ajax.post(loc[0], obj, function(r) {
+            Paginator.onDone(r, nextOffset);
         });
+        //nav.go(A.pgUrl +'?offset='+ nextOffset, null, {paginator: true});
     },
 
-    nav: function(loc, evt) {
-        var offset = parseInt(loc.href.match(/offset=(\d+)/)[1]),
-            page = (offset + Paginator.opts.delta) / Paginator.opts.delta;
+    onDone: function(r, offset) {
+        var page = (A.offset + A.pgDelta) / A.pgDelta;
+        A.pgBusy = false;
+        A.offset = offset;
 
-        if (!un.pgFixedLoaded[page]) return true;
+        $(r.html).appendTo(A.pgTarget);
+        Paginator.scanLandmarks();
+        Paginator.initPages();
+    },
+
+    showMore: function() {
+        Paginator.preload();
+    },
+
+    nav: function(offset) {
+        var page = (parseInt(offset) + A.pgDelta) / A.pgDelta;
+
+        if (!Paginator.landmarks[page]) return true;
         else {
-            $(window).scrollTop($('li[data-paginator="page-'+ page +'"]').offset().top - 80);
+            $(window).scrollTop($('[rel="page-'+ page +'"]').offset().top - 80);
+            A.pgPage = page;
+            Paginator.initPages();
             return false;
         }
     }

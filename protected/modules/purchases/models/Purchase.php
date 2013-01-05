@@ -16,6 +16,7 @@
  * @property string $min_sum
  * @property integer $min_num
  * @property string $supplier_url
+ * @property integer $hide_supplier
  * @property string $price_url
  * @property string $message
  * @property string $org_tax
@@ -81,7 +82,7 @@ class Purchase extends CActiveRecord
 		return array(
             array('name, author_id, category_id, city_id, status', 'required', 'on' => 'create'),
             array('name, author_id, category_id, status, state, min_sum, min_num, org_tax', 'required', 'on' => 'edit'),
-            array('image', 'safe'),
+            array('image, hide_supplier', 'safe'),
 			array('author_id, category_id, city_id, min_num, vip, mod_confirmation', 'numerical', 'integerOnly'=>true),
 			array('name, supplier_url, price_url, message, image, mod_reason, sizes', 'length', 'max'=>255),
 			array('status', 'length', 'max'=>8),
@@ -132,6 +133,7 @@ class Purchase extends CActiveRecord
             'min_sum' => 'Мин. сумма заказа',
             'min_num' => 'Мин. кол-во заказов',
             'supplier_url' => 'Ссылка на сайт поставщика',
+            'hide_supplier' => 'Скрыть сайт поставщика',
             'price_url' => 'Ссылка на прайс',
             'message' => 'Оповещение',
             'org_tax' => '% наценки организатора',

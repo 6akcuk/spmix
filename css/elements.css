@@ -253,3 +253,10 @@ table.data th.right, table.data td.right {
     width: 80px;
 }
 
+.pagination ul li {
+    float: left;
+}
+.pagination ul li a {
+    display: block;
+    padding: 5px 10px
+}
