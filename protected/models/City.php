@@ -9,6 +9,8 @@
  */
 class City extends CActiveRecord
 {
+    private static $_cities = null;
+
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
@@ -85,12 +87,16 @@ class City extends CActiveRecord
 
     public static function getDataArray()
     {
-        $arr = array();
-        $data = self::model()->findAll();
-        foreach ($data as $dt) {
-            $arr[$dt->name] = $dt->id;
+        if (!self::$_cities) {
+            $arr = array();
+            $data = self::model()->findAll();
+            foreach ($data as $dt) {
+                $arr[$dt->name] = $dt->id;
+            }
+
+            self::$_cities = $arr;
         }
 
-        return $arr;
+        return self::$_cities;
     }
 }

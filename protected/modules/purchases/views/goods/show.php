@@ -149,6 +149,7 @@ foreach ($good->orders as $order) {
             <?php echo $form->dropdown($orderc, 'oic', $dd_oic) ?>
         </div>
         <?php endif; ?>
+        <!--
         <div class="clearfix">
             <div class="left label">Цена:</div>
             <div class="left labeled"><?php echo ActiveHtml::price($good->price, $good->currency) ?></div>
@@ -160,6 +161,10 @@ foreach ($good->orders as $order) {
         <div class="clearfix">
             <div class="left label">Итог. цена:</div>
             <div class="left labeled"><?php echo ActiveHtml::price(floatval($good->price) * ($good->purchase->org_tax / 100 + 1), $good->currency) ?></div>
+        </div>
+        -->
+        <div class="clearfix">
+            <?php echo ActiveHtml::price(floatval($good->price) * ($good->purchase->org_tax / 100 + 1), $good->currency) ?>
         </div>
         <div class="row">
             <?php if (in_array($good->purchase->state, array(Purchase::STATE_CALL_STUDY, Purchase::STATE_ORDER_COLLECTION, Purchase::STATE_REORDER))): ?>

@@ -21,11 +21,13 @@ class ProfilesController extends Controller {
 
     public function actionIndex($id) {
         $userinfo = User::model()->with('profile')->findByPk($id);
+        $friends = $userinfo->profile->getFriends();
+        $friendsNum = $userinfo->profile->countFriends();
 
         if (Yii::app()->request->isAjaxRequest) {
-            $this->pageHtml = $this->renderPartial('index', array('userinfo' => $userinfo), true);
+            $this->pageHtml = $this->renderPartial('index', array('userinfo' => $userinfo, 'friends' => $friends, 'friendsNum' => $friendsNum), true);
         }
-        else $this->render('index', array('userinfo' => $userinfo));
+        else $this->render('index', array('userinfo' => $userinfo, 'friends' => $friends, 'friendsNum' => $friendsNum));
     }
 
     public function actionEdit() {

@@ -21,6 +21,8 @@ class RbacItem extends CActiveRecord
     const TYPE_TASK = 1;
     const TYPE_ROLE = 2;
 
+    private static $_sroles = null;
+
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
@@ -85,25 +87,19 @@ class RbacItem extends CActiveRecord
 		);
 	}
 
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// Warning: Please modify the following code to remove attributes that
-		// should not be searched.
+    public static function getSearchRoleArray()
+    {
+        if (!self::$_sroles) {
+            $arr = array();
+            $data = self::model()->findAll('type = :type', array(':type' => self::TYPE_ROLE));
+            foreach ($data as $dt) {
+                if ($dt->name == 'Гость') continue;
+                $arr[$dt->name] = $dt->name;
+            }
 
-		$criteria=new CDbCriteria;
+            self::$_sroles = $arr;
+        }
 
-		$criteria->compare('name',$this->name,true);
-		$criteria->compare('type',$this->type);
-		$criteria->compare('description',$this->description,true);
-		$criteria->compare('bizrule',$this->bizrule,true);
-		$criteria->compare('data',$this->data,true);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
-	}
+        return self::$_sroles;
+    }
 }

@@ -20,12 +20,12 @@ class GoodsController extends Controller {
     }
 
     public function actionOrder($purchase_id, $good_id) {
-        $order = new Order('create');
-
         if(isset($_POST['Order']))
         {
             /** @var $good Good */
             $good = Good::model()->with('purchase', 'grid')->findByPk($good_id);
+
+            $order = new Order(($good->is_range) ? 'create_range' : 'create');
 
             if (
                 in_array(

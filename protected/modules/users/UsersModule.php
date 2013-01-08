@@ -3,6 +3,7 @@
 class UsersModule extends CWebModule
 {
     public $onlineInterval = 10;
+    public $friendsPerPage = 10;
 
 	public function init()
 	{

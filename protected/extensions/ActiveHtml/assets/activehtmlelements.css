@@ -92,12 +92,22 @@ a.input_calendar em {
 /* Tooltip */
 div.tooltip {
     position: absolute;
-    padding: 10px;
+}
+div.tooltip div.tt_bg {
+    position: absolute;
+    left: 0;
+    top: 0;
     background: #000;
-    color: #fff;
-    opacity: .7;
-    filter:alpha(opacity=70);
+    filter:alpha(opacity=80);
+    opacity: .8;
     border-radius: 4px
+}
+div.tooltip div.tt_text {
+    position: relative;
+    color: #fff;
+    padding: 4px 6px;
+    font-size: 12px;
+    font-weight: bold;
 }
 
 /* Dropdown */

@@ -12,6 +12,14 @@ class ActiveForm extends CActiveForm {
         return ActiveHtml::activeInputPlaceholder($model, $attribute, $htmlOptions);
     }
 
+    public function emailPlaceholder($model, $attribute, $htmlOptions = array()) {
+        return ActiveHtml::activeEmailPlaceholder($model, $attribute, $htmlOptions);
+    }
+
+    public function passwordPlaceholder($model, $attribute, $htmlOptions = array()) {
+        return ActiveHtml::activePasswordPlaceholder($model, $attribute, $htmlOptions);
+    }
+
     public function dropdown($model, $attribute, $data, $htmlOptions = array()) {
         return ActiveHtml::activeDropdown($model, $attribute, $data, $htmlOptions);
     }

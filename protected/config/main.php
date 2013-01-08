@@ -31,12 +31,14 @@ return array(
 			'class'=>'system.gii.GiiModule',
 			'password'=>'s1a55j7',
 			// If removed, Gii defaults to localhost only. Edit carefully to taste.
-			'ipFilters'=>array('127.0.0.1','::1','136.169.156.108','92.50.166.78'),
+			'ipFilters'=>array('127.0.0.1','::1','94.41.87.226','92.50.166.78'),
 		),
         'users' => array(
             'onlineInterval' => 10, // сколько минут считать пользователя онлайн
         ),
         'purchases',
+        'search',
+        'im',
     ),
 
 	// application components
@@ -72,6 +74,8 @@ return array(
                 'register/sendSMS' => 'site/sendSMSRegister',
                 'id<id:\d+>' => 'users/profiles',
                 'edit' => 'users/profiles/edit',
+                '<controller:(friends)>' => 'users/friends/',
+                '<controller:(friends)>/<action:\w+>' => 'users/friends/<action>',
                 '<controller:(users)>' => 'users/users/index',
                 '<controller:(users)>/<action:\w+>' => 'users/users/<action>',
                 '<controller:(goods)>/<action:\w+>' => 'purchases/goods/<action>',

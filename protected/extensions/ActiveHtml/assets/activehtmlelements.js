@@ -74,14 +74,19 @@ var Tooltip = {
 
         var c = $(el),
             t = $('<div/>').addClass('tooltip')
-            .html(c.attr('title'))
-            .appendTo('body');
+            .html('<div class="tt_bg"></div><div class="tt_text">'+ c.attr('title') + '</div>')
+            .appendTo('body'),
+            b = t.find('div.tt_bg');
         Tooltip.cur = t;
         Tooltip.d = c;
         c.attr('title', '');
         t.css({
             top: parseInt(c.offset().top - 10 - t.outerHeight()),
             left: parseInt(c.offset().left + (c.outerWidth() / 2) - (t.outerWidth() / 2))
+        });
+        b.css({
+            width: t.find('div.tt_text').outerWidth(),
+            height: t.find('div.tt_text').outerHeight()
         });
     },
     hide: function() {
@@ -262,7 +267,7 @@ var input_ph = {
 $.fn.inputPlaceholder = function() {
     this.each(function()
     {
-        $(this).focus(function() {
+        $(this).focus(function(e) {
             $(this).next().hide();
         }).blur(function() {
             if ($.trim($(this).val()) == '') $(this).next().show();
@@ -625,6 +630,49 @@ $.fn.tabs = function()
     });
 }
 
+/* Boxes */
+var _box_guid = 0;
+var _bq = {
+    _boxes: [],
+    curBox: 0
+};
+
+function Box(opts, dark) {
+    var defaults = {
+        title: false,
+        width: 410,
+        height: 'auto',
+        progress: false,
+        hideButtons: false,
+        hideOnBGClick: false,
+        onShow: false,
+        onHide: false
+    };
+
+    opts = $.extend(defaults, opts);
+
+    var boxContainer, boxBG, boxLayout;
+    var boxTitleWrap, boxTitle, boxCloseButton, boxBody;
+    var guid = _box_guid++, visible = false;
+
+    if (!opts.progress) opts.progress = 'box_progress'+ guid;
+
+    var controlsStyle = (opts.hideButtons) ? ' style="display:none"' : '';
+    boxContainer = $('<div/>').addClass('popup_box_container');
+    if (dark) boxContainer.addClass('box_dark');
+    boxContainer.html('\
+<div class="box_layout" onclick="_bq.skip=true;">\
+<div class="box_title_wrap"><div class="box_x_button">'+(dark ? 'Закрыть' : '')+'</div><div class="box_title"></div></div>\
+<div class="box_body" style="' + options.bodyStyle + '"></div>\
+<div class="box_controls_wrap"' + controlsStyle + '><div class="box_controls">\
+<table cellspacing="0" cellpadding="0" class="fl_r"><tr></tr></table>\
+<div class="progress" id="' + options.progress + '"></div>\
+<div class="box_controls_text"></div>\
+</div></div>\
+</div>');
+    boxContainer.hide();
+}
+
 /* Simple Field Add/Remove */
 var sfar = {
     add: function(plus) {
@@ -826,13 +874,15 @@ var Upload = {
         Upload.initFile(id);
     },
     initFile: function(id, customChange) {
-        $('<input/>')
-            .attr({type: 'file', name: 'photo', id: 'file_upload_'+ id})
-            .change(function(){
-                if (customChange) customChange();
-                else Upload.onStart(id)
-            })
-            .prependTo('#file_button_'+ id +' div.filebutton');
+        if (!$('#file_button_'+ id +' div.filebutton input[type="file"]').size()) {
+            $('<input/>')
+                .attr({type: 'file', name: 'photo', id: 'file_upload_'+ id})
+                .change(function(){
+                    if (customChange) customChange();
+                    else Upload.onStart(id)
+                })
+                .prependTo('#file_button_'+ id +' div.filebutton');
+        }
     },
     deleteFile: function(id) {
         var $button = $('#file_button_'+ id);
@@ -911,6 +961,7 @@ var Upload = {
         if (cur['fileDoneCustom'+ id]) cur['fileDoneCustom'+ id](filedata);
     },
     onFail: function(id, message) {
+        $('#file_ctrl_'+ id).remove();
         Upload.showInput(id);
         Upload.initFile(id);
         report_window.create('#file_button_'+ id, 'left', message);
@@ -926,21 +977,21 @@ $.fn.filters = function() {
         if ($el.hasClass('input_placeholder')) {
             var $this = $el.find('input');
             $this.blur(function() {
-                nav.go('?'+ $this.attr('name') +'='+ $this.val(), event, {revoke: ($this.val() == '')});
+                nav.go('?'+ $this.attr('name') +'='+ $this.val(), event, {search: true, revoke: ($this.val() == '')});
             }).keypress(function(ev) {
-                if (ev.keyCode == 13) nav.go('?'+ $this.attr('name') +'='+ $this.val());
+                if (ev.keyCode == 13) nav.go('?'+ $this.attr('name') +'='+ $this.val(), event, {search: true});
             });
         }
         else if ($el.hasClass('input_calendar')) {
             var $this = $el.find('input');
             $this.blur(function() {
-                nav.go('?'+ $this.attr('name') +'='+ $this.val(), event, {revoke: ($this.val() == '')});
+                nav.go('?'+ $this.attr('name') +'='+ $this.val(), event, {search: true, revoke: ($this.val() == '')});
             });
         }
         else if ($el.hasClass('dropdown')) {
             var $this = $el.find('input');
             $this.change(function() {
-                nav.go('?'+ $this.attr('name') +'='+ $this.val(), event, {revoke: ($this.val() == '')});
+                nav.go('?'+ $this.attr('name') +'='+ $this.val(), event, {search: true, revoke: ($this.val() == '')});
             });
         }
     });
@@ -953,6 +1004,7 @@ var nav = {
     _tmPage: null,
     curLoc: false,
     objLoc: {},
+    request: null,
 
     q2obj: function(qa) {
         if (!qa) return {};
@@ -1032,8 +1084,8 @@ var nav = {
 
         if (a[1]) {
             if (a[0] == '') a[0] = curLoc[0];
-            if (a[0] != curLoc[0]) nav.objLoc = {};
-            $.extend(true, nav.objLoc, curObj, obj);
+            if (!opts.search) nav.objLoc = {};
+            $.extend(true, nav.objLoc, (!opts.search) ? {} : curObj, obj);
             q = nav.obj2q(nav.objLoc);
             if (opts.revoke) {
                 q = nav.revoke(q, a[1]);
@@ -1072,12 +1124,9 @@ var nav = {
                 if (!todo) return false;
             }
 
-            nav.curLoc = loc;
-            location.hash = loc;
-
             var where = loc.split('?');
             if (where[1]) {
-                where.url = where[0];
+                where.url = loc;
                 where.params = where[1];
             }
             else {
@@ -1085,7 +1134,11 @@ var nav = {
                 where.params = '';
             }
 
-            var request = $.ajax({
+            if (nav.request) {
+                clearTimeout(nav._tmPage);
+                nav.request.abort();
+            }
+            nav.request = $.ajax({
                 type: 'POST',
                 dataType: 'json',
                 url: where.url,
@@ -1093,18 +1146,47 @@ var nav = {
             });
             $('body').addClass('progress');
 
-            request.done(function(response, status, xhr) {
+            nav.request.done(function(response, status, xhr) {
                 if (response.guest && A.user_id > 0) {
                     location.href = A.host;
                     return;
                 }
 
+                nav.curLoc = loc;
+                location.hash = loc;
+
                 $('body').removeClass('progress');
                 clearTimeout(nav._tmPage);
+                nav.request = null;
 
                 $.each(response.static, function(i, st) {
                     stmgr.add(st[0], st[1], st[2])
                 });
+
+                // Page Counters
+                if (response.counters['friends']) {
+                    var iCnt = parseInt(response.counters['friends']),
+                        $friends_cnt = $('#friends_link').find('a.right');
+                    if ($friends_cnt.size()) {
+                        (iCnt > 0) ? $friends_cnt.html('+'+ iCnt) : $friends_cnt.remove();
+                    }
+                    else {
+                        if (iCnt > 0)
+                            $('<a href="/friends?section=requests" onclick="return nav.go(this, event)" class="right lm-counter">+'+ iCnt +'</a>').appendTo('#friends_link');
+                    }
+                }
+
+                if (response.counters['pm']) {
+                    var iCnt = parseInt(response.counters['pm']),
+                        $pm_cnt = $('#pm_link').find('a.right');
+                    if ($pm_cnt.size()) {
+                        (iCnt > 0) ? $pm_cnt.html('+'+ iCnt) : $pm_cnt.remove();
+                    }
+                    else {
+                        if (iCnt > 0)
+                            $('<a href="/im" onclick="return nav.go(this, event)" class="right lm-counter">+'+ iCnt +'</a>').appendTo('#pm_link');
+                    }
+                }
 
                 //logger.showAll();
 
@@ -1115,21 +1197,33 @@ var nav = {
                     $('#content').removeClass('largecolumn');
                 }
                 else {
-                    if (!$('#content').hasClass('largecolumn')) {
+                    if (!$('#content').hasClass('wrap') && !$('#content').hasClass('largecolumn')) {
                         $('#body > div.wrap > div.maincolumns > div.smallcolumn').show();
                         $('#content').addClass('largecolumn');
                     }
                 }
                 $('#content').trigger('contentChanged');
             });
-            request.fail(function(xhr, textStatus, errorThrown) {
+            nav.request.fail(function(xhr, textStatus, errorThrown) {
+                if (xhr.response && xhr.response.guest && A.user_id > 0) {
+                    location.href = A.host;
+                    return;
+                }
+
                 $('body').removeClass('progress');
                 clearTimeout(nav._tmPage);
+                nav.request = null;
 
-                if (errorThrown == 'Forbidden') {
-                    ajex.show(xhr.responseText);
+                switch (xhr.status) {
+                    case 403:
+
+                        break;
+                    case 404:
+                        ajex.show('Страница не найдена');
+                        break;
+                    default:
+                        ajex.show('Ошибка связи с сервером. Перезагрузите страницу, нажав <b>F5</b>. '+ xhr.responseText);
                 }
-                else ajex.show('Ошибка связи с сервером. Перезагрузите страницу, нажав <b>F5</b>. '+ xhr.responseText);
             });
 
             clearTimeout(nav._tmPage);
@@ -1137,10 +1231,15 @@ var nav = {
                 //$.jGrowl('Соединение с сервером разорвано, перезагрузите страницу', {theme: 'danger'});
                 ajex.show('Соединение с сервером разорвано, перезагрузите страницу');
                 $('body').removeClass('progress');
-                request.abort();
+                nav.request.abort();
+                nav.request = null;
             }, 5000);
         }
         return false;
+    },
+
+    reload: function() {
+        nav.curLoc = null;
     },
 
     check: function() {
@@ -1165,7 +1264,7 @@ var ajax = {
     STATUS_ERR: 0,
     STATUS_EXCEPTION: -1,
 
-    post: function(url, params, onDone) {
+    post: function(url, params, onDone, onFail) {
         var request = $.ajax({
             type: 'POST',
             dataType: 'json',
@@ -1182,6 +1281,8 @@ var ajax = {
         request.fail(function(xhr, textStatus) {
             $('body').removeClass('progress');
             ajex.show('Ошибка связи с сервером: '+ xhr.responseText);
+
+            if ($.isFunction(onFail)) onFail(xhr);
         });
     },
 
@@ -1205,12 +1306,12 @@ $().ready(function() {
     $win = $(window);
 
     $(window).resize(function() {
-        if (typeof Paginator !== "undefined") Paginator.onWindowResize();
-
         $('#stl_left').css({
             width: $('div.main > div.wrapper').offset().left,
-            height: $(document.body).height()
+            height: $(window).height()
         });
+
+        if (typeof Paginator !== "undefined") Paginator.onWindowResize();
     }).scroll(function() {
         if ($win.scrollTop() > 50) {
             $('#stl_left').show();

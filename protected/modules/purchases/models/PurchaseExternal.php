@@ -38,6 +38,7 @@ class PurchaseExternal extends CActiveRecord
 		return array(
 			array('purchase_id', 'required'),
             array('purchase_id', 'numerical', 'integerOnly'=>true),
+            array('shortstory, fullstory', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('purchase_id, shortstory, fullstory ', 'safe', 'on'=>'search'),

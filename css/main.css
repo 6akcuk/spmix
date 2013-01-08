@@ -127,6 +127,10 @@ body.progress {
     cursor: progress !important;
 }
 
+table td {
+    vertical-align: top;
+}
+
 h1, h2, h3, h4, h5, h6 {
     margin: 0 0 10px;
     color: #456;
@@ -836,6 +840,9 @@ div.smallcolumn ul li a {
 div.smallcolumn ul li a:hover {
     text-decoration: underline;
     color: #33454e;
+}
+div.smallcolumn ul li a.lm-counter {
+    font-weight: bold;
 }
 
 div.ls_columns {}

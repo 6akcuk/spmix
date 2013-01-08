@@ -13,18 +13,19 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
     'id' => 'login-form',
     'action' => '/login',
     'enableClientValidation' => true,
+    'htmlOptions' => array('autocomplete' => 'on'),
 )); ?>
 <div class="fl_l login_text">
 <div class="row">
-    <?php echo $form->inputPlaceholder($model, 'email'); ?>
+    <?php echo $form->emailPlaceholder($model, 'email'); ?>
 </div>
 <div class="row">
-    <?php echo $form->inputPlaceholder($model, 'password'); ?>
+    <?php echo $form->passwordPlaceholder($model, 'password'); ?>
 </div>
     </div>
     <div class="fl_l login_button">
         <div class="row">
-            <?php echo ActiveHtml::submitButton('Войти', array('class' => 'btn light_blue', 'onclick' => 'return user.login()')); ?>
+            <?php echo ActiveHtml::submitButton('Войти', array('class' => 'button', 'onclick' => 'return user.login()')); ?>
         </div>
     </div>
         <div class="clear"></div>

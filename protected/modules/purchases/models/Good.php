@@ -57,7 +57,7 @@ class Good extends CActiveRecord
 			array('purchase_id, name, price, currency', 'required', 'on' => 'create'),
             array('purchase_id, name, artikul, price, is_quick', 'required', 'on' => 'quick'),
 			array('purchase_id, is_quick', 'numerical', 'integerOnly'=>true),
-            array('is_range', 'safe'),
+            array('is_range, description', 'safe'),
 			array('name', 'length', 'max'=>100),
 			array('price', 'length', 'max'=>10),
 			array('currency', 'length', 'max'=>3),

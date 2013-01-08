@@ -1,8 +1,12 @@
 <?php
-/** @var $userinfo User */
+/**
+ * @var $userinfo User
+ * @var $friend ProfileRelationship
+ */
 $title = Yii::app()->name;
 
 Yii::app()->getClientScript()->registerCssFile('/css/profile.css');
+Yii::app()->getClientScript()->registerScriptFile('/js/profile.js');
 
 if ($userinfo)
     $title .= ' - ' .
@@ -44,15 +48,68 @@ $this->pageTitle = $title;
             <img src="/images/camera_a.gif" width="250" alt="" />
             <?php endif; ?>
         </div>
+        <div class="module profile-socials">
+        <?php if ($userinfo->id != Yii::app()->user->getId() && Yii::app()->user->getId() == 1): ?>
+            <a class="button">Отправить сообщение</a>
+        <?php $relationship = $userinfo->profile->getProfileRelation(); ?>
+            <?php
+                if ($relationship == null ||
+                    ($relationship->rel_type == ProfileRelationship::TYPE_INCOME && $relationship->from_id == Yii::app()->user->getId()) ||
+                    ($relationship->rel_type == ProfileRelationship::TYPE_OUTCOME && $relationship->from_id != Yii::app()->user->getId())): ?>
+            <a class="button" onclick="return Profile.addFriend(this, <?php echo $userinfo->id ?>)">Добавить в друзья</a>
+            <?php endif; ?>
+            <?php
+            if ($relationship != null) {
+                if ($relationship->rel_type == ProfileRelationship::TYPE_FRIENDS) {
+                    ?>
+            <div class="social-status"><?php echo $userinfo->login ?> у Вас в друзьях</div>
+                    <?php
+                }
+                elseif (Yii::app()->user->model->profile->isProfileRelationIncome($relationship)) {
+                    ?>
+            <div class="social-status"><?php echo $userinfo->login ?> подписан<?php echo ($userinfo->profile->gender == 'Female') ? "а" : "" ?> на Вас</div>
+                    <?php
+                }
+                elseif (Yii::app()->user->model->profile->isProfileRelationOutcome($relationship)) {
+                    ?>
+            <div class="social-status">Вы отправили заявку</div>
+                    <?php
+                }
+            }
+            ?>
+        <?php endif; ?>
+        </div>
         <div class="module">
             <a href="/friends?id=<?php echo $userinfo->id ?>" onclick="return nav.go(this, event, {noback: false})" class="module-header">
                 <div class="header-top">
                     Друзья
                 </div>
                 <div class="header-bottom">
-                    0 друзей
+                    <?php echo Yii::t('user', '{n} друг|{n} друга|{n} друзей', $friendsNum) ?>
                 </div>
             </a>
+        </div>
+        <div class="module-body">
+        <?php if ($friends): ?>
+        <?php $fcnt = 0; ?>
+        <?php foreach ($friends as $friend): ?>
+        <?php $fcnt++; ?>
+        <?php if ($fcnt > 6) break; ?>
+        <?php if ($fcnt == 1 || $fcnt == 4): ?>
+        <div class="clearfix people_row">
+        <?php endif; ?>
+            <div class="left people_cell">
+                <?php echo ActiveHtml::link(($friend->friend->profile->photo) ? ActiveHtml::showUploadImage($friend->friend->profile->photo, 'c') : '<img src="/iamges/camera_a.gif" />', '/id'. $friend->friend->id, array('class' => 'ava')) ?>
+                <div class="people_name">
+                <?php echo ActiveHtml::link($friend->friend->login, '/id'. $friend->friend->id) ?>
+                </div>
+            </div>
+        <?php if ($fcnt == 3 || $fcnt == 6): ?>
+        </div>
+        <?php endif; ?>
+        <?php endforeach; ?>
+        <?php if ($fcnt < 3 || ($fcnt > 3 && $fcnt < 6)): ?></div><?php endif; ?>
+        <?php endif; ?>
         </div>
     </div>
     <div class="left profile-right">
@@ -62,7 +119,7 @@ $this->pageTitle = $title;
                     Город:
                 </div>
                 <div class="labeled left">
-                    <?php echo ActiveHtml::link($userinfo->profile->city->name, '/search?c[city_id]='. $userinfo->profile->city_id) ?>
+                    <?php echo ActiveHtml::link($userinfo->profile->city->name, '/search?c[section]=people&c[city_id]='. $userinfo->profile->city_id) ?>
                 </div>
             </div>
             <div class="clearfix miniblock">
@@ -70,7 +127,7 @@ $this->pageTitle = $title;
                     Зарегистрирован<?php echo (($userinfo->profile->gender == 'Female') ? "а" : "") ?>:
                 </div>
                 <div class="labeled left">
-                    <?php echo ActiveHtml::link(ActiveHtml::date($userinfo->regdate), '/search?c[regdate]='. $userinfo->regdate) ?>
+                    <?php echo ActiveHtml::link(ActiveHtml::date($userinfo->regdate), '/search?c[section]=people&c[regdate]='. $userinfo->regdate) ?>
                 </div>
             </div>
             <div class="clearfix miniblock">

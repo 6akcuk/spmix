@@ -13,6 +13,7 @@ class Controller extends CController
     public $breadcrumbs = array();
     public $menu = array();
 
+    public $pageCounters = array('friends' => 0, 'pm' => 0);
     public $pageHtml = '';
     public $wideScreen = false;
 
@@ -21,6 +22,20 @@ class Controller extends CController
             $this->layout = '//layouts/intro';
         }
         else {
+            if (!Yii::app()->user->getIsGuest()) {
+                $criteria = new CDbCriteria();
+                $criteria->addCondition('owner_id = :id');
+                $criteria->addCondition('viewed = 0');
+                $criteria->addCondition('req_type = :type');
+                $criteria->params[':id'] = Yii::app()->user->getId();
+
+                $criteria->params[':type'] = ProfileRequest::TYPE_FRIEND;
+                $this->pageCounters['friends'] = ProfileRequest::model()->count($criteria);
+
+                $criteria->params[':type'] = ProfileRequest::TYPE_PM;
+                $this->pageCounters['pm'] = ProfileRequest::model()->count($criteria);
+            }
+
             $this->layout = '//layouts/main';
         }
     }

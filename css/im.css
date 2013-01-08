@@ -1,0 +1,14 @@
+.im_bar {
+    padding: 10px;
+    background: #f2f2f2;
+    border-bottom: 1px solid #ddd;
+}
+.im_bar div.left input {
+    width: 400px;
+}
+
+.summary {
+    padding: 12px 10px 0px;
+    font-size: 12px;
+    font-weight: bold;
+}

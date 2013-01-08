@@ -63,6 +63,7 @@ class Order extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('purchase_id, good_id, customer_id, amount, price, total_price', 'required', 'on' => 'create'),
+            array('purchase_id, good_id, customer_id, grid_id, amount, price, total_price', 'required', 'on' => 'create_range'),
             array('purchase_id, good_id, customer_id, amount, price, total_price', 'required', 'on' => 'edit'),
             array('purchase_id, customer_id, amount, price, total_price', 'required', 'on' => 'quick'),
 			array('purchase_id, good_id, customer_id, grid_id, amount, anonymous', 'numerical', 'integerOnly'=>true),

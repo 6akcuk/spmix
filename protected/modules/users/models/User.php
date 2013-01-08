@@ -14,6 +14,7 @@
  * @property string $lockedauth_until
  * @property string $regdate
  * @property string $lastvisit
+ *
  * @property RbacAssignment $role
  * @property Profile $profile
  */
@@ -113,7 +114,7 @@ class User extends CActiveRecord
     }
 
     public function isOnline() {
-        return (strtotime($this->lastvisit) >= time() - Yii::app()->controller->module->onlineInterval * 60);
+        return (strtotime($this->lastvisit) >= time() - Yii::app()->getModule('users')->onlineInterval * 60);
     }
 
     public function beforeSave() {

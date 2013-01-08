@@ -24,7 +24,6 @@
  * @property integer $vip
  * @property integer $mod_confirmation
  * @property string $mod_reason
- * @property string $sizes
  * @property string $purchase_delete
  *
  * @property City $city
@@ -82,9 +81,9 @@ class Purchase extends CActiveRecord
 		return array(
             array('name, author_id, category_id, city_id, status', 'required', 'on' => 'create'),
             array('name, author_id, category_id, status, state, min_sum, min_num, org_tax', 'required', 'on' => 'edit'),
-            array('image, hide_supplier', 'safe'),
+            array('image, hide_supplier, stop_date', 'safe'),
 			array('author_id, category_id, city_id, min_num, vip, mod_confirmation', 'numerical', 'integerOnly'=>true),
-			array('name, supplier_url, price_url, message, image, mod_reason, sizes', 'length', 'max'=>255),
+			array('name, supplier_url, price_url, message, image, mod_reason', 'length', 'max'=>255),
 			array('status', 'length', 'max'=>8),
 			array('state', 'length', 'max'=>16),
 			array('min_sum', 'length', 'max'=>10),

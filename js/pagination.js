@@ -6,9 +6,10 @@ var Paginator = {
         var $pg = $('div.pagination'),
             ofs = $pg.offset();
 
-        A.pgFixed.css({
-            left: ofs.left
-        });
+        if (A.pgFixed)
+            A.pgFixed.css({
+                left: ofs.left
+            });
         Paginator.initPages();
     },
 
@@ -25,6 +26,7 @@ var Paginator = {
         A.offset = opts.offset;
         A.pgPage = (A.offset + A.pgDelta) / A.pgDelta;
         A.pgPages = opts.pages;
+        A.pgNoPages = opts.nopages;
         A.pgFixedNoMore = false;
 
         if (A.pgInit) $(window).scrollTop(0);
@@ -93,7 +95,7 @@ var Paginator = {
         var $win = $(window), scr = $win.scrollTop(), st = scr + $win.height(),
             $pgMore = $('a.pg_more'), mrt = ($pgMore.offset()) ? $pgMore.offset().top : 0;
 
-        if (scr > A.pgFixedTop && !A.pgFixedVisible) {
+        if (scr > A.pgFixedTop && !A.pgFixedVisible && !A.pgNoPages) {
             A.pgFixed.stop(true, true).fadeIn();
             A.pgFixedVisible = true;
             Paginator.initPages();

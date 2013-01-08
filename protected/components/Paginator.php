@@ -13,6 +13,7 @@ class Paginator extends CPortlet {
     public $offsets;
     public $offset;
     public $delta;
+    public $nopages = false;
 
     protected function renderContent() {
         $this->render('paginator');

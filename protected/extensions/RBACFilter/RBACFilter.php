@@ -9,7 +9,6 @@
 
 class RBACFilter extends CFilter {
     protected function preFilter($filterChain) {
-
         $access = Yii::app()->user->checkAccess(self::getHierarchy());
 
         if (!$access) {

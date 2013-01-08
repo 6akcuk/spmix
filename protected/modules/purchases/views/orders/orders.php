@@ -30,7 +30,7 @@ $this->pageTitle = Yii::app()->name .' - Заказы к закупке #'. $pur
     </div>
 </div>
 <div class="clearfix filters">
-    <table class="bezborder">
+    <table>
         <thead>
         <tr>
             <td>
@@ -64,7 +64,7 @@ $this->pageTitle = Yii::app()->name .' - Заказы к закупке #'. $pur
         </tr>
         </thead>
     </table>
-    <table>
+    <table class="ordertable">
         <thead>
         <tr>
     <td>

@@ -28,7 +28,7 @@ class ActiveHtml extends CHtml {
         return $htmlOptions;
     }
 
-    public static function inputPlaceholder($name, $value = '', $htmlOptions = array()) {
+    public static function fieldPlaceholder($field, $name, $value = '', $htmlOptions = array()) {
         ActiveHtml::publishAssets();
 
         if (isset($htmlOptions['placeholder'])) {
@@ -38,19 +38,43 @@ class ActiveHtml extends CHtml {
         else $placeholder = '';
 
         return self::openTag('span', array('class' => 'input_placeholder')) .
-            self::inputField('text', $name, $value, $htmlOptions) .
+            self::inputField($field, $name, $value, $htmlOptions) .
             self::label($placeholder, $name) .
             self::closeTag('span');
     }
 
-    public static function activeInputPlaceholder($model, $attribute, $htmlOptions = array()) {
+    public static function inputPlaceholder($name, $value = '', $htmlOptions = array()) {
+        return self::fieldPlaceholder('text', $name, $value, $htmlOptions);
+    }
+
+    public static function emailPlaceholder($email, $value = '', $htmlOptions = array()) {
+        return self::fieldPlaceholder('email', $name, $value, $htmlOptions);
+    }
+
+    public static function passwordPlaceholder($name, $value = '', $htmlOptions = array()) {
+        return self::fieldPlaceholder('password', $name, $value, $htmlOptions);
+    }
+
+    public static function activeFieldPlaceholder($field, $model, $attribute, $htmlOptions = array()) {
         ActiveHtml::publishAssets();
 
         self::resolveNameID($model, $attribute, $htmlOptions);
         return self::openTag('span', array('class' => 'input_placeholder')) .
-            self::activeInputField('text', $model, $attribute, $htmlOptions) .
+            self::activeInputField($field, $model, $attribute, $htmlOptions) .
             self::activeLabel($model, $attribute) .
             self::closeTag('span');
+    }
+
+    public static function activeInputPlaceholder($model, $attribute, $htmlOptions = array()) {
+        return self::activeFieldPlaceholder('text', $model, $attribute, $htmlOptions = array());
+    }
+
+    public static function activeEmailPlaceholder($model, $attribute, $htmlOptions = array()) {
+        return self::activeFieldPlaceholder('email', $model, $attribute, $htmlOptions = array());
+    }
+
+    public static function activePasswordPlaceholder($model, $attribute, $htmlOptions = array()) {
+        return self::activeFieldPlaceholder('password', $model, $attribute, $htmlOptions = array());
     }
 
     public static function smartTextarea($name, $value = '', $htmlOptions = array()) {

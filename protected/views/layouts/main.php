@@ -73,6 +73,9 @@ $cookies = $request->getCookies();
         <?php if (!Yii::app()->user->getIsGuest()): ?>
         <ul class="clearfix">
             <li>
+                <?php echo ActiveHtml::link('Люди', '/search?c[section]=people') ?>
+            </li>
+            <li>
                 <?php echo ActiveHtml::link('Закупки', '/purchases') ?>
             </li>
             <li>

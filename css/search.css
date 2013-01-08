@@ -1,0 +1,32 @@
+#search_css {
+    display:none
+}
+
+.gsearch {
+    padding: 10px;
+    background: #f2f2f2;
+    border-bottom: 1px solid #ddd;
+}
+
+.gsearch div.left:first-child input {
+    width: 635px;
+    margin-right: 10px
+}
+
+.gsearch_table .searchresults, .largecolumn .searchresults {
+    width: 550px;
+    padding: 10px 15px
+}
+
+.gsearch_table .filters {
+    border-left: 1px solid #ddd;
+    background: #f7f7f7;
+    padding: 10px;
+    width: 180px;
+}
+
+.summary {
+    padding: 12px 10px 0px;
+    font-size: 12px;
+    font-weight: bold;
+}

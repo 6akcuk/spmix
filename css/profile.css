@@ -33,6 +33,24 @@
     padding-bottom: 10px
 }
 
+.profile-socials {
+    padding: 10px;
+    margin-bottom: 10px;
+    background: #f2f2f2;
+}
+.profile-socials .button {
+    width: 210px;
+    text-align: center;
+    margin-top: 10px;
+}
+.profile-socials .button:first-child {
+    margin-top: 0px;
+}
+.profile-socials .social-status {
+    padding: 12px 0 0;
+    text-align: center;
+}
+
 .profile-info {
     padding-bottom: 10px;
 }
@@ -98,6 +116,71 @@
 .module-body {
     overflow: hidden;
     padding: 6px 0px 14px 0px
+}
+
+.people {
+    padding: 10px 0px;
+    border-top: 1px solid #ededed;
+}
+.people:first-child {
+    border-top: 0;
+}
+.people.report {
+    border: 1px solid #ededed;
+    background: #f5f7f6;
+    padding: 20px;
+}
+
+.people .photo img {
+    width: 100px;
+    height: 100px;
+}
+
+.people .info {
+    width: 182px;
+    padding-left: 14px;
+    overflow: hidden;
+}
+.people .info.request_info {
+    width: 382px;
+}
+.people .info > div {
+    padding-bottom: 5px;
+}
+.people .info div.labeled.name {
+    font-weight: bold;
+    padding-bottom: 6px;
+}
+.people .info .online {
+    color: #bbb
+}
+
+.people .menu {
+    width: 156px;
+    height: 100px;
+}
+.people .menu a {
+    display: block;
+    padding: 4px 6px;
+}
+
+.people_row {
+    width: 246px;
+    overflow: hidden;
+}
+.people_row .people_cell {
+    width: 82px;
+    overflow: hidden;
+    text-align: center;
+    padding: 6px 0px;
+}
+.people_row .people_cell .ava {
+    width: 70px;
+    height: 70px;
+    overflow: hidden;
+    display: block;
+    padding-bottom: 8px;
+    margin: 0px 6px;
 }
 
 /* Static Manager */

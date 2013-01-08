@@ -25,6 +25,42 @@
     color: #447229;
 }
 
+div.tabs {
+    border-bottom: 1px solid #508033;
+}
+div.tabs a {
+    display: inline-block;
+    margin-left: 5px;
+    padding: 6px 12px;
+    border-radius: 4px 4px 0 0;
+}
+div.tabs a:first-child {
+    margin-left: 10px;
+}
+div.tabs a:hover {
+    background: #b9d199;
+}
+div.tabs a.selected {
+    background: #508033;
+    color: #fff;
+}
+
+div.minitabs a {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 4px;
+    margin-right: 6px;
+    font-size: 12px;
+    font-weight: bold;
+}
+div.minitabs a:hover {
+    background: #b9d199;
+}
+div.minitabs a.selected {
+    color: #fff;
+    background: #508033;
+}
+
 span.input_placeholder label {
     font-size: 12px;
     color: #557132;

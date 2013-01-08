@@ -14,6 +14,7 @@ class AjaxFilter extends CFilter {
                 'html' => Yii::app()->controller->pageHtml,
                 'title' => Yii::app()->controller->pageTitle,
                 'static' => Yii::app()->getClientScript()->renderAjax(),
+                'counters' => Yii::app()->controller->pageCounters,
             );
 
             if (Yii::app()->controller->wideScreen)
