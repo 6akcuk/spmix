@@ -1,4 +1,5 @@
 <?php /** @var $good Good */ ?>
+<div class="my_goods">
 <?php $page = ($offset + Yii::app()->controller->module->purchasesPerPage) / Yii::app()->controller->module->purchasesPerPage ?>
 <?php $added = false; ?>
 <?php if (sizeof($goods) > 0): ?>
@@ -15,3 +16,4 @@
     </div>
     <?php endforeach; ?>
 <?php endif; ?>
+    </div>

@@ -143,7 +143,7 @@ a.purchase_edit_story:hover {
 }
 
 /* Нахрена эта глобальная запись? */
-table.ordertable td {
+.my table td {
     padding: 4px;
     border: 1px #c2c2c2 solid;
 }
@@ -291,3 +291,16 @@ table.ordertable td {
     color: #fff;
 }
 
+table.bezborder td {
+    border: 0px;
+}
+
+table.ordertable td {
+    padding: 4px;
+    border: 1px #c2c2c2 solid;
+}
+
+.goods_purchases table td {
+    padding: 4px;
+    border: 1px #c2c2c2 solid;
+}

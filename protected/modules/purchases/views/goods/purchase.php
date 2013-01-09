@@ -9,7 +9,7 @@ Yii::app()->getClientScript()->registerScriptFile('/js/purchase.js');
 
 $this->pageTitle = Yii::app()->name .' - Товары к закупке #'. $purchase->purchase_id;
 ?>
-
+<div class="goods_purchases">
 <h1>
     Товары к закупке #<?php echo $purchase->purchase_id ?> "<?php echo $purchase->name ?>"
     <div class="right">
@@ -95,3 +95,4 @@ $this->pageTitle = Yii::app()->name .' - Товары к закупке #'. $pur
     <?php endforeach; ?>
     </tbody>
 </table>
+    </div>

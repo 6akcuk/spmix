@@ -73,6 +73,6 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
     </div>
 </div>
 <div class="row">
-    <?php echo ActiveHtml::submitButton('Сохранить изменения', array('class' => 'btn light_blue', 'onclick' => 'return FormMgr.submit(\'#editform\')')); ?>
+    <?php echo ActiveHtml::submitButton('Сохранить изменения', array('class' => 'button', 'onclick' => 'return FormMgr.submit(\'#editform\')')); ?>
 </div>
 <?php $this->endWidget(); ?>
