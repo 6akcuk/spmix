@@ -181,6 +181,10 @@ div.dropdown ul li a:hover {
     border-top: 0;
     overflow: hidden;
 }
+.wddi_no {
+    background: #f1f1f1;
+    padding: 6px;
+}
 .wddi, .wddi_over {
     cursor: pointer;
     display: block;
@@ -207,13 +211,13 @@ div.dropdown ul li a:hover {
     border-bottom: 0px;
 }
 .wddi_thumb {
-    width: 49px;
-    height: 43px;
+    width: 50px;
+    height: 42px;
     overflow: hidden;
 }
 .wddi_img {
     vertical-align: top;
-    width: 43px;
+    width: 42px;
     border-radius: 2px;
 }
 .wddi_text {

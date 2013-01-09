@@ -202,9 +202,13 @@ class ActiveHtml extends CHtml {
         );
     }
 
-    public static function showUploadImage($data, $size = 'b') {
+    public static function showUploadImage($data, $size = 'b', $htmlOptions = array()) {
         $images = json_decode($data, true);
-        return self::image('http://cs'. $images[$size][2] .'.spmix.ru/'. $images[$size][0] .'/'. $images[$size][1], '');
+        return self::image('http://cs'. $images[$size][2] .'.spmix.ru/'. $images[$size][0] .'/'. $images[$size][1], '', $htmlOptions);
+    }
+    public static function getImageUrl($data, $size = 'b') {
+        $images = json_decode($data, true);
+        return 'http://cs'. $images[$size][2] .'.spmix.ru/'. $images[$size][0] .'/'. $images[$size][1];
     }
 
     public static function link($text, $url = '#', $htmlOptions = array()) {

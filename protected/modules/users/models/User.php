@@ -117,6 +117,12 @@ class User extends CActiveRecord
         return (strtotime($this->lastvisit) >= time() - Yii::app()->getModule('users')->onlineInterval * 60);
     }
 
+    public function getDisplayName() {
+        return Yii::app()->user->checkAccess('global.fullnameView') ?
+            $this->profile->firstname .' '. $this->login :
+            $this->profile->firstname .' '. $this->profile->lastname .' ('. $this->login .')';
+    }
+
     public function beforeSave() {
         if (parent::beforeSave()) {
             if ($this->isNewRecord)

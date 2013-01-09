@@ -1,22 +1,26 @@
 <?php
-/** @var $people User */
+/** @var $friend ProfileRelationship */
 
 Yii::app()->getClientScript()->registerCssFile('/css/profile.css');
 Yii::app()->getClientScript()->registerCssFile('/css/im.css');
 
-Yii::app()->getClientScript()->registerScriptFile('/js/profile.js');
+Yii::app()->getClientScript()->registerScriptFile('/js/im.js');
 
 $this->pageTitle = Yii::app()->name .' - Новое сообщение';
+
+$friendsJS = array();
+foreach ($friends as $friend) {
+    $friendsJS[] = "'". $friend->friend->id ."': {img: '". (($friend->friend->profile->photo) ? ActiveHtml::getImageUrl($friend->friend->profile->photo, 'a') : 'http://spmix.ru/images/camera_a.gif') ."', text: '". $friend->friend->getDisplayName() ."', sub: '". $friend->friend->profile->city->name ."'}";
+}
+
+$friendsJS[] = "'". Yii::app()->user->getId() ."': {img: '". ((Yii::app()->user->model->profile->photo) ? ActiveHtml::getImageUrl(Yii::app()->user->model->profile->photo, 'a') : 'http://spmix.ru/images/camera_a.gif') ."', text: '". Yii::app()->user->model->getDisplayName() ."', sub: '". Yii::app()->user->model->profile->city->name ."'}";
+
 ?>
 <div class="tabs">
     <?php echo ActiveHtml::link('Диалоги', '/im') ?>
     <?php echo ActiveHtml::link('Новое сообщение', '/im?sel=-1', array('class' => 'selected')) ?>
 </div>
-<div class="wrap2">
-<?php $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
-    'id' => 'imform',
-    'action' => $this->createUrl('/im?sel=-1'),
-)); ?>
+<div id="imform" class="wrap2">
     <div class="row">
         <h5>Получатель</h5>
         <div id="im_wdd" class="wdd clearfix" onclick="WideDropdown.show('im_wdd', event)">
@@ -51,11 +55,9 @@ $this->pageTitle = Yii::app()->name .' - Новое сообщение';
                     'onblur' => "WideDropdown.setUnfocused('im_wdd', event)",
                 )
             ) ?>
-            <script type="text/javascript">
-            WideDropdown.addList('im_wdd', {'2': {img: 'http://cs1.spmix.ru/v1000/176/LiogOQv0iwf.jpg',
-            text: 'fluegel', sub: 'Стерлитамак'}, '5': {img: 'http://cs1.spmix.ru/v1000/170/DeAq_2ez4UD.jpg',
-            text: 'honeytata', sub: 'Стерлитамак'}});
-            </script>
+<script type="text/javascript">
+WideDropdown.addList('im_wdd', {<?php echo implode(', ', $friendsJS) ?>});
+</script>
         </div>
     </div>
     <div id="im_theme" class="row" style="display:none">
@@ -67,9 +69,8 @@ $this->pageTitle = Yii::app()->name .' - Новое сообщение';
         <?php echo ActiveHtml::smartTextarea('Im[message]', '') ?>
     </div>
     <div class="row">
-        <?php echo ActiveHtml::submitButton('Отправить', array('class' => 'left button')) ?>
+        <a id="im_send" class="left button" onclick="return Im.sendMessage()">Отправить</a>
     </div>
-<?php $this->endWidget(); ?>
 </div>
 <script type="text/javascript">
 if (!A.wddOnSelect) A.wddOnSelect = {};

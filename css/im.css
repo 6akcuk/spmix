@@ -17,6 +17,121 @@
     font-weight: bold;
 }
 
+#imform {
+    padding-top: 20px;
+}
+#imform div.row {
+    margin-top: 10px;
+}
+#imform div.row:first-child {
+    margin-top: 0
+}
+
 #imform div.row > span.input_placeholder input, #imform div.row > span.input_placeholder textarea {
     width: 480px;
+}
+
+
+.im_none {
+    margin: 0 10px;
+    padding: 130px 0;
+    line-height: 160%;
+    text-align: center;
+    color: #777;
+}
+
+.dialogs_row {
+    cursor: pointer;
+    padding: 5px 10px 5px 7px;
+    border-bottom: 1px solid #e4e8ed;
+}
+.dialogs_deleted_row {
+    cursor: default;
+}
+.dialogs_new_msg {
+    background: #edf1e5;
+    border-color: #dae1e8;
+}
+.dialogs_row_t {
+    width: 100%;
+}
+.dialogs_row_over {
+    background: #edf1e5;
+    border-color: #dae1e8;
+}
+.dialogs_row_over .dialogs_new_msg {
+    background: #DAE1E8;
+}
+.dialogs_row_over .dialogs_online,
+.dialogs_new_msg .dialogs_online {
+    color: #93a2b3;
+}
+.dialogs_row_over .dialogs_date,
+.dialogs_new_msg .dialogs_date {
+    color: #8795a5;
+}
+.dialogs_photo {
+    width: 50px;
+    padding: 5px 5px 2px;
+    vertical-align: top;
+}
+.dialogs_info {
+    padding: 5px;
+    vertical-align: middle;
+    width: 125px;
+}
+.dialogs_user {
+    width: 120px;
+}
+.dialogs_online {
+    color: #aaa;
+    padding: 3px 0 2px;
+}
+.dialogs_date {
+    color: #999999;
+    font-size: 0.9em;
+}
+.dialogs_msg_contents {
+    padding: 0px;
+    vertical-align: middle;
+}
+.dialogs_msg_body {
+    padding: 6px 8px 8px;
+}
+.dialogs_deleted_row .dialogs_msg_body {
+    color: #777;
+    line-height: 1.81em;
+    text-align: center;
+}
+.dialogs_msg_text {
+    color: #67829E;
+    line-height: 160%;
+    width: 345px;
+}
+.dialogs_msg_body .dialogs_inline_author {
+    width: 50px;
+    height: 50px;
+    margin: 3px 10px 2px 0;
+
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+}
+
+div.dialogs_inline_chatter {
+    margin: 0 4px 4px 0;
+    float: left;
+    width: 23px;
+    height: 23px;
+    overflow: hidden;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+}
+img.dialogs_inline_chatter {
+    width: 23px;
+    height: 23px;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
 }

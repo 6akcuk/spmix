@@ -332,6 +332,14 @@ $.fn.dropdown = function() {
     });
 }
 
+function objectLen(obj) {
+    var l = 0;
+    for(var i in obj) {
+        l++;
+    }
+    return l;
+}
+
 var WideDropdown = {
     addList: function(id, items) {
         if (!A.wddIList) A.wddIList = {};
@@ -341,13 +349,30 @@ var WideDropdown = {
         if (!A.wddIBubbles) A.wddIBubbles = {};
         A.wddIBubbles[id] = bubbles;
     },
-    renderList: function(id) {
-        if (A.wddList[id]) {
-            $('#'+ id + ' div.wdd_list').html('');
+    renderList: function() {
+        var id, list, curItem = 0, totalItems = 10;
 
-            $.each(A.wddList[id], function(value, item) {
-                if (!A.wddBubbles[id] || (A.wddBubbles[id] && !A.wddBubbles[id][value])) WideDropdown.renderItem(id, value, item);
+        if ($.isPlainObject(arguments[0])) {
+            id = arguments[0].id;
+            list = arguments[0].list;
+        }
+        else {
+            id = arguments[0];
+            list = A.wddList[id] || {};
+        }
+
+        $('#'+ id + ' div.wdd_list').html('');
+
+        if (objectLen(list)) {
+            $.each(list, function(value, item) {
+                if ((!A.wddBubbles[id] || (A.wddBubbles[id] && !A.wddBubbles[id][value])) && curItem < totalItems) {
+                    WideDropdown.renderItem(id, value, item);
+                    curItem++;
+                }
             });
+        }
+        else {
+            $('#'+ id +' div.wdd_list').html('<div class="wddi_no">Пользователь не найден</div>');
         }
     },
     renderItem: function(id, value, item) {
@@ -355,7 +380,7 @@ var WideDropdown = {
             $list = $wdd.find('div.wdd_lwrap > .wdd_list');
 
         $('\
-<div class="wddi_over" id="wddi'+ value +'_'+ id +'" onmousedown="WideDropdown.select(\''+ id +'\', event, \''+ value +'\')" onmouseover="WideDropdown.over(\''+ id +'\', \''+ value +'\')">\
+<div class="wddi" id="wddi'+ value +'_'+ id +'" onmousedown="WideDropdown.select(\''+ id +'\', event, \''+ value +'\')" onmouseover="WideDropdown.over(\''+ id +'\', \''+ value +'\')">\
 <div class="wddi_data">\
     <b class="left wddi_thumb"><img class="wddi_img" src="'+ item.img +'" /></b>\
     <div class="wddi_text">'+ item.text +'</div>\
@@ -386,6 +411,7 @@ var WideDropdown = {
 </div>').appendTo($bubbles);
     },
     setup: function() {
+        A.wddBasicList = {};
         A.wddList = {};
         A.wddFocus = {};
         A.wddBubbles = {};
@@ -410,6 +436,11 @@ var WideDropdown = {
             $(this).children('.wdd_arrow').click(function() {
                 WideDropdown.show(id, event);
             })
+            $(this).find('input[type="text"]').bind('keydown', function(event) {
+                setTimeout(function() {
+                    WideDropdown.onKeyEvent(id, event);
+                }, 1);
+            });
         });
     },
     select: function(id, event, value) {
@@ -460,7 +491,10 @@ var WideDropdown = {
         var $wdd = $('#'+ id),
             $lwrap = $wdd.children('.wdd_lwrap');
 
-        if (!$lwrap.children('.wdd_list').children().length) WideDropdown.renderList(id);
+        if (!$lwrap.children('.wdd_list').children().length) {
+            A.wddBasicList[id] = A.wddList[id];
+            WideDropdown.renderList(id);
+        }
 
         $lwrap.css({top: $wdd.outerHeight() - 1, width: $wdd.outerWidth()}).show();
         $('body').one('click', function() {
@@ -491,6 +525,23 @@ var WideDropdown = {
     setUnfocused: function(id, event) {
         A.wddFocus[id] = 0;
         //WideDropdown.hide(id, event);
+    },
+    onKeyEvent: function(id, event) {
+        if (A.wddList[id]) {
+            var text = $.trim($(event.target).val());
+            WideDropdown.renderList((text) ? {id: id, list: WideDropdown.search(A.wddList[id], text)} : id);
+        }
+    },
+    search: function(list, text) {
+        var result = {};
+        $.each(list, function(i, item) {
+            if (item.text.match(new RegExp(text, 'i'))) {
+                result[i] = {};
+                result[i] = {img: item.img, text: item.text, sub: item.sub}
+                result[i].text = result[i].text.replace(new RegExp(text, 'i'), '<b>'+ text +'</b>');
+            }
+        })
+        return result;
     }
 };
 
@@ -1447,6 +1498,17 @@ var ajax = {
             ajex.show('Ошибка связи с сервером: '+ xhr.responseText);
 
             if ($.isFunction(onFail)) onFail(xhr);
+
+            switch (xhr.status) {
+                case 403:
+                    ajex.show(r.html);
+                    break;
+                case 404:
+                    ajex.show('Страница не найдена');
+                    break;
+                default:
+                    ajex.show('Ошибка связи с сервером. Перезагрузите страницу, нажав <b>F5</b>. '+ xhr.responseText);
+            }
         });
     },
 

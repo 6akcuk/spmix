@@ -43,11 +43,11 @@ class DialogMessage extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('dialog_id, creation_date, author_id, message', 'required'),
+			array('dialog_id, author_id, message', 'required'),
 			array('author_id', 'numerical', 'integerOnly'=>true),
 			array('message_id', 'length', 'max'=>20),
 			array('dialog_id', 'length', 'max'=>10),
-			array('attaches, message_delete', 'safe'),
+			array('creation_date, attaches, message_delete', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('message_id, dialog_id, creation_date, author_id, message, attaches, message_delete', 'safe', 'on'=>'search'),
@@ -88,4 +88,14 @@ class DialogMessage extends CActiveRecord
 			'message_delete' => 'Message Delete',
 		);
 	}
+
+    public function beforeSave() {
+        if (parent::beforeSave()) {
+            if ($this->isNewRecord)
+                $this->creation_date = date("Y-m-d H:i:s");
+
+            return true;
+        }
+        else return false;
+    }
 }

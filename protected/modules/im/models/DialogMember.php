@@ -7,6 +7,8 @@
  * @property string $dialog_id
  * @property integer $member_id
  * @property string $add_date
+ *
+ * @property Dialog $dialog
  */
 class DialogMember extends CActiveRecord
 {
@@ -36,9 +38,10 @@ class DialogMember extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('dialog_id, member_id, add_date', 'required'),
+			array('dialog_id, member_id', 'required'),
 			array('member_id', 'numerical', 'integerOnly'=>true),
 			array('dialog_id', 'length', 'max'=>10),
+            array('add_date', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('dialog_id, member_id, add_date', 'safe', 'on'=>'search'),
@@ -69,23 +72,13 @@ class DialogMember extends CActiveRecord
 		);
 	}
 
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// Warning: Please modify the following code to remove attributes that
-		// should not be searched.
+    public function beforeSave() {
+        if (parent::beforeSave()) {
+            if ($this->isNewRecord)
+                $this->add_date = date("Y-m-d H:i:s");
 
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('dialog_id',$this->dialog_id,true);
-		$criteria->compare('member_id',$this->member_id);
-		$criteria->compare('add_date',$this->add_date,true);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
-	}
+            return true;
+        }
+        else return false;
+    }
 }
