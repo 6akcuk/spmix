@@ -13,6 +13,7 @@
  * @property string $stop_date
  * @property string $status
  * @property string $state
+ * @property integer $accept_add
  * @property string $min_sum
  * @property integer $min_num
  * @property string $supplier_url
@@ -82,7 +83,7 @@ class Purchase extends CActiveRecord
             array('name, author_id, category_id, city_id, status', 'required', 'on' => 'create'),
             array('name, author_id, category_id, status, state, min_sum, min_num, org_tax', 'required', 'on' => 'edit'),
             array('image, hide_supplier, stop_date', 'safe'),
-			array('author_id, category_id, city_id, min_num, vip, mod_confirmation', 'numerical', 'integerOnly'=>true),
+			array('author_id, category_id, city_id, accept_add, min_num, vip, mod_confirmation', 'numerical', 'integerOnly'=>true),
 			array('name, supplier_url, price_url, message, image, mod_reason', 'length', 'max'=>255),
 			array('status', 'length', 'max'=>8),
 			array('state', 'length', 'max'=>16),
@@ -129,6 +130,7 @@ class Purchase extends CActiveRecord
             'stop_date' => 'Дата окончания (стопа)',
             'status' => 'Статус',
             'state' => 'Статус закупки',
+            'accept_add' => 'Разрешить добавление товаров пользователями',
             'min_sum' => 'Мин. сумма заказа',
             'min_num' => 'Мин. кол-во заказов',
             'supplier_url' => 'Ссылка на сайт поставщика',

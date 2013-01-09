@@ -71,6 +71,10 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
             <?php echo $form->label($model, 'price_url') ?>
             <?php echo $form->textfield($model, 'price_url') ?>
         </div>
+        <div class="row">
+            <?php echo $form->label($model, 'accept_add') ?>
+            <?php echo $form->checkBox($model, 'accept_add') ?>
+        </div>
     </div>
 </div>
 <div class="row">

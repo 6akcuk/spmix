@@ -227,7 +227,7 @@ class ActiveHtml extends CHtml {
     }
 
     public static function price($price, $currency = 'RUR') {
-        return number_format($price, 2, ',', ' ') . ' '. Yii::t('app', $currency);
+        return number_format($price, 0, ',', ' ') . ' '. Yii::t('app', $currency);
     }
 
     public static function date($date, $showTime = true, $shortMonth = false, $showYear = true, $useTimezone = false) {

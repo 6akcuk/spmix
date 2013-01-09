@@ -16,6 +16,7 @@ span.input_placeholder label {
     display: none;
     position: absolute;
     cursor: text;
+    overflow: hidden;
 }
 span.input_placeholder input {
 
@@ -164,7 +165,7 @@ div.dropdown ul li a:hover {
     position: relative;
     padding: 2px;
     background: #fff;
-    border: 1px solid #557132;
+    border: 1px solid #70973f;
     overflow: visible;
 }
 .wdd_lwrap {
@@ -173,9 +174,10 @@ div.dropdown ul li a:hover {
     top: -1px;
     z-index: 1010;
     display: none;
+    max-height: 210px;
 }
 .wdd_list {
-    border: 1px solid #557132;
+    border: 1px solid #70973f;
     border-top: 0;
     overflow: hidden;
 }
@@ -187,8 +189,8 @@ div.dropdown ul li a:hover {
 }
 .wddi_over {
     background: #f1f5f9;
-    margin-top: 1px;
-    border: 1px solid #e1e7ed;
+    margin-top: -1px;
+    border: solid #e1e7ed;
     border-width: 1px 0;
 }
 .wddi:first-child, .wddi_over:first-child {
@@ -202,7 +204,7 @@ div.dropdown ul li a:hover {
     font-size: 12px;
 }
 .wddi:last-child .wddi_data, .wddi_over .wddi_data, .wddi:last-child, .wddi_over:last-child {
-    border-bottom: 0;
+    border-bottom: 0px;
 }
 .wddi_thumb {
     width: 49px;
@@ -225,6 +227,7 @@ div.dropdown ul li a:hover {
     color: #738392;
 }
 .wdd_arrow {
+    margin-top: 2px;
     width: 23px;
     height: 27px;
     overflow: hidden;
@@ -247,7 +250,7 @@ div.dropdown ul li a:hover {
 }
 .summary_tab3 {
     max-width: 230px;
-    height: 16px;
+    height: 17px;
     overflow: hidden;
     padding: 0 3px;
     text-overflow: ellipsis;
@@ -259,13 +262,43 @@ div.dropdown ul li a:hover {
 .summary_tab_x {
     width: 11px;
     height: 11px;
-    margin: 3px 1px 0;
+    margin: 4px 1px 0;
     background: url('/../../images/wdd_tabx.gif') no-repeat;
     cursor: pointer;
 }
 .summary_tab_sel .summary_tab_x {
     background-position: 0 -13px;
     opacity: 0.2;
+}
+.wdd_add {
+    padding: 2px;
+    cursor: pointer;
+}
+.wdd_add2 {
+    background: #e5e8ed;
+    border-radius: 2px;
+    padding: 3px 5px 4px;
+    font-size: 12px;
+}
+.wdd_add3 {
+    height: 17px;
+    overflow: hidden;
+    padding: 0 3px;
+    font-weight: bold;
+}
+.wdd_add_plus {
+    width: 11px;
+    height: 11px;
+    margin: 4px 1px 0;
+    background: url('/../../images/wdd_plus.gif') no-repeat;
+}
+.wdd_text {
+    padding: 5px 6px 6px;
+    height: 14px;
+    margin: 0;
+    outline: 0;
+    border: 0 !important;
+    background: none !important;
 }
 
 /* Search Field */
@@ -316,7 +349,7 @@ div.report_window .close:hover {
 
 /* AJAX Exception Window */
 div.ajex {
-    position: absolute;
+    position: fixed;
     top: 0px;
     left: 0px;
     padding: 10px;

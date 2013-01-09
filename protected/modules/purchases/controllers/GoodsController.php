@@ -150,23 +150,25 @@ class GoodsController extends Controller {
             if (isset($_POST['Good'])) {
                 $good->attributes=$_POST['Good'];
 
-                foreach ($_POST['grid'] as $idx => $id) {
-                    if (!isset($_POST['size'][$idx])) {
-                        GoodGrid::model()->deleteByPk($id);
-                        continue;
+                if (isset($_POST['grid'])) {
+                    foreach ($_POST['grid'] as $idx => $id) {
+                        if (!isset($_POST['size'][$idx])) {
+                            GoodGrid::model()->deleteByPk($id);
+                            continue;
+                        }
+
+                        $size = $_POST['size'][$idx];
+                        $colors = $_POST['color'][$idx];
+
+                        $grid = GoodGrid::model()->findByPk($id);
+                        $grid->colors = json_encode($colors);
+                        $grid->allowed = $_POST['allowed'][$idx];
+                        $grid->save();
+
+                        unset($_POST['size'][$idx]);
+                        unset($_POST['color'][$idx]);
+                        unset($_POST['allowed'][$idx]);
                     }
-
-                    $size = $_POST['size'][$idx];
-                    $colors = $_POST['color'][$idx];
-
-                    $grid = GoodGrid::model()->findByPk($id);
-                    $grid->colors = json_encode($colors);
-                    $grid->allowed = $_POST['allowed'][$idx];
-                    $grid->save();
-
-                    unset($_POST['size'][$idx]);
-                    unset($_POST['color'][$idx]);
-                    unset($_POST['allowed'][$idx]);
                 }
                 // были добавлены новые размеры
                 if (sizeof($_POST['size'])) {

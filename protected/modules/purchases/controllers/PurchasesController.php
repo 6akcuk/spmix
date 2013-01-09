@@ -481,7 +481,8 @@ class PurchasesController extends Controller {
         $purchase = Purchase::model()->findByPk($id);
 
         if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
-            Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('purchase' => $purchase)))
+            Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('purchase' => $purchase)) ||
+            Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Accepted', array('purchase' => $purchase)))
         {
             $model = new Good('create');
             $model->purchase_id = $id;
@@ -511,7 +512,7 @@ class PurchasesController extends Controller {
                     $image->save();
 
                     $result['success'] = true;
-                    $result['url'] = '/good'. $model->purchase_id .'_'. $model->good_id .'/edit';
+                    $result['url'] = (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Accepted', array('purchase' => $purchase))) ? '/good'. $model->purchase_id .'_'. $model->good_id : '/good'. $model->purchase_id .'_'. $model->good_id .'/edit';
                 }
                 else {
                     foreach ($model->getErrors() as $attr => $error) {

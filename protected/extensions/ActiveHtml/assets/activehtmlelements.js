@@ -125,7 +125,7 @@ var ajex = {
         var _lAjx = $('<div class="ajex">'+ msg +'</div>').appendTo('body');
         setTimeout(function() {
             _lAjx.remove();
-        }, 5000);
+        }, 8000);
     }
 };
 
@@ -332,7 +332,167 @@ $.fn.dropdown = function() {
     });
 }
 
+var WideDropdown = {
+    addList: function(id, items) {
+        if (!A.wddIList) A.wddIList = {};
+        A.wddIList[id] = $.extend(A.wddIList[id] || {}, items);
+    },
+    addBubbles: function(id, bubbles) {
+        if (!A.wddIBubbles) A.wddIBubbles = {};
+        A.wddIBubbles[id] = bubbles;
+    },
+    renderList: function(id) {
+        if (A.wddList[id]) {
+            $('#'+ id + ' div.wdd_list').html('');
 
+            $.each(A.wddList[id], function(value, item) {
+                if (!A.wddBubbles[id] || (A.wddBubbles[id] && !A.wddBubbles[id][value])) WideDropdown.renderItem(id, value, item);
+            });
+        }
+    },
+    renderItem: function(id, value, item) {
+        var $wdd = $('#'+ id),
+            $list = $wdd.find('div.wdd_lwrap > .wdd_list');
+
+        $('\
+<div class="wddi_over" id="wddi'+ value +'_'+ id +'" onmousedown="WideDropdown.select(\''+ id +'\', event, \''+ value +'\')" onmouseover="WideDropdown.over(\''+ id +'\', \''+ value +'\')">\
+<div class="wddi_data">\
+    <b class="left wddi_thumb"><img class="wddi_img" src="'+ item.img +'" /></b>\
+    <div class="wddi_text">'+ item.text +'</div>\
+<div class="wddi_sub">'+ item.sub +'</div>\
+</div>\
+</div>').appendTo($list);
+    },
+    renderBubble: function(id, value) {
+        var $wdd = $('#'+ id),
+            $bubbles = $wdd.find('div.wdd_bubbles');
+
+        $('\
+<div id="wddb'+ value +'" class="summary_tab_sel left" onclick="event.cancelBubble=true">\
+    <div class="summary_tab2">\
+    <table>\
+        <tr>\
+            <td>\
+                <div class="summary_tab3">\
+                    <nobr>'+ A.wddList[id][value].text +'</nobr>\
+                </div>\
+            </td>\
+            <td>\
+                <div class="summary_tab_x" onclick="WideDropdown.deselect(\''+ id +'\', event, \''+ value + '\')"></div>\
+            </td>\
+        </tr>\
+    </table>\
+    </div>\
+</div>').appendTo($bubbles);
+    },
+    setup: function() {
+        A.wddList = {};
+        A.wddFocus = {};
+        A.wddBubbles = {};
+
+        if (A.wddIBubbles) {
+            $.each(A.wddIBubbles, function(id, bubbles) {
+                A.wddBubbles[id] = bubbles;
+            });
+        }
+        A.wddIBubbles = {};
+
+        if (A.wddIList) {
+            $.each(A.wddIList, function(id, list) {
+                A.wddList[id] = list;
+            });
+        }
+        A.wddIList = {};
+
+        $('div.wdd').each(function()
+        {
+            var id = $(this).attr('id');
+            $(this).children('.wdd_arrow').click(function() {
+                WideDropdown.show(id, event);
+            })
+        });
+    },
+    select: function(id, event, value) {
+        if (!A.wddBubbles[id]) A.wddBubbles[id] = {};
+        A.wddBubbles[id][value] = A.wddList[id];
+        WideDropdown.renderBubble(id, value);
+        WideDropdown.hide(id);
+        WideDropdown.renderList(id);
+        $('<input/>').attr({type: 'hidden', id: 'wddh'+ value, name: id +'[]'}).val(value).appendTo('#'+ id);
+
+        if (A.wddOnSelect && A.wddOnSelect[id]) A.wddOnSelect[id]();
+    },
+    deselect: function(id, event, value) {
+        delete A.wddBubbles[id][value];
+        $('#wddb'+ value).remove();
+        $('#wddh'+ value).remove();
+        WideDropdown.refreshAdd(id);
+        WideDropdown.renderList(id);
+
+        if (A.wddOnDeselect && A.wddOnDeselect[id]) A.wddOnDeselect[id]();
+    },
+    countBubbleSize: function(id) {
+        var cnt = 0;
+        for(var i in A.wddBubbles[id]) {
+            cnt++;
+        }
+        return cnt;
+    },
+    refreshAdd: function(id) {
+        if (WideDropdown.countBubbleSize(id) && !A.wddFocus[id]) {
+            $('#'+ id +' div.wdd_add').show();
+            $('#'+ id +' span.input_placeholder').hide();
+        }
+        else {
+            $('#'+ id +' div.wdd_add').hide();
+            $('#'+ id +' span.input_placeholder').show();
+        }
+    },
+    over: function(id, value) {
+        var $wdd = $('#'+ id),
+            $wddlist = $wdd.find('div.wdd_list');
+        $wddlist.children('div.wddi_over').removeClass('wddi_over').addClass('wddi');
+        $('#wddi'+ value +'_'+ id).removeClass('wddi').addClass('wddi_over');
+    },
+    show: function(id, event) {
+        event.stopPropagation();
+
+        var $wdd = $('#'+ id),
+            $lwrap = $wdd.children('.wdd_lwrap');
+
+        if (!$lwrap.children('.wdd_list').children().length) WideDropdown.renderList(id);
+
+        $lwrap.css({top: $wdd.outerHeight() - 1, width: $wdd.outerWidth()}).show();
+        $('body').one('click', function() {
+            WideDropdown.hide(id, event);
+        });
+
+        if (!A.wddFocus[id]) {
+            A.wddFocus[id] = 1;
+            $wdd.find('input').focus();
+        }
+
+        WideDropdown.refreshAdd(id);
+    },
+    hide: function(id, event) {
+        var $wdd = $('#'+ id),
+            $lwrap = $wdd.children('.wdd_lwrap');
+        $lwrap.hide();
+        $wdd.find('input').blur();
+
+        WideDropdown.refreshAdd(id);
+    },
+    setFocused: function(id, event) {
+        if (!A.wddFocus[id]) {
+            A.wddFocus[id] = 1;
+            //WideDropdown.show(id, event);
+        }
+    },
+    setUnfocused: function(id, event) {
+        A.wddFocus[id] = 0;
+        //WideDropdown.hide(id, event);
+    }
+};
 
 /* Calendar */
 $.fn.calendar = function() {
@@ -1207,7 +1367,9 @@ var nav = {
                 $('#content').trigger('contentChanged');
             });
             nav.request.fail(function(xhr, textStatus, errorThrown) {
-                if (xhr.response && xhr.response.guest && A.user_id > 0) {
+                var r = $.parseJSON(xhr.responseText);
+
+                if (r && r.guest && A.user_id > 0) {
                     location.href = A.host;
                     return;
                 }
@@ -1218,7 +1380,7 @@ var nav = {
 
                 switch (xhr.status) {
                     case 403:
-
+                        ajex.show(r.html);
                         break;
                     case 404:
                         ajex.show('Страница не найдена');
@@ -1231,11 +1393,11 @@ var nav = {
             clearTimeout(nav._tmPage);
             nav._tmPage = setTimeout(function() {
                 //$.jGrowl('Соединение с сервером разорвано, перезагрузите страницу', {theme: 'danger'});
-                ajex.show('Соединение с сервером разорвано, перезагрузите страницу');
+                ajex.show('Соединение с сервером потеряно, попробуйте заново');
                 $('body').removeClass('progress');
                 nav.request.abort();
                 nav.request = null;
-            }, 5000);
+            }, 30000);
         }
         return false;
     },
@@ -1368,6 +1530,7 @@ $().ready(function() {
     $('div.tabs').tabs();
     $('.smarttext textarea').autosize();
     $('[rel="filters"]').filters();
+    WideDropdown.setup();
 
     // content updates with ajax
     $('#content').on('contentChanged', function() {
@@ -1386,6 +1549,8 @@ $().ready(function() {
         });
 
         $('[rel="filters"]').filters();
+        WideDropdown.setup();
+
         $(window).resize();
     });
 

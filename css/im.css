@@ -1,3 +1,7 @@
+#im_css {
+    display: none;
+}
+
 .im_bar {
     padding: 10px;
     background: #f2f2f2;
@@ -11,4 +15,8 @@
     padding: 12px 10px 0px;
     font-size: 12px;
     font-weight: bold;
+}
+
+#imform div.row > span.input_placeholder input, #imform div.row > span.input_placeholder textarea {
+    width: 480px;
 }
