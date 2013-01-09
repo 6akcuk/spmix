@@ -3,6 +3,7 @@ Yii::app()->getClientScript()->registerScriptFile('/js/jquery-1.8.2.min.js');
 Yii::app()->getClientScript()->registerScriptFile('/js/main.js');
 Yii::app()->getClientScript()->registerCssFile('/css/main.css', '', 'before purchases.css');
 Yii::app()->getClientScript()->registerCssFile('/css/elements.css', '', 'before main.css');
+Yii::app()->getClientScript()->registerCssFile('/css/icons.css');
 
 $app=Yii::app();
 $request = $app->getRequest();

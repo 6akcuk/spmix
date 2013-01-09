@@ -159,6 +159,115 @@ div.dropdown ul li a:hover {
     color: #fff
 }
 
+/* Wide Dropdown */
+.wdd {
+    position: relative;
+    padding: 2px;
+    background: #fff;
+    border: 1px solid #557132;
+    overflow: visible;
+}
+.wdd_lwrap {
+    position: absolute;
+    left: -1px;
+    top: -1px;
+    z-index: 1010;
+    display: none;
+}
+.wdd_list {
+    border: 1px solid #557132;
+    border-top: 0;
+    overflow: hidden;
+}
+.wddi, .wddi_over {
+    cursor: pointer;
+    display: block;
+    padding: 0px 6px;
+    background: #fff;
+}
+.wddi_over {
+    background: #f1f5f9;
+    margin-top: 1px;
+    border: 1px solid #e1e7ed;
+    border-width: 1px 0;
+}
+.wddi:first-child, .wddi_over:first-child {
+    border-top: 0;
+    margin-top: 0;
+}
+.wddi_data {
+    padding: 6px 0;
+    border-bottom: 1px solid #ededed;
+    min-height: 32px;
+    font-size: 12px;
+}
+.wddi:last-child .wddi_data, .wddi_over .wddi_data, .wddi:last-child, .wddi_over:last-child {
+    border-bottom: 0;
+}
+.wddi_thumb {
+    width: 49px;
+    height: 43px;
+    overflow: hidden;
+}
+.wddi_img {
+    vertical-align: top;
+    width: 43px;
+    border-radius: 2px;
+}
+.wddi_text {
+    padding-top: 2px
+}
+.wddi_sub {
+    padding-top: 3px;
+    color: #777
+}
+.wddi_over .wddi_sub {
+    color: #738392;
+}
+.wdd_arrow {
+    width: 23px;
+    height: 27px;
+    overflow: hidden;
+    cursor: pointer;
+    background: url('/../../images/wide_dd.gif') no-repeat;
+}
+.wdd_bubbles .summary_tab_sel {
+    padding: 2px;
+    cursor: default;
+    font-weight: bold;
+}
+.summary_tab2 {
+    display: block;
+    padding: 3px 5px 4px;
+    border-radius: 2px;
+    font-size: 12px;
+}
+.summary_tab_sel .summary_tab2, .summary_tab_sel .summary_tab2:hover {
+    background: #447229;
+}
+.summary_tab3 {
+    max-width: 230px;
+    height: 16px;
+    overflow: hidden;
+    padding: 0 3px;
+    text-overflow: ellipsis;
+    font-weight: bold;
+}
+.summary_tab_sel .summary_tab3 {
+    color: #fff;
+}
+.summary_tab_x {
+    width: 11px;
+    height: 11px;
+    margin: 3px 1px 0;
+    background: url('/../../images/wdd_tabx.gif') no-repeat;
+    cursor: pointer;
+}
+.summary_tab_sel .summary_tab_x {
+    background-position: 0 -13px;
+    opacity: 0.2;
+}
+
 /* Search Field */
 .search {
     position: relative;

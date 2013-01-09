@@ -219,7 +219,7 @@ textarea {
     font-family: sans-serif;
     line-height: 16px;
     min-height: 50px;
-    resize: vertical
+    resize: none;
 }
 
 /* End of default declaration */
@@ -227,6 +227,11 @@ textarea {
 .wrap {
     margin: 0px auto;
     width: 960px;
+    position: relative;
+}
+.wrap2 {
+    margin: 0px auto;
+    width: 500px;
     position: relative;
 }
 .fixed {

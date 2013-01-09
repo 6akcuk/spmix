@@ -56,4 +56,11 @@ class DefaultController extends Controller
         }
         else $this->render('index', array('peoples' => $dialogs, 'c' => $c, 'offset' => $offset, 'offsets' => $dialogsNum,));
 	}
+
+    public function actionCreate() {
+        if (Yii::app()->request->isAjaxRequest) {
+            $this->pageHtml = $this->renderPartial('create', array(), true);
+        }
+        else $this->render('create', array());
+    }
 }
