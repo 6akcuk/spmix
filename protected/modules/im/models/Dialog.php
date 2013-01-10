@@ -83,4 +83,106 @@ class Dialog extends CActiveRecord
 			'title' => 'Title',
 		);
 	}
+
+    public static function getDialogs($user_id, $offset = 0) {
+        $limit = Yii::app()->getModule('im')->dialogsPerPage;
+        $conn = self::getDbConnection();
+
+        $conn->createCommand("SET SESSION group_concat_max_len = 4096;")->execute();
+
+        $command = $conn->createCommand("
+SELECT * FROM `dialogs` AS t
+  INNER JOIN `dialog_members` AS myself ON myself.dialog_id = t.dialog_id
+  LEFT JOIN
+     (
+        SELECT
+          MAX(message_id) AS message_id,
+          dialog_id,
+          creation_date,
+          author_id,
+          SUBSTR(message, 1, 90) AS message,
+          attaches,
+          message_delete,
+          p.photo,
+          p.firstname,
+          u.login,
+          r.req_link_id,
+          r.owner_id
+        FROM `dialog_messages` AS sub
+          INNER JOIN `users` AS u ON u.id = sub.author_id
+          INNER JOIN `profiles` AS p ON p.user_id = u.id
+          LEFT JOIN `profile_requests` AS r ON r.req_link_id = message_id
+        WHERE message_delete IS NULL AND r.req_type = ". ProfileRequest::TYPE_PM ." AND r.viewed = 0
+        GROUP BY dialog_id
+     )
+     AS lastMessage ON lastMessage.dialog_id = t.dialog_id
+  INNER JOIN
+     (
+       SELECT
+         GROUP_CONCAT(IF(p.photo = '',0,p.photo) SEPARATOR ';') AS photos,
+         GROUP_CONCAT(mm.member_id SEPARATOR ';') AS members,
+         GROUP_CONCAT(p.firstname SEPARATOR ';') AS firstnames,
+         GROUP_CONCAT(p.lastname SEPARATOR ';') AS lastnames,
+         GROUP_CONCAT(u.login SEPARATOR ';') AS logins,
+         GROUP_CONCAT(u.lastvisit SEPARATOR ';') AS lastvisits,
+         dialog_id
+       FROM `dialog_members` AS mm
+         INNER JOIN `users` AS u ON u.id = mm.member_id
+         INNER JOIN `profiles` AS p ON p.user_id = u.id
+       GROUP BY dialog_id
+       LIMIT 4
+     )
+     AS members ON members.dialog_id = t.dialog_id
+   WHERE myself.member_id = {$user_id} GROUP BY t.dialog_id ORDER BY lastMessage.creation_date DESC LIMIT {$offset}, {$limit}");
+
+        $result = array();
+        $dataReader = $command->query();
+        while (($row = $dataReader->read()) !== false) {
+            $dialog = new Dialog();
+            $dialog->attributes = $row;
+
+            $dialog->lastMessage = new DialogMessage();
+            $dialog->lastMessage->attributes = $row;
+            $dialog->lastMessage->author = new User();
+            $dialog->lastMessage->author->attributes = $row;
+            $dialog->lastMessage->author->profile = new Profile();
+            $dialog->lastMessage->author->profile->attributes = $row;
+
+            $dialog->lastMessage->isNew = new ProfileRequest();
+            $dialog->lastMessage->isNew->attributes = $row;
+
+            $members = array();
+            $id = explode(';', $row['members']);
+            $firstname = explode(';', $row['firstnames']);
+            $lastname = explode(';', $row['lastnames']);
+            $photo = explode(';', $row['photos']);
+            $login = explode(';', $row['logins']);
+            $lastvisit = explode(';', $row['lastvisits']);
+
+            foreach ($id as $idx => $_id) {
+                $member = new DialogMember();
+                $member->dialog_id = $dialog->dialog_id;
+                $member->member_id = $_id;
+
+                $member->user = new User();
+                $member->user->id = $_id;
+                $member->user->login = $login[$idx];
+                $member->user->lastvisit = $lastvisit[$idx];
+
+                $member->user->profile = new Profile();
+                $member->user->profile->user_id = $_id;
+                $member->user->profile->photo = $photo[$idx];
+                $member->user->profile->firstname = $firstname[$idx];
+                $member->user->profile->lastname = $lastname[$idx];
+
+                $members[] = $member;
+            }
+
+            $dialog->members = $members;
+
+            $result[] = $dialog;
+        }
+
+        return $result;
+    }
 }

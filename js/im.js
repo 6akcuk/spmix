@@ -1,11 +1,15 @@
 var Im = {
+    selectDialog: function(dialog_id, event) {
+        nav.go('/im?sel='+ dialog_id, event);
+    },
+
     showSendButton: function() {
         $('#im_send').html('Отправить');
     },
 
     sendMessage: function() {
         var $im = $('#imform'),
-            recipients = $im.find('[name*="im_wdd"]'),
+            recipients = $im.find('input[name^="im_wdd"]'),
             rec = [],
             title = $.trim($im.find('[name="Im[title]"]').val()),
             message = $.trim($im.find('[name="Im[message]"]').val());
@@ -27,8 +31,8 @@ var Im = {
         A.imSending = true;
 
         $('#im_send').html('<img src="/images/progress_small.gif" />');
-        for(var i in recipients) {
-            rec[i] = parseInt(recipients.val());
+        for(var i=0; i < recipients.length; i++) {
+            rec.push(parseInt(recipients[i].value));
         }
 
         ajax.post('/im?sel=-1', {recipients: rec, title: title, message: message}, function(r) {
@@ -40,6 +44,18 @@ var Im = {
         }, function(xhr) {
             A.imSending = false;
             Im.showSendButton();
+        });
+    },
+
+    setup: function(dialog_id) {
+        var $head = $('#header');
+
+        $('body').addClass('im_fixed');
+        $('#sidebar').css({top: $head.outerHeight()});
+        $('#im_nav').css({top: $head.outerHeight()});
+        $('#im_content').css({padding:
+            ($head.outerHeight() + $('#im_nav').outerHeight()) +'px 0px '+
+            ($('#im_controls').outerHeight()) + 'px'
         });
     }
 };

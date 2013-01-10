@@ -21,23 +21,19 @@ class DefaultController extends Controller
 
         if (isset($_GET['sel']) && $_GET['sel'] == -1)
             $this->defaultAction = 'create';
+        elseif (isset($_GET['sel']) && $_GET['sel'] > 0)
+            $this->defaultAction = 'show';
     }
 
     public function actionIndex($offset = 0)
 	{
         $c = (isset($_REQUEST['c'])) ? $_REQUEST['c'] : array();
 
-        $criteria = new CDbCriteria();
-        $criteria->limit = $this->module->dialogsPerPage;
-        $criteria->offset = $offset;
+        $dialogs = Dialog::getDialogs(Yii::app()->user->getId(), $offset);
 
+        $criteria = new CDbCriteria();
         $criteria->addCondition('member.member_id = :id');
         $criteria->params[':id'] = Yii::app()->user->getId();
-        $criteria->order = 'lastMessage.creation_date DESC';
-
-        $dialogs = Dialog::model()->with('member', 'leader', 'lastMessage')->findAll($criteria);
-        //$dialogs = DialogMember::model()->with('dialog', 'dialog.leader', 'dialog.leader.profile', 'dialog.lastMessage')->findAll($criteria);
-
         $criteria->limit = 0;
         $criteria->group = 'dialog.dialog_id';
         $dialogsNum = Dialog::model()->with('members')->count('members.member_id = :id', array(':id' => Yii::app()->user->getId())); //DialogMember::model()->with('dialog', 'dialog.lastMessage')->count($criteria);
@@ -70,7 +66,7 @@ class DefaultController extends Controller
                 $dialog = new Dialog();
                 $dialog->leader_id = Yii::app()->user->getId();
                 $dialog->title = $title;
-                $dialog->type = Dialog::TYPE_TET;
+                $dialog->type = Dialog::TYPE_CONFERENCE;
                 if (!$dialog->save()) {
                     echo json_encode(array('success' => false, 'message' => 'Не удалось создать беседу'));
                     exit;
@@ -80,15 +76,15 @@ class DefaultController extends Controller
                 $dialogMembers = array();
                 $memberSuccessful = false;
 
-                foreach ($recipients as $idx => $recipient) {
+                for ($idx = 0; $idx < sizeof($recipients); $idx++) {
                     $dialogMembers[$idx] = new DialogMember();
                     $dialogMembers[$idx]->dialog_id = $dialog->dialog_id;
-                    $dialogMembers[$idx]->member_id = $recipient;
+                    $dialogMembers[$idx]->member_id = $recipients[$idx];
 
                     $memberSuccessful = $dialogMembers[$idx]->validate();
                 }
 
-                $idx = sizeof($dialogMembers);
+                $idx = sizeof($recipients);
                 $dialogMembers[$idx] = new DialogMember();
                 $dialogMembers[$idx]->dialog_id = $dialog->dialog_id;
                 $dialogMembers[$idx]->member_id = Yii::app()->user->getId();
@@ -175,14 +171,14 @@ class DefaultController extends Controller
                     // Можно отправлять самому себе сообщения
                     if ($member->member_id == Yii::app()->user->getId() && $selfRecipient != 1) {
                         $selfRecipient++;
-                        continue;
                     }
-
-                    $request = new ProfileRequest();
-                    $request->owner_id = $member->member_id;
-                    $request->req_type = ProfileRequest::TYPE_PM;
-                    $request->req_link_id = $dialogMessage->message_id;
-                    $request->save();
+                    else {
+                        $request = new ProfileRequest();
+                        $request->owner_id = $member->member_id;
+                        $request->req_type = ProfileRequest::TYPE_PM;
+                        $request->req_link_id = $dialogMessage->message_id;
+                        $request->save();
+                    }
                 }
 
                 echo json_encode(array('success' => true, 'url' => '/im?sel='. $dialog->dialog_id));
@@ -196,5 +192,38 @@ class DefaultController extends Controller
             $this->pageHtml = $this->renderPartial('create', array('friends' => $friends), true);
         }
         else $this->render('create', array('friends' => $friends));
+    }
+
+    public function actionShow($sel, $offset = 0) {
+        $criteria = new CDbCriteria();
+        $criteria->limit = Yii::app()->getModule('im')->messagesPerPage;
+        $criteria->offset = $offset;
+
+        $criteria->addCondition('dialog_id = :id');
+        $criteria->params[':id'] = $sel;
+
+        $criteria->order = 'creation_date DESC';
+
+        $dialog = Dialog::model()->findByPk($sel);
+        $messages = DialogMessage::model()->with('author', 'isNew')->findAll($criteria);
+
+        $criteria->limit = 0;
+        $messagesNum = DialogMessage::model()->count($criteria);
+
+        if (Yii::app()->request->isAjaxRequest) {
+            if (isset($_POST['pages'])) {
+                $this->pageHtml = $this->renderPartial('_im', array(
+                    'messages' => $messages,
+                    'offset' => $offset,
+                ), true);
+            }
+            else $this->pageHtml = $this->renderPartial('show', array(
+                'dialog' => $dialog,
+                'messages' => $messages,
+                'offset' => $offset,
+                'offsets' => $messagesNum,
+            ), true);
+        }
+        else $this->render('show', array('dialog' => $dialog, 'messages' => $messages, 'offset' => $offset, 'offsets' => $messagesNum,));
     }
 }

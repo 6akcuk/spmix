@@ -14,6 +14,7 @@
  *
  * @property User $author
  * @property Dialog $dialog
+ * @property ProfileRequest $isNew
  */
 class DialogMessage extends CActiveRecord
 {
@@ -70,6 +71,7 @@ class DialogMessage extends CActiveRecord
 		return array(
             'author' => array(self::BELONGS_TO, 'User', 'author_id'),
             'dialog' => array(self::BELONGS_TO, 'Dialog', 'dialog_id'),
+            'isNew' => array(self::HAS_ONE, 'ProfileRequest', 'req_link_id', 'condition' => 'req_type = '. ProfileRequest::TYPE_PM .' AND viewed = 0'),
 		);
 	}
 

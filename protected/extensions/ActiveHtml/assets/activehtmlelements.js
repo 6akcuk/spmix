@@ -98,7 +98,7 @@ var Tooltip = {
     },
     init: function() {
         $('div.tooltip').remove();
-        $('.tt').mouseenter(function() {
+        $('.tt, [rel="tooltip"]').mouseenter(function() {
                 Tooltip.show(this)
             }).mouseleave(function() {
                 Tooltip.hide();
@@ -350,22 +350,24 @@ var WideDropdown = {
         A.wddIBubbles[id] = bubbles;
     },
     renderList: function() {
-        var id, list, curItem = 0, totalItems = 10;
+        var id, list, public, curItem = 0, totalItems = 10;
 
         if ($.isPlainObject(arguments[0])) {
             id = arguments[0].id;
             list = arguments[0].list;
+            public = false;
         }
         else {
             id = arguments[0];
             list = A.wddList[id] || {};
+            public = true;
         }
 
         $('#'+ id + ' div.wdd_list').html('');
 
         if (objectLen(list)) {
             $.each(list, function(value, item) {
-                if ((!A.wddBubbles[id] || (A.wddBubbles[id] && !A.wddBubbles[id][value])) && curItem < totalItems) {
+                if ((!public || (public && !item.private)) && (!A.wddBubbles[id] || (A.wddBubbles[id] && !A.wddBubbles[id][value])) && curItem < totalItems) {
                     WideDropdown.renderItem(id, value, item);
                     curItem++;
                 }
@@ -538,7 +540,7 @@ var WideDropdown = {
             if (item.text.match(new RegExp(text, 'i'))) {
                 result[i] = {};
                 result[i] = {img: item.img, text: item.text, sub: item.sub}
-                result[i].text = result[i].text.replace(new RegExp(text, 'i'), '<b>'+ text +'</b>');
+                result[i].text = result[i].text.replace(new RegExp('('+ text +')', 'i'), '<b>$1</b>');
             }
         })
         return result;
@@ -1415,6 +1417,9 @@ var nav = {
                         $('#content').addClass('largecolumn');
                     }
                 }
+
+                if (!loc.match(/im\?sel=(\d+)/i)) $('body').removeClass('im_fixed');
+
                 $('#content').trigger('contentChanged');
             });
             nav.request.fail(function(xhr, textStatus, errorThrown) {

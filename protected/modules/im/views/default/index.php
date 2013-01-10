@@ -7,7 +7,7 @@ Yii::app()->getClientScript()->registerCssFile('/css/im.css');
 Yii::app()->getClientScript()->registerCssFile('/css/pagination.css');
 Yii::app()->getClientScript()->registerScriptFile('/js/pagination.js');
 
-Yii::app()->getClientScript()->registerScriptFile('/js/profile.js');
+Yii::app()->getClientScript()->registerScriptFile('/js/im.js');
 
 $this->pageTitle = Yii::app()->name .' - Диалоги';
 $delta = Yii::app()->controller->module->dialogsPerPage;
@@ -24,7 +24,7 @@ $delta = Yii::app()->controller->module->dialogsPerPage;
     </div>
     <div style="display: none">
         <?php $this->widget('Paginator', array(
-        'url' => '/friends?section=requests',
+        'url' => '/im',
         'offset' => $offset,
         'offsets' => $offsets,
         'delta' => $delta,

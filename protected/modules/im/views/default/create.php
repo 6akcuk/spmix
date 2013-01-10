@@ -13,7 +13,7 @@ foreach ($friends as $friend) {
     $friendsJS[] = "'". $friend->friend->id ."': {img: '". (($friend->friend->profile->photo) ? ActiveHtml::getImageUrl($friend->friend->profile->photo, 'a') : 'http://spmix.ru/images/camera_a.gif') ."', text: '". $friend->friend->getDisplayName() ."', sub: '". $friend->friend->profile->city->name ."'}";
 }
 
-$friendsJS[] = "'". Yii::app()->user->getId() ."': {img: '". ((Yii::app()->user->model->profile->photo) ? ActiveHtml::getImageUrl(Yii::app()->user->model->profile->photo, 'a') : 'http://spmix.ru/images/camera_a.gif') ."', text: '". Yii::app()->user->model->getDisplayName() ."', sub: '". Yii::app()->user->model->profile->city->name ."'}";
+$friendsJS[] = "'". Yii::app()->user->getId() ."': {private: true, img: '". ((Yii::app()->user->model->profile->photo) ? ActiveHtml::getImageUrl(Yii::app()->user->model->profile->photo, 'a') : 'http://spmix.ru/images/camera_a.gif') ."', text: '". Yii::app()->user->model->getDisplayName() ."', sub: '". Yii::app()->user->model->profile->city->name ."'}";
 
 ?>
 <div class="tabs">

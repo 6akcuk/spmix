@@ -225,9 +225,9 @@ textarea {
 /* End of default declaration */
 
 .wrap {
-    margin: 0px auto;
-    width: 960px;
+    padding: 0 20px;
     position: relative;
+    background: #fff;
 }
 .wrap2 {
     margin: 0px auto;
@@ -460,6 +460,10 @@ textarea {
 
 /* End of useful declaration */
 
+#header {
+    height: 171px;
+}
+
 #top, #features {
     padding: 30px 0;
 }
@@ -560,70 +564,6 @@ textarea {
     font-size: 15px;
     color: #6f7e8b;
 }
-
-#header {
-    background: #33454e;
-    position: relative;
-}
-#header > div.wrap {
-    padding: 11px 0;
-    position: relative;
-    overflow: hidden;
-}
-
-#header a.logo {
-    display: block;
-    float: left;
-    color: #fff;
-    font-size: 24px;
-    padding: 10px 0px;
-    margin-right: 25px
-}
-#header .gsearch {
-    margin-top: 7px;
-}
-#header .gsearch input {
-    float: left;
-    border: 0;
-    padding: 5px;
-    background: #5d6266;
-}
-#header .gsearch a {
-    display: inline-block;
-    float: left;
-    font-size: 18px;
-    padding: 3px 6px 3px 3px;
-    background: #5d6266;
-    color: #54bbfc;
-}
-#header .gsearch.focused input {
-    background: #f2f2f2
-}
-#header .gsearch.focused a {
-    color: #fff;
-    background: #54bbfc;
-}
-#header .gsearch.focused a:hover {
-    background: #74c7f7;
-}
-
-#header ul.hmenu {
-    margin-left: 20px
-}
-#header ul.hmenu li {
-    float: left;
-    margin-right: 15px;
-}
-#header ul.hmenu li a {
-    display: block;
-    font-size: 18px;
-    color: #fff;
-    padding: 10px 15px
-}
-#header ul.hmenu li a:hover {
-    background: #54bbfc;
-}
-
 
 #header nav, ul.hmenu_slidesubmenu > li {
     float: left;
@@ -823,11 +763,9 @@ form .success {
 
 div.maincolumns {}
 div.smallcolumn {
-    float: left;
     width: 190px;
 }
 div.largecolumn {
-    float: left;
     margin-left: 10px;
     width: 750px;
 }
@@ -872,6 +810,7 @@ div.ls_columns div.column.options div {
 .wrapper {
     width: 1000px;
     margin: 0 auto;
+    position: relative;
 }
 
 .top {

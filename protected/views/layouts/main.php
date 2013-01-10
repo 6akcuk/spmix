@@ -55,66 +55,56 @@ $cookies = $request->getCookies();
 </div>
 
 <div class="wrapper">
-    <div class='top'>
-        <div class="fl_l logo">
-            <a href="/" class="logo_a"></a>
-        </div>
-        <div class="fl_l login">
-            <div class="clearfix">
-                <?php echo ActiveHtml::dropdown('cur_city', 'Город', ($cookies['cur_city']) ? $cookies['cur_city']->value : '', City::getDataArray()) ?>
+    <div id="header">
+        <div class='top'>
+            <div class="fl_l logo">
+                <a href="/" class="logo_a"></a>
             </div>
-        </div>
-        <div class="clear"></div>
-    </div>
-
-</div>
-<div class="main">
-    <div class="wrapper">
-        <div class="main_a">
-        <?php if (!Yii::app()->user->getIsGuest()): ?>
-        <ul class="clearfix">
-            <li>
-                <?php echo ActiveHtml::link('Люди', '/search?c[section]=people') ?>
-            </li>
-            <li>
-                <?php echo ActiveHtml::link('Закупки', '/purchases') ?>
-            </li>
-            <li>
-                <?php echo ActiveHtml::link('Пристрой', '/annexe') ?>
-            </li>
-            <li>
-                <?php echo ActiveHtml::link('Хотелки', '/wishlist') ?>
-            </li>
-            <li>
-                <a href="/logout">Выйти</a>
-            </li>
-        </ul>
-        <?php else: ?>
-        <?php $this->widget('application.modules.users.components.LoginWidget'); ?>
-        <?php endif; ?>
-            </div>
-    </div>
-</div>
-<div class="wrapper">
-    <div class="wrapper_content">
-        <div id="body">
-            <div class="wrap">
-                <div class="maincolumns clearfix">
-                    <div class="smallcolumn"<?php if(Yii::app()->controller->wideScreen): ?> style="display:none"<?php endif; ?>>
-                        <?php echo $this->renderPartial('//layouts/leftmenu') ?>
-                    </div>
-                    <div id="content" class="<?php if(!Yii::app()->controller->wideScreen): ?>largecolumn<?php endif; ?>">
-                        <?php echo $content; ?>
-                    </div>
+            <div class="fl_l login">
+                <div class="clearfix">
+                    <?php echo ActiveHtml::dropdown('cur_city', 'Город', ($cookies['cur_city']) ? $cookies['cur_city']->value : '', City::getDataArray()) ?>
                 </div>
             </div>
+            <div class="clear"></div>
+        </div>
+        <div class="main">
+            <div class="wrapper">
+                <div class="main_a">
+                <?php if (!Yii::app()->user->getIsGuest()): ?>
+                <ul class="clearfix">
+                    <li>
+                        <?php echo ActiveHtml::link('Люди', '/search?c[section]=people') ?>
+                    </li>
+                    <li>
+                        <?php echo ActiveHtml::link('Закупки', '/purchases') ?>
+                    </li>
+                    <li>
+                        <?php echo ActiveHtml::link('Пристрой', '/annexe') ?>
+                    </li>
+                    <li>
+                        <?php echo ActiveHtml::link('Хотелки', '/wishlist') ?>
+                    </li>
+                    <li>
+                        <a href="/logout">Выйти</a>
+                    </li>
+                </ul>
+                <?php else: ?>
+                <?php $this->widget('application.modules.users.components.LoginWidget'); ?>
+                <?php endif; ?>
+                    </div>
+            </div>
+        </div>
+    </div>
+    <div class="wrap clearfix">
+        <div id="sidebar" class="left smallcolumn"<?php if(Yii::app()->controller->wideScreen): ?> style="display:none"<?php endif; ?>>
+            <?php echo $this->renderPartial('//layouts/leftmenu') ?>
+        </div>
+        <div id="content" class="<?php if(!Yii::app()->controller->wideScreen): ?>largecolumn<?php endif; ?> right">
+            <?php echo $content; ?>
         </div>
     </div>
 </div>
 </body>
-
-
-
 <script type="text/javascript">
 Upload.assign({server_id: 1, action: 'http://cs1.spmix.ru/upload.php'});
 </script>

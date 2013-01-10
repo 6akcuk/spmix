@@ -9,6 +9,7 @@
  * @property string $add_date
  *
  * @property Dialog $dialog
+ * @property User $user
  */
 class DialogMember extends CActiveRecord
 {
@@ -57,6 +58,7 @@ class DialogMember extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
             'dialog' => array(self::BELONGS_TO, 'Dialog', 'dialog_id'),
+            'user' => array(self::HAS_ONE, 'User', 'member_id'),
 		);
 	}
 
