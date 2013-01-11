@@ -19,6 +19,9 @@ class DefaultController extends Controller
     public function init() {
         parent::init();
 
+        if (isset($_GET['action']))
+            $this->defaultAction = $_GET['action'];
+
         if (isset($_GET['sel']) && $_GET['sel'] == -1)
             $this->defaultAction = 'create';
         elseif (isset($_GET['sel']) && $_GET['sel'] > 0)
@@ -204,8 +207,10 @@ class DefaultController extends Controller
 
         $criteria->order = 'creation_date DESC';
 
-        $dialog = Dialog::model()->findByPk($sel);
-        $messages = DialogMessage::model()->with('author', 'isNew')->findAll($criteria);
+        $dialog = Dialog::model()->with(array('members' => array('limit' => 4)))->findByPk($sel);
+        $messages = DialogMessage::model()->with('author', array('isNewIn' => array('joinType' => 'LEFT JOIN')), array('isNewOut' => array('joinType' => 'LEFT JOIN')))->findAll($criteria);
+
+        $messages = array_reverse($messages);
 
         $criteria->limit = 0;
         $messagesNum = DialogMessage::model()->count($criteria);
@@ -225,5 +230,27 @@ class DefaultController extends Controller
             ), true);
         }
         else $this->render('show', array('dialog' => $dialog, 'messages' => $messages, 'offset' => $offset, 'offsets' => $messagesNum,));
+    }
+
+    public function actionViewed($id) {
+        $criteria = new CDbCriteria();
+        $criteria->addCondition('req_type = :type');
+        $criteria->addCondition('req_link_id = :id');
+        $criteria->addCondition('owner_id = :owner');
+
+        $criteria->params = array(
+            ':type' => ProfileRequest::TYPE_PM,
+            ':id' => $id,
+            ':owner' => Yii::app()->user->getId(),
+        );
+        $request = ProfileRequest::model()->find($criteria);
+        if ($request && $request->delete()) {
+            $this->pageCounters['pm']--;
+            $success = true;
+        }
+        else $success = false;
+
+        echo json_encode(array('counters' => $this->pageCounters));
+        exit;
     }
 }

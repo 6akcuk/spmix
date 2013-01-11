@@ -95,7 +95,7 @@ $cookies = $request->getCookies();
             </div>
         </div>
     </div>
-    <div class="wrap clearfix">
+    <div id="page_layout" class="wrap clearfix">
         <div id="sidebar" class="left smallcolumn"<?php if(Yii::app()->controller->wideScreen): ?> style="display:none"<?php endif; ?>>
             <?php echo $this->renderPartial('//layouts/leftmenu') ?>
         </div>

@@ -55,6 +55,8 @@ var Paginator = {
     },
 
     initPages: function() {
+        if (typeof A.pgFixedContent == 'undefined' || A.pgNoPages) return;
+
         var page = (A.offset + A.pgDelta) / A.pgDelta,
             html = [],
             minPage = 1, maxPage = 1;

@@ -93,6 +93,7 @@ a.input_calendar em {
 /* Tooltip */
 div.tooltip {
     position: absolute;
+    z-index: 1200;
 }
 div.tooltip div.tt_bg {
     position: absolute;
@@ -338,6 +339,7 @@ div.report_window {
     text-align: center;
     line-height: 22px;
     display: none;
+    z-index: 1199;
 }
 
 div.report_window .close {

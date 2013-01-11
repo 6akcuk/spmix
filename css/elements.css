@@ -27,6 +27,7 @@
 
 div.tabs {
     border-bottom: 1px solid #508033;
+    background: #fff;
 }
 div.tabs a {
     display: inline-block;

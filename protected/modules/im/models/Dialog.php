@@ -107,12 +107,31 @@ SELECT * FROM `dialogs` AS t
           p.firstname,
           u.login,
           r.req_link_id,
-          r.owner_id
+          r.owner_id,
+          r2.req_link_id AS out_req_link_id,
+          r2.owner_id AS out_owner_id
         FROM `dialog_messages` AS sub
           INNER JOIN `users` AS u ON u.id = sub.author_id
           INNER JOIN `profiles` AS p ON p.user_id = u.id
-          LEFT JOIN `profile_requests` AS r ON r.req_link_id = message_id
-        WHERE message_delete IS NULL AND r.req_type = ". ProfileRequest::TYPE_PM ." AND r.viewed = 0
+          LEFT JOIN
+            (
+               SELECT
+                 *
+               FROM `profile_requests`
+               WHERE req_type = ". ProfileRequest::TYPE_PM ." AND
+                 (owner_id = ". Yii::app()->user->getId() .")
+            )
+            AS r ON r.req_link_id = sub.message_id
+          LEFT JOIN
+            (
+               SELECT
+                 *
+               FROM `profile_requests`
+               WHERE req_type = ". ProfileRequest::TYPE_PM ." AND
+                 (owner_id != ". Yii::app()->user->getId() .")
+            )
+            AS r2 ON r2.req_link_id = sub.message_id
+        WHERE message_delete IS NULL
         GROUP BY dialog_id
      )
      AS lastMessage ON lastMessage.dialog_id = t.dialog_id
@@ -149,7 +168,11 @@ SELECT * FROM `dialogs` AS t
             $dialog->lastMessage->author->profile->attributes = $row;
 
             $dialog->lastMessage->isNew = new ProfileRequest();
-            $dialog->lastMessage->isNew->attributes = $row;
+            if ($row['req_link_id']) $dialog->lastMessage->isNew->attributes = $row;
+            else {
+                $dialog->lastMessage->isNew->req_link_id = $row['out_req_link_id'];
+                $dialog->lastMessage->isNew->owner_id = $row['out_owner_id'];
+            }
 
             $members = array();
             $id = explode(';', $row['members']);

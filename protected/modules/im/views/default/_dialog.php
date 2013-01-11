@@ -7,7 +7,7 @@
 <?php $page = ($offset + Yii::app()->controller->module->dialogsPerPage) / Yii::app()->controller->module->dialogsPerPage ?>
 <?php $added = false; ?>
 <?php foreach ($dialogs as $dialog): ?>
-<div class="dialogs_row<?php if($dialog->lastMessage->isNew && $dialog->lastMessage->isNew->owner_id == Yii::app()->user->getId()) echo " dialogs_new_msg" ?>" id="im_dialog<?php echo $dialog->dialog_id ?>" onclick="Im.selectDialog(<?php echo $dialog->dialog_id ?>, event)" onmouseover="$(this).addClass('dialogs_row_over')" onmouseout="$(this).removeClass('dialogs_row_over')">
+<div class="dialogs_row<?php if($dialog->lastMessage->isNew->req_link_id && $dialog->lastMessage->isNew->owner_id == Yii::app()->user->getId()) echo " dialogs_new_msg" ?>" id="im_dialog<?php echo $dialog->dialog_id ?>" onclick="Im.selectDialog(<?php echo $dialog->dialog_id ?>, event)" onmouseover="$(this).addClass('dialogs_row_over')" onmouseout="$(this).removeClass('dialogs_row_over')">
     <div class="dialogs_del_wrap">
         <div class="dialogs_del" rel="tooltip" title="Удалить диалог"></div>
     </div>
@@ -50,7 +50,7 @@
                 </div>
             </td>
             <td class="dialogs_msg_contents">
-                <div class="dialogs_msg_body<?php if ($dialog->lastMessage->isNew && $dialog->lastMessage->isNew->owner_id != Yii::app()->user->getId()) echo " dialogs_new_msg" ?> clearfix">
+                <div class="dialogs_msg_body<?php if ($dialog->lastMessage->isNew->req_link_id && $dialog->lastMessage->isNew->owner_id != Yii::app()->user->getId()) echo " dialogs_new_msg" ?> clearfix">
                 <?php if($dialog->lastMessage): ?>
                     <?php if ($dialog->type == Dialog::TYPE_CONFERENCE || ($dialog->type == Dialog::TYPE_TET && $interlocutor->user->id != $dialog->leader_id)): ?>
                     <?php echo ($dialog->lastMessage->author->profile->photo)

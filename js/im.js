@@ -47,16 +47,65 @@ var Im = {
         });
     },
 
+    setLogState: function(state, message_id) {
+        var $ma = $('#ma'+ message_id),
+            $ms = $('#mess'+ message_id);
+        $ma.css('visibility', (state == 1) ? 'visible' : 'hidden');
+        if (state == 1 && $ms.hasClass('im_in') && $ms.hasClass('im_new_msg')) {
+            setTimeout(function() {
+                Im.setMessViewed(message_id);
+            }, 1);
+        }
+    },
+
+    setMessViewed: function(message_id) {
+        ajax.post('/im?action=viewed&id='+ message_id, null, function(r) {
+            if (r.success) {
+                $('#mess'+ message_id).removeClass('im_new_msg');
+                updMessCounter(parseInt(r.counters['pm']));
+            }
+        }, function(r) {
+
+        });
+    },
+
     setup: function(dialog_id) {
         var $head = $('#header');
+        A.imChecked = {};
 
         $('body').addClass('im_fixed');
         $('#sidebar').css({top: $head.outerHeight()});
         $('#im_nav').css({top: $head.outerHeight()});
+        //$('#page_layout').css({marginTop: $head.outerHeight()});
         $('#im_content').css({padding:
             ($head.outerHeight() + $('#im_nav').outerHeight()) +'px 0px '+
-            ($('#im_controls').outerHeight()) + 'px'
+            ($('#im_peer_controls').outerHeight()) + 'px'
         });
+
+        Im.resizeRows();
+        Im.pointControls();
+    },
+
+    pointControls: function() {
+        var $sb = $('#sidebar'),
+            $fill = $('#im_footer_filler'),
+            lowY = $sb.offset().top - $(window).scrollTop() + $sb.outerHeight() + $('#im_peer_controls').outerHeight(),
+            height, minY;
+
+        height = ($(window).height < lowY) ? 0 : $(window).height() - lowY;
+        minY = $('#header').outerHeight() + $('#im_nav').outerHeight() + 50;
+
+        $fill.css({height: height});
+
+        if ($fill.offset().top <= 0) {
+
+        }
+    },
+
+    resizeRows: function() {
+        var tHeight = $('#im_rows div.im_peer_rows').outerHeight();
+        $('#im_rows').css({height: tHeight});
+        $(window).scrollTop(tHeight);
     }
 };
 

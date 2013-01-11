@@ -1379,46 +1379,28 @@ var nav = {
                 });
 
                 // Page Counters
-                if (response.counters['friends']) {
-                    var iCnt = parseInt(response.counters['friends']),
-                        $friends_cnt = $('#friends_link').find('a.right');
-                    if ($friends_cnt.size()) {
-                        (iCnt > 0) ? $friends_cnt.html('+'+ iCnt) : $friends_cnt.remove();
-                    }
-                    else {
-                        if (iCnt > 0)
-                            $('<a href="/friends?section=requests" onclick="return nav.go(this, event)" class="right lm-counter">+'+ iCnt +'</a>').appendTo('#friends_link');
-                    }
-                }
-
-                if (response.counters['pm']) {
-                    var iCnt = parseInt(response.counters['pm']),
-                        $pm_cnt = $('#pm_link').find('a.right');
-                    if ($pm_cnt.size()) {
-                        (iCnt > 0) ? $pm_cnt.html('+'+ iCnt) : $pm_cnt.remove();
-                    }
-                    else {
-                        if (iCnt > 0)
-                            $('<a href="/im" onclick="return nav.go(this, event)" class="right lm-counter">+'+ iCnt +'</a>').appendTo('#pm_link');
-                    }
-                }
+                if (response.counters['friends']) updFriendCounter(parseInt(response.counters['friends']));
+                if (response.counters['pm']) updMessCounter(parseInt(response.counters['pm']));
 
                 //logger.showAll();
 
                 $('title').html(response.title);
                 $(opts.container).html(response.html);
                 if (response.widescreen) {
-                    $('#body > div.wrap > div.maincolumns > div.smallcolumn').hide();
+                    $('#sidebar').hide();
                     $('#content').removeClass('largecolumn');
                 }
                 else {
                     if (!$('#content').hasClass('wrap') && !$('#content').hasClass('largecolumn')) {
-                        $('#body > div.wrap > div.maincolumns > div.smallcolumn').show();
+                        $('#sidebar').show();
                         $('#content').addClass('largecolumn');
                     }
                 }
 
-                if (!loc.match(/im\?sel=(\d+)/i)) $('body').removeClass('im_fixed');
+                if (!loc.match(/im\?sel=(\d+)/i)) {
+                    $('body').removeClass('im_fixed');
+                    $('#page_layout').css({marginTop: 0});
+                }
 
                 $('#content').trigger('contentChanged');
             });
@@ -1495,13 +1477,10 @@ var ajax = {
 
         request.done(function(response, status, xhr) {
             $('body').removeClass('progress');
-
             if ($.isFunction(onDone)) onDone(response);
         });
         request.fail(function(xhr, textStatus) {
             $('body').removeClass('progress');
-            ajex.show('Ошибка связи с сервером: '+ xhr.responseText);
-
             if ($.isFunction(onFail)) onFail(xhr);
 
             switch (xhr.status) {
@@ -1543,15 +1522,18 @@ $().ready(function() {
         });
 
         if (typeof Paginator !== "undefined") Paginator.onWindowResize();
+        if ($('body').hasClass('im_fixed')) {
+            Im.pointControls();
+        }
     }).scroll(function() {
-        if ($win.scrollTop() > 50) {
+        if ($win.scrollTop() > 50 && !$('body').hasClass('im_fixed')) {
             $('#stl_left').show();
 
-            if ($win.scrollTop() > $('div.maincolumns > div.smallcolumn').offset().top + $('div.maincolumns > div.smallcolumn').outerHeight()) {
+            if ($win.scrollTop() > $('#sidebar').offset().top + $('#sidebar').outerHeight()) {
                 if (!A.stlLeftWide) {
                     A.stlLeftWide = true;
                     $('#stl_left').css({
-                        width: $('div.maincolumns > div.largecolumn').offset().left
+                        width: $('#content').offset().left
                     });
                 }
             }
