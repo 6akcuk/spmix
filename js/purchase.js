@@ -33,6 +33,20 @@ var Purchase = {
         return false;
     },
 
+    goEditGood: function(c, good, event) {
+        A.glCancelClick = true;
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        var sp = good.split('_'),
+            purchase_id = sp[0],
+            good_id = sp[1];
+
+        nav.go('/good'+ purchase_id +'_'+ good_id +'/edit', null);
+        return false;
+    },
+
     deletegood: function(el, purchase_id, good_id) {
         var $g = $('#good'+ purchase_id +'_'+ good_id).hide(),
             $gp = $('<div/>').attr({id: 'good'+ purchase_id +'_'+ good_id +'_pr', class: 'left good'}).insertAfter($g);
@@ -54,6 +68,21 @@ var Purchase = {
             }
             else $gp.html(r.html);
         });
+    },
+
+    overGood: function(c, event) {
+        $(c).find('div.good_row_controls').show();
+    },
+
+    outGood: function(c, event) {
+        $(c).find('div.good_row_controls').hide();
+    },
+
+    overIcon: function(c) {
+        $(c).css({opacity: 1});
+    },
+    outIcon: function(c) {
+        $(c).css({opacity: 0.8});
     },
 
     uploadGoodImage: function(purchase_id, good_id, file_id) {

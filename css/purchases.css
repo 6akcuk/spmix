@@ -357,16 +357,57 @@ table.ordertable td {
     background: #000;
     height: 16px;
 }
+.good_row_ranges_wrap {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    cursor: pointer;
+}
+.good_row_ranges_bg {
+    background: #000;
+    width: 47px;
+    height: 30px;
+    opacity: .5;
+    filter: alpha(opacity=50);
+    border-radius: 3px;
+}
+.good_row_ranges {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    padding: 6px 8px;
+    color: #fff;
+}
 .good_row_controls {
     position: absolute;
     top: 6px;
     right: 6px;
     cursor: pointer;
-    padding: 0px 1px 0px 1px;
+    width: 46px;
+    height: 30px;
+}
+.good_row_controls_bg {
+    position: absolute;
+    top: 0px;
+    left: 0px;
     border-radius: 3px;
     background: #000;
     opacity: .5;
     filter: alpha(opacity=50);
+    width: 46px;
+    height: 30px;
+}
+.good_row_icons {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}
+.good_row_icon {
+    padding: 6px 3px 6px 5px;
+}
+.good_row_icon > div {
+    opacity: .8;
+    filter: alpha(opacity=80);
 }
 .good_raw_info_name {
     position: absolute;
