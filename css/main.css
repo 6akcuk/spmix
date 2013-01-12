@@ -659,6 +659,12 @@ div.ls_columns div.column.options div {
     padding-bottom: 5px;
 }
 
+.form_progress {
+    background: url(/images/progress_small.gif) no-repeat;
+    width: 32px;
+    height: 10px;
+}
+
 /* Static Manager */
 #main_css {
     display: none;

@@ -57,6 +57,7 @@ class DialogMember extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+            'twin' => array(self::BELONGS_TO, 'DialogMember', 'dialog_id'),
             'dialog' => array(self::BELONGS_TO, 'Dialog', 'dialog_id'),
             'user' => array(self::BELONGS_TO, 'User', 'member_id'),
 		);

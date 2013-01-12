@@ -61,20 +61,32 @@ var Purchase = {
         Upload.onStart(file_id);
     },
     onUploadDone: function(purchase_id, good_id, file_id, filedata) {
-        var json = $.parseJSON(filedata),
-            cont = $('<div/>').attr({class: 'left good_image'}).appendTo('#images_list');
+        var json = $.parseJSON(filedata);
         Upload.showInput(file_id);
         Upload.initFile(file_id, function() {
             Purchase.uploadGoodImage(purchase_id, good_id, file_id);
         });
 
-        cont.html('<img src="http://cs'+ json['b'][2] +'.spmix.ru/'+ json['b'][0] +'/'+ json['b'][1] +'" alt=""/><a class="tt iconify_x_a" title="Удалить изображение"></a>');
         ajax.post('/goods/addimage', {purchase_id: purchase_id, good_id: good_id, image: filedata}, function(r) {
-            msi.show('Изображение успешно добавлено в галерею');
+            if (r.success) {
+                var cont = $('<div/>').attr({class: 'left good_image'}).appendTo('#images_list');
+                cont.html('<img src="http://cs'+ json['b'][2] +'.spmix.ru/'+ json['b'][0] +'/'+ json['b'][1] +'" alt=""/><a class="tt iconify_x_a" title="Удалить изображение"></a>');
 
-            cont.children('a').click(function() {
-                Purchase.removeImage.call(this, purchase_id, good_id, r.id);
-            });
+                msi.show('Изображение успешно добавлено в галерею');
+
+                cont.children('a').click(function() {
+                    Purchase.removeImage.call(this, purchase_id, good_id, r.id);
+                });
+            }
+            else {
+                var msg = [];
+                $.each(r, function(i, v) {
+                    msg.push(v);
+                });
+                report_window.create($('#images_list'), 'top', msg.join('<br/>'));
+            }
+        }, function(xhr) {
+            ajex.show(xhr.responseText);
         });
     },
     removeImage: function(purchase_id, good_id, image_id) {

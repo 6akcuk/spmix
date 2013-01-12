@@ -1,13 +1,13 @@
 <?php
 /**
-* @var $message DialogMessage
+ * @var $message DialogMessage
+ * @var $prev DialogMessage
 */
 ?>
-<?php $page = ($offset + Yii::app()->controller->module->messagesPerPage) / Yii::app()->controller->module->messagesPerPage ?>
-<?php $added = false; ?>
+<?php $prev = null; ?>
 <?php foreach ($messages as $message): ?>
 <tr id="mess<?php echo $message->message_id ?>"
-    class="<?php echo ($message->author_id == Yii::app()->user->getId()) ? 'im_out' : 'im_in'; ?> im_msg_from<?php echo $message->author_id ?> <?php if($message->isNewIn || $message->isNewOut) echo "im_new_msg" ?>"
+    class="<?php echo ($message->author_id == Yii::app()->user->getId()) ? 'im_out' : 'im_in'; ?> im_msg_from<?php echo $message->author_id ?> <?php if($message->isNewIn || $message->isNewOut) echo "im_new_msg" ?> <?php if ($prev && $prev->author_id == $message->author_id && (strtotime($message->creation_date) - strtotime($prev->creation_date)) < Yii::app()->getModule('im')->addRowInterval): ?>im_add_row<?php endif; ?>"
     date="<?php echo strtotime($message->creation_date) ?>"
     onmouseover="Im.setLogState(1, <?php echo $message->message_id ?>)"
     onmouseout="Im.setLogState(0, <?php echo $message->message_id ?>)"
@@ -36,10 +36,13 @@
         </div>
     </td>
     <td class="im_log_date">
-        <a class="im_date_link" rel="tooltip" title="Отправлено в <?php echo date("H:i", strtotime($message->creation_date)) ?>">
-            <?php echo date("d.m.y", strtotime($message->creation_date)) ?>
+        <?php $date = date("d.m.y", strtotime($message->creation_date)); ?>
+        <?php $today = date("d.m.y"); ?>
+        <a class="im_date_link"<?php if ($today != $date): ?> rel="tooltip" title="Отправлено в <?php echo date("H:i", strtotime($message->creation_date)) ?>"<?php endif; ?>>
+            <?php echo ($today == $date) ? date("H:i:s", strtotime($message->creation_date)) : $date ?>
         </a>
     </td>
     <td class="im_log_rspacer"></td>
 </tr>
+<?php $prev = $message; ?>
 <?php endforeach; ?>

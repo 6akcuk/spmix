@@ -1,5 +1,8 @@
 <?php
-/** @var $friend ProfileRelationship */
+/**
+ * @var $friend ProfileRelationship
+ * @var $guest User
+ */
 
 Yii::app()->getClientScript()->registerCssFile('/css/profile.css');
 Yii::app()->getClientScript()->registerCssFile('/css/im.css');
@@ -57,6 +60,7 @@ $friendsJS[] = "'". Yii::app()->user->getId() ."': {private: true, img: '". ((Yi
             ) ?>
 <script type="text/javascript">
 WideDropdown.addList('im_wdd', {<?php echo implode(', ', $friendsJS) ?>});
+<?php if($guest): ?>WideDropdown.addBubbles('im_wdd', {'<?php echo $guest->id ?>': {img: '<?php echo (($guest->profile->photo) ? ActiveHtml::getImageUrl($guest->profile->photo, 'a') : 'http://spmix.ru/images/camera_a.gif') ?>', text: '<?php echo $guest->getDisplayName() ?>', sub: '<? echo $guest->profile->city->name ?>'}});<?php endif; ?>
 </script>
         </div>
     </div>

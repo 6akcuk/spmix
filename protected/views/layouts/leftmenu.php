@@ -14,7 +14,7 @@
         <?php echo ActiveHtml::link('Мои сообщения', '/im') ?>
         <?php
         if ($this->pageCounters['pm'])
-            echo ActiveHtml::link('+'. $this->pageCounters['pm'], '/im', array('class' => 'right profile-counter'))
+            echo ActiveHtml::link('+'. $this->pageCounters['pm'], '/im', array('class' => 'right lm-counter'))
         ?>
     </li>
     <li>

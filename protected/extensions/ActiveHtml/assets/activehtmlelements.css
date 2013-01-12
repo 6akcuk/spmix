@@ -363,6 +363,7 @@ div.ajex {
     background: #f49ac1;
     color: #123;
     font-size: 14px;
+    z-index: 1310;
 }
 
 /* Mini Save Informer */

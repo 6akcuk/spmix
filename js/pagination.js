@@ -29,8 +29,7 @@ var Paginator = {
         A.pgNoPages = opts.nopages;
         A.pgFixedNoMore = false;
 
-        if (A.pgInit) $(window).scrollTop(0);
-        else {
+        if (!A.pgInit) {
             A.pgFixed = $('<div/>').addClass('pg_fixed')
                 .attr('id', 'pg_fixed')
                 .css({

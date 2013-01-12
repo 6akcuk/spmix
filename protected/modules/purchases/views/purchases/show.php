@@ -93,13 +93,14 @@ $delta = Yii::app()->controller->module->goodsPerPage;
     <?php endif; ?>
     </div>
 </div>
-<div id="tabs" data-link="#tabs_content" class="tabs">
-    <a target="div.purchase_fullstory" class="selected">Описание</a>
+<div data-link="#tabs_content" class="tabs">
+    <a target="div.purchase_fullstory">Условие</a>
     <a target="div.purchase_customers">Статистика</a>
     <a target="div.purchase_history">История действий</a>
+    <a target="div.purchase_goods" class="selected">Альбом</a>
 </div>
 <div id="tabs_content">
-    <div class="purchase_fullstory">
+    <div class="purchase_fullstory" style="display: none">
         <?php if (Yii::app()->user->checkAccess('purchases.purchases.editSuper') ||
                   Yii::app()->user->checkAccess('purchases.purchases.editOwn', array('purchase' => $purchase))): ?>
         <a class="purchase_edit_story tt" onclick="$(this).editor('simple', '/purchases/updateFullstory', {id: <?php echo $purchase->purchase_id ?>}); return false" title="<?php echo ($purchase->external && $purchase->external->fullstory) ? "Редактировать описание" : "Добавить новое описание" ?>">
@@ -121,22 +122,22 @@ $delta = Yii::app()->controller->module->goodsPerPage;
         <?php endforeach; ?>
         <?php endif; ?>
     </div>
-</div>
-<div class="purchase_goods">
-    <div class="clearfix">
-        <h4 class="left">Товары в данной закупке</h4>
-        <?php echo ActiveHtml::link('<span class="iconify_plus_b"></span>', '/purchase'. $purchase->purchase_id .'/addgood', array('class' => 'left button tt', 'title' => 'Добавить товар')) ?>
-        <div class="right">
-        <?php $this->widget('Paginator', array(
-            'url' => '/purchase'. $purchase->purchase_id,
-            'offset' => $offset,
-            'offsets' => $offsets,
-            'delta' => $delta,
-        )); ?>
+    <div class="purchase_goods">
+        <div class="clearfix">
+            <h2 class="left"><?php echo Yii::t('purchase', '{n} товар|{n} товара|{n} товаров', $offsets) ?></h2>
+            <?php echo ActiveHtml::link('<span class="icon-plus icon-white"></span>', '/purchase'. $purchase->purchase_id .'/addgood', array('class' => 'left button add_good tt', 'title' => 'Добавить товар')) ?>
+            <div class="right">
+                <?php $this->widget('Paginator', array(
+                'url' => '/purchase'. $purchase->purchase_id,
+                'offset' => $offset,
+                'offsets' => $offsets,
+                'delta' => $delta,
+            )); ?>
+            </div>
         </div>
+        <div class="list clearfix" rel="pagination">
+            <?php $this->renderPartial('_goodlist', array('goods' => $goods, 'offset' => $offset)) ?>
+        </div>
+        <? if ($offset + $delta < $offsets && $offsets > $delta): ?><a id="pg_more" class="pg_more" onclick="Paginator.showMore()">Еще товары</a><? endif; ?>
     </div>
-    <div class="list clearfix" rel="pagination">
-    <?php $this->renderPartial('_goodlist', array('goods' => $goods, 'offset' => $offset)) ?>
-    </div>
-    <? if ($offset + $delta < $offsets && $offsets > $delta): ?><a id="pg_more" class="pg_more" onclick="Paginator.showMore()">Еще товары</a><? endif; ?>
 </div>

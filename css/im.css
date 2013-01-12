@@ -323,6 +323,9 @@ td#im_peer_holders {
 #im_send_wrap {
     position: relative;
 }
+#im_progress {
+    margin: 10px 10px 0px;
+}
 .im_send_cont {
     margin-right: 2px;
 }

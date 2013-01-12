@@ -16,9 +16,6 @@ class FriendsController extends Controller {
             array(
                 'ext.RBACFilter.RBACFilter'
             ),
-            array(
-                'ext.DevelopFilter'
-            ),
         );
     }
 

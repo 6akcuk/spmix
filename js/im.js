@@ -69,6 +69,57 @@ var Im = {
         });
     },
 
+    send: function(dialog_id) {
+        var $text = $('#im_text'),
+            txt = $.trim($text.val());
+
+        if (!txt) {
+            $text.focus();
+            return false;
+        }
+
+        if (A.imSending) return;
+        A.imSending = true;
+
+        $('#im_progress').show();
+        ajax.post('/im?action=send&id='+ dialog_id, {msg: txt}, function(r) {
+            A.imSending = false;
+            $('#im_progress').hide();
+            $text.val('').keypress();
+
+            if (r.success) Im.peer(dialog_id);
+            else {
+                ajex.show(r.message);
+            }
+        }, function(r) {
+            A.imSending = false;
+            $('#im_progress').hide();
+        });
+    },
+
+    // такой способ никогда нельзя использовать :)
+    peer: function(dialog_id) {
+        clearTimeout(A.imPeer);
+        A.imPeer = setTimeout(function() {
+            var $lastMsg = $('#im_log'+ dialog_id + ' tr:last-child'),
+                timestamp = $lastMsg.attr('date');
+
+            if (A.imPeerRequest) A.imPeerRequest.abort();
+            A.imPeerRequest = ajax.post('/im?action=peer&id='+ dialog_id + '&timestamp='+ timestamp, {}, function(r) {
+                updMessCounter(parseInt(r.counters['pm']));
+                $(r.html).appendTo('#im_log'+ dialog_id);
+                if (r.html) Im.resizeRows();
+            }, function(r) {
+
+            });
+
+            Im.peer(dialog_id);
+        }, 5000);
+    },
+    stopPeer: function() {
+        clearTimeout(A.imPeer);
+    },
+
     setup: function(dialog_id) {
         var $head = $('#header');
         A.imChecked = {};
@@ -77,17 +128,15 @@ var Im = {
         $('#sidebar').css({top: $head.outerHeight()});
         $('#im_nav').css({top: $head.outerHeight()});
         //$('#page_layout').css({marginTop: $head.outerHeight()});
-        $('#im_content').css({padding:
-            ($head.outerHeight() + $('#im_nav').outerHeight()) +'px 0px '+
-            ($('#im_peer_controls').outerHeight()) + 'px'
-        });
 
-        Im.resizeRows();
+        Im.peer(dialog_id);
         Im.pointControls();
+        Im.resizeRows();
     },
 
     pointControls: function() {
-        var $sb = $('#sidebar'),
+        var $head = $('#header'),
+            $sb = $('#sidebar'),
             $fill = $('#im_footer_filler'),
             lowY = $sb.offset().top - $(window).scrollTop() + $sb.outerHeight() + $('#im_peer_controls').outerHeight(),
             height, minY;
@@ -97,6 +146,11 @@ var Im = {
 
         $fill.css({height: height});
 
+        $('#im_content').css({padding:
+            ($head.outerHeight() + $('#im_nav').outerHeight()) +'px 0px '+
+                ($('#im_peer_controls_wrap').outerHeight()) + 'px'
+        });
+
         if ($fill.offset().top <= 0) {
 
         }
@@ -105,7 +159,7 @@ var Im = {
     resizeRows: function() {
         var tHeight = $('#im_rows div.im_peer_rows').outerHeight();
         $('#im_rows').css({height: tHeight});
-        $(window).scrollTop(tHeight);
+        $(window).scrollTop($('body').height());
     }
 };
 

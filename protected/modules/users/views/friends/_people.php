@@ -22,7 +22,7 @@
         <?php endif; ?>
     </div>
     <div class="right menu">
-        <?php echo ActiveHtml::link('Написать сообщение', '') ?>
+        <?php echo ActiveHtml::link('Написать сообщение', '/write'. $people->friend->id) ?>
         <?php echo ActiveHtml::link('Просмотреть друзей', '/friends?id='. $people->friend->id) ?>
         <?php if ($user->id == Yii::app()->user->getId()): ?>
         <a onclick="return Profile.deleteFriend(this, <?php echo $people->friend->id ?>)">Убрать из друзей</a>

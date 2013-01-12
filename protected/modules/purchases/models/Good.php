@@ -123,6 +123,10 @@ class Good extends CActiveRecord
 		);
 	}
 
+    public function getEndPrice() {
+        return floatval($this->price) * ($this->purchase->org_tax / 100 + 1);
+    }
+
     public function countImages()
     {
         return GoodImages::model()->count('good_id = :good_id', array(':good_id' => $this->good_id));

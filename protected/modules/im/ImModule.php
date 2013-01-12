@@ -4,6 +4,7 @@ class ImModule extends CWebModule
 {
     public $dialogsPerPage = 20;
     public $messagesPerPage = 20;
+    public $addRowInterval = 240;
 
 	public function init()
 	{

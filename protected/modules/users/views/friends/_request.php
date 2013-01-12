@@ -28,7 +28,5 @@
         <a class="button" onclick="return Profile.deleteFriend(this, <?php echo $people->friend->id ?>)">Отменить заявку и отписаться</a>
         <?php endif; ?>
     </div>
-    <div class="right menu">
-    </div>
 </div>
 <?php endforeach; ?>

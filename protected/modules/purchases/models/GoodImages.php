@@ -39,7 +39,6 @@ class GoodImages extends CActiveRecord
 		return array(
 			array('good_id, image', 'required'),
 			array('good_id', 'length', 'max'=>10),
-			array('image', 'length', 'max'=>255),
 			array('tag_color', 'length', 'max'=>50),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.

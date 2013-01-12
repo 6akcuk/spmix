@@ -48,9 +48,9 @@ $this->pageTitle = $title;
             <img src="/images/camera_a.gif" width="250" alt="" />
             <?php endif; ?>
         </div>
+        <?php if ($userinfo->id != Yii::app()->user->getId()): ?>
         <div class="module profile-socials">
-        <?php if ($userinfo->id != Yii::app()->user->getId() && Yii::app()->user->getId() == 1): ?>
-            <a class="button">Отправить сообщение</a>
+            <?php echo ActiveHtml::link('Отправить сообщение', '/write'. $userinfo->id, array('class' => 'button')) ?>
         <?php $relationship = $userinfo->profile->getProfileRelation(); ?>
             <?php
                 if ($relationship == null ||
@@ -77,8 +77,8 @@ $this->pageTitle = $title;
                 }
             }
             ?>
-        <?php endif; ?>
         </div>
+        <?php endif; ?>
         <div class="module">
             <a href="/friends?id=<?php echo $userinfo->id ?>" onclick="return nav.go(this, event, {noback: false})" class="module-header">
                 <div class="header-top">

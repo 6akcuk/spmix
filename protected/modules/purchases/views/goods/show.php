@@ -164,7 +164,7 @@ foreach ($good->orders as $order) {
         </div>
         -->
         <div class="clearfix">
-            <?php echo ActiveHtml::price(floatval($good->price) * ($good->purchase->org_tax / 100 + 1), $good->currency) ?>
+            <?php echo ActiveHtml::price($good->getEndPrice(), $good->currency) ?>
         </div>
         <div class="row">
             <?php if (in_array($good->purchase->state, array(Purchase::STATE_CALL_STUDY, Purchase::STATE_ORDER_COLLECTION, Purchase::STATE_REORDER))): ?>

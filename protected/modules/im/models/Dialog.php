@@ -96,7 +96,7 @@ SELECT * FROM `dialogs` AS t
   LEFT JOIN
      (
         SELECT
-          MAX(message_id) AS message_id,
+          message_id,
           dialog_id,
           creation_date,
           author_id,
@@ -132,7 +132,7 @@ SELECT * FROM `dialogs` AS t
             )
             AS r2 ON r2.req_link_id = sub.message_id
         WHERE message_delete IS NULL
-        GROUP BY dialog_id
+        ORDER BY message_id DESC
      )
      AS lastMessage ON lastMessage.dialog_id = t.dialog_id
   INNER JOIN
@@ -149,7 +149,6 @@ SELECT * FROM `dialogs` AS t
          INNER JOIN `users` AS u ON u.id = mm.member_id
          INNER JOIN `profiles` AS p ON p.user_id = u.id
        GROUP BY dialog_id
-       LIMIT 4
      )
      AS members ON members.dialog_id = t.dialog_id
    WHERE myself.member_id = {$user_id} GROUP BY t.dialog_id ORDER BY lastMessage.creation_date DESC LIMIT {$offset}, {$limit}");

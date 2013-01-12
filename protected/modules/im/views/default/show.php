@@ -82,8 +82,9 @@ foreach ($dialog->members as $member) {
                     <div id="im_texts">
                         <?php echo ActiveHtml::smartTextarea('im_text', '', array('class' => 'im_editable')) ?>
                     </div>
-                    <div id="im_send_wrap">
-                        <a class="button">Отправить</a>
+                    <div id="im_send_wrap" class="clearfix">
+                        <a id="im_send" class="left button" onclick="return Im.send(<?php echo $dialog->dialog_id ?>)">Отправить</a>
+                        <div id="im_progress" class="left form_progress" style="display:none"></div>
                     </div>
                 </td>
                 <td id="im_peer_holders">

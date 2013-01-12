@@ -401,7 +401,7 @@ var WideDropdown = {
         <tr>\
             <td>\
                 <div class="summary_tab3">\
-                    <nobr>'+ A.wddList[id][value].text +'</nobr>\
+                    <nobr>'+ A.wddBubbles[id][value].text +'</nobr>\
                 </div>\
             </td>\
             <td>\
@@ -421,6 +421,12 @@ var WideDropdown = {
         if (A.wddIBubbles) {
             $.each(A.wddIBubbles, function(id, bubbles) {
                 A.wddBubbles[id] = bubbles;
+
+                $.each(A.wddBubbles[id], function(bid, value) {
+                    WideDropdown.addBubble(id, bid);
+                });
+
+                WideDropdown.refreshAdd(id);
             });
         }
         A.wddIBubbles = {};
@@ -445,13 +451,16 @@ var WideDropdown = {
             });
         });
     },
+    addBubble: function(id, value) {
+        WideDropdown.renderBubble(id, value);
+        $('<input/>').attr({type: 'hidden', id: 'wddh'+ value, name: id +'[]'}).val(value).appendTo('#'+ id);
+    },
     select: function(id, event, value) {
         if (!A.wddBubbles[id]) A.wddBubbles[id] = {};
-        A.wddBubbles[id][value] = A.wddList[id];
-        WideDropdown.renderBubble(id, value);
+        A.wddBubbles[id][value] = A.wddList[id][value];
         WideDropdown.hide(id);
         WideDropdown.renderList(id);
-        $('<input/>').attr({type: 'hidden', id: 'wddh'+ value, name: id +'[]'}).val(value).appendTo('#'+ id);
+        WideDropdown.addBubble(id, value);
 
         if (A.wddOnSelect && A.wddOnSelect[id]) A.wddOnSelect[id]();
     },
@@ -1079,10 +1088,9 @@ var logger = {
 
 /* Upload */
 var Upload = {
-    map: {},
-
     assign: function(map) {
-        $.extend(Upload.map, map || {});
+        if (!A.uploadMap) A.uploadMap = {};
+        $.extend(A.uploadMap, map || {});
     },
     cancel: function(id) {
         Upload.showInput(id);
@@ -1152,7 +1160,7 @@ var Upload = {
             }).appendTo($div),
             $form = $('<form/>').attr({
                 id: 'file_form_'+ id,
-                action: Upload.map.action,
+                action: A.uploadMap.action,
                 enctype: 'multipart/form-data',
                 method: 'post',
                 target: 'upload_iframe_'+ id
@@ -1400,6 +1408,8 @@ var nav = {
                 if (!loc.match(/im\?sel=(\d+)/i)) {
                     $('body').removeClass('im_fixed');
                     $('#page_layout').css({marginTop: 0});
+
+                    if (typeof Im !== "undefined") Im.stopPeer();
                 }
 
                 $('#content').trigger('contentChanged');
@@ -1485,15 +1495,18 @@ var ajax = {
 
             switch (xhr.status) {
                 case 403:
+                    var r = $.parseJSON(xhr.responseText);
                     ajex.show(r.html);
                     break;
                 case 404:
                     ajex.show('Страница не найдена');
                     break;
                 default:
-                    ajex.show('Ошибка связи с сервером. Перезагрузите страницу, нажав <b>F5</b>. '+ xhr.responseText);
+                    ajex.show('Ошибка связи с сервером:<br/> '+ xhr.responseText);
             }
         });
+
+        return request;
     },
 
     script: function(url, options) {
@@ -1601,6 +1614,11 @@ $().ready(function() {
         WideDropdown.setup();
 
         $(window).resize();
+        if (!$('body').hasClass('im_fixed')) {
+            $(window).scrollTop(0);
+        }
+
+        cur = {};
     });
 
     $(window).resize();

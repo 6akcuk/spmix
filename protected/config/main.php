@@ -74,6 +74,7 @@ return array(
                 'register/sendSMS' => 'site/sendSMSRegister',
                 'id<id:\d+>' => 'users/profiles',
                 'edit' => 'users/profiles/edit',
+                'write<id:\d+>' => '/im/default/create',
                 '<controller:(friends)>' => 'users/friends/',
                 '<controller:(friends)>/<action:\w+>' => 'users/friends/<action>',
                 '<controller:(users)>' => 'users/users/index',

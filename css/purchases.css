@@ -51,8 +51,7 @@
 }
 
 .purchase_table {
-    padding: 5px 0 10px;
-    border-bottom: 1px solid #ddd
+    padding: 5px 0 20px;
 }
 .purchase_table .photo {
     position: relative;
@@ -89,8 +88,9 @@
 .purchase_fullstory {
     border-bottom: 1px solid #ddd;
 }
-.purchase_goods {
-    padding: 10px 0
+
+.add_good {
+    margin-left: 10px;
 }
 
 a.purchase_edit_story {
@@ -318,4 +318,80 @@ table.ordertable td {
     width: 300px;
     overflow: hidden;
     float: left;
+}
+
+/* Good section */
+.purchase_goods {
+    padding: 10px 0 0 10px;
+}
+.good_row_cont {
+    display: inline-block;
+    cursor: pointer;
+    padding: 0 10px 10px 0;
+    width: 354px;
+    height: 210px;
+    font-size: 12px;
+}
+.good_row_inner_cont {
+    width: 354px;
+    height: 210px;
+}
+.good_row_relative {
+    display: block;
+    position: relative;
+}
+.good_row_info_line_wrap {
+    position: absolute;
+    bottom: 0px;
+    width: 350px;
+    height: 32px;
+}
+.good_row_info_line {
+    position: absolute;
+    bottom: 0px;
+    padding: 6px 8px;
+    width: 338px;
+    color: #fff;
+    opacity: .5;
+    filter: alpha(opacity=50);
+    background: #000;
+    height: 16px;
+}
+.good_row_controls {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    cursor: pointer;
+    padding: 0px 1px 0px 1px;
+    border-radius: 3px;
+    background: #000;
+    opacity: .5;
+    filter: alpha(opacity=50);
+}
+.good_raw_info_name {
+    position: absolute;
+    top: 10px;
+    left: 6px;
+    width: 273px;
+    color: #fff;
+    white-space: nowrap;
+    height: 16px;
+    overflow: hidden;
+    line-height: 16px;
+    text-overflow: ellipsis;
+}
+.good_row_price {
+    position: absolute;
+    top: 10px;
+    right: 6px;
+    font-weight: bold;
+    width: 65px;
+    text-align: right;
+    color: #fff;
+}
+.good_image_div {
+    display: block;
+    background: black center center no-repeat;
+    width: 354px;
+    height: 210px;
 }
