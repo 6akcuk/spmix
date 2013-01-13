@@ -1539,7 +1539,7 @@ $().ready(function() {
             Im.pointControls();
         }
     }).scroll(function() {
-        if ($win.scrollTop() > 50 && !$('body').hasClass('im_fixed')) {
+        if ($win.scrollTop() > 150 && !$('body').hasClass('im_fixed')) {
             $('#stl_left').show();
 
             if ($win.scrollTop() > $('#sidebar').offset().top + $('#sidebar').outerHeight()) {

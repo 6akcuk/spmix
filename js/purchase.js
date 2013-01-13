@@ -47,31 +47,41 @@ var Purchase = {
         return false;
     },
 
-    deletegood: function(el, purchase_id, good_id) {
-        var $g = $('#good'+ purchase_id +'_'+ good_id).hide(),
-            $gp = $('<div/>').attr({id: 'good'+ purchase_id +'_'+ good_id +'_pr', class: 'left good'}).insertAfter($g);
-        $(el).mouseleave();
-        $gp.html('<img src="/images/progress_small.gif" alt="" />');
+    deletegood: function(c, good, event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        var sp = good.split('_'),
+            purchase_id = sp[0],
+            good_id = sp[1];
+
+        $(c).mouseleave();
+
+        var $a = $('#good'+ good + ' a.good_row_relative'), $m;
+        $a.addClass('good_row_deleted');
+        $m = $('<div class="good_row_deleted_msg"></div>').appendTo($a);
+
         ajax.post('/good'+ purchase_id +'_'+ good_id +'/delete', null, function(r) {
-            $gp.html(r.html);
+            $m.html(r.html);
+            $m.css({top: ($a.outerHeight() - $m.outerHeight()) / 2});
         });
     },
 
     restoregood: function(purchase_id, good_id) {
-        var $g = $('#good'+ purchase_id +'_'+ good_id),
-            $gp = $('#good'+ purchase_id +'_'+ good_id +'_pr');
-        $gp.html('<img src="/images/progress_small.gif" alt="" />');
+        A.glCancelClick = true;
+
         ajax.post('/good'+ purchase_id +'_'+ good_id +'/restore', null, function(r) {
             if (r.success) {
-                $g.show();
-                $gp.remove();
+                var $a = $('#good'+ purchase_id +'_'+ good_id + ' a.good_row_relative');
+                $a.removeClass('good_row_deleted');
+                $a.find('div.good_row_deleted_msg').remove();
             }
-            else $gp.html(r.html);
+            else ajex.show(r.html);
         });
     },
 
     overGood: function(c, event) {
-        $(c).find('div.good_row_controls').show();
+        if (!$(c).hasClass('good_row_deleted')) $(c).find('div.good_row_controls').show();
     },
 
     outGood: function(c, event) {

@@ -105,10 +105,10 @@ foreach ($good->orders as $order) {
     <?php endif; ?>
 </h1>
 <div class="purchase_table clearfix">
-    <div class="left photo">
+    <div class="left good_photo">
     <?php if($good->image): ?>
     <a onclick="Purchase.showImages(<?php echo $good->good_id ?>)">
-        <?php echo ActiveHtml::showUploadImage($good->image->image, 'a'); ?>
+        <?php echo ActiveHtml::showUploadImage($good->image->image, 'd'); ?>
         <?php $images_num = $good->countImages() ?>
         <div class="subtitle">
             <div class="text">Просмотреть <?php echo Yii::t('app', 'фотографию|все {n} фотографии|все {n} фотографий', $images_num) ?></div>
@@ -149,20 +149,6 @@ foreach ($good->orders as $order) {
             <?php echo $form->dropdown($orderc, 'oic', $dd_oic) ?>
         </div>
         <?php endif; ?>
-        <!--
-        <div class="clearfix">
-            <div class="left label">Цена:</div>
-            <div class="left labeled"><?php echo ActiveHtml::price($good->price, $good->currency) ?></div>
-        </div>
-        <div class="clearfix">
-            <div class="left label">Орг. сбор:</div>
-            <div class="left labeled"><?php echo $good->purchase->org_tax .'% - '. ActiveHtml::price($good->price * $good->purchase->org_tax / 100, $good->currency) ?></div>
-        </div>
-        <div class="clearfix">
-            <div class="left label">Итог. цена:</div>
-            <div class="left labeled"><?php echo ActiveHtml::price(floatval($good->price) * ($good->purchase->org_tax / 100 + 1), $good->currency) ?></div>
-        </div>
-        -->
         <div class="clearfix">
             <?php echo ActiveHtml::price($good->getEndPrice(), $good->currency) ?>
         </div>
@@ -178,7 +164,7 @@ foreach ($good->orders as $order) {
         <?php $this->endWidget(); ?>
     </div>
 </div>
-<div id="tabs" data-link="#tabs_content" class="tabs">
+<div data-link="#tabs_content" class="tabs">
     <a target="div.purchase_fullstory" class="selected">Описание</a>
     <?php if ($good->is_range): ?><a target="div.purchase_range">Заполнение рядов</a><?php endif; ?>
     <a target="div.purchase_customers">Список заказов</a>
