@@ -782,3 +782,12 @@ div.ls_columns div.column.options div {
     padding: 20px;
     background: #fff;
 }
+
+
+.breadcrumbs {
+    padding: 7px 12px;
+    background: #f2f2f2;
+    margin-bottom: 10px;
+    overflow: hidden;
+    font-size: 12px;
+}

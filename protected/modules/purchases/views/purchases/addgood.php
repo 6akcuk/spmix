@@ -1,5 +1,4 @@
-<div class="create">
-    <?php
+<?php
 /** @var $model Purchase */
 
 Yii::app()->getClientScript()->registerCssFile('/css/purchases.css');
@@ -7,6 +6,11 @@ Yii::app()->getClientScript()->registerScriptFile('/js/purchase.js');
 
 $this->pageTitle = Yii::app()->name .' - Добавление нового товара';
 ?>
+<div class="breadcrumbs">
+    <?php echo ActiveHtml::link($purchase->name, '/purchase'. $purchase->purchase_id) ?> &raquo;
+    Добавить новый товар
+</div>
+<div class="create">
 <h1>Добавить новый товар</h1>
 
 <?php

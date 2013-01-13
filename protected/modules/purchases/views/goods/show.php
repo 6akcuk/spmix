@@ -95,7 +95,10 @@ foreach ($good->orders as $order) {
 }
 
 ?>
-
+<div class="breadcrumbs">
+    <?php echo ActiveHtml::link($good->purchase->name, '/purchase'. $good->purchase_id) ?> &raquo;
+    <?php echo $good->name ?>
+</div>
 <h1>
     <?php echo $good->name ?>
     <?php if (Yii::app()->user->checkAccess('purchases.goods.edit') &&

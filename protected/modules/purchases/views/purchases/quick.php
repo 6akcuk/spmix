@@ -1,4 +1,3 @@
-<div class="create">
 <?php
 /** @var $purchase Purchase */
 
@@ -15,7 +14,11 @@ if (is_array($purchase->oic)) {
 }
 
 ?>
-
+<div class="breadcrumbs">
+    <?php echo ActiveHtml::link($purchase->name, '/purchase'. $purchase->purchase_id) ?> &raquo;
+    Быстрый заказ
+</div>
+<div class="create">
 <h1>Быстрый заказ</h1>
 
 <?php

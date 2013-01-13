@@ -525,9 +525,9 @@ class PurchasesController extends Controller {
             }
 
             if (Yii::app()->request->isAjaxRequest) {
-                $this->pageHtml = $this->renderPartial('addgood', array('id' => $id, 'model' => $model), true);
+                $this->pageHtml = $this->renderPartial('addgood', array('id' => $id, 'purchase' => $purchase, 'model' => $model), true);
             }
-            else $this->render('addgood', array('id' => $id, 'model' => $model));
+            else $this->render('addgood', array('id' => $id, 'purchase' => $purchase, 'model' => $model));
         }
         else
             throw new CHttpException(403, 'В доступе отказано');

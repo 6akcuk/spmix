@@ -1,4 +1,4 @@
-<div class="create">
+
     <?php
 /** @var $model Purchase */
 
@@ -7,8 +7,11 @@ Yii::app()->getClientScript()->registerScriptFile('/js/purchase.js');
 
 $this->pageTitle = Yii::app()->name .' - Редактирование закупки';
 ?>
-
-
+<div class="breadcrumbs">
+    <?php echo ActiveHtml::link($model->name, '/purchase'. $model->purchase_id) ?> &raquo;
+    Редактирование закупки
+</div>
+<div class="create">
 <h1>Редактирование закупки</h1>
 
 <?php

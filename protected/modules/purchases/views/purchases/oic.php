@@ -9,7 +9,10 @@ Yii::app()->getClientScript()->registerScriptFile('/js/purchase.js');
 
 $this->pageTitle = Yii::app()->name .' - Центры выдачи заказов';
 ?>
-
+<div class="breadcrumbs">
+    <?php echo ActiveHtml::link($purchase->name, '/purchase'. $purchase->purchase_id) ?> &raquo;
+    Центры выдачи заказов
+</div>
 <h1>Центры выдачи заказов</h1>
 
 <?php
