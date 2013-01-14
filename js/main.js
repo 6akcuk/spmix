@@ -1,22 +1,22 @@
-function updFriendCounter(num) {
-    var $friends_cnt = $('#friends_link').find('a.right');
-    if ($friends_cnt.size()) {
-        (num > 0) ? $friends_cnt.html('+'+ num) : $friends_cnt.remove();
+function updMenuCounter(id, url, num) {
+    var $cnt = $(id).find('a.right');
+    if ($cnt.size()) {
+        (num > 0) ? $cnt.html('+'+ num) : $cnt.remove();
     }
     else {
         if (num > 0)
-            $('<a href="/friends?section=requests" onclick="return nav.go(this, event)" class="right lm-counter">+'+ num +'</a>').appendTo('#friends_link');
+            $('<a href="'+ url +'" onclick="return nav.go(this, event)" class="right lm-counter">+'+ num +'</a>').appendTo(id);
     }
 }
+
+function updFriendCounter(num) {
+    updMenuCounter('#friends_link', '/friends?section=requests', num);
+}
 function updMessCounter(num) {
-    var $pm_cnt = $('#pm_link').find('a.right');
-    if ($pm_cnt.size()) {
-        (num > 0) ? $pm_cnt.html('+'+ num) : $pm_cnt.remove();
-    }
-    else {
-        if (num > 0)
-            $('<a href="/im" onclick="return nav.go(this, event)" class="right lm-counter">+'+ num +'</a>').appendTo('#pm_link');
-    }
+    updMenuCounter('#pm_link', '/im', num);
+}
+function updPurchaseCounter(num) {
+    updMenuCounter('#ac_purchase_link', '/purchases/acquire', num);
 }
 
 $().ready(function() {

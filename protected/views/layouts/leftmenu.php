@@ -40,6 +40,17 @@
     </li>
 </ul>
 <?php endif; ?>
+<?php if (Yii::app()->user->checkAccess('purchases.purchases.acquire')): ?>
+<ul class="modmenu">
+    <li id="ac_purchase_link">
+        <?php echo ActiveHtml::link('Одобрить закупки', '/purchases/acquire') ?>
+        <?php
+        if ($this->pageCounters['purchases'])
+            echo ActiveHtml::link('+'. $this->pageCounters['purchases'], '/purchases/acquire', array('class' => 'right lm-counter'))
+        ?>
+    </li>
+</ul>
+<?php endif; ?>
 <?php if(Yii::app()->user->checkAccess('purchases.purchases.create')): ?>
 <ul class="orgmenu">
     <li>

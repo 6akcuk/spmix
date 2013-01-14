@@ -120,7 +120,9 @@ class PurchasesController extends Controller {
             $criteria->addCondition('category_id = :category_id');
         }
 
-        $purchases = Purchase::model()->with('city', 'ordersNum', 'ordersSum', 'goodsNum')->findAll($criteria);
+        $criteria->addCondition('purchase_delete IS NULL');
+
+        $purchases = Purchase::model()->resetScope()->with('city', 'ordersNum', 'ordersSum', 'goodsNum')->findAll($criteria);
 
         $this->wideScreen = true;
         if (Yii::app()->request->isAjaxRequest) {
@@ -132,6 +134,9 @@ class PurchasesController extends Controller {
     public function actionShow($id, $offset = 0) {
         $purchase = Purchase::model()->with('city', 'author', 'category', 'ordersNum', 'ordersSum')->findByPk($id);
         if (isset($_POST['offset'])) $offset = $_POST['offset'];
+
+        if (!$purchase)
+            throw new CHttpException(500, 'Закупка не обнаружена, либо находится на предмодерации');
 
         $criteria = new CDbCriteria();
         $criteria->limit = Yii::app()->controller->module->goodsPerPage;
@@ -213,12 +218,25 @@ class PurchasesController extends Controller {
     }
 
     public function actionEdit($id) {
-        $model = Purchase::model()->findByPk($id);
-        $model->setScenario('edit');
+        /** @var $model Purchase */
+        $model = Purchase::model()->resetScope()->findByPk($id);
 
         if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
             Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('purchase' => $model)))
         {
+            $scenario = array();
+            $scenario[] = 'edit';
+            $scenario[] = (!Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super')) ? 'own' : 'super';
+            if ($scenario[1] == 'own') {
+                $scenario[] = ($model->mod_confirmation) ? 'confirmed' : 'notconfirmed';
+            }
+            else {
+                $scenario[] = (Yii::app()->user->checkAccess('purchases.purchases.acquireSuper')) ? 'admin' : 'moderator';
+            }
+
+            $scenario = implode('_', $scenario);
+            $model->setScenario($scenario);
+
             if(isset($_POST['Purchase']))
             {
                 $history = array(
@@ -231,9 +249,32 @@ class PurchasesController extends Controller {
                 foreach ($history as $h => $m) {
                     $cache[$h] = $model->$h;
                 }
+                $cache['mod_reason'] = $model->mod_reason;
 
                 $model->attributes=$_POST['Purchase'];
                 $result = array();
+
+                if (Yii::app()->user->checkAccess('purchases.purchases.acquireSuper') ||
+                    Yii::app()->user->checkAccess('purchases.purchases.acquireMod', array('purchase' => $model))) {
+                    if ($cache['mod_reason'] != $model->mod_reason) {
+                        $model->mod_id = Yii::app()->user->getId();
+                        $model->mod_date = date("Y-m-d H:i:s");
+
+                        if ($model->mod_reason) {
+                            Yii::import('application.modules.im.models.*');
+
+                            DialogMessage::send(array($model->author_id), $model->mod_reason, '', array(
+                                array(
+                                    'type' => 'purchase_edit',
+                                    'name' => $model->name,
+                                    'purchase_id' => $model->purchase_id,
+                                )
+                            ));
+                        }
+                    }
+
+                    unset($cache['mod_reason']);
+                }
 
                 if($model->validate() && $model->save()) {
                     foreach ($history as $h => $m) {

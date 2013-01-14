@@ -8,7 +8,10 @@
     <td><?php echo $purchase->purchase_id ?></td>
     <td><?php echo ActiveHtml::date($purchase->create_date, false, true) ?></td>
     <td><?php echo $purchase->category->name ?></td>
-    <td><?php echo ActiveHtml::link($purchase->name, '/purchase'. $purchase->purchase_id) ?></td>
+    <td>
+        <?php echo ActiveHtml::link($purchase->name, '/purchase'. $purchase->purchase_id) ?>
+        <div><small><?php echo ActiveHtml::link('редактировать', '/purchase'. $purchase->purchase_id .'/edit') ?></small></div>
+    </td>
     <td style="position: relative">
         <a data-id="<?php echo $purchase->purchase_id ?>" onclick="changeState(this)">
             <?php echo Yii::t('purchase', $purchase->state) ?>

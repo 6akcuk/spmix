@@ -3,7 +3,6 @@
  * @var $purchase Purchase
  * @var $good Good
  */
-
 Yii::app()->getClientScript()->registerCssFile('/css/purchases.css');
 Yii::app()->getClientScript()->registerScriptFile('/js/purchase.js');
 

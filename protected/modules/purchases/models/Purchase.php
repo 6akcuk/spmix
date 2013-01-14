@@ -23,6 +23,8 @@
  * @property string $org_tax
  * @property string $image
  * @property integer $vip
+ * @property integer $mod_id
+ * @property string $mod_date
  * @property integer $mod_confirmation
  * @property string $mod_reason
  * @property string $purchase_delete
@@ -81,14 +83,18 @@ class Purchase extends CActiveRecord
 		// will receive user inputs.
 		return array(
             array('name, author_id, category_id, city_id, status', 'required', 'on' => 'create'),
-            array('name, author_id, category_id, status, state, min_sum, min_num, org_tax', 'required', 'on' => 'edit'),
+            array('name, author_id, category_id, status, state, min_sum, min_num, org_tax', 'required', 'on' => 'edit_own_notconfirmed'),
+            array('author_id, status, state, min_sum, min_num', 'required', 'on' => 'edit_own_confirmed'),
+            array('mod_confirmation, mod_id, mod_date, mod_reason', 'safe', 'on' => 'edit_super_admin, edit_super_moderator'),
+
             array('image, hide_supplier, stop_date', 'safe'),
 			array('author_id, category_id, city_id, accept_add, min_num, vip, mod_confirmation', 'numerical', 'integerOnly'=>true),
-			array('name, supplier_url, price_url, message, image, mod_reason', 'length', 'max'=>255),
+			array('price_url, message, image, mod_reason', 'length', 'max'=>255),
+            array('name, supplier_url', 'length', 'max' => 255, 'on' => 'edit_own_notconfirmed, edit_super_admin, edit_super_moderator'),
 			array('status', 'length', 'max'=>8),
 			array('state', 'length', 'max'=>16),
 			array('min_sum', 'length', 'max'=>10),
-			array('org_tax', 'length', 'max'=>4),
+			array('org_tax', 'length', 'max'=>4, 'on' => 'edit_own_notconfirmed, edit_super_admin, edit_super_moderator'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('purchase_id, name, author_id, category_id, city_id, create_date, stop_date, status, state, min_sum, min_num, supplier_url, price_url, message, org_tax, image, vip, mod_confirmation, mod_reason, sizes', 'safe', 'on'=>'search'),
@@ -141,17 +147,17 @@ class Purchase extends CActiveRecord
             'image' => 'Аватар',
             'vip' => 'VIP',
             'mod_confirmation' => 'Подтверждение модератора',
-            'mod_reason' => 'Причина отказа',
+            'mod_reason' => 'Сообщение организатору',
             'sizes' => 'Размеры',
         );
 	}
 
     public function defaultScope() {
         return array(
-            'condition' => 'purchase_delete IS NULL',
+            'condition' => 'purchase_delete IS NULL AND mod_confirmation = 1',
         );
     }
-    
+
     public function getMinimalPercentage() {
         $sum_perc = ceil((floatval($this->min_sum) > 0) ? ($this->ordersSum / $this->min_sum) * 100 : 0);
         $num_perc = ceil((floatval($this->min_num) > 0) ? ($this->ordersNum / $this->min_num) * 100 : 0);

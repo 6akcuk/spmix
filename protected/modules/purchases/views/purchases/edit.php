@@ -1,8 +1,6 @@
-
-    <?php
+<?php
 /** @var $model Purchase */
-
-    Yii::app()->getClientScript()->registerCssFile('/css/purchases.css');
+Yii::app()->getClientScript()->registerCssFile('/css/purchases.css');
 Yii::app()->getClientScript()->registerScriptFile('/js/purchase.js');
 
 $this->pageTitle = Yii::app()->name .' - Редактирование закупки';
@@ -26,11 +24,11 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
     <div class="left purchase_column">
         <div class="row">
             <?php echo $form->label($model, 'name') ?>
-            <?php echo $form->inputPlaceholder($model, 'name') ?>
+            <?php echo $form->inputPlaceholder($model, 'name', array('disabled' => ($model->getScenario() == 'edit_own_confirmed') ? true : false)) ?>
         </div>
         <div class="row">
             <?php echo $form->label($model, 'category_id') ?>
-            <?php echo $form->dropdown($model, 'category_id', PurchaseCategory::getDataArray()) ?>
+            <?php echo $form->dropdown($model, 'category_id', PurchaseCategory::getDataArray(), array('disabled' => ($model->getScenario() == 'edit_own_confirmed') ? true : false)) ?>
         </div>
         <div class="row clearfix">
             <?php echo $form->label($model, 'image') ?>
@@ -60,11 +58,11 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
         </div>
         <div class="row">
             <?php echo $form->label($model, 'org_tax') ?>
-            <?php echo $form->inputPlaceholder($model, 'org_tax') ?>
+            <?php echo $form->inputPlaceholder($model, 'org_tax', array('disabled' => ($model->getScenario() == 'edit_own_confirmed') ? true : false)) ?>
         </div>
         <div class="row">
             <?php echo $form->label($model, 'supplier_url') ?>
-            <?php echo $form->textfield($model, 'supplier_url') ?>
+            <?php echo $form->textfield($model, 'supplier_url', array('disabled' => ($model->getScenario() == 'edit_own_confirmed') ? true : false)) ?>
         </div>
         <div class="row">
             <?php echo $form->label($model, 'hide_supplier') ?>
@@ -77,6 +75,36 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
         <div class="row">
             <?php echo $form->label($model, 'accept_add') ?>
             <?php echo $form->checkBox($model, 'accept_add') ?>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <h1>Согласование модератором</h1>
+    <div class="purchase_columns clearfix">
+        <div class="left purchase_column">
+            <div class="row">
+                <?php echo $form->label($model, 'mod_confirmation') ?>
+                <?php
+                    if (Yii::app()->user->checkAccess('purchases.purchases.acquireSuper') ||
+                        Yii::app()->user->checkAccess('purchases.purchases.acquireMod', array('purchase' => $model))):
+                ?>
+                <?php echo $form->checkBox($model, 'mod_confirmation') ?>
+                <?php else: ?>
+                <?php echo ($model->mod_confirmation) ? 'Да' : 'Нет' ?>
+                <?php endif; ?>
+            </div>
+        </div>
+        <div class="left purchase_column">
+            <div class="row">
+                <?php
+                    if (Yii::app()->user->checkAccess('purchases.purchases.acquireSuper') ||
+                        Yii::app()->user->checkAccess('purchases.purchases.acquireMod', array('purchase' => $model))):
+                ?>
+                <?php echo $form->smartTextarea($model, 'mod_reason') ?>
+                <?php else: ?>
+                <?php echo nl2br($model->mod_reason) ?>
+                <?php endif; ?>
+            </div>
         </div>
     </div>
 </div>

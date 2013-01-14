@@ -104,4 +104,131 @@ class DialogMessage extends CActiveRecord
         }
         else return false;
     }
+
+    /**
+     * Отправить сообщение (Instant Message)
+     *
+     * @param $recipients       Получатели
+     * @param $message          Текст сообщения
+     * @param string $title     Заголовок беседы (конференции)
+     * @param array $attaches   Прикрепления к сообщению
+     */
+    public static function send($recipients, $message, $title = '', $attaches = array()) {
+        // Создание беседы (конференции)
+        if (sizeof($recipients) > 1) {
+            $dialog = new Dialog();
+            $dialog->leader_id = Yii::app()->user->getId();
+            $dialog->title = $title;
+            $dialog->type = Dialog::TYPE_CONFERENCE;
+            if (!$dialog->save())
+                return array('success' => false, 'message' => 'Не удалось создать беседу');
+
+            // Members
+            $dialogMembers = array();
+            $memberSuccessful = false;
+
+            for ($idx = 0; $idx < sizeof($recipients); $idx++) {
+                $dialogMembers[$idx] = new DialogMember();
+                $dialogMembers[$idx]->dialog_id = $dialog->dialog_id;
+                $dialogMembers[$idx]->member_id = $recipients[$idx];
+
+                $memberSuccessful = $dialogMembers[$idx]->validate();
+            }
+
+            $idx = sizeof($recipients);
+            $dialogMembers[$idx] = new DialogMember();
+            $dialogMembers[$idx]->dialog_id = $dialog->dialog_id;
+            $dialogMembers[$idx]->member_id = Yii::app()->user->getId();
+
+            $memberSuccessful = $dialogMembers[$idx]->validate();
+
+            if (!$memberSuccessful) {
+                $dialog->delete();
+                return array('success' => false, 'message' => 'Собеседники не прошли проверку валидации');
+            }
+
+            foreach ($dialogMembers as &$member) {
+                $member->save();
+            }
+        }
+        elseif (sizeof($recipients) == 1) {
+            $criteria = new CDbCriteria();
+            $criteria->condition = 'twin.member_id = :user AND t.member_id = :id AND dialog.type = :type';
+            $criteria->params[':user'] = Yii::app()->user->getId();
+            $criteria->params[':id'] = $recipients[0];
+            $criteria->params[':type'] = Dialog::TYPE_TET;
+
+            $dialogMembers = DialogMember::model()->with('twin', 'dialog')->findAll($criteria);
+            if (!$dialogMembers) {
+                $dialog = new Dialog();
+                $dialog->leader_id = Yii::app()->user->getId();
+                $dialog->type = Dialog::TYPE_TET;
+                if (!$dialog->save())
+                    return array('success' => false, 'message' => 'Не удалось создать диалог с пользователем');
+
+                // Members
+                $dialogMembers = array();
+                $memberSuccessful = false;
+
+                $dialogMembers[0] = new DialogMember();
+                $dialogMembers[0]->dialog_id = $dialog->dialog_id;
+                $dialogMembers[0]->member_id = $recipients[0];
+
+                $memberSuccessful = $dialogMembers[0]->validate();
+
+                $idx = sizeof($dialogMembers);
+                $dialogMembers[$idx] = new DialogMember();
+                $dialogMembers[$idx]->dialog_id = $dialog->dialog_id;
+                $dialogMembers[$idx]->member_id = Yii::app()->user->getId();
+
+                $memberSuccessful = $dialogMembers[$idx]->validate();
+
+                if (!$memberSuccessful) {
+                    $dialog->delete();
+                    return array('success' => false, 'message' => 'Собеседники не прошли проверку валидации');
+                }
+
+                foreach ($dialogMembers as &$member) {
+                    $member->save();
+                }
+            }
+            else {
+                $dialog = $dialogMembers[0]->dialog;
+            }
+        }
+        else
+            return array('success' => false, 'message' => 'Вы не выбрали получателя сообщения');
+
+        $dialogMessage = new DialogMessage();
+        $dialogMessage->dialog_id = $dialog->dialog_id;
+        $dialogMessage->author_id = Yii::app()->user->getId();
+        $dialogMessage->message = $message;
+        $dialogMessage->attaches = (sizeof($attaches)) ? json_encode($attaches) : '';
+
+        if (!$dialogMessage->save()) {
+            return array('success' => false, 'message' => 'Сообщение не было доставлено');
+        }
+        else {
+            /** @var $member DialogMember */
+            $selfRecipient = 0;
+            $length = sizeof($dialogMembers);
+            for ($i=0; $i < $length; $i++) {
+                $member = $dialogMembers[$i];
+
+                // Можно отправлять самому себе сообщения
+                if ($member->member_id == Yii::app()->user->getId()) {
+                    $selfRecipient++;
+                }
+                else {
+                    $request = new ProfileRequest();
+                    $request->owner_id = $member->member_id;
+                    $request->req_type = ProfileRequest::TYPE_PM;
+                    $request->req_link_id = $dialogMessage->message_id;
+                    $request->save();
+                }
+            }
+
+            return array('success' => true, 'url' => '/im?sel='. $dialog->dialog_id);
+        }
+    }
 }

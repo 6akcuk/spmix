@@ -8,6 +8,7 @@ var Purchase = {
 
     edit: function() {
         FormMgr.submit('#purchaseform', 'right', function(r) {
+            msi.show('Изменения сохранены');
             nav.go(r.url, null, null);
         });
         return false;

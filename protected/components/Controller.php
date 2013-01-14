@@ -34,6 +34,19 @@ class Controller extends CController
 
                 $criteria->params[':type'] = ProfileRequest::TYPE_PM;
                 $this->pageCounters['pm'] = ProfileRequest::model()->count($criteria);
+
+                if (Yii::app()->user->checkAccess('purchases.purchases.acquire')) {
+                    $criteria = new CDbCriteria();
+                    $criteria->addCondition('purchase_delete IS NULL');
+                    $criteria->addCondition('mod_confirmation = 0');
+
+                    if (!Yii::app()->user->checkAccess('purchases.purchases.acquireSuper')) {
+                        $criteria->addCondition('city_id = :id');
+                        $criteria->params[':id'] = Yii::app()->user->model->profile->city_id;
+                    }
+
+                    $this->pageCounters['purchases'] = Purchase::model()->resetScope()->count($criteria);
+                }
             }
 
             $this->layout = '//layouts/main';

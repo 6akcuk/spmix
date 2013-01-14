@@ -20,6 +20,7 @@ return array(
         'application.modules.users.models.*',
         'application.modules.users.components.*',
         'application.modules.users.components.views.*',
+        'application.modules.purchases.models.*',
         'ext.ActiveHtml.*',
         'ext.SmsDelivery.*',
         'ext.Excel.*',

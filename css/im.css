@@ -550,3 +550,8 @@ a.im_date_link {
     display: inline;
     color: #800;
 }
+
+/* Attaches */
+.im_attaches {
+    padding-top: 5px;
+}

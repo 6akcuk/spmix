@@ -1389,6 +1389,7 @@ var nav = {
                 // Page Counters
                 if (response.counters['friends']) updFriendCounter(parseInt(response.counters['friends']));
                 if (response.counters['pm']) updMessCounter(parseInt(response.counters['pm']));
+                if (response.counters['purchases']) updPurchaseCounter(parseInt(response.counters['purchases']));
 
                 //logger.showAll();
 
@@ -1432,6 +1433,9 @@ var nav = {
                         break;
                     case 404:
                         ajex.show('Страница не найдена');
+                        break;
+                    case 500:
+                        ajex.show('Ошибка: '+ (r.html) ? r.html : xhr.responseText);
                         break;
                     default:
                         ajex.show('Ошибка связи с сервером. Перезагрузите страницу, нажав <b>F5</b>. '+ xhr.responseText);
