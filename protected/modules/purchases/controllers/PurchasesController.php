@@ -19,6 +19,113 @@ class PurchasesController extends Controller {
         );
     }
 
+    public function init() {
+        parent::init();
+
+        if (isset($_GET['action']))
+            $this->defaultAction = $_GET['action'];
+    }
+
+
+
+    public function actionAcquire($offset = 0) {
+        if (isset($_POST['confirm'])) {
+            /** @var $purchase Purchase */
+            $purchase = Purchase::model()->resetScope()->with('mod_request')->findByPk($_POST['id']);
+
+            if ($purchase) {
+                if ($_POST['confirm'] == 1) {
+                    $mod_request_id = $purchase->mod_request_id;
+
+                    $purchase->mod_confirmation = 1;
+                    $purchase->mod_request_id = null;
+                    $purchase->save(true, array('mod_confirmation', 'mod_request_id'));
+
+                    $purchase->mod_request->status = PurchaseModRequest::STATUS_CLOSED;
+                    $purchase->mod_request->moderator_id= Yii::app()->user->getId();
+                    $purchase->mod_request->save(true, array('status', 'moderator_id'));
+
+                    $_SESSION['purchase.acquire.'. intval($_POST['id'])] = $hash = substr(md5('hh'. time() . $_POST['id']), 0, 8);
+
+                    echo json_encode(array('html' => 'Закупка одобрена. <a onclick="return Purchase.cancelAcquire('. $_POST['id'] .', '. $mod_request_id .', \''. $hash .'\')">Отменить</a>'));
+                    exit;
+                }
+                elseif ($_POST['confirm'] == -1) {
+                    $mod_request_id = $purchase->mod_request_id;
+
+                    $purchase->mod_request->status = PurchaseModRequest::STATUS_CLOSED;
+                    $purchase->mod_request->moderator_id= Yii::app()->user->getId();
+                    $purchase->mod_request->message = $_POST['message'];
+                    $purchase->mod_request->save(true, array('status', 'moderator_id', 'message'));
+
+                    $_SESSION['purchase.acquire.'. intval($_POST['id'])] = $hash = substr(md5('hh'. time() . $_POST['id']), 0, 8);
+
+                    Yii::import('application.modules.im.models.*');
+                    DialogMessage::send(array($purchase->author_id), $_POST['message'], '', array(
+                        array(
+                            'type' => 'purchase_edit',
+                            'name' => $purchase->name,
+                            'purchase_id' => $purchase->purchase_id,
+                        )
+                    ));
+
+                    echo json_encode(array('html' => 'Замечание отправлено. <a onclick="return Purchase.cancelAcquire('. $_POST['id'] .', '. $mod_request_id .', \''. $hash .'\')">Отменить</a>'));
+                    exit;
+                }
+                elseif ($_POST['confirm'] == 0 && $_SESSION['purchase.acquire.'. intval($_POST['id'])] == $_POST['hash']) {
+                    unset($_SESSION['purchase.acquire.'. intval($_POST['id'])]);
+
+                    $purchase->mod_confirmation = 0;
+                    $purchase->mod_request_id = $_POST['request_id'];
+                    $purchase->save(true, array('mod_confirmation', 'mod_request_id'));
+
+                    /** @var $mod_request PurchaseModRequest */
+                    $mod_request = PurchaseModRequest::model()->findByPk($_POST['request_id']);
+                    $mod_request->status = PurchaseModRequest::STATUS_NEW;
+                    $mod_request->message = '';
+                    $mod_request->save(true, array('status', 'message'));
+
+                    exit;
+                }
+            }
+        }
+
+        if (isset($_POST['offset'])) $offset = $_POST['offset'];
+
+        $criteria = new CDbCriteria();
+        $criteria->limit = Yii::app()->controller->module->purchasesPerPage;
+        $criteria->offset = $offset;
+        $criteria->order = 'mod_request.request_date DESC';
+
+        $criteria->addCondition('t.purchase_delete IS NULL');
+        $criteria->addCondition('t.mod_request_id IS NOT NULL AND t.mod_confirmation = 0');
+        $criteria->addCondition('mod_request.status = '. PurchaseModRequest::STATUS_NEW);
+        if (!Yii::app()->user->checkAccess('purchases.purchases.acquireSuper')) {
+            $criteria->addCondition('t.city_id = :id');
+            $criteria->params[':id'] = Yii::app()->user->model->profile->city_id;
+        }
+
+        $purchases = Purchase::model()->resetScope()->with('mod_request')->findAll($criteria);
+
+        $criteria->limit = 0;
+        $purchasesNum = Purchase::model()->resetScope()->with('mod_request')->count($criteria);
+
+        if (Yii::app()->request->isAjaxRequest) {
+            if (isset($_POST['pages'])) {
+                $this->pageHtml = $this->renderPartial('_acquire', array(
+                    'purchases' => $purchases,
+                    'offset' => $offset,
+                ), true);
+            }
+            else $this->pageHtml = $this->renderPartial('acquire', array(
+                'purchases' => $purchases,
+                'offset' => $offset,
+                'offsets' => $purchasesNum,
+            ), true);
+        }
+        else $this->render('acquire', array('purchases' => $purchases, 'offset' => $offset, 'offsets' => $purchasesNum,));
+    }
+
     public function actionIndex($offset = 0) {
         $cookies = Yii::app()->getRequest()->getCookies();
         $c = (isset($_REQUEST['c'])) ? $_REQUEST['c'] : array();
@@ -54,6 +161,8 @@ class PurchasesController extends Controller {
             $criteria->params[':category_id'] = $c['category_id'];
             $criteria->addCondition('category_id = :category_id');
         }
+
+        $criteria->addCondition("(state IN ('Draft', 'Call Study') OR (state NOT IN ('Draft', 'Call Study') AND mod_confirmation = 1))");
 
         $purchases = Purchase::model()->with('city', 'author', 'ordersNum', 'ordersSum')->findAll($criteria);
 
@@ -136,7 +245,7 @@ class PurchasesController extends Controller {
         if (isset($_POST['offset'])) $offset = $_POST['offset'];
 
         if (!$purchase)
-            throw new CHttpException(500, 'Закупка не обнаружена, либо находится на предмодерации');
+            throw new CHttpException(500, 'Закупка не обнаружена');
 
         $criteria = new CDbCriteria();
         $criteria->limit = Yii::app()->controller->module->goodsPerPage;
@@ -219,7 +328,7 @@ class PurchasesController extends Controller {
 
     public function actionEdit($id) {
         /** @var $model Purchase */
-        $model = Purchase::model()->resetScope()->findByPk($id);
+        $model = Purchase::model()->resetScope()->with('mod_request')->findByPk($id);
 
         if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
             Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('purchase' => $model)))
@@ -249,11 +358,10 @@ class PurchasesController extends Controller {
                 foreach ($history as $h => $m) {
                     $cache[$h] = $model->$h;
                 }
-                $cache['mod_reason'] = $model->mod_reason;
 
                 $model->attributes=$_POST['Purchase'];
                 $result = array();
-
+                /*
                 if (Yii::app()->user->checkAccess('purchases.purchases.acquireSuper') ||
                     Yii::app()->user->checkAccess('purchases.purchases.acquireMod', array('purchase' => $model))) {
                     if ($cache['mod_reason'] != $model->mod_reason) {
@@ -274,7 +382,7 @@ class PurchasesController extends Controller {
                     }
 
                     unset($cache['mod_reason']);
-                }
+                }*/
 
                 if($model->validate() && $model->save()) {
                     foreach ($history as $h => $m) {
@@ -304,6 +412,29 @@ class PurchasesController extends Controller {
 
                             $ph->params = json_encode(array('{from}' => $from, '{to}' => $to));
                             $ph->save();
+                        }
+                    }
+
+                    // отправить на согласование
+                    if ($_POST['mod_request'] == 1) {
+                        if (!$model->mod_request || $model->mod_request->moderator_id > 0) {
+                            $modrequest = new PurchaseModRequest();
+                            $modrequest->purchase_id = $model->purchase_id;
+                            if ($modrequest->save()) {
+                                $model->mod_request_id = $modrequest->mod_request_id;
+                                $model->save(true, array('mod_request_id'));
+                            }
+                            else {
+                                foreach ($modrequest->getErrors() as $error) {
+                                    $result[] = $error;
+                                }
+                                echo json_encode($result);
+                                exit;
+                            }
+                        }
+                        else {
+                            echo json_encode(array('Вы уже отправили заявку'));
+                            exit;
                         }
                     }
 
@@ -413,18 +544,6 @@ class PurchasesController extends Controller {
         }
         else
             throw new CHttpException(403, 'В доступе отказано');
-    }
-
-    public function actionAcquire() {
-      $criteria = new CDbCriteria();
-      $criteria->addCondition('purchase_delete IS NULL');
-      $criteria->addCondition('mod_confirmation = 0');
-
-      if (!Yii::app()->user->checkAccess('purchases.purchases.acquireSuper')) {
-        $criteria->addCondition('city_id = :id');
-        $criteria->params[':id'] = Yii::app()->user->model->profile->city_id;
-      }
-
     }
 
     public function actionUpdateFullstory() {

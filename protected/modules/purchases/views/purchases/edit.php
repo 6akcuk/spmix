@@ -20,6 +20,7 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
     'id' => 'purchaseform',
     'action' => $this->createUrl('/purchases/edit/'. $model->purchase_id),
 )); ?>
+<input type="hidden" name="mod_request" value="0" />
 <div class="purchase_columns clearfix">
     <div class="left purchase_column">
         <div class="row">
@@ -80,36 +81,39 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
 </div>
 <div class="row">
     <h1>Согласование модератором</h1>
-    <div class="purchase_columns clearfix">
-        <div class="left purchase_column">
-            <div class="row">
-                <?php echo $form->label($model, 'mod_confirmation') ?>
-                <?php
-                    if (Yii::app()->user->checkAccess('purchases.purchases.acquireSuper') ||
-                        Yii::app()->user->checkAccess('purchases.purchases.acquireMod', array('purchase' => $model))):
-                ?>
-                <?php echo $form->checkBox($model, 'mod_confirmation') ?>
+    <?php if ($model->mod_request_id > 0): ?>
+        <?php if ($model->mod_confirmation == 0): ?>
+            <?php if ($model->mod_request->moderator_id == 0): ?>
+        Ожидается рассмотрение заявки №<?php echo $model->mod_request_id ?>,
+        отправленной <?php echo ActiveHtml::date($model->mod_request->request_date, true, true) ?>
+            <?php else: ?>
+                <?php if (!$model->mod_request->message): ?>
+        Модератор <?php echo ActiveHtml::link($model->mod_request->moderator->getDisplayName(), '/id'. $model->mod_request->moderator_id) ?>
+        просматривает Вашу заявку
                 <?php else: ?>
-                <?php echo ($model->mod_confirmation) ? 'Да' : 'Нет' ?>
-                <?php endif; ?>
-            </div>
+        Модератор <?php echo ActiveHtml::link($model->mod_request->moderator->getDisplayName(), '/id'. $model->mod_request->moderator_id) ?>
+        <?php echo ActiveHtml::date($model->mod_request->request_date, true, true) ?>
+        <?php echo Yii::t('purchase', '0#оставил|1#оставила', $model->mod_request->moderator->profile->genderToInt()) ?>
+        замечание по Вашей закупке:
+        <div>
+            <?php echo nl2br($model->mod_request->message) ?>
         </div>
-        <div class="left purchase_column">
-            <div class="row">
-                <?php
-                    if (Yii::app()->user->checkAccess('purchases.purchases.acquireSuper') ||
-                        Yii::app()->user->checkAccess('purchases.purchases.acquireMod', array('purchase' => $model))):
-                ?>
-                <?php echo $form->smartTextarea($model, 'mod_reason') ?>
-                <?php else: ?>
-                <?php echo nl2br($model->mod_reason) ?>
                 <?php endif; ?>
-            </div>
-        </div>
-    </div>
+            <?php endif; ?>
+        <?php else: ?>
+        Модератор <?php echo ActiveHtml::link($model->mod_request->moderator->getDisplayName(), '/id'. $model->mod_request->moderator_id) ?>
+        <?php echo Yii::t('purchase', '0#одобрил|1#одобрила', $model->mod_request->moderator->profile->genderToInt()) ?>
+        Вашу закупку
+        <?php endif; ?>
+    <?php else: ?>
+
+    <?php endif; ?>
 </div>
 <div class="row">
     <?php echo ActiveHtml::submitButton('Сохранить изменения', array('class' => 'btn light_blue', 'onclick' => 'return Purchase.edit()')); ?>
+    <?php if($model->mod_confirmation == 0): ?>
+        <?php echo ActiveHtml::submitButton('Сохранить и отправить на согласование', array('class' => 'btn light_blue', 'onclick' => 'return Purchase.sendToModerator()')); ?>
+    <?php endif; ?>
 </div>
 <?php $this->endWidget(); ?>
-    </div>
+</div>

@@ -23,16 +23,15 @@
  * @property string $org_tax
  * @property string $image
  * @property integer $vip
- * @property integer $mod_id
- * @property string $mod_date
+ * @property integer $mod_request_id
  * @property integer $mod_confirmation
- * @property string $mod_reason
  * @property string $purchase_delete
  *
  * @property City $city
  * @property User $author
+ * @property PurchaseModRequest $mod_request
  * @property PurchaseCategory $category
- * @property PurchaseExternal $external
+ * @property PurchaseExternal $external *
  * @property array $history
  * @property array $oic
  *
@@ -85,11 +84,11 @@ class Purchase extends CActiveRecord
             array('name, author_id, category_id, city_id, status', 'required', 'on' => 'create'),
             array('name, author_id, category_id, status, state, min_sum, min_num, org_tax', 'required', 'on' => 'edit_own_notconfirmed'),
             array('author_id, status, state, min_sum, min_num', 'required', 'on' => 'edit_own_confirmed'),
-            array('mod_confirmation, mod_id, mod_date, mod_reason', 'safe', 'on' => 'edit_super_admin, edit_super_moderator'),
+            array('mod_confirmation', 'safe', 'on' => 'edit_super_admin, edit_super_moderator'),
 
             array('image, hide_supplier, stop_date', 'safe'),
 			array('author_id, category_id, city_id, accept_add, min_num, vip, mod_confirmation', 'numerical', 'integerOnly'=>true),
-			array('price_url, message, image, mod_reason', 'length', 'max'=>255),
+			array('price_url, message, image', 'length', 'max'=>255),
             array('name, supplier_url', 'length', 'max' => 255, 'on' => 'edit_own_notconfirmed, edit_super_admin, edit_super_moderator'),
 			array('status', 'length', 'max'=>8),
 			array('state', 'length', 'max'=>16),
@@ -112,6 +111,7 @@ class Purchase extends CActiveRecord
             'city' => array(self::HAS_ONE, 'City', array('id' => 'city_id')),
             'category' => array(self::BELONGS_TO, 'PurchaseCategory', 'category_id'),
             'author' => array(self::BELONGS_TO, 'User', 'author_id'),
+            'mod_request' => array(self::BELONGS_TO, 'PurchaseModRequest', 'mod_request_id', 'order' => 'mod_request.request_date DESC'),
             'external' => array(self::BELONGS_TO, 'PurchaseExternal', 'purchase_id'),
             'history' => array(self::HAS_MANY, 'PurchaseHistory', 'purchase_id', 'order' => 'history.datetime DESC'),
             'oic' => array(self::HAS_MANY, 'PurchaseOic', 'purchase_id'),
@@ -154,7 +154,7 @@ class Purchase extends CActiveRecord
 
     public function defaultScope() {
         return array(
-            'condition' => 'purchase_delete IS NULL AND mod_confirmation = 1',
+            'condition' => "purchase_delete IS NULL",
         );
     }
 

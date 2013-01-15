@@ -38,14 +38,14 @@ class Controller extends CController
                 if (Yii::app()->user->checkAccess('purchases.purchases.acquire')) {
                     $criteria = new CDbCriteria();
                     $criteria->addCondition('purchase_delete IS NULL');
-                    $criteria->addCondition('mod_confirmation = 0');
+                    $criteria->addCondition('t.mod_request_id IS NOT NULL AND t.mod_confirmation = 0 AND mod_request.status = '. PurchaseModRequest::STATUS_NEW);
 
                     if (!Yii::app()->user->checkAccess('purchases.purchases.acquireSuper')) {
                         $criteria->addCondition('city_id = :id');
                         $criteria->params[':id'] = Yii::app()->user->model->profile->city_id;
                     }
 
-                    $this->pageCounters['purchases'] = Purchase::model()->resetScope()->count($criteria);
+                    $this->pageCounters['purchases'] = Purchase::model()->resetScope()->with('mod_request')->count($criteria);
                 }
             }
 

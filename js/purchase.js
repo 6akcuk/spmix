@@ -9,7 +9,17 @@ var Purchase = {
     edit: function() {
         FormMgr.submit('#purchaseform', 'right', function(r) {
             msi.show('Изменения сохранены');
-            nav.go(r.url, null, null);
+            //nav.go(r.url, null, null);
+        });
+        return false;
+    },
+
+    sendToModerator: function() {
+        $('input[name="mod_request"]').val(1);
+        FormMgr.submit('#purchaseform', 'right', function(r) {
+            msi.show('Изменения сохранены. Заявка отправлена модераторам');
+            $('input[name="mod_request"]').val(0);
+            nav.reload();
         });
         return false;
     },
@@ -157,6 +167,86 @@ var Purchase = {
             nav.go(r.url, null, null);
         });
         return false;
+    },
+
+    acquire: function(purchase_id) {
+        if (A.acqPurchase) return;
+        A.acqPurchase = true;
+
+        ajax.post('/purchases/acquire', {id: purchase_id, confirm: 1}, function(r) {
+            A.acqPurchase = false;
+
+            var $p = $('#purchase'+ purchase_id),
+                $h = $('<div/>').attr({class: 'purchase_hider'}).appendTo($p),
+                $t = $('<div/>').attr({class: 'purchase_hider_tag'}).appendTo($p);
+            $h.css({width: $p.outerWidth(), height: $p.outerHeight()});
+            $t.html(r.html).css({
+                top: ($p.outerHeight() - $t.outerHeight()) / 2,
+                left: ($p.outerWidth() - $t.outerWidth()) / 2
+            });
+        }, function(xhr) {
+            A.acqPurchase = false;
+        });
+    },
+    cancelAcquire: function(purchase_id, request_id, hash) {
+        if (A.acqPurchase) return;
+        A.acqPurchase = true;
+
+        ajax.post('/purchases/acquire', {id: purchase_id, request_id: request_id, hash: hash, confirm: 0}, function(r) {
+            A.acqPurchase = false;
+
+            var $p = $('#purchase'+ purchase_id);
+            $p.find('div.purchase_hider').remove();
+            $p.find('div.purchase_hider_tag').remove();
+        }, function(xhr) {
+            A.acqPurchase = false;
+        });
+    },
+
+    sendWarning: function(purchase_id) {
+        var $p = $('#purchase'+ purchase_id +'_warning'),
+            $w = ($('#acquire_warning').size()) ? $('#acquire_warning') : $('<div/>').attr({id: 'acquire_warning'}).appendTo('body');
+        $w.html('<textarea></textarea><div><a class="button" onclick="return Purchase.doSendWarning('+ purchase_id +')">Отправить</a></div>');
+        $w.css({
+            top: $p.offset().top - $w.outerHeight() - 10,
+            left: $p.offset().left + ($p.outerWidth() - $w.outerWidth()) / 2
+        });
+        $w.click(function(event) {
+            event.stopPropagation();
+        });
+
+        setTimeout(function() {
+            $('body').one('click', function() {
+                $w.remove();
+            });
+        }, 1);
+    },
+    doSendWarning: function(purchase_id) {
+        var msg = $.trim($('#acquire_warning textarea').val());
+        if (!msg) {
+            $('#acquire_warning textarea').focus();
+            return;
+        }
+
+        if (A.acqPurchase) return;
+        A.acqPurchase = true;
+
+        $('#acquire_warning').remove();
+
+        ajax.post('/purchases/acquire', {id: purchase_id, confirm: -1, message: msg}, function(r) {
+            A.acqPurchase = false;
+
+            var $p = $('#purchase'+ purchase_id),
+                $h = $('<div/>').attr({class: 'purchase_hider'}).appendTo($p),
+                $t = $('<div/>').attr({class: 'purchase_hider_tag'}).appendTo($p);
+            $h.css({width: $p.outerWidth(), height: $p.outerHeight()});
+            $t.html(r.html).css({
+                top: ($p.outerHeight() - $t.outerHeight()) / 2,
+                left: ($p.outerWidth() - $t.outerWidth()) / 2
+            });
+        }, function(xhr) {
+            A.acqPurchase = false;
+        });
     }
 };
 

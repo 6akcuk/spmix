@@ -36,6 +36,7 @@
     padding: 10px 0
 }
 .purchase {
+    position: relative;
     margin: 5px 0;
     border-bottom: 1px solid #eeeeee;
 }
@@ -462,4 +463,37 @@ table.ordertable td {
     background: #fff;
     opacity: 0.8;
     filter: alpha(opacity=80);
+}
+
+/* Acquire */
+.purchase_hider {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    background: #fff;
+    opacity: .6;
+    filter: alpha(opacity=60);
+}
+.purchase_hider_tag {
+    position: absolute;
+    border-radius: 3px;
+    background: #f7f7f7;
+    color: #000;
+    padding: 20px;
+    text-align: center;
+}
+
+#acquire_warning {
+    position: absolute;
+    padding: 15px;
+    background: #f2f2f2;
+    border: 1px solid #ccc;
+}
+#acquire_warning textarea {
+    width: 200px;
+    height: 100px;
+}
+#acquire_warning a {
+    width: 198px;
+    text-align: center;
 }

@@ -92,7 +92,7 @@ return array(
                 'orders<purchase_id:\d+>/excel' => 'purchases/orders/purchase2Excel',
                 'orders/<action:\w+>' => 'purchases/orders/<action>',
                 'payment<payment_id:\d+>' => 'purchases/orders/payment',
-                '<controller:(purchases)>' => 'purchases/purchases/index',
+                '<controller:(purchases)>' => 'purchases/purchases',
                 '<controller:(purchases)>/<action:\w+>' => 'purchases/purchases/<action>',
                 '<controller:(purchases)>/<action:\w+>/<id:\d+>' => 'purchases/purchases/<action>',
                 '<controller:\w+>/<id:\d+>'=>'<controller>/view',
