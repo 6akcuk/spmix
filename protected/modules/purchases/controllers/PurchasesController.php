@@ -415,6 +415,18 @@ class PurchasesController extends Controller {
             throw new CHttpException(403, 'В доступе отказано');
     }
 
+    public function actionAcquire() {
+      $criteria = new CDbCriteria();
+      $criteria->addCondition('purchase_delete IS NULL');
+      $criteria->addCondition('mod_confirmation = 0');
+
+      if (!Yii::app()->user->checkAccess('purchases.purchases.acquireSuper')) {
+        $criteria->addCondition('city_id = :id');
+        $criteria->params[':id'] = Yii::app()->user->model->profile->city_id;
+      }
+
+    }
+
     public function actionUpdateFullstory() {
         $id = intval($_POST['id']);
 
