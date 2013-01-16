@@ -132,14 +132,30 @@ $this->pageTitle = $title;
             </div>
             <div class="clearfix miniblock">
                 <div class="label left">
-                    Репутация:
+                    <?php echo ActiveHtml::link('Репутация', '/reputation'. $userinfo->id) ?>:
                 </div>
                 <div class="labeled left">
                     <span class="profile-positive-rep">
-                        <a class="iconify_plus_a"></a>
+                        <div id="rep_pos_box" class="reputation_box" style="display:none">
+                            <div class="row">
+                            <?php ?>
+                                <input type="radio" id="rep_value_1" name="rep_value" value="1" />
+                                <label for="rep_value_1">+1</label>
+                                <input type="radio" id="rep_value_5" name="rep_value" value="5" />
+                                <label for="rep_value_5">+5</label>
+                            </div>
+                            <div class="row">
+                                <span class="input_placeholder">
+                                    <textarea id="rep_comment" name="rep_comment"></textarea>
+                                    <label for="rep_comment">Комментарий</label>
+                                </span>
+                            </div>
+                            <a class="button">Поднять репутацию</a>
+                        </div>
+                        <a class="iconify_plus_a" onclick="return Profile.incReputation(this, <?php echo $userinfo->id ?>)"></a>
                         <?php echo $userinfo->profile->positive_rep ?>
                     </span>
-                    <span class="profile-negative-rep">
+                    <span class="profile-negative-rep" onclick="return Profile.decReputation(this, <?php echo $userinfo->id ?>)">
                         <?php echo $userinfo->profile->negative_rep ?>
                         <a class="iconify_dash_a"></a>
                     </span>

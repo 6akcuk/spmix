@@ -183,6 +183,28 @@
     margin: 0px 6px;
 }
 
+/* Reputation */
+.reputation_box {
+    position: absolute;
+    padding: 15px;
+    border: 1px solid #ccc;
+    background: #f2f2f2;
+}
+.reputation_box .row {
+    padding-bottom: 10px;
+}
+.reputation_box textarea {
+    width: 200px;
+    height: 100px;
+}
+.reputation_box .dropdown .text {
+    width: 179px;
+}
+.reputation_box a {
+    width: 198px;
+    text-align: center;
+}
+
 /* Static Manager */
 #profile_css {
     display: none;

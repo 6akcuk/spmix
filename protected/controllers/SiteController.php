@@ -59,13 +59,21 @@ class SiteController extends Controller
             $result = array();
 
             if($model->validate() && $model->login()) {
-                $result['success'] = true;
-                $result['id'] = Yii::app()->user->getId();
+                if (Yii::app()->getRequest()->isAjaxRequest) {
+                    $result['success'] = true;
+                    $result['id'] = Yii::app()->user->getId();
+                }
+                else $this->redirect('/id'. Yii::app()->user->getId());
             }
             else {
                 foreach ($model->getErrors() as $attr => $error) {
-                    $result[ActiveHtml::activeId($model, $attr)] = $error;
+                    $result[$attr] = $error;
                 }
+            }
+
+            if (!Yii::app()->getRequest()->isAjaxRequest) {
+                $_SESSION['LoginForm.errors'] = $result;
+                $this->redirect('/');
             }
 
             echo json_encode($result);

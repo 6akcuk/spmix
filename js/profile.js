@@ -84,6 +84,43 @@ var Profile = {
             A.frKeep = false;
             Profile.showKeepSubscriber($cont, friend_id);
         });
+    },
+
+    incReputation: function(cont, user_id) {
+        var $w = $('<div/>').attr({id: 'reputation_box'}).appendTo('body');
+        $w.html('\
+<div class="row">\
+    <input type="radio" id="rep_value_1" name="rep_value" value="1" />\
+    <label for="rep_value_1">+1</label>\
+    <input type="radio" id="rep_value_5" name="rep_value" value="5" />\
+    <label for="rep_value_5">+5</label>\
+</div>\
+<div class="row">\
+    <span class="input_placeholder">\
+        <textarea id="rep_comment" name="rep_comment"></textarea>\
+        <label for="rep_comment">Комментарий</label>\
+    </span>\
+</div>\
+<a class="button">Поднять репутацию</a>\
+');
+        $('#rep_comment').inputPlaceholder();
+        $w.css({
+            top: $(cont).offset().top - $w.outerHeight() - 10,
+            left: $(cont).offset().left + ($(cont).outerWidth() - $w.outerWidth()) / 2
+        })
+        $w.click(function(event) {
+            event.stopPropagation();
+        });
+
+        setTimeout(function() {
+            $('body').one('click', function() {
+                $w.remove();
+            });
+        }, 1);
+    },
+
+    decReputation: function(cont, user_id) {
+
     }
 };
 
