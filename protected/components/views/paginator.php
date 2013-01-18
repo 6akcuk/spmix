@@ -36,7 +36,7 @@ $nextoffset = ($page < $maxpage) ? $this->offset + $this->delta : $this->offsets
         offset: <? echo $this->offset; ?>,
         pages: <? echo $pages; ?>,
         url: '<?php echo $this->url ?>',
-        nopages: <?php echo $this->nopages ?>
+        nopages: <?php echo ($this->nopages) ? $this->nopages : 'false' ?>
     });
     </script>
 <?php endif; ?>

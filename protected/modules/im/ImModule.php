@@ -2,7 +2,7 @@
 
 class ImModule extends CWebModule
 {
-    public $dialogsPerPage = 20;
+    public $dialogsPerPage = 10;
     public $messagesPerPage = 20;
     public $addRowInterval = 240; // время в сек. между сообщениями, когда считать их от одного отправителя
 

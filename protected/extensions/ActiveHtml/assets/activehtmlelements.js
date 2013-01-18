@@ -1008,7 +1008,7 @@ var stmgr = {
                 }
                 else stmgr._waiters[i][1]++;
 
-                if (stmgr._waiters[i][1] >= stmgr._failover) {
+                if (stmgr._waiters[i] && stmgr._waiters[i][1] >= stmgr._failover) {
                     stmgr._waiters.splice(i, 1);
                     ajex.show('Не удалось загрузить '+ waiter[0] +'');
                 }
@@ -1017,7 +1017,7 @@ var stmgr = {
                 if (staticFiles[waiter[0]].l == 1) stmgr._waiters.splice(i, 1);
                 else stmgr._waiters[i][1]++;
 
-                if (stmgr._waiters[i][1] >= stmgr._failover) {
+                if (stmgr._waiters[i] && stmgr._waiters[i][1] >= stmgr._failover) {
                     stmgr._waiters.splice(i, 1);
                     ajex.show('Не удалось загрузить '+ waiter[0] +'');
                 }
@@ -1490,10 +1490,12 @@ var ajax = {
         $('body').addClass('progress');
 
         request.done(function(response, status, xhr) {
+            clearTimeout(A._tmPost);
             $('body').removeClass('progress');
             if ($.isFunction(onDone)) onDone(response);
         });
         request.fail(function(xhr, textStatus) {
+            clearTimeout(A._tmPost);
             $('body').removeClass('progress');
             if ($.isFunction(onFail)) onFail(xhr);
 
@@ -1505,10 +1507,24 @@ var ajax = {
                 case 404:
                     ajex.show('Страница не найдена');
                     break;
+                case 500:
+                    var r = $.parseJSON(xhr.responseText);
+                    ajex.show((r && r.html) ? r.html : xhr.responseText);
+                    break;
                 default:
                     ajex.show('Ошибка связи с сервером:<br/> '+ xhr.responseText);
             }
         });
+
+        clearTimeout(A._tmPost);
+        A._tmPost = setTimeout(function() {
+            //$.jGrowl('Соединение с сервером разорвано, перезагрузите страницу', {theme: 'danger'});
+            ajex.show('Соединение с сервером потеряно, попробуйте заново');
+            $('body').removeClass('progress');
+            request.fail({responseText: 'соединение разорвано по таймауту'});
+            request.abort();
+            request = null;
+        }, 30000);
 
         return request;
     },

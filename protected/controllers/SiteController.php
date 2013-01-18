@@ -195,7 +195,7 @@ class SiteController extends Controller
         $model->attributes = $user->getState('regform', null);
 
         if ($model->phone) {
-            PhoneConfirmation::model()->deleteAll('phone = :phone', array(':phone' => $model->phone));
+            PhoneConfirmation::model()->deleteAll('phone = :phone', array(':phone' => '7'. $model->phone));
             $pc = new PhoneConfirmation();
             $pc->phone = '7'. $model->phone;
             $pc->generateCode();

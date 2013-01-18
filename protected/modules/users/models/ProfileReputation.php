@@ -10,6 +10,7 @@
  * @property integer $owner_id
  * @property integer $value
  * @property string $comment
+ * @property string $reputation_delete
  */
 class ProfileReputation extends CActiveRecord
 {
@@ -39,7 +40,7 @@ class ProfileReputation extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('author_id, owner_id, value', 'required'),
+			array('author_id, owner_id, value, comment', 'required'),
 			array('author_id, owner_id, value', 'numerical', 'integerOnly'=>true),
 			array('comment', 'length', 'max'=>255),
 			// The following rule is used by search().
@@ -56,6 +57,7 @@ class ProfileReputation extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+            'author' => array(self::BELONGS_TO, 'User', 'author_id'),
 		);
 	}
 
@@ -73,6 +75,12 @@ class ProfileReputation extends CActiveRecord
 			'comment' => 'Comment',
 		);
 	}
+
+    public function defaultScope() {
+        return array(
+            'condition' => "reputation_delete IS NULL",
+        );
+    }
 
     public function beforeSave() {
         if (parent::beforeSave()) {

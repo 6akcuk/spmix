@@ -43,6 +43,7 @@ $delta = Yii::app()->controller->module->friendsPerPage;
     <tr>
         <td rel="pagination" class="searchresults">
             <?php echo $this->renderPartial('_people', array('user' => $user, 'peoples' => $peoples, 'offset' => $offset)) ?>
+            <? if ($offset + $delta < $offsets && $offsets > $delta): ?><a id="pg_more" class="pg_more" onclick="Paginator.showMore()">Еще друзья</a><? endif; ?>
         </td>
         <td class="filters">
             <div rel="filters">

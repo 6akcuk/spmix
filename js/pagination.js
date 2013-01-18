@@ -139,12 +139,12 @@ var Paginator = {
             }
         }
 
-        var loc = (nav.curLoc.match(/\?/)) ? nav.curLoc.split('?') : [nav.curLoc, ''],
-            obj = nav.q2obj(loc[1]);
+        var loc = nav.query(nav.curLoc + ((nav.curLoc.match(/\?/)) ? '&' : '?') + 'offset='+ nextOffset +'&pages=1', {search: true}), // (nav.curLoc.match(/\?/)) ? nav.curLoc.split('?') : [nav.curLoc, ''],
+            where = loc.split('?'),
+            obj = nav.q2obj(where[1]);
 
-        $.extend(obj, {offset: nextOffset, pages: 1});
         loc[1] = nav.obj2q(obj);
-        ajax.post(loc[0], obj, function(r) {
+        ajax.post(loc, obj, function(r) {
             Paginator.onDone(r, nextOffset);
         });
         //nav.go(A.pgUrl +'?offset='+ nextOffset, null, {paginator: true});

@@ -138,11 +138,17 @@ $this->pageTitle = $title;
                     <span class="profile-positive-rep">
                         <div id="rep_pos_box" class="reputation_box" style="display:none">
                             <div class="row">
-                            <?php ?>
+                            <?php if (!Yii::app()->user->checkAccess('users.profiles.increaseReputationAny')): ?>
                                 <input type="radio" id="rep_value_1" name="rep_value" value="1" />
                                 <label for="rep_value_1">+1</label>
                                 <input type="radio" id="rep_value_5" name="rep_value" value="5" />
                                 <label for="rep_value_5">+5</label>
+                            <?php else: ?>
+                                <span class="input_placeholder">
+                                    <input type="text" id="rep_value" name="rep_value" value="" />
+                                    <label for="rep_value">Кол-во голосов</label>
+                                </span>
+                            <?php endif; ?>
                             </div>
                             <div class="row">
                                 <span class="input_placeholder">
@@ -150,14 +156,36 @@ $this->pageTitle = $title;
                                     <label for="rep_comment">Комментарий</label>
                                 </span>
                             </div>
-                            <a class="button">Поднять репутацию</a>
+                            <a class="button" onclick="return Profile.doIncReputation(<?php echo $userinfo->id ?>)">Поднять репутацию</a>
                         </div>
                         <a class="iconify_plus_a" onclick="return Profile.incReputation(this, <?php echo $userinfo->id ?>)"></a>
-                        <?php echo $userinfo->profile->positive_rep ?>
+                        <em id="pos_rep_value"><?php echo $userinfo->profile->positive_rep ?></em>
                     </span>
                     <span class="profile-negative-rep" onclick="return Profile.decReputation(this, <?php echo $userinfo->id ?>)">
-                        <?php echo $userinfo->profile->negative_rep ?>
-                        <a class="iconify_dash_a"></a>
+                        <div id="rep_neg_box" class="reputation_box" style="display:none">
+                            <div class="row">
+                                <?php if (!Yii::app()->user->checkAccess('users.profiles.decreaseReputationAny')): ?>
+                                <input type="radio" id="rep_neg_value_1" name="rep_value" value="-1" />
+                                <label for="rep_neg_value_1">-1</label>
+                                <input type="radio" id="rep_neg_value_5" name="rep_value" value="-5" />
+                                <label for="rep_neg_value_5">-5</label>
+                                <?php else: ?>
+                                <span class="input_placeholder">
+                                    <input type="text" id="rep_neg_value" name="rep_value" value="" />
+                                    <label for="rep_value">Кол-во голосов</label>
+                                </span>
+                                <?php endif; ?>
+                            </div>
+                            <div class="row">
+                                <span class="input_placeholder">
+                                    <textarea id="rep_neg_comment" name="rep_comment"></textarea>
+                                    <label for="rep_neg_comment">Комментарий</label>
+                                </span>
+                            </div>
+                            <a class="button" onclick="return Profile.doDecReputation(<?php echo $userinfo->id ?>)">Понизить репутацию</a>
+                        </div>
+                        <em id="neg_rep_value"><?php echo $userinfo->profile->negative_rep ?></em>
+                        <?php if (!Yii::app()->user->checkAccess('users.profiles.decreaseReputationUser')): ?><a class="iconify_dash_a" onclick="return Profile.decReputation(this, <?php echo $userinfo->id ?>)"></a><?php endif; ?>
                     </span>
                 </div>
             </div>

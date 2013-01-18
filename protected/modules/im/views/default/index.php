@@ -35,7 +35,8 @@ $delta = Yii::app()->controller->module->dialogsPerPage;
 <div class="summary">
     <?php echo Yii::t('user', '{n} диалог|{n} диалога|{n} диалогов', $offsets) ?>
 </div>
-<div id="im_dialogs">
+<div id="im_dialogs" rel="pagination">
     <div class="im_none" id="im_rows_none" style="display:<?php echo ($offsets) ? 'none' : 'block' ?>">Здесь будет выводиться список Ваших сообщений</div>
     <?php $this->renderPartial('_dialog', array('dialogs' => $dialogs, 'offset' => $offset)) ?>
 </div>
+<? if ($offset + $delta < $offsets && $offsets > $delta): ?><a id="pg_more" class="pg_more" onclick="Paginator.showMore()">Еще диалоги</a><? endif; ?>

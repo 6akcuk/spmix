@@ -87,40 +87,108 @@ var Profile = {
     },
 
     incReputation: function(cont, user_id) {
-        var $w = $('<div/>').attr({id: 'reputation_box'}).appendTo('body');
-        $w.html('\
-<div class="row">\
-    <input type="radio" id="rep_value_1" name="rep_value" value="1" />\
-    <label for="rep_value_1">+1</label>\
-    <input type="radio" id="rep_value_5" name="rep_value" value="5" />\
-    <label for="rep_value_5">+5</label>\
-</div>\
-<div class="row">\
-    <span class="input_placeholder">\
-        <textarea id="rep_comment" name="rep_comment"></textarea>\
-        <label for="rep_comment">Комментарий</label>\
-    </span>\
-</div>\
-<a class="button">Поднять репутацию</a>\
-');
-        $('#rep_comment').inputPlaceholder();
-        $w.css({
-            top: $(cont).offset().top - $w.outerHeight() - 10,
-            left: $(cont).offset().left + ($(cont).outerWidth() - $w.outerWidth()) / 2
-        })
+        var $w = $('#rep_pos_box');
+        $w.show().css({
+            top: $(cont).offset().top - $('#content').offset().top - $w.outerHeight() - 10,
+            left: $(cont).offset().left - $('#content').offset().left + ($(cont).outerWidth() - $w.outerWidth()) / 2
+        });
         $w.click(function(event) {
             event.stopPropagation();
         });
 
         setTimeout(function() {
             $('body').one('click', function() {
-                $w.remove();
+                $w.hide();
             });
         }, 1);
     },
 
     decReputation: function(cont, user_id) {
+        var $w = $('#rep_neg_box');
+        $w.show().css({
+            top: $(cont).offset().top - $('#content').offset().top - $w.outerHeight() - 10,
+            left: $(cont).offset().left - $('#content').offset().left + ($(cont).outerWidth() - $w.outerWidth()) / 2
+        });
+        $w.click(function(event) {
+            event.stopPropagation();
+        });
 
+        setTimeout(function() {
+            $('body').one('click', function() {
+                $w.hide();
+            });
+        }, 1);
+    },
+
+    doIncReputation: function(user_id) {
+        var val = parseInt($('#rep_pos_box input[name="rep_value"]').val()),
+            com = $.trim($('#rep_pos_box textarea').val());
+
+        if (!val || !com) return;
+        if (A.repInc) return;
+        A.repInc = true;
+
+        ajax.post('/reputation'+ user_id + '?act=increase', {value: val, comment: com}, function(r) {
+            A.repInc = false;
+            $('body').click();
+            $('#pos_rep_value').html(r.positive_rep);
+        }, function(xhr) {
+            A.repInc = false;
+            $('body').click();
+        });
+    },
+
+    doDecReputation: function(user_id) {
+        var val = parseInt($('#rep_neg_box input[name="rep_value"]').val()),
+            com = $.trim($('#rep_neg_box textarea').val());
+
+        if (!val || !com) return;
+        if (A.repDec) return;
+        A.repDec = true;
+
+        ajax.post('/reputation'+ user_id + '?act=decrease', {value: val, comment: com}, function(r) {
+            A.repDec = false;
+            $('body').click();
+            $('#neg_rep_value').html(r.negative_rep);
+        }, function(xhr) {
+            A.repDec = false;
+            $('body').click();
+        });
+    },
+
+    deleteReputation: function(id) {
+        if (A.repDelete) return;
+        A.repDelete = true;
+
+        ajax.post('/users/profiles/deleteReputation', {id: id}, function(r) {
+            A.repDelete = false;
+
+            var $p = $('#rep'+ id),
+                $h = $('<div/>').attr({class: 'reputation_hider'}).appendTo($p),
+                $t = $('<div/>').attr({class: 'reputation_hider_tag'}).appendTo($p);
+            $h.css({width: $p.outerWidth(), height: $p.outerHeight()});
+            $t.html(r.html).css({
+                top: ($p.outerHeight() - $t.outerHeight()) / 2,
+                left: ($p.outerWidth() - $t.outerWidth()) / 2
+            });
+        }, function(xhr) {
+            A.repDelete = false;
+        });
+    },
+
+    restoreReputation: function(id, hash) {
+        if (A.repRestore) return;
+        A.repRestore = true;
+
+        ajax.post('/users/profiles/restoreReputation', {id: id, hash: hash}, function(r) {
+            A.repRestore = false;
+
+            var $p = $('#rep'+ id);
+            $p.find('div.reputation_hider').remove();
+            $p.find('div.reputation_hider_tag').remove();
+        }, function(xhr) {
+            A.repRestore = false;
+        });
     }
 };
 
