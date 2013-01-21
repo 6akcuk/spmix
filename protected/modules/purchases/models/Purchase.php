@@ -88,7 +88,7 @@ class Purchase extends CActiveRecord
 
             array('image, hide_supplier, stop_date', 'safe'),
 			array('author_id, category_id, city_id, accept_add, min_num, vip, mod_confirmation', 'numerical', 'integerOnly'=>true),
-			array('price_url, message, image', 'length', 'max'=>255),
+			array('price_url, message', 'length', 'max'=>255),
             array('name, supplier_url', 'length', 'max' => 255, 'on' => 'edit_own_notconfirmed, edit_super_admin, edit_super_moderator'),
 			array('status', 'length', 'max'=>8),
 			array('state', 'length', 'max'=>16),
@@ -174,6 +174,14 @@ class Purchase extends CActiveRecord
             'Стандарт' => self::STATUS_STANDARD,
             'Vip' => self::STATUS_VIP,
         );
+    }
+
+    public static function getNonConfirmedStateArray() {
+      return array(
+        'Черновик' => self::STATE_DRAFT,
+        'Изучение спроса' => self::STATE_CALL_STUDY,
+        'Сбор заказов' => self::STATE_ORDER_COLLECTION,
+      );
     }
 
     public static function getStateDataArray() {

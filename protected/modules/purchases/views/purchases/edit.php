@@ -47,7 +47,7 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
     <div class="left purchase_column">
         <div class="row">
             <?php echo $form->label($model, 'state') ?>
-            <?php echo $form->dropdown($model, 'state', Purchase::getStateDataArray()) ?>
+            <?php echo $form->dropdown($model, 'state', ($model->mod_confirmation) ? Purchase::getStateDataArray() : Purchase::getNonConfirmedStateArray(), array('onchange' => 'Purchase.stateChanged(this)')) ?>
         </div>
         <div class="row clearfix">
             <?php echo $form->label($model, 'min_sum') ?>
@@ -112,7 +112,12 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
 <div class="row">
     <?php echo ActiveHtml::submitButton('Сохранить изменения', array('class' => 'btn light_blue', 'onclick' => 'return Purchase.edit()')); ?>
     <?php if($model->mod_confirmation == 0): ?>
-        <?php echo ActiveHtml::submitButton('Сохранить и отправить на согласование', array('class' => 'btn light_blue', 'onclick' => 'return Purchase.sendToModerator()')); ?>
+    <?php echo ActiveHtml::submitButton('Сохранить и отправить на согласование', array(
+      'id' => 'sc_button',
+      'class' => 'btn light_blue',
+      'onclick' => 'return Purchase.sendToModerator()',
+      'style' => 'display: '. (($model->state == Purchase::STATE_ORDER_COLLECTION) ? 'block' : 'none'),
+    )); ?>
     <?php endif; ?>
 </div>
 <?php $this->endWidget(); ?>

@@ -6,6 +6,11 @@ var Purchase = {
         return false;
     },
 
+    stateChanged: function(obj) {
+      if (obj.value == 'Order Collection') $('#sc_button').show();
+      else $('#sc_button').hide();
+    },
+
     edit: function() {
         FormMgr.submit('#purchaseform', 'right', function(r) {
             msi.show('Изменения сохранены');

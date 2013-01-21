@@ -120,8 +120,8 @@ class ActiveHtml extends CHtml {
 
         $htmlOptions = ActiveHtml::addClass('dropdown', $htmlOptions);
 
-        return self::openTag('div', $htmlOptions) .
-            self::hiddenField($name, $value) .
+        return self::openTag('div', array('class' => 'dropdown')) .
+            self::hiddenField($name, $value, $htmlOptions) .
             self::openTag('span', array('class' => 'text')) .
                 $current .
             self::closeTag('span') .
@@ -181,7 +181,9 @@ class ActiveHtml extends CHtml {
                     self::image('/images/progress_small.gif', '') .
                 self::closeTag('div') .
                 self::openTag('div', array('class' => 'filedata')) .
-                    self::openTag('a', array('class' => 'iconify_x_a tt', 'title' => 'Удалить', 'onclick' => 'Upload.deleteFile('. self::$uploadId .')')) .
+                    self::openTag('a', array('class' => 'tt', 'title' => 'Удалить', 'onclick' => 'Upload.deleteFile('. self::$uploadId .')')) .
+                      self::openTag('em', array('class' => 'icon-remove icon-white')) .
+                      self::closeTag('em') .
                     self::closeTag('a') .
                 self::closeTag('div') .
                 self::openTag('div', array('class' => 'filebutton')) .
