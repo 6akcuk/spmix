@@ -935,6 +935,40 @@ var sbar = {
 
 /* Form Easy Control */
 var FormMgr = {
+    c200: function($form) {
+        var url = $form.attr('action');
+        $form.attr({action: '/nullForm', target: 'iframe_200', method: 'post'}).submit();
+        $form.attr('action', url);
+    },
+    validate: function(el, pos, onDone) {
+        var $form = $(el),
+            url = $form.attr('action'),
+            data = {};
+
+        if (!pos) pos = 'right';
+
+        $form.find('input').removeClass('error');
+        data = $form.serialize();
+        data += "&validate=1";
+
+        ajax.post(url, data, function(response) {
+            if (response.success) $form.submit();
+            else {
+                var string = [];
+                $.each(response, function(i, v) {
+                    $('#'+ i).addClass('error');
+                    if ($.isArray(v)) {
+                        $.each(v, function(i2, v2) {
+                            string[string.length] = v2;
+                        })
+                    }
+                    else string[string.length] = v;
+                });
+
+                report_window.create($form, pos, string.join('<br/>'));
+            }
+        });
+    },
     submit: function(el, pos, onDone) {
         var $form = $(el),
             url = $form.attr('action');

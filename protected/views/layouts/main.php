@@ -32,7 +32,9 @@ $cookies = $request->getCookies();
     </script>
 </head>
 <body>
-<div id="utils"></div>
+<div id="utils">
+    <div class="filectrl"><iframe id="iframe_200" name="iframe_200"></iframe></div>
+</div>
 <div id="global_progress_bg"></div>
 <div id="global_progress" class="fixed">
     <img src="<?php echo Yii::app()->request->baseUrl; ?>/images/2.gif" alt="" />

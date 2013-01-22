@@ -15,15 +15,15 @@ $this->pageTitle = Yii::app()->name .' - Добавление нового то�
 
 <?php
 /** @var $form ActiveForm */
-
 $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
     'id' => 'addgoodform',
     'action' => $this->createUrl('/purchase'. $id .'/addgood'),
 )); ?>
+<input type="hidden" id="direction" name="direction" value="0" />
 <div class="purchase_columns clearfix">
     <div class="left purchase_column">
         <div class="row">
-            <?php echo $form->inputPlaceholder($model, 'name') ?>
+            <?php echo $form->textField($model, 'name') ?>
         </div>
         <div class="row">
             <?php echo $form->inputPlaceholder($model, 'artikul') ?>
@@ -67,7 +67,8 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
     <?php echo $form->smartTextarea($model, 'description', array('style' => 'width: 520px')) ?>
 </div>
 <div class="row">
-    <?php echo ActiveHtml::submitButton('Добавить товар', array('class' => 'btn light_blue', 'onclick' => 'return Purchase.addgood()')); ?>
+    <?php echo ActiveHtml::submitButton('Добавить товар и вернуться к закупке', array('class' => 'btn light_blue', 'onclick' => 'return Purchase.addgood(0)')); ?>
+    <?php echo ActiveHtml::submitButton('Добавить товар и приступить к новому', array('class' => 'btn light_blue', 'onclick' => 'return Purchase.addgood(1)')); ?>
 </div>
 <?php $this->endWidget(); ?>
 </div>

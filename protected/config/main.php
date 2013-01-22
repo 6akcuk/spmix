@@ -67,6 +67,7 @@ return array(
 			'urlFormat'=>'path',
             'showScriptName' => false,
 			'rules'=>array(
+                'nullForm' => 'site/nullForm',
                 'setcity' => 'site/setcity',
                 'login' => 'site/login',
                 'logout' => 'site/logout',

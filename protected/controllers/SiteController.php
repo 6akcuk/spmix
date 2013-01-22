@@ -217,4 +217,9 @@ class SiteController extends Controller
         }
         exit;
     }
+
+    public function actionNullForm() {
+        echo 'OK';
+        exit;
+    }
 }

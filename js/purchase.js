@@ -1,8 +1,6 @@
 var Purchase = {
     create: function() {
-        FormMgr.submit('#purchaseform', 'right', function(r) {
-            nav.go(r.url, null, null);
-        });
+        FormMgr.submit('#purchaseform', 'right');
         return false;
     },
 
@@ -30,15 +28,12 @@ var Purchase = {
     },
 
     restore: function(id) {
-        ajax.post('/purchase'+ id +'/restore', null, function(r) {
-            nav.go(r.url, null, null);
-        });
+        ajax.post('/purchase'+ id +'/restore', null);
     },
 
-    addgood: function() {
-        FormMgr.submit('#addgoodform', 'right', function(r) {
-            nav.go(r.url, null, null);
-        });
+    addgood: function(direction) {
+        $('#direction').val(direction);
+        FormMgr.validate('#addgoodform', 'right');
         return false;
     },
 
