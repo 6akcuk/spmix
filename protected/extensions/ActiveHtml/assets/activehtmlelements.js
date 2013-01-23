@@ -106,6 +106,30 @@ var Tooltip = {
     }
 };
 
+/* Popup Helper */
+$.fn.popupHelp = function(text) {
+  this.each(function()
+  {
+    var $c = $(this);
+
+    $c.focus(function() {
+      var $t = $('<div/>').addClass('tooltip')
+          .html('<div class="tt_bg"></div><div class="tt_text">'+ text + '</div>')
+          .appendTo('body'),
+        $b = $t.find('div.tt_bg');
+
+      $t.css({
+        top: parseInt($c.offset().top - 10 - $t.outerHeight()),
+        left: parseInt($c.offset().left + ($c.outerWidth() / 2) - ($t.outerWidth() / 2))
+      });
+      $b.css({
+        width: $t.find('div.tt_text').outerWidth(),
+        height: $t.find('div.tt_text').outerHeight()
+      });
+    });
+  });
+};
+
 /* Minimal Save Informer */
 var msi = {
     show: function(msg) {

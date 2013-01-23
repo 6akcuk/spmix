@@ -32,15 +32,13 @@ var Purchase = {
     },
 
     addgood: function(direction) {
-        $('#direction').val(direction);
-        FormMgr.validate('#addgoodform', 'right');
+      $('#direction').val(direction);
+        FormMgr.submit('#addgoodform', 'right');
         return false;
     },
 
     editgood: function() {
-        FormMgr.submit('#purchaseform', 'right', function(r) {
-            nav.go(r.url, null, null);
-        });
+        FormMgr.submit('#purchaseform', 'right');
         return false;
     },
 

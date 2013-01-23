@@ -26,6 +26,8 @@ class PurchasesController extends Controller {
             $this->defaultAction = $_GET['action'];
     }
 
+
+
     public function actionAcquire($offset = 0) {
         if (isset($_POST['confirm'])) {
             /** @var $purchase Purchase */
@@ -648,7 +650,7 @@ class PurchasesController extends Controller {
     }
 
     public function actionAddGood($id) {
-        /** @var $purchase Purchase */
+      /** @var $purchase Purchase */
         $purchase = Purchase::model()->findByPk($id);
 
         if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
@@ -664,14 +666,7 @@ class PurchasesController extends Controller {
                 $model->attributes=$_POST['Good'];
                 $result = array();
 
-                if($model->validate()) {
-                    if (isset($_POST['validate']) && $_POST['validate'] == 1) {
-                        echo json_encode(array('success' => true));
-                        exit;
-                    }
-
-                    $model->save();
-
+                if($model->validate() && $model->save()) {
                     foreach ($_POST['size'] as $idx => $size) {
                         $colors = $_POST['color'][$idx];
 
@@ -689,9 +684,8 @@ class PurchasesController extends Controller {
                     $image->image = $_POST['image'];
                     $image->save();
 
-                    $this->redirect(($_POST['direction'] == 0) ? '/purchase'. $purchase->purchase_id : '/purchase'. $purchase->purchase_id .'/addgood');
-                    //$result['success'] = true;
-                    //$result['url'] = (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Accepted', array('purchase' => $purchase))) ? '/good'. $model->purchase_id .'_'. $model->good_id : '/good'. $model->purchase_id .'_'. $model->good_id .'/edit';
+                    $result['success'] = true;
+                    $result['url'] = ($_POST['direction'] == 0) ? '/purchase'. $purchase->purchase_id : '/purchase'. $purchase->purchase_id .'/addgood';
                 }
                 else {
                     foreach ($model->getErrors() as $attr => $error) {
