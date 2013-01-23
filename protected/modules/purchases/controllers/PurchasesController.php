@@ -650,6 +650,7 @@ class PurchasesController extends Controller {
     }
 
     public function actionAddGood($id) {
+      /** @var $purchase Purchase */
         $purchase = Purchase::model()->findByPk($id);
 
         if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
@@ -684,7 +685,7 @@ class PurchasesController extends Controller {
                     $image->save();
 
                     $result['success'] = true;
-                    $result['url'] = (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Accepted', array('purchase' => $purchase))) ? '/good'. $model->purchase_id .'_'. $model->good_id : '/good'. $model->purchase_id .'_'. $model->good_id .'/edit';
+                    $result['url'] = ($_POST['direction'] == 0) ? '/purchase'. $purchase->purchase_id : '/purchase'. $purchase->purchase_id .'/addgood';
                 }
                 else {
                     foreach ($model->getErrors() as $attr => $error) {

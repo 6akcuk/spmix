@@ -1,8 +1,9 @@
 <?php
-/** @var $model Purchase */
+/** @var $model Good */
 
 Yii::app()->getClientScript()->registerCssFile('/css/purchases.css');
 Yii::app()->getClientScript()->registerScriptFile('/js/purchase.js');
+Yii::app()->getClientScript()->registerScriptFile('/js/addgood.js');
 
 $this->pageTitle = Yii::app()->name .' - Добавление нового товара';
 ?>
@@ -10,6 +11,7 @@ $this->pageTitle = Yii::app()->name .' - Добавление нового то�
     <?php echo ActiveHtml::link($purchase->name, '/purchase'. $purchase->purchase_id) ?> &raquo;
     Добавить новый товар
 </div>
+
 <div class="create">
 <h1>Добавить новый товар</h1>
 
@@ -20,6 +22,7 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
     'id' => 'addgoodform',
     'action' => $this->createUrl('/purchase'. $id .'/addgood'),
 )); ?>
+<input type="hidden" id="direction" name="direction" value="0" />
 <div class="purchase_columns clearfix">
     <div class="left purchase_column">
         <div class="row">
@@ -34,40 +37,32 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
         <div class="row">
             <?php echo $form->inputPlaceholder($model, 'url') ?>
         </div>
+      <div class="row">
+        <?php echo ActiveHtml::inputPlaceholder('sizes', '', array('placeholder' => 'Размеры')) ?>
+      </div>
+      <div class="row">
+        <?php echo ActiveHtml::inputPlaceholder('colors', '', array('placeholder' => 'Цвета')) ?>
+      </div>
         <div class="row">
             <?php echo ActiveHtml::upload('image', '', 'Прикрепить фотографию', array('data-image' => 'a')) ?>
         </div>
     </div>
     <div class="left purchase_column">
-        <h3>Размерная сетка</h3>
-        <div>
-            <?php echo $form->checkBox($model, 'is_range') ?>
-            <?php echo $form->label($model, 'is_range') ?>
-        </div>
-        <div id="block0" rel="sbar" class="row">
-            <div class="row">
-                <?php echo ActiveHtml::inputPlaceholder('size[0]', '', array('id' => '', 'placeholder' => 'Размер')) ?>
-                <a class="iconify_x_a" onclick="sbar.del(this)" style="display:none"></a>
-            </div>
-            <div rel="range" class="row" style="display:none">
-                <?php echo ActiveHtml::inputPlaceholder('allowed[0]', '', array('id' => '', 'placeholder' => 'Количество на ряд')) ?>
-            </div>
-            <div sbar="sub" class="row" style="margin-left: 20px">
-                <?php echo ActiveHtml::inputPlaceholder('color[0][]', '', array('id' => '', 'placeholder' => 'Цвет')) ?>
-                <a class="iconify_plus_a" onclick="sfar.add(this)"></a>
-                <a class="iconify_x_a" onclick="sfar.del(this)" style="display:none"></a>
-            </div>
-        </div>
-        <div class="row">
-            <a onclick="sbar.add(this)" class="button"><span class="iconify_plus_a"></span> Добавить еще размер</a>
-        </div>
+      <div>
+          <?php echo $form->checkBox($model, 'is_range') ?>
+          <?php echo $form->label($model, 'is_range') ?>
+      </div>
+      <div rel="range" class="row" style="display: none">
+        <?php echo $form->smartTextarea($model, 'range') ?>
+      </div>
     </div>
 </div>
 <div class="row">
     <?php echo $form->smartTextarea($model, 'description', array('style' => 'width: 520px')) ?>
 </div>
 <div class="row">
-    <?php echo ActiveHtml::submitButton('Добавить товар', array('class' => 'btn light_blue', 'onclick' => 'return Purchase.addgood()')); ?>
+  <?php echo ActiveHtml::submitButton('Добавить товар и перейти к закупке', array('class' => 'btn light_blue', 'onclick' => 'return Purchase.addgood(0)')); ?>
+  <?php echo ActiveHtml::submitButton('Добавить товар и приступить к новому', array('class' => 'btn light_blue', 'onclick' => 'return Purchase.addgood(1)')); ?>
 </div>
 <?php $this->endWidget(); ?>
 </div>
