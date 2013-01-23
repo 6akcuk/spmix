@@ -112,6 +112,14 @@ div.tooltip div.tt_text {
     font-weight: bold;
 }
 
+/* Popup Helper */
+div.popup_helper {
+  max-width: 270px;
+}
+div.popup_helper div.tt_text {
+
+}
+
 /* Dropdown */
 div.dropdown {
     display: inline-block;

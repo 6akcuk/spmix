@@ -110,22 +110,42 @@ var Tooltip = {
 $.fn.popupHelp = function(text) {
   this.each(function()
   {
-    var $c = $(this);
+    var $c = $(this), rx, rbx, y, tx, ty, ax, ay;
 
     $c.focus(function() {
-      var $t = $('<div/>').addClass('tooltip')
+      var $t = $('<div/>').addClass('tooltip popup_helper')
           .html('<div class="tt_bg"></div><div class="tt_text">'+ text + '</div>')
           .appendTo('body'),
         $b = $t.find('div.tt_bg');
 
+      rx = $c.offset().left + $c.outerWidth() + 10;
+      rbx = rx + $t.outerWidth() + 10;
+
+      tx = (rbx > $(window).width())
+        ? ($c.offset().left + ($c.outerWidth() - $t.outerWidth()) / 2)
+        : rx;
+      ty = (rbx > $(window).width())
+        ? ($c.offset().top - 10 - $t.outerHeight())
+        : ($c.offset().top + ($c.outerHeight() - $t.outerHeight()) / 2);
+
+      ax = (rbx > $(window).width()) ? tx : tx + 15;
+      ay = (rbx > $(window).width()) ? ty - 15 : ty;
+
       $t.css({
-        top: parseInt($c.offset().top - 10 - $t.outerHeight()),
-        left: parseInt($c.offset().left + ($c.outerWidth() / 2) - ($t.outerWidth() / 2))
+        top: ay,
+        left: ax
       });
+      $t.animate({
+        top: ty,
+        left: tx
+      }, 100);
       $b.css({
         width: $t.find('div.tt_text').outerWidth(),
         height: $t.find('div.tt_text').outerHeight()
       });
+    });
+    $c.blur(function() {
+      $('div.tooltip').remove();
     });
   });
 };

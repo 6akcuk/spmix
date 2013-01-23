@@ -667,25 +667,46 @@ class PurchasesController extends Controller {
                 $result = array();
 
                 if($model->validate() && $model->save()) {
-                    foreach ($_POST['size'] as $idx => $size) {
-                        $colors = $_POST['color'][$idx];
+                  $sizes = explode(";", trim($_POST['sizes']));
+                  $colors = explode(";", trim($_POST['colors']));
 
-                        $grid = new GoodGrid('create');
-                        $grid->purchase_id = $id;
-                        $grid->good_id = $model->good_id;
-                        $grid->size = $size;
-                        $grid->allowed = $_POST['allowed'][$idx];
-                        $grid->colors = json_encode($colors);
-                        $grid->save();
+                  if ($sizes) {
+                    foreach ($sizes as $size) {
+                      $gs = new GoodSize();
+                      $gs->good_id = $model->good_id;
+                      $gs->size = $size;
+                      $gs->save();
                     }
+                  }
 
-                    $image = new GoodImages();
-                    $image->good_id = $model->good_id;
-                    $image->image = $_POST['image'];
-                    $image->save();
+                  if ($colors) {
+                    foreach ($colors as $color) {
+                      $gc = new GoodColor();
+                      $gc->good_id = $model->good_id;
+                      $gc->color = $color;
+                      $gc->save();
+                    }
+                  }
 
-                    $result['success'] = true;
-                    $result['url'] = ($_POST['direction'] == 0) ? '/purchase'. $purchase->purchase_id : '/purchase'. $purchase->purchase_id .'/addgood';
+                  if (trim($_POST['config'])) {
+                    $config = new PurchaseGoodConfig();
+                    $config->purchase_id = $id;
+                    $config->name = trim($_POST['config']);
+                    $config->config = json_encode(array(
+                      'sizes' => trim($_POST['sizes']),
+                      'colors' => trim($_POST['colors']),
+                      'range' => $model->range,
+                    ));
+                    $config->save();
+                  }
+
+                  $image = new GoodImages();
+                  $image->good_id = $model->good_id;
+                  $image->image = $_POST['image'];
+                  $image->save();
+
+                  $result['success'] = true;
+                  $result['url'] = ($_POST['direction'] == 0) ? '/purchase'. $purchase->purchase_id : '/purchase'. $purchase->purchase_id .'/addgood';
                 }
                 else {
                     foreach ($model->getErrors() as $attr => $error) {
@@ -697,10 +718,12 @@ class PurchasesController extends Controller {
                 exit;
             }
 
-            if (Yii::app()->request->isAjaxRequest) {
-                $this->pageHtml = $this->renderPartial('addgood', array('id' => $id, 'purchase' => $purchase, 'model' => $model), true);
-            }
-            else $this->render('addgood', array('id' => $id, 'purchase' => $purchase, 'model' => $model));
+          $configs = PurchaseGoodConfig::model()->findAll('purchase_id = :id', array(':id' => $purchase->purchase_id));
+
+          if (Yii::app()->request->isAjaxRequest) {
+              $this->pageHtml = $this->renderPartial('addgood', array('id' => $id, 'purchase' => $purchase, 'model' => $model, 'configs' => $configs), true);
+          }
+          else $this->render('addgood', array('id' => $id, 'purchase' => $purchase, 'model' => $model, 'configs' => $configs));
         }
         else
             throw new CHttpException(403, 'В доступе отказано');
