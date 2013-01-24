@@ -9,9 +9,9 @@
  * @property integer $good_id
  * @property integer $customer_id
  * @property string $creation_date
- * @property integer $grid_id
- * @property integer $range_id
+ * @property string $size
  * @property string $color
+ * @property integer $range_id
  * @property integer $amount
  * @property string $price
  * @property string $total_price
@@ -63,10 +63,10 @@ class Order extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('purchase_id, good_id, customer_id, amount, price, total_price', 'required', 'on' => 'create'),
-            array('purchase_id, good_id, customer_id, grid_id, amount, price, total_price', 'required', 'on' => 'create_range'),
-            array('purchase_id, good_id, customer_id, amount, price, total_price', 'required', 'on' => 'edit'),
-            array('purchase_id, customer_id, amount, price, total_price', 'required', 'on' => 'quick'),
-			array('purchase_id, good_id, customer_id, grid_id, amount, anonymous', 'numerical', 'integerOnly'=>true),
+      array('purchase_id, good_id, customer_id, amount, price, total_price', 'required', 'on' => 'create_range'),
+      array('purchase_id, good_id, customer_id, amount, price, total_price', 'required', 'on' => 'edit'),
+      array('purchase_id, customer_id, amount, price, total_price', 'required', 'on' => 'quick'),
+			array('purchase_id, good_id, customer_id, range_id, amount, anonymous', 'numerical', 'integerOnly'=>true),
 			array('price, total_price', 'length', 'max'=>10),
 			array('client_comment, org_comment', 'length', 'max'=>200),
 			array('status', 'length', 'max'=>12),
@@ -101,7 +101,7 @@ class Order extends CActiveRecord
 			'good_id' => 'Good',
 			'customer_id' => 'Customer',
 			'creation_date' => 'Creation Date',
-            'grid_id' => 'Размер',
+            'size' => 'Размер',
             'color' => 'Цвет',
 			'amount' => 'Количество',
 			'price' => 'Цена',

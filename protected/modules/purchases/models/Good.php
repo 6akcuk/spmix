@@ -18,6 +18,8 @@
  * @property string $good_delete
  *
  * @property Purchase $purchase
+ * @property array|GoodSize $sizes
+ * @property array|GoodColor $colors
  * @property array $grid
  * @property array $ranges
  * @property GoodImages $image
@@ -92,15 +94,17 @@ class Good extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-            'purchase' => array(self::BELONGS_TO, 'Purchase', 'purchase_id'),
-            'grid' => array(self::HAS_MANY, 'GoodGrid', array('good_id' => 'good_id'), 'order' => 'size'),
-            'ranges' => array(self::HAS_MANY, 'GoodRange', array('good_id' => 'good_id')),
-            'image' => array(self::HAS_ONE, 'GoodImages', array('good_id' => 'good_id')),
-            'images' => array(self::HAS_MANY, 'GoodImages', array('good_id' => 'good_id')),
-            'oic' => array(self::HAS_MANY, 'PurchaseOic', array('purchase_id' => 'purchase_id')),
-            'orders' => array(self::HAS_MANY, 'Order', 'good_id'),
-            'ordersNum' => array(self::STAT, 'Order', 'good_id'),
-            'ordersSum' => array(self::STAT, 'Order', 'good_id', 'select' => 'SUM(total_price)'),
+      'purchase' => array(self::BELONGS_TO, 'Purchase', 'purchase_id'),
+      'sizes' => array(self::HAS_MANY, 'GoodSize', 'good_id'),
+      'colors' => array(self::HAS_MANY, 'GoodColor', 'good_id'),
+      'grid' => array(self::HAS_MANY, 'GoodGrid', array('good_id' => 'good_id'), 'order' => 'size'),
+      'ranges' => array(self::HAS_MANY, 'GoodRange', array('good_id' => 'good_id')),
+      'image' => array(self::HAS_ONE, 'GoodImages', array('good_id' => 'good_id')),
+      'images' => array(self::HAS_MANY, 'GoodImages', array('good_id' => 'good_id')),
+      'oic' => array(self::HAS_MANY, 'PurchaseOic', array('purchase_id' => 'purchase_id')),
+      'orders' => array(self::HAS_MANY, 'Order', 'good_id'),
+      'ordersNum' => array(self::STAT, 'Order', 'good_id'),
+      'ordersSum' => array(self::STAT, 'Order', 'good_id', 'select' => 'SUM(total_price)'),
 		);
 	}
 

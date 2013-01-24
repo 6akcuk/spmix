@@ -1,21 +1,22 @@
 <?php
 
 /**
- * This is the model class for table "good_ranges".
+ * This is the model class for table "range_cols".
  *
- * The followings are the available columns in table 'good_ranges':
+ * The followings are the available columns in table 'range_cols':
+ * @property string $col_id
  * @property string $range_id
- * @property string $good_id
- * @property integer $filled
- *
- * @property array|RangeCol $cols
+ * @property string $order_id
+ * @property integer $owner_id
+ * @property string $size
+ * @property string $color
  */
-class GoodRange extends CActiveRecord
+class RangeCol extends CActiveRecord
 {
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
-	 * @return GoodRange the static model class
+	 * @return RangeCol the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
@@ -27,7 +28,7 @@ class GoodRange extends CActiveRecord
 	 */
 	public function tableName()
 	{
-		return 'good_ranges';
+		return 'range_cols';
 	}
 
 	/**
@@ -38,12 +39,13 @@ class GoodRange extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('good_id, filled', 'required'),
-			array('filled', 'numerical', 'integerOnly'=>true),
-			array('good_id', 'length', 'max'=>10),
+			array('range_id, order_id, owner_id', 'required'),
+			array('owner_id', 'numerical', 'integerOnly'=>true),
+			array('range_id, order_id', 'length', 'max'=>10),
+			array('size, color', 'length', 'max'=>200),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('range_id, good_id, filled', 'safe', 'on'=>'search'),
+			array('col_id, range_id, order_id, owner_id, size, color', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -55,7 +57,6 @@ class GoodRange extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-      'cols' => array(self::HAS_MANY, 'RangeCol', 'range_id'),
 		);
 	}
 
@@ -65,9 +66,12 @@ class GoodRange extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
+			'col_id' => 'Col',
 			'range_id' => 'Range',
-			'good_id' => 'Good',
-			'filled' => 'Filled',
+			'order_id' => 'Order',
+			'owner_id' => 'Owner',
+			'size' => 'Size',
+			'color' => 'Color',
 		);
 	}
 
@@ -82,9 +86,12 @@ class GoodRange extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
+		$criteria->compare('col_id',$this->col_id,true);
 		$criteria->compare('range_id',$this->range_id,true);
-		$criteria->compare('good_id',$this->good_id,true);
-		$criteria->compare('filled',$this->filled);
+		$criteria->compare('order_id',$this->order_id,true);
+		$criteria->compare('owner_id',$this->owner_id);
+		$criteria->compare('size',$this->size,true);
+		$criteria->compare('color',$this->color,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

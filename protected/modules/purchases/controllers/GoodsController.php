@@ -23,11 +23,19 @@ class GoodsController extends Controller {
     }
 
     public function actionOrder($purchase_id, $good_id) {
-        if(isset($_POST['Order']))
-        {
+        //if(isset($_POST['Order']))
+        //{
             /** @var $good Good */
-            $good = Good::model()->with('purchase', 'grid')->findByPk($good_id);
-
+            $good = Good::model()->with(array(
+              'purchase',
+              /*'ranges' => array(
+                'joinType' => 'LEFT JOIN',
+                'condition' => 'ranges.filled = 0',
+              ),
+              'ranges.cols' => array(
+                'joinType' => 'LEFT JOIN',
+              ),*/
+            ))->findByPk($good_id);
             $order = new Order(($good->is_range) ? 'create_range' : 'create');
 
             if (
@@ -41,13 +49,12 @@ class GoodsController extends Controller {
                 )
             )
             {
-                $order->attributes = $_POST['Order'];
+                /*$order->attributes = $_POST['Order'];
                 $order->purchase_id = $purchase_id;
                 $order->good_id = $good_id;
-                $order->color = ($order->grid_id) ? $_POST['color'][$order->grid_id] : '';
                 $order->customer_id = Yii::app()->user->getId();
-                $order->price = $good->price;
-                $price = floatval($good->price) * ($good->purchase->org_tax / 100 + 1);
+                $order->price = $good->price;*/
+                $price = $good->getEndPrice();
 
                 if ($order->oic) {
                     $oic = PurchaseOic::model()->findByPk($order->oic);
@@ -59,22 +66,54 @@ class GoodsController extends Controller {
                 $order->total_price = $price * intval($order->amount);
                 $result = array();
 
-                if($order->validate() && $order->save()) {
-                    $result['success'] = true;
-                    $result['msg'] = Yii::t('purchase', 'Заказ добавлен в список покупок');
-                    $result['url'] = '/orders';
-                }
-                else {
-                    foreach ($order->getErrors() as $attr => $error) {
-                        $result[ActiveHtml::activeId($order, $attr)] = $error;
+                // сохраняем заказ в таблице Заказов
+                //if($order->validate() && $order->save()) {
+                  // если товар имеет ряды, необходимо встать в один из рядов, либо создать новый
+                  // если имеются незаполненные ряды
+                  if ($good->ranges) {
+                    // если ряды имеют одну строку
+                    if (!stristr($good->range, '[rows]')) {
+                      preg_match("'\\[cols\\](.*?)\\[\/cols\\]'si", $good->range, $cols_string);
+                      preg_match_all("'\\[col\\](.*?)\\[\/col\\]'si", $cols_string[1], $cols_arr);
+
+
                     }
-                }
+                  }
+
+              $cols = array();
+              preg_match("'\\[cols\\](.*?)\\[\/cols\\]'si", $good->range, $cols_string);
+              preg_match_all("'\\[col\\](.*?)\\[\/col\\]'si", $cols_string[1], $cols_arr);
+
+              foreach ($cols_arr[1] as $col_data) {
+                preg_match("'\\[size\\](.*?)\\[\/size\\]'si", $col_data, $size);
+                preg_match("'\\[color\\](.*?)\\[\/color\\]'si", $col_data, $color);
+
+                $helper = array();
+                if (isset($size[1])) $helper['size'] = $size[1];
+                if (isset($color[1])) $helper['color'] = $color[1];
+
+                $cols[] = $helper;
+              }
+
+              var_dump($cols);
+              exit;
+
+
+              $result['success'] = true;
+                  $result['msg'] = Yii::t('purchase', 'Заказ добавлен в список покупок');
+                  $result['url'] = '/orders';
+                //}
+                //else {
+                //    foreach ($order->getErrors() as $attr => $error) {
+                //        $result[ActiveHtml::activeId($order, $attr)] = $error;
+                //    }
+                //}
             }
             else $result[''] = '';
 
             echo json_encode($result);
             exit;
-        }
+        //}
     }
 
     public function actionPurchase($purchase_id, $offset = 0) {
@@ -133,7 +172,7 @@ class GoodsController extends Controller {
     }
 
     public function actionShow($purchase_id, $good_id) {
-        $good = Good::model()->with('image', 'grid', 'purchase', 'oic', 'orders', 'orders.customer', 'ordersNum')->findByPk($good_id);
+        $good = Good::model()->with('image', 'sizes', 'colors', 'purchase', 'oic', 'orders', 'orders.customer', 'ordersNum')->findByPk($good_id);
         $orderc = new Order('create');
 
         if (Yii::app()->request->isAjaxRequest) {

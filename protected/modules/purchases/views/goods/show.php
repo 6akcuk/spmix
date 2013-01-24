@@ -3,6 +3,7 @@
  * @var $good Good
  * @var $form ActiveForm
  * @var $oic PurchaseOic
+ * @var $size GoodSize
  * @var $grid GoodGrid
  * @var $order Order
  * @var $range GoodRange
@@ -19,6 +20,21 @@ $dd_sizes = array();
 $dd_colors = array();
 $dd_oic = array();
 
+$ranges = null;
+
+if ($good->sizes) {
+    foreach ($good->sizes as $size) {
+        $dd_sizes[$size->size] = $size->size;
+    }
+}
+
+if ($good->colors) {
+  foreach ($good->colors as $color) {
+    $dd_colors[$color->color] = $color->color;
+  }
+}
+
+/*
 if ($good->grid) {
     foreach ($good->grid as $grid) {
         $colors = json_decode($grid->colors, true);
@@ -36,7 +52,7 @@ if ($good->oic) {
 }
 
 $gridsizes = array();
-/** @var $grid GoodGrid */
+/** @var $grid GoodGrid *//*
 foreach ($good->grid as $grid) {
     $gridsizes[$grid->grid_id] = $grid->size;
 }
@@ -93,7 +109,7 @@ foreach ($good->orders as $order) {
         }
     }
 }
-
+*/
 ?>
 <div class="breadcrumbs">
     <?php echo ActiveHtml::link($good->purchase->name, '/purchase'. $good->purchase_id) ?> &raquo;
@@ -124,16 +140,14 @@ foreach ($good->orders as $order) {
             'id' => 'orderform',
             'action' => $this->createUrl('/good'. $good->purchase_id .'_'. $good->good_id .'/order'),
         )); ?>
-        <?php if ($good->grid): ?>
+        <?php if ($good->sizes): ?>
         <div class="row">
-            <?php echo $form->dropdown($orderc, 'grid_id', $dd_sizes) ?>
+            <?php echo $form->dropdown($orderc, 'size', $dd_sizes) ?>
         </div>
+        <?php endif; ?>
+        <?php if ($good->colors): ?>
         <div class="row">
-        <?php foreach ($dd_colors as $grid_id => $colors): ?>
-            <div id="dd<?php echo $grid_id ?>" rel="colors" class="row" style="display:none">
-                <?php echo ActiveHtml::dropdown('color['. $grid_id .']', 'Цвет', '', $colors) ?>
-            </div>
-        <?php endforeach; ?>
+          <?php echo $form->dropdown($orderc, 'color', $dd_colors) ?>
         </div>
         <?php endif; ?>
         <div class="row">
@@ -233,12 +247,3 @@ foreach ($good->orders as $order) {
         Всего на сумму (без орг.сбора): <b><?php echo ActiveHtml::price($sum) ?></b>
     </div>
 </div>
-<script type="text/javascript">
-$().ready(function() {
-    $('#Order_grid_id').change(switchSize);
-});
-function switchSize() {
-    $('[rel="colors"]').hide();
-    $('#dd'+ $(this).val()).show();
-}
-</script>
