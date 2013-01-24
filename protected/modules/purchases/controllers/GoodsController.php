@@ -84,15 +84,43 @@ class GoodsController extends Controller {
               preg_match("'\\[cols\\](.*?)\\[\/cols\\]'si", $good->range, $cols_string);
               preg_match_all("'\\[col\\](.*?)\\[\/col\\]'si", $cols_string[1], $cols_arr);
 
-              foreach ($cols_arr[1] as $col_data) {
-                preg_match("'\\[size\\](.*?)\\[\/size\\]'si", $col_data, $size);
-                preg_match("'\\[color\\](.*?)\\[\/color\\]'si", $col_data, $color);
+              $ranges = array_fill(0, sizeof($good->ranges), array_fill(0, sizeof($cols_arr[1]), null));
+              $range_idx = 0;
 
-                $helper = array();
-                if (isset($size[1])) $helper['size'] = $size[1];
-                if (isset($color[1])) $helper['color'] = $color[1];
+              /** @var $range GoodRange */
+              foreach ($good->ranges as $idx => $range) {
+                $range_id[$range->range_id] = $idx;
+              }
 
-                $cols[] = $helper;
+              /** @var $range_col RangeCol */
+              foreach ($good->ranges->range_cols as $range_col) {
+                foreach ($cols_arr[1] as $col_idx => $col_data) {
+                  preg_match("'\\[size\\](.*?)\\[\/size\\]'si", $col_data, $size);
+                  preg_match("'\\[color\\](.*?)\\[\/color\\]'si", $col_data, $color);
+
+                  $helper = array();
+                  if (isset($size[1])) $helper['size'] = $size[1];
+                  if (isset($color[1])) $helper['color'] = $color[1];
+
+                  $cols[$col_idx] = $helper;
+                  $range_idx = $range_id[$range_col->range_id];
+
+                  if ($ranges[$range_idx][$col_idx] === null && $size[1] == $range_col->size && $color[1] == $range_col->color) {
+                    $ranges[$range_idx][$col_idx] = $range_col;
+                  }
+                }
+              }
+
+              $added = false;
+
+              foreach ($ranges as $range_idx => $range_cols) {
+                foreach ($range_cols as $col_idx => $range_col) {
+                  if ($order->size == $cols[$col_idx]['size'] && $order->color == $cols[$col_idx]['color'] && $range_col == null) {
+
+
+                    $ranges[$range_idx][$col_idx] = array();
+                  }
+                }
               }
 
               var_dump($cols);
