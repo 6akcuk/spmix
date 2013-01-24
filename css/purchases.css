@@ -465,6 +465,11 @@ table.ordertable td {
     filter: alpha(opacity=80);
 }
 
+/* Add Good */
+#addgoodform .purchase_column input[type="text"], #addgoodform .purchase_column textarea {
+  width: 250px;
+}
+
 /* Acquire */
 .purchase_hider {
     position: absolute;
