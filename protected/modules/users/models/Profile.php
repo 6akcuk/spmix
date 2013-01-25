@@ -55,9 +55,9 @@ class Profile extends CActiveRecord
 		return array(
 			array('user_id, lastname, firstname, middlename, phone, city_id, gender', 'required'),
 			array('user_id, city_id, positive_rep, negative_rep, email_notify, sms_notify', 'numerical', 'integerOnly'=>true),
+      array('photo', 'safe'),
 			array('lastname', 'length', 'max'=>128),
-            array('photo', 'length', 'max'=>255),
-			array('firstname, middlename', 'length', 'max'=>64),
+      array('firstname, middlename', 'length', 'max'=>64),
 			array('phone', 'length', 'max'=>32),
 			array('status, about', 'length', 'max'=>255),
 			array('gender', 'length', 'max'=>6),

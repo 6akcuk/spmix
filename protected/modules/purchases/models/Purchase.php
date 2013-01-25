@@ -81,15 +81,15 @@ class Purchase extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-            array('name, author_id, category_id, city_id, status', 'required', 'on' => 'create'),
-            array('name, author_id, category_id, status, state, min_sum, min_num, org_tax', 'required', 'on' => 'edit_own_notconfirmed'),
-            array('author_id, status, state, min_sum, min_num', 'required', 'on' => 'edit_own_confirmed'),
-            array('mod_confirmation', 'safe', 'on' => 'edit_super_admin, edit_super_moderator'),
+      array('name, author_id, category_id, city_id, status', 'required', 'on' => 'create'),
+      array('name, author_id, category_id, status, state, min_sum, min_num, org_tax', 'required', 'on' => 'edit_own_notconfirmed'),
+      array('author_id, status, state, min_sum, min_num', 'required', 'on' => 'edit_own_confirmed'),
+      array('mod_confirmation', 'safe', 'on' => 'edit_super_admin, edit_super_moderator'),
 
-            array('image, hide_supplier, stop_date', 'safe'),
+      array('image, hide_supplier, stop_date', 'safe'),
 			array('author_id, category_id, city_id, accept_add, min_num, vip, mod_confirmation', 'numerical', 'integerOnly'=>true),
 			array('price_url, message', 'length', 'max'=>255),
-            array('name, supplier_url', 'length', 'max' => 255, 'on' => 'edit_own_notconfirmed, edit_super_admin, edit_super_moderator'),
+      array('name, supplier_url', 'length', 'max' => 255, 'on' => 'edit_own_notconfirmed, edit_super_admin, edit_super_moderator'),
 			array('status', 'length', 'max'=>8),
 			array('state', 'length', 'max'=>16),
 			array('min_sum', 'length', 'max'=>10),
