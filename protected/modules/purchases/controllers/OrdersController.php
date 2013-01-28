@@ -205,7 +205,7 @@ class OrdersController extends Controller {
                 $criteria->addCondition('t.status = :status');
             }
 
-            $orders = Order::model()->with('good', 'customer', 'payment', 'grid')->findAll($criteria);
+            $orders = Order::model()->with('good', 'customer', 'payment')->findAll($criteria);
 
             $this->wideScreen = true;
             if (Yii::app()->request->isAjaxRequest) {

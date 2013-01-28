@@ -68,6 +68,7 @@ class Order extends CActiveRecord
       array('purchase_id, customer_id, amount, price, total_price', 'required', 'on' => 'quick'),
 			array('purchase_id, good_id, customer_id, range_id, amount, anonymous', 'numerical', 'integerOnly'=>true),
 			array('price, total_price', 'length', 'max'=>10),
+      array('size, color', 'length', 'max' => 50),
 			array('client_comment, org_comment', 'length', 'max'=>200),
 			array('status', 'length', 'max'=>12),
 			array('oic', 'length', 'max'=>100),

@@ -10,6 +10,8 @@
  * @property string $size
  * @property integer $allowed
  * @property string $colors
+ *
+ * @property Good $good
  */
 class GoodGrid extends CActiveRecord
 {
@@ -57,6 +59,7 @@ class GoodGrid extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+      'good' => array(self::BELONGS_TO, 'Good', 'good_id'),
 		);
 	}
 

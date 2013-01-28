@@ -18,6 +18,42 @@ class SiteController extends Controller
 
 	}
 
+  public function actionPatch1() {
+    Yii::import('application.modules.purchases.models.*');
+    $grids = GoodGrid::model()->with(array('good' => array('joinType' => 'INNER JOIN')))->findAll();
+
+    $range_clear = array();
+    $ranges = array();
+
+    /** @var $grid GoodGrid */
+    foreach ($grids as $grid) {
+      $colors = json_decode($grid->colors, true);
+
+      $size = new GoodSize();
+      $size->good_id = $grid->good_id;
+      $size->size = $grid->size;
+      if (!$size->save()) continue;
+
+      if ($grid->good->is_range) $ranges[$grid->good_id][] = '[col][size]'. $grid->size .'[/size][/col]';
+
+      foreach ($colors as $color) {
+        $clr = new GoodColor();
+        $clr->color = $color;
+        $clr->good_id = $grid->good_id;
+        $clr->save();
+      }
+
+      $grid->delete();
+    }
+
+    foreach ($ranges as $good_id => $sizes) {
+      /** @var $good Good */
+      $good = Good::model()->findByPk($good_id);
+      $good->range = '[cols]'. implode('', $sizes) .'[/cols]';
+      $good->save(true, array('range'));
+    }
+  }
+
 	public function actionIndex()
 	{
         if (!Yii::app()->user->getIsGuest()) {

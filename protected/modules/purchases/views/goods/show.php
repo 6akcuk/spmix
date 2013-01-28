@@ -6,6 +6,7 @@
  * @var $size GoodSize
  * @var $grid GoodGrid
  * @var $order Order
+ * @var $item Order
  * @var $range GoodRange
  */
 
@@ -19,8 +20,6 @@ $this->pageTitle = Yii::app()->name .' - '. $good->purchase->name .' - '. $good-
 $dd_sizes = array();
 $dd_colors = array();
 $dd_oic = array();
-
-$ranges = null;
 
 if ($good->sizes) {
     foreach ($good->sizes as $size) {
@@ -133,6 +132,8 @@ foreach ($good->orders as $order) {
             <div class="text">Просмотреть <?php echo Yii::t('app', 'фотографию|все {n} фотографии|все {n} фотографий', $images_num) ?></div>
         </div>
     </a>
+    <?php else: ?>
+      <span>Фотография отсутствует</span>
     <?php endif; ?>
     </div>
     <div class="left td">
@@ -195,24 +196,25 @@ foreach ($good->orders as $order) {
         <thead>
         <tr>
             <td>Строки/Столбцы</td>
-            <?php foreach ($good->grid as $grid): ?>
-            <?php for($i=1; $i<=$grid->allowed; $i++): ?>
-            <td><?php echo $grid->size ?></td>
-            <?php endfor; ?>
+            <?php foreach ($struct as $col): ?>
+            <td>
+              <?php echo (isset($col['size'])) ? 'Размер ('. $col['size'] .')' : '' ?>
+              <?php echo (isset($col['color'])) ? 'Цвет ('. $col['color'] .')' : '' ?>
+            </td>
             <?php endforeach; ?>
             <td>Собран</td>
         </tr>
         </thead>
         <tbody>
         <?php if ($ranges): ?>
-        <?php foreach ($ranges as $range => $sizes): ?>
+        <?php foreach ($ranges as $range => $range_data): ?>
         <?php $filled = 0; ?>
         <tr>
-            <td>Ряд <?php echo $range ?></td>
-            <?php foreach ($sizes as $size): ?>
-            <td><?php if ($size[1]) { echo ($size[1]->anonymous) ? 'анонимно' : ActiveHtml::link($size[1]->customer->login, '/id'. $size[1]->customer_id); $filled++; } ?></td>
+            <td>Ряд <?php echo $range ?> <?php echo $range_data['tag'] ?></td>
+            <?php foreach ($range_data['items'] as $item): ?>
+            <td><?php if ($item) { echo ($item->anonymous) ? 'анонимно' : ActiveHtml::link($item->customer->login, '/id'. $item->customer_id); $filled++; } ?></td>
             <?php endforeach; ?>
-            <td><?php echo ($filled == sizeof($sizes)) ? 'Да' : 'Нет'; ?></td>
+            <td><?php echo ($filled == sizeof($range_data['items'])) ? 'Да' : 'Нет'; ?></td>
         </tr>
         <?php endforeach; ?>
         <?php endif; ?>
@@ -234,7 +236,7 @@ foreach ($good->orders as $order) {
         <tr>
             <td><?php echo $order->order_id ?></td><td><?php echo ActiveHtml::date($order->creation_date, false, true) ?></td>
             <td><?php echo ($order->anonymous) ? 'анонимно' : ActiveHtml::link($order->customer->login, '/id'. $order->customer_id) ?></td>
-            <td><?php echo ($order->grid) ? $order->grid->size : '' ?></td>
+            <td><?php echo $order->size ?></td>
             <td><?php echo $order->color ?></td><td><?php echo ActiveHtml::price($order->price); $sum += $order->price ?></td>
             <td><?php echo $order->amount ?></td><td><?php echo ActiveHtml::price($order->total_price) ?></td>
         </tr>

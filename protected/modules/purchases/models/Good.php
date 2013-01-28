@@ -137,4 +137,113 @@ class Good extends CActiveRecord
     {
         return GoodImages::model()->count('good_id = :good_id', array(':good_id' => $this->good_id));
     }
+
+  /**
+   * @return array
+   */
+  public function getRangeStructure() {
+    $structure = array();
+
+    if ($this->is_range) {
+      preg_match("'\\[cols\\](.*?)\\[\/cols\\]'si", $this->range, $cols_string);
+      preg_match_all("'\\[col\\](.*?)\\[\/col\\]'si", $cols_string[1], $cols_arr);
+
+      foreach ($cols_arr[1] as $col) {
+        preg_match("'\\[size\\](.*?)\\[\/size\\]'si", $col, $size);
+        preg_match("'\\[color\\](.*?)\\[\/color\\]'si", $col, $color);
+
+        $helper = array();
+        if (isset($size[1])) $helper['size'] = $size[1];
+        if (isset($color[1])) $helper['color'] = $color[1];
+
+        $structure[] = $helper;
+      }
+    }
+
+    return $structure;
+  }
+
+  /**
+   * Построить ряды на основе сделанных заказов
+   *
+   * @return null|array
+   */
+  public function buildRanges() {
+    $ranges = null;
+    $cur_range_length = 1;
+    $struct = $this->getRangeStructure();
+
+    if ($this->is_range) {
+      // если ряды имеют одну строку
+      if (!stristr($this->range, '[rows]')) {
+        if ($this->orders) {
+          /** @var $order Order */
+          foreach ($this->orders as $order) {
+            for ($i=1; $i<=$order->amount; $i++) {
+              $added = false;
+
+              if ($ranges === null) {
+                $ranges[$cur_range_length] = array('tag' => '', 'items' => array());
+
+                foreach ($struct as $col) {
+                  if (!$added &&
+                    (!isset($col['size']) || (isset($col['size']) && $col['size'] == $order->size)) &&
+                    (!isset($col['color']) || (isset($col['color']) && $col['color'] == $order->color))
+                  ) {
+                    $added = true;
+                    $o = $order;
+                  }
+                  else $o = null;
+
+                  $ranges[$cur_range_length]['items'][] = $o;
+                }
+
+                $cur_range_length++;
+                continue;
+              }
+              else {
+                foreach ($ranges as $range => &$range_data) {
+                  foreach ($range_data['items'] as $idx => &$item) {
+                    $col = $struct[$idx];
+
+                    if ($item == null &&
+                      (!isset($col['size']) || (isset($col['size']) && $col['size'] == $order->size)) &&
+                      (!isset($col['color']) || (isset($col['color']) && $col['color'] == $order->color))
+                    ) {
+                      $item = $order;
+
+                      $added = true;
+                      break 2;
+                    }
+                  }
+                }
+              }
+
+              if (!$added) {
+                $ranges[$cur_range_length] = array('tag' => '', 'items' => array());
+
+                foreach ($struct as $col) {
+                  if (!$added &&
+                    (!isset($col['size']) || (isset($col['size']) && $col['size'] == $order->size)) &&
+                    (!isset($col['color']) || (isset($col['color']) && $col['color'] == $order->color))
+                  ) {
+                    $added = true;
+                    $o = $order;
+                  }
+                  else $o = null;
+
+                  $ranges[$cur_range_length]['items'][] = $o;
+                }
+
+                $cur_range_length++;
+                continue;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return $ranges;
+  }
 }

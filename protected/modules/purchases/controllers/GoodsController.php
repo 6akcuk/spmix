@@ -23,8 +23,8 @@ class GoodsController extends Controller {
     }
 
     public function actionOrder($purchase_id, $good_id) {
-        //if(isset($_POST['Order']))
-        //{
+        if(isset($_POST['Order']))
+        {
             /** @var $good Good */
             $good = Good::model()->with(array(
               'purchase',
@@ -49,11 +49,11 @@ class GoodsController extends Controller {
                 )
             )
             {
-                /*$order->attributes = $_POST['Order'];
+                $order->attributes = $_POST['Order'];
                 $order->purchase_id = $purchase_id;
                 $order->good_id = $good_id;
                 $order->customer_id = Yii::app()->user->getId();
-                $order->price = $good->price;*/
+                $order->price = $good->price;
                 $price = $good->getEndPrice();
 
                 if ($order->oic) {
@@ -67,81 +67,27 @@ class GoodsController extends Controller {
                 $result = array();
 
                 // сохраняем заказ в таблице Заказов
-                //if($order->validate() && $order->save()) {
+                if($order->validate() && $order->save()) {
                   // если товар имеет ряды, необходимо встать в один из рядов, либо создать новый
                   // если имеются незаполненные ряды
-                  if ($good->ranges) {
-                    // если ряды имеют одну строку
-                    if (!stristr($good->range, '[rows]')) {
-                      preg_match("'\\[cols\\](.*?)\\[\/cols\\]'si", $good->range, $cols_string);
-                      preg_match_all("'\\[col\\](.*?)\\[\/col\\]'si", $cols_string[1], $cols_arr);
 
-
-                    }
-                  }
-
-              $cols = array();
-              preg_match("'\\[cols\\](.*?)\\[\/cols\\]'si", $good->range, $cols_string);
-              preg_match_all("'\\[col\\](.*?)\\[\/col\\]'si", $cols_string[1], $cols_arr);
-
-              $ranges = array_fill(0, sizeof($good->ranges), array_fill(0, sizeof($cols_arr[1]), null));
-              $range_idx = 0;
-
-              /** @var $range GoodRange */
-              foreach ($good->ranges as $idx => $range) {
-                $range_id[$range->range_id] = $idx;
-              }
-
-              /** @var $range_col RangeCol */
-              foreach ($good->ranges->range_cols as $range_col) {
-                foreach ($cols_arr[1] as $col_idx => $col_data) {
-                  preg_match("'\\[size\\](.*?)\\[\/size\\]'si", $col_data, $size);
-                  preg_match("'\\[color\\](.*?)\\[\/color\\]'si", $col_data, $color);
-
-                  $helper = array();
-                  if (isset($size[1])) $helper['size'] = $size[1];
-                  if (isset($color[1])) $helper['color'] = $color[1];
-
-                  $cols[$col_idx] = $helper;
-                  $range_idx = $range_id[$range_col->range_id];
-
-                  if ($ranges[$range_idx][$col_idx] === null && $size[1] == $range_col->size && $color[1] == $range_col->color) {
-                    $ranges[$range_idx][$col_idx] = $range_col;
-                  }
-                }
-              }
-
-              $added = false;
-
-              foreach ($ranges as $range_idx => $range_cols) {
-                foreach ($range_cols as $col_idx => $range_col) {
-                  if ($order->size == $cols[$col_idx]['size'] && $order->color == $cols[$col_idx]['color'] && $range_col == null) {
-
-
-                    $ranges[$range_idx][$col_idx] = array();
-                  }
-                }
-              }
-
-              var_dump($cols);
-              exit;
-
-
-              $result['success'] = true;
+                  $result['success'] = true;
                   $result['msg'] = Yii::t('purchase', 'Заказ добавлен в список покупок');
                   $result['url'] = '/orders';
-                //}
-                //else {
-                //    foreach ($order->getErrors() as $attr => $error) {
-                //        $result[ActiveHtml::activeId($order, $attr)] = $error;
-                //    }
-                //}
+                }
+                else {
+                    foreach ($order->getErrors() as $attr => $error) {
+                        $result[ActiveHtml::activeId($order, $attr)] = $error;
+                    }
+                }
             }
             else $result[''] = '';
 
             echo json_encode($result);
             exit;
-        //}
+        }
+      else
+        throw new CHttpException(500, 'Неверный запрос');
     }
 
     public function actionPurchase($purchase_id, $offset = 0) {
@@ -200,13 +146,17 @@ class GoodsController extends Controller {
     }
 
     public function actionShow($purchase_id, $good_id) {
-        $good = Good::model()->with('image', 'sizes', 'colors', 'purchase', 'oic', 'orders', 'orders.customer', 'ordersNum')->findByPk($good_id);
-        $orderc = new Order('create');
+      /** @var $good Good */
+      $good = Good::model()->with('image', 'sizes', 'colors', 'purchase', 'oic', 'orders', 'orders.customer', 'ordersNum')->findByPk($good_id);
+      $orderc = new Order('create');
 
-        if (Yii::app()->request->isAjaxRequest) {
-            $this->pageHtml = $this->renderPartial('show', array('good' => $good, 'orderc' => $orderc), true);
-        }
-        else $this->render('show', array('good' => $good, 'orderc' => $orderc));
+      $ranges = $good->buildRanges();
+      $struct = $good->getRangeStructure();
+
+      if (Yii::app()->request->isAjaxRequest) {
+          $this->pageHtml = $this->renderPartial('show', array('good' => $good, 'orderc' => $orderc, 'struct' => $struct, 'ranges' => $ranges), true);
+      }
+      else $this->render('show', array('good' => $good, 'orderc' => $orderc, 'struct' => $struct, 'ranges' => $ranges));
     }
 
     public function actionEdit($purchase_id, $good_id) {
@@ -215,7 +165,7 @@ class GoodsController extends Controller {
         if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
             Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('purchase' => $purchase)))
         {
-            $good = Good::model()->with('grid', 'images')->findByPk($good_id);
+            $good = Good::model()->with('images', 'sizes', 'colors')->findByPk($good_id);
 
             if (isset($_POST['Good'])) {
                 $good->attributes=$_POST['Good'];
@@ -270,10 +220,12 @@ class GoodsController extends Controller {
                 exit;
             }
 
-            if (Yii::app()->request->isAjaxRequest) {
-                $this->pageHtml = $this->renderPartial('edit', array('purchase' => $purchase, 'good' => $good), true);
-            }
-            else $this->render('edit', array('purchase' => $purchase, 'good' => $good));
+          $configs = PurchaseGoodConfig::model()->findAll('purchase_id = :id', array(':id' => $purchase->purchase_id));
+
+          if (Yii::app()->request->isAjaxRequest) {
+              $this->pageHtml = $this->renderPartial('edit', array('purchase' => $purchase, 'good' => $good, 'configs' => $configs), true);
+          }
+          else $this->render('edit', array('purchase' => $purchase, 'good' => $good, 'configs' => $configs));
         }
         else
             throw new CHttpException(403, 'В доступе отказано');
