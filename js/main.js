@@ -19,6 +19,18 @@ function updPurchaseCounter(num) {
     updMenuCounter('#ac_purchase_link', '/purchases/acquire', num);
 }
 
+function showGlobalPrg() {
+  var $gp = $('#global_progress');
+  $gp.show();
+  $gp.css({
+    top: ($(window).height() - $gp.height()) / 3,
+    left: ($(window).width() - $gp.width()) / 2
+  });
+}
+function hideGlobalPrg() {
+  $('#global_progress').hide();
+}
+
 $().ready(function() {
     $('#cur_city').change(function() {
         ajax.post('/setcity', {city_id: $(this).val()}, function(r) {

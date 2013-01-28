@@ -37,7 +37,8 @@ $cookies = $request->getCookies();
 </div>
 <div id="global_progress_bg"></div>
 <div id="global_progress" class="fixed">
-    <img src="<?php echo Yii::app()->request->baseUrl; ?>/images/2.gif" alt="" />
+  <div class="loader"></div>
+  <div class="back"></div>
 </div>
 
 <div class="fixed pv_dark" id="layout_bg" style="display: none;"></div>

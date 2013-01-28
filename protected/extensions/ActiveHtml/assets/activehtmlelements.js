@@ -901,26 +901,96 @@ $.fn.tabs = function()
 /* Boxes */
 var _box_guid = 0;
 var _bq = {
-    _boxes: [],
-    curBox: 0
+  _guids: [],
+  _boxes: [],
+  curBox: 0,
+
+  hideAll: function() {
+
+  },
+
+  hideLast: function() {
+    if (_bq.count()) {
+      var box = _bq._boxes[_bq._guids[_bq.count() - 1]];
+      if (_bq.skip) {
+        _bq.skip = false;
+        return;
+      }
+      box.hide();
+    }
+  },
+
+  count: function() {
+    return _bq._guids.length;
+  },
+  _showLayer: function() {
+    $(document.body).css({
+      overflow: 'hidden',
+      cursor: 'default'
+    });
+
+    A.boxLayerWrap.show().css({
+      width: $(window).width(),
+      height: $(window).height()
+    });
+    A.boxLayerBG.show().css({
+      height: $(window).height()
+    });
+  },
+  _hideLayer: function() {
+    $('body').css({
+      overflow: 'auto'
+    });
+
+    A.boxLayerBG.hide();
+    A.boxLayerWrap.hide();
+  },
+  _show: function(guid) {
+    var box = _bq._boxes[guid];
+    if (!box) return;
+    _bq._showLayer();
+    if (_bq.count()) _bq._boxes[_bq._guids[_bq.count() - 1]].hide();
+    _bq.curBox = guid;
+    box._show();
+    _bq._guids.push(guid);
+  },
+  _hide: function(guid) {
+    var box = _bq._boxes[guid];
+    if (!box || _bq._guids[_bq.count() - 1] != guid || !box.isVisible()) return;
+    _bq._guids.pop();
+    box._hide();
+    if (_bq.count()) {
+      var prev_guid = _bq._guids[_bq.count() - 1];
+      _bq.curBox = prev_guid;
+      _bq._boxes[prev_guid]._show();
+    }
+    else _bq._hideLayer();
+  }
 };
+
+function boxRefreshCoords(cont) {
+  cont.css('marginTop', Math.max(10, $(window).scrollTop() + ($(window).height() - cont.outerHeight()) / 3));
+}
 
 function Box(opts, dark) {
     var defaults = {
-        title: false,
-        width: 410,
-        height: 'auto',
-        progress: false,
-        hideButtons: false,
-        hideOnBGClick: false,
-        onShow: false,
-        onHide: false
+      bodyStyle: '',
+      title: false,
+      width: 410,
+      height: 'auto',
+      selfDestruct: true,
+      progress: false,
+      hideButtons: false,
+      hideOnBGClick: false,
+      onShow: false,
+      onHide: false
     };
 
     opts = $.extend(defaults, opts);
 
     var boxContainer, boxBG, boxLayout;
     var boxTitleWrap, boxTitle, boxCloseButton, boxBody;
+    var boxControlsWrap, boxControls, boxProgress, boxControlsText;
     var guid = _box_guid++, visible = false;
 
     if (!opts.progress) opts.progress = 'box_progress'+ guid;
@@ -931,14 +1001,120 @@ function Box(opts, dark) {
     boxContainer.html('\
 <div class="box_layout" onclick="_bq.skip=true;">\
 <div class="box_title_wrap"><div class="box_x_button">'+(dark ? 'Закрыть' : '')+'</div><div class="box_title"></div></div>\
-<div class="box_body" style="' + options.bodyStyle + '"></div>\
+<div class="box_body" style="' + opts.bodyStyle + '"></div>\
 <div class="box_controls_wrap"' + controlsStyle + '><div class="box_controls">\
 <table cellspacing="0" cellpadding="0" class="fl_r"><tr></tr></table>\
-<div class="progress" id="' + options.progress + '"></div>\
+<div class="progress" id="' + opts.progress + '"></div>\
 <div class="box_controls_text"></div>\
 </div></div>\
 </div>');
     boxContainer.hide();
+
+  boxLayout = boxContainer.children().first();
+  boxTitleWrap = boxLayout.children().first();
+  boxCloseButton = boxTitleWrap.children().first();
+  boxTitle = boxCloseButton.next();
+
+  if (opts.noCloseButton) boxCloseButton.hide();
+
+  boxBody = boxTitleWrap.next();
+
+  boxControlsWrap = boxBody.next();
+  boxControls = boxControlsWrap.children(':first-child');
+  boxProgress = boxControls.next();
+  boxControlsText = boxProgress.next();
+
+  if (!A.boxLayerBG) A.boxLayerBG = $('#layout_bg');
+  if (!A.boxLayerWrap) A.boxLayerWrap = $('#layout_wrap');
+  if (!A.boxLayer) A.boxLayer = $('#layout');
+  boxContainer.appendTo(A.boxLayer);
+
+  refreshBox();
+  boxRefreshCoords(boxContainer);
+
+  function refreshBox() {
+    if (opts.title) {
+      boxTitle.html(opts.title);
+      boxBody.removeClass('box_no_title');
+      boxTitleWrap.show();
+    }
+    else {
+      boxBody.addClass('box_no_title');
+      boxTitleWrap.hide();
+    }
+
+    boxContainer.css({width: opts.width, height: opts.height});
+  }
+
+  var destroyMe = function() {
+    boxContainer.remove();
+    delete _bq._boxes[guid];
+  }
+
+  var hideMe = function() {
+    if (!visible) return;
+    visible = false;
+
+    if (opts.selfDestruct) destroyMe();
+    else boxContainer.hide();
+
+    if ($.isFunction(opts.onHide)) opts.onHide();
+  }
+
+  var showMe = function() {
+    if (visible || !_bq._boxes[guid]) return;
+    visible = true;
+
+    boxContainer.show();
+    boxRefreshCoords(boxContainer);
+    if ($.isFunction(opts.onShow)) opts.onShow();
+  }
+
+  boxCloseButton.click(_bq.hideLast);
+
+  var retBox = _bq._boxes[guid] = {
+    guid: guid,
+    _show: showMe,
+    _hide: hideMe,
+
+    bodyNode: boxBody,
+
+    show: function() {
+      _bq._show(guid);
+      return this;
+    },
+    progress: boxProgress,
+    showProgress: function() {
+      boxControlsText.hide();
+      boxProgress.show();
+    },
+    hideProgress: function() {
+      boxControlsText.show();
+      boxProgress.hide();
+    },
+
+    hide: function() {
+      _bq._hide(guid);
+      return this;
+    },
+
+    isVisible: function() {
+      return visible;
+    },
+    bodyHeight: function() {
+      return boxBody.height();
+    },
+
+    content: function(html) {
+      boxBody.html(html);
+      boxRefreshCoords(boxContainer);
+      refreshBox();
+      return this;
+    },
+
+    destroy: destroyMe
+  };
+  return retBox;
 }
 
 /* Simple Field Add/Remove */
@@ -1435,6 +1611,8 @@ var nav = {
                 where.params = '';
             }
 
+            if (opts.box) where.params += (where.params) ? '&box_request=1' : 'box_request=1';
+
             if (nav.request) {
                 clearTimeout(nav._tmPage);
                 nav.request.abort();
@@ -1445,7 +1623,11 @@ var nav = {
                 url: where.url,
                 data: where.params
             });
-            $('body').addClass('progress');
+
+            if (!opts.box) $('body').addClass('progress');
+            else {
+              showGlobalPrg();
+            }
 
             nav.request.done(function(response, status, xhr) {
                 if (response.guest && A.user_id > 0) {
@@ -1453,10 +1635,10 @@ var nav = {
                     return;
                 }
 
-                nav.curLoc = loc;
-                location.hash = loc;
+                nav.curLoc = (!opts.box) ? loc : nav.curLoc + '?z='+ loc.replace(/\//, '');
+                location.hash = (!opts.box) ? loc : nav.curLoc;
 
-                $('body').removeClass('progress');
+                (!opts.box) ? $('body').removeClass('progress') : hideGlobalPrg();
                 clearTimeout(nav._tmPage);
                 nav.request = null;
 
@@ -1471,24 +1653,31 @@ var nav = {
 
                 //logger.showAll();
 
-                $('title').html(response.title);
-                $(opts.container).html(response.html);
-                if (response.widescreen) {
-                    $('#sidebar').hide();
-                    $('#content').removeClass('largecolumn');
+                if (!opts.box) {
+                  $('title').html(response.title);
+                  $(opts.container).html(response.html);
+                  if (response.widescreen) {
+                      $('#sidebar').hide();
+                      $('#content').removeClass('largecolumn');
+                  }
+                  else {
+                      if (!$('#content').hasClass('wrap') && !$('#content').hasClass('largecolumn')) {
+                          $('#sidebar').show();
+                          $('#content').addClass('largecolumn');
+                      }
+                  }
+
+                  if (!loc.match(/im\?sel=(\d+)/i)) {
+                      $('body').removeClass('im_fixed');
+                      $('#page_layout').css({marginTop: 0});
+
+                      if (typeof Im !== "undefined") Im.stopPeer();
+                  }
                 }
                 else {
-                    if (!$('#content').hasClass('wrap') && !$('#content').hasClass('largecolumn')) {
-                        $('#sidebar').show();
-                        $('#content').addClass('largecolumn');
-                    }
-                }
-
-                if (!loc.match(/im\?sel=(\d+)/i)) {
-                    $('body').removeClass('im_fixed');
-                    $('#page_layout').css({marginTop: 0});
-
-                    if (typeof Im !== "undefined") Im.stopPeer();
+                  var box = Box({hideButtons: true});
+                  box.content(response.html);
+                  box.show();
                 }
 
                 $('#content').trigger('contentChanged');

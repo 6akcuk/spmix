@@ -50,7 +50,7 @@ $this->pageTitle = $title;
         </div>
         <?php if ($userinfo->id != Yii::app()->user->getId()): ?>
         <div class="module profile-socials">
-            <?php echo ActiveHtml::link('Отправить сообщение', '/write'. $userinfo->id, array('class' => 'button')) ?>
+            <?php echo ActiveHtml::link('Отправить сообщение', '/write'. $userinfo->id, array('class' => 'button', 'nav' => array('box' => 1))) ?>
         <?php $relationship = $userinfo->profile->getProfileRelation(); ?>
             <?php
                 if ($relationship == null ||

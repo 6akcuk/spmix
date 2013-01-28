@@ -73,6 +73,7 @@ class Order extends CActiveRecord
 			array('status', 'length', 'max'=>12),
 			array('oic', 'length', 'max'=>100),
 	    );
+
 	}
 
 	/**
