@@ -31,6 +31,59 @@
     width: 480px;
 }
 
+/* Mail Box */
+#mail_box_topic_wrap {
+  background: #508033;
+  padding: 10px 10px 11px;
+  position: relative;
+  overflow: hidden;
+}
+#mail_box_topic {
+  color: #fff;
+  padding: 7px 16px;
+  margin-left: 26px;
+  font-weight: bold;
+  font-size: 1.09em;
+}
+#mail_box_ava {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  margin-top: -1px;
+}
+.mail_box_close {
+  padding: 17px 26px 18px;
+  margin: -10px -10px -11px;
+  color: #c7d7e9;
+  transition: color 100ms linear;
+}
+.mail_box_close:hover {
+  color: #fff;
+}
+
+.mail_box_cont {
+  padding: 26px;
+  background: #f7f7f7;
+}
+.mail_box_label {
+  line-height: 1.27em;
+  padding: 26px 0px 9px;
+  margin: 0px;
+  font-weight: bold;
+  font-size: 1.09em;
+  color: #508033;
+}
+#mail_box_label_to_header {
+  padding-top: 0px;
+}
+.mail_box_text_wrap {
+  margin-bottom: 10px;
+}
+
+.mail_box_cont textarea {
+  width: 431px;
+}
+
 /* Fixing Content */
 .im_fixed {
     overflow-x: hidden;
@@ -549,6 +602,23 @@ a.im_date_link {
 .im_add_row .im_log_date .im_log_date_error {
     display: inline;
     color: #800;
+}
+
+/* Ava */
+.wdd_img_full, .wdd_img_half, .wdd_img_tiny, .wdd_img {
+  border-radius: 2px;
+}
+.wdd_img_full, .wdd_img_half, .wdd_img_tiny {
+  overflow: hidden;
+  display: block;
+  width: 50px;
+  height: 50px;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+#mail_box_ava .wdd_img_full, #mail_box_ava .wdd_img_half, #mail_box_ava .wdd_img_tiny {
+  width: 32px;
+  height: 32px;
 }
 
 /* Attaches */

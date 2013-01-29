@@ -919,6 +919,9 @@ var _bq = {
       box.hide();
     }
   },
+  hideBGClick: function(e) {
+    _bq.hideLast();
+  },
 
   count: function() {
     return _bq._guids.length;
@@ -932,18 +935,18 @@ var _bq = {
     A.boxLayerWrap.show().css({
       width: $(window).width(),
       height: $(window).height()
-    });
+    }).bind('click', _bq.hideBGClick);
     A.boxLayerBG.show().css({
       height: $(window).height()
-    });
+    }).bind('click', _bq.hideBGClick);
   },
   _hideLayer: function() {
     $('body').css({
       overflow: 'auto'
     });
 
-    A.boxLayerBG.hide();
-    A.boxLayerWrap.hide();
+    A.boxLayerBG.hide().unbind('click', _bq.hideBGClick);
+    A.boxLayerWrap.hide().unbind('click', _bq.hideBGClick);
   },
   _show: function(guid) {
     var box = _bq._boxes[guid];
@@ -968,8 +971,12 @@ var _bq = {
   }
 };
 
+function curBox() {
+  return _bq._boxes[_bq.curBox];
+}
+
 function boxRefreshCoords(cont) {
-  cont.css('marginTop', Math.max(10, $(window).scrollTop() + ($(window).height() - cont.outerHeight()) / 3));
+  cont.css('marginTop', Math.max(10, ($(window).height() - cont.outerHeight()) / 3));
 }
 
 function Box(opts, dark) {
@@ -1601,6 +1608,11 @@ var nav = {
                 if (!todo) return false;
             }
 
+            if (loc.match(/\?z=/i)) {
+              loc = loc.match(/\?z=(.*)/i)[1];
+              opts.box = true;
+            }
+
             var where = loc.split('?');
             if (where[1]) {
                 where.url = loc;
@@ -1635,7 +1647,7 @@ var nav = {
                     return;
                 }
 
-                nav.curLoc = (!opts.box) ? loc : nav.curLoc + '?z='+ loc.replace(/\//, '');
+                nav.curLoc = (!opts.box) ? loc : nav.curLoc.replace(/\?z=.*/, '') + '?z='+ loc.replace(/\//, '');
                 location.hash = (!opts.box) ? loc : nav.curLoc;
 
                 (!opts.box) ? $('body').removeClass('progress') : hideGlobalPrg();
@@ -1675,7 +1687,11 @@ var nav = {
                   }
                 }
                 else {
-                  var box = Box({hideButtons: true});
+                  var z = location.hash.match(/\?z=(.*)/i)[1], width = 410;
+
+                  if (z.match(/write/)) width = 502;
+
+                  var box = Box({hideButtons: true, bodyStyle: 'padding:0px;border:0px', width: width});
                   box.content(response.html);
                   box.show();
                 }
@@ -1683,14 +1699,16 @@ var nav = {
                 $('#content').trigger('contentChanged');
             });
             nav.request.fail(function(xhr, textStatus, errorThrown) {
+              try {
                 var r = $.parseJSON(xhr.responseText);
+              } catch(e) {}
 
                 if (r && r.guest && A.user_id > 0) {
                     location.href = A.host;
                     return;
                 }
 
-                $('body').removeClass('progress');
+              (!opts.box) ? $('body').removeClass('progress') : hideGlobalPrg();
                 clearTimeout(nav._tmPage);
                 nav.request = null;
 
@@ -1702,7 +1720,7 @@ var nav = {
                         ajex.show('Страница не найдена');
                         break;
                     case 500:
-                        ajex.show('Ошибка: '+ (r.html) ? r.html : xhr.responseText);
+                        ajex.show('Ошибка: '+ (r && r.html) ? r.html : xhr.responseText);
                         break;
                     default:
                         ajex.show('Ошибка связи с сервером. Перезагрузите страницу, нажав <b>F5</b>. '+ xhr.responseText);
@@ -1713,7 +1731,7 @@ var nav = {
             nav._tmPage = setTimeout(function() {
                 //$.jGrowl('Соединение с сервером разорвано, перезагрузите страницу', {theme: 'danger'});
                 ajex.show('Соединение с сервером потеряно, попробуйте заново');
-                $('body').removeClass('progress');
+              (!opts.box) ? $('body').removeClass('progress') : hideGlobalPrg();
                 nav.request.abort();
                 nav.request = null;
             }, 30000);
@@ -1729,14 +1747,17 @@ var nav = {
         var loc = location.hash.replace(/^#/i, '');
         if (loc == nav.curLoc) return;
         if (loc != '' && !loc.match(/^\//i)) return;
-        if (loc == '') return;
+        if (loc == '') {
+          location.hash = nav.curLoc;
+          return;
+        }
 
         nav.curLoc = loc;
         nav.go(loc);
     },
 
     init: function() {
-        nav.curLoc = location.pathname;//.replace(/^\/{1}/i, '');
+        nav.curLoc = location.pathname + location.search;//.replace(/^\/{1}/i, '');
         clearInterval(nav._ivCheck);
         nav._ivCheck = setInterval(nav.check, 200);
     }
@@ -1808,7 +1829,7 @@ var ajax = {
 };
 nav.init();
 
-var cur = [];
+var cur = [], domReady = false;
 window['cur'] = cur;
 
 /* DOM ready */
@@ -1908,7 +1929,12 @@ $().ready(function() {
         cur = {};
     });
 
-    $(window).resize();
+  $(window).resize();
+  if (!domReady && nav.curLoc.match(/\?z=/)) {
+    nav.go(nav.curLoc, null);
+  }
+
+  domReady = true;
 });
 
 try {stmgr.loaded('activehtmlelements.js');}catch(e){}

@@ -71,7 +71,7 @@ class DefaultController extends Controller
         $guest = ($id) ? User::model()->with('profile', 'profile.city')->findByPk($id) : null;
 
         if (Yii::app()->request->isAjaxRequest) {
-            $this->pageHtml = $this->renderPartial('create', array('friends' => $friends, 'guest' => $guest), true);
+            $this->pageHtml = $this->renderPartial((isset($_POST['box_request'])) ? 'create_box' : 'create', array('friends' => $friends, 'guest' => $guest), true);
         }
         else $this->render('create', array('friends' => $friends, 'guest' => $guest));
     }
