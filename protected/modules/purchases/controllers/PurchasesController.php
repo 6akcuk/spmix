@@ -728,4 +728,53 @@ class PurchasesController extends Controller {
         else
             throw new CHttpException(403, 'В доступе отказано');
     }
+
+  public function actionSiteList($offset = 0) {
+    $model = new SiteList();
+
+    if (isset($_POST['SiteList'])) {
+      $result = array();
+
+      $model->attributes = $_POST['SiteList'];
+      if (Yii::app()->user->checkAccess('purchases.purchases.siteListMyCity'))
+        $model->city_id = Yii::app()->user->model->profile->city_id;
+      elseif (!$_POST['SiteList']['city_id'])
+        $model->city_id = Yii::app()->user->model->profile->city_id;
+
+      $model->author_id = Yii::app()->user->getId();
+
+      if ($model->save()) {
+        $result['success'] = true;
+        $result['msg'] = 'Сайт успешно добавлен';
+      }
+      else {
+        foreach ($model->getErrors() as $attr => $error) {
+          $result[ActiveHtml::activeId($model, $attr)] = $error;
+        }
+      }
+
+      echo json_encode($result);
+      exit;
+    }
+
+    $criteria = new CDbCriteria();
+    $criteria->offset = $offset;
+    $criteria->limit = Yii::app()->getModule('purchases')->sitesPerPage;
+    $criteria->order = 'site ASC';
+
+    if (Yii::app()->user->checkAccess('purchases.purchases.siteListMyCity')) {
+      $criteria->addCondition('city_id = :id');
+      $criteria->params[':id'] = Yii::app()->user->model->profile->city_id;
+    }
+
+    $sites = SiteList::model()->findAll($criteria);
+
+    $criteria->limit = 0;
+    $sitesNum = SiteList::model()->count($criteria);
+
+    if (Yii::app()->request->isAjaxRequest) {
+      $this->pageHtml = $this->renderPartial('sitelist', array('model' => $model, 'sites' => $sites, 'offset' => $offset, 'offsets' => $sitesNum), true);
+    }
+    else $this->render('sitelist', array('model' => $model, 'sites' => $sites, 'offset' => $offset, 'offsets' => $sitesNum));
+  }
 }

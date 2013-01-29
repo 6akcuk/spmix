@@ -207,14 +207,26 @@ class OrdersController extends Controller {
 
             $orders = Order::model()->with('good', 'customer', 'payment')->findAll($criteria);
 
+          $criteria->limit = 0;
+          $ordersNum = Order::model()->with('good', 'customer', 'payment')->count($criteria);
+
             $this->wideScreen = true;
             if (Yii::app()->request->isAjaxRequest) {
-                $this->pageHtml = $this->renderPartial(
+              if (isset($_POST['pages'])) {
+                $this->pageHtml = $this->renderPartial('_acquire', array(
+                  'orders' => $orders,
+                  'c' => $c,
+                  'offset' => $offset,
+                ), true);
+              }
+              else $this->pageHtml = $this->renderPartial(
                     'orders',
                     array(
                         'purchase' => $purchase,
                         'orders' => $orders,
                         'c' => $c,
+                      'offset' => $offset,
+                      'offsets' => $ordersNum,
                     ),
                     true);
             }
@@ -225,6 +237,8 @@ class OrdersController extends Controller {
                         'purchase' => $purchase,
                         'orders' => $orders,
                         'c' => $c,
+                      'offset' => $offset,
+                      'offsets' => $ordersNum,
                     )
                 );
         }

@@ -909,7 +909,9 @@ var _bq = {
 
   },
 
-  hideLast: function() {
+  hideLast: function(e) {
+    if (e) e.stopPropagation();
+
     if (_bq.count()) {
       var box = _bq._boxes[_bq._guids[_bq.count() - 1]];
       if (_bq.skip) {
@@ -951,7 +953,6 @@ var _bq = {
   _show: function(guid) {
     var box = _bq._boxes[guid];
     if (!box) return;
-    _bq._showLayer();
     if (_bq.count()) _bq._boxes[_bq._guids[_bq.count() - 1]].hide();
     _bq.curBox = guid;
     box._show();
@@ -976,7 +977,9 @@ function curBox() {
 }
 
 function boxRefreshCoords(cont) {
-  cont.css('marginTop', Math.max(10, ($(window).height() - cont.outerHeight()) / 3));
+  (!cont.hasClass('popup_box_absolute'))
+    ? cont.css('marginTop', Math.max(10, ($(window).height() - cont.outerHeight()) / 3))
+    : cont.css({top: ($(window).height() - cont.outerHeight()) / 3, left: ($(window).width() - cont.outerWidth()) / 2});
 }
 
 function Box(opts, dark) {
@@ -1005,13 +1008,14 @@ function Box(opts, dark) {
     var controlsStyle = (opts.hideButtons) ? ' style="display:none"' : '';
     boxContainer = $('<div/>').addClass('popup_box_container');
     if (dark) boxContainer.addClass('box_dark');
+    if (opts.absolute) boxContainer.addClass('popup_box_absolute');
     boxContainer.html('\
 <div class="box_layout" onclick="_bq.skip=true;">\
-<div class="box_title_wrap"><div class="box_x_button">'+(dark ? 'Закрыть' : '')+'</div><div class="box_title"></div></div>\
+<div class="box_title_wrap"><div class="icon-remove icon-white box_x_button">'+(dark ? 'Закрыть' : '')+'</div><div class="box_title"></div></div>\
 <div class="box_body" style="' + opts.bodyStyle + '"></div>\
 <div class="box_controls_wrap"' + controlsStyle + '><div class="box_controls">\
-<table cellspacing="0" cellpadding="0" class="fl_r"><tr></tr></table>\
-<div class="progress" id="' + opts.progress + '"></div>\
+<table cellspacing="0" cellpadding="0" class="right"><tr></tr></table>\
+<div class="box_progress" id="' + opts.progress + '"></div>\
 <div class="box_controls_text"></div>\
 </div></div>\
 </div>');
@@ -1034,7 +1038,13 @@ function Box(opts, dark) {
   if (!A.boxLayerBG) A.boxLayerBG = $('#layout_bg');
   if (!A.boxLayerWrap) A.boxLayerWrap = $('#layout_wrap');
   if (!A.boxLayer) A.boxLayer = $('#layout');
-  boxContainer.appendTo(A.boxLayer);
+  boxContainer.appendTo((opts.absolute) ? 'body' : A.boxLayer);
+
+  if (opts.buttons) {
+    $.each(opts.buttons, function(i, b) {
+      addButton(b.title, b.onclick);
+    });
+  }
 
   refreshBox();
   boxRefreshCoords(boxContainer);
@@ -1062,10 +1072,10 @@ function Box(opts, dark) {
     if (!visible) return;
     visible = false;
 
+    if ($.isFunction(opts.onHide)) opts.onHide();
+
     if (opts.selfDestruct) destroyMe();
     else boxContainer.hide();
-
-    if ($.isFunction(opts.onHide)) opts.onHide();
   }
 
   var showMe = function() {
@@ -1074,10 +1084,20 @@ function Box(opts, dark) {
 
     boxContainer.show();
     boxRefreshCoords(boxContainer);
+    if (!opts.absolute || opts.showLayer) _bq._showLayer();
     if ($.isFunction(opts.onShow)) opts.onShow();
   }
 
-  boxCloseButton.click(_bq.hideLast);
+  boxCloseButton.click(function(e) {
+    _bq.skip = false;
+    _bq.hideLast(e);
+  });
+
+  function addButton(title, onclick) {
+    var row = boxControls.find('table tr'),
+        btn = $('<td></td>').html('<a class="button">'+ title +'</a>').appendTo(row);
+    btn.children('a').click(onclick);
+  }
 
   var retBox = _bq._boxes[guid] = {
     guid: guid,

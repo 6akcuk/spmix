@@ -6,16 +6,34 @@
 
 Yii::app()->getClientScript()->registerCssFile('/css/purchases.css');
 Yii::app()->getClientScript()->registerScriptFile('/js/purchase.js');
+Yii::app()->getClientScript()->registerScriptFile('/js/orders.js');
+
+Yii::app()->getClientScript()->registerCssFile('/css/pagination.css');
+Yii::app()->getClientScript()->registerScriptFile('/js/pagination.js');
 
 $this->pageTitle = Yii::app()->name .' - Заказы к закупке #'. $purchase->purchase_id;
+$delta = $c['limit'];
 ?>
+<div id="_box_hidden_status" style="display:none">
+  <div class="row">
+    <?php echo ActiveHtml::dropdown('new_state', 'Новый статус', '', Purchase::getStateDataArray()) ?>
+  </div>
+  <div class="row">
+    <?php echo ActiveHtml::smartTextarea('org_comment', '', array('placeholder' => 'Комментарий организатора')) ?>
+  </div>
+</div>
+
 <div class="my_orders">
 <h1>
     Заказы к закупке #<?php echo $purchase->purchase_id ?> "<?php echo $purchase->name ?>"
-    <div class="right">
-        <?php echo CHtml::link('Сохранить в Excel', '/orders'. $purchase->purchase_id .'/excel', array('class' => 'button')) ?>
-    </div>
 </h1>
+
+<div class="orders_controlbar">
+  <a class="button" onclick="Order.massChangeStatus()">Изменение статуса заказов</a>
+  <a class="button" onclick="Order.massSendMessage()">Отправка ЛС</a>
+  <a class="button" onclick="Order.massSendSMS()">Отправка СМС</a>
+  <?php echo CHtml::link('Сохранить в Excel', '/orders'. $purchase->purchase_id .'/excel', array('class' => 'button')) ?>
+</div>
 
 <div class="clearfix">
     <div class="left sortlimit">
@@ -26,7 +44,14 @@ $this->pageTitle = Yii::app()->name .' - Заказы к закупке #'. $pur
         <?php echo ActiveHtml::link('100', '/orders'. $purchase->purchase_id .'?c[limit]=100', ($c['limit'] == 100) ? array('class' => 'selected') : array()) ?>
     </div>
     <div class="right">
-
+      <div class="right">
+        <?php $this->widget('Paginator', array(
+        'url' => '/orders'. $purchase->purchase_id,
+        'offset' => $offset,
+        'offsets' => $offsets,
+        'delta' => $delta,
+      )); ?>
+      </div>
     </div>
 </div>
 <div class="clearfix filters">
@@ -64,6 +89,7 @@ $this->pageTitle = Yii::app()->name .' - Заказы к закупке #'. $pur
         </tr>
         </thead>
     </table>
+</div>
     <table class="ordertable">
         <thead>
         <tr>
@@ -142,7 +168,6 @@ $this->pageTitle = Yii::app()->name .' - Заказы к закупке #'. $pur
             <td>
             </td>
     </tr>
-</div>
     <tr>
         <td>
             <input type="checkbox" />
@@ -152,29 +177,7 @@ $this->pageTitle = Yii::app()->name .' - Заказы к закупке #'. $pur
     </tr>
     </thead>
     <tbody id="orders">
-    <?php foreach ($orders as $order): ?>
-    <tr>
-        <td><?php echo ActiveHtml::checkBox('select['. $order->order_id .']') ?></td>
-        <td>
-            <?php echo ActiveHtml::link('Зак№'. $order->order_id, '/order'. $order->order_id) ?><br/>
-            <?php if ($order->payment): ?>
-            <?php echo ActiveHtml::link('Платеж №'. $order->payment->payment_id .' от '. ActiveHtml::date($order->payment->datetime, false, true), '/payment'. $order->payment->payment_id) ?>
-            <?php echo Yii::t('purchase', $order->payment->status) ?>
-            <?php endif; ?>
-        </td>
-        <td><?php echo ActiveHtml::date($order->creation_date, false) ?></td>
-        <td><?php echo ActiveHtml::link($order->good->name, '/good'. $order->purchase_id .'_'. $order->good_id) ?></td>
-        <td><?php echo $order->good->artikul ?></td>
-        <td><?php echo $order->color ?></td>
-        <td><?php echo $order->size ?></td>
-        <td><?php echo $order->customer->login .' '. $order->customer->profile->firstname .' '. $order->customer->profile->lastname ?></td>
-        <td><?php echo $order->customer->profile->city->name ?></td>
-        <td><?php echo $order->customer->profile->positive_rep .' | '. $order->customer->profile->negative_rep ?></td>
-        <td><?php echo Yii::t('purchase', $order->status) ?></td>
-        <td><?php echo $order->amount ?></td>
-        <td><?php echo ActiveHtml::price($order->total_price) ?></td>
-    </tr>
-    <?php endforeach; ?>
+    <?php $this->renderPartial('_order', array('orders' => $orders, 'offset' => $offset, 'c' => $c)) ?>
     </tbody>
 </table>
-    </div>
+</div>

@@ -198,12 +198,17 @@ class Purchase extends CActiveRecord
         );
     }
     public static function getStateSearchArray() {
-        return array(
-            'Изучение спроса' => self::STATE_CALL_STUDY,
-            'Сбор заказов' => self::STATE_ORDER_COLLECTION,
-            'В работе' => 'Progress',
-            'Завершено' => self::STATE_COMPLETED,
-        );
+      $arr = array();
+
+      if (Yii::app()->user->checkAccess('users.users.index'))
+        $arr['Черновик'] = self::STATE_DRAFT;
+
+      $arr['Изучение спроса'] = self::STATE_CALL_STUDY;
+      $arr['Сбор заказов'] = self::STATE_ORDER_COLLECTION;
+      $arr['В работе'] = 'Progress';
+      $arr['Завершено'] = self::STATE_COMPLETED;
+
+      return $arr;
     }
 
     public function beforeSave() {

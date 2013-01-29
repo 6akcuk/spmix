@@ -33,82 +33,11 @@ if ($good->colors) {
   }
 }
 
-/*
-if ($good->grid) {
-    foreach ($good->grid as $grid) {
-        $colors = json_decode($grid->colors, true);
-        $dd_sizes[$grid->size] = $grid->grid_id;
-        foreach ($colors as $color) {
-            $dd_colors[$grid->grid_id][$color] = $color;
-        }
-    }
-}
-
 if ($good->oic) {
-    foreach ($good->oic as $oic) {
-        $dd_oic[$oic->description .' '. ActiveHtml::price($oic->price)] = $oic->pk;
-    }
+  foreach ($good->oic as $oic) {
+    $dd_oic[$oic->description .' '. ActiveHtml::price($oic->price)] = $oic->pk;
+  }
 }
-
-$gridsizes = array();
-/** @var $grid GoodGrid *//*
-foreach ($good->grid as $grid) {
-    $gridsizes[$grid->grid_id] = $grid->size;
-}
-
-$ranges = null;
-$cur_range = 1;
-foreach ($good->orders as $order) {
-    for ($i=1; $i<=$order->amount; $i++) {
-        $added = false;
-
-        if ($ranges === null) {
-            $ranges[$cur_range] = array();
-            foreach ($good->grid as $grid) {
-                for($k=1; $k<=$grid->allowed; $k++) {
-                    if (!$added && $grid->size == $gridsizes[$order->grid_id]) {
-                        $added = true;
-                        $o = $order;
-                    }
-                    else $o = null;
-                    $ranges[$cur_range][] = array($grid->size, $o);
-                }
-            }
-
-            $cur_range++;
-            continue;
-        }
-        else {
-            foreach ($ranges as $range => &$sizes) {
-                foreach ($sizes as &$_size) {
-                    if ($_size[1] == null && $_size[0] == $gridsizes[$order->grid_id]) {
-                        $_size[1] = $order;
-
-                        $added = true;
-                        break 2;
-                    }
-                }
-            }
-
-            if (!$added) {
-                $ranges[$cur_range] = array();
-                foreach ($good->grid as $grid) {
-                    for($k=1; $k<=$grid->allowed; $k++) {
-                        if (!$added && $grid->size == $gridsizes[$order->grid_id]) {
-                            $added = true;
-                            $o = $order;
-                        }
-                        else $o = null;
-                        $ranges[$cur_range][] = array($grid->size, $o);
-                    }
-                }
-
-                $cur_range++;
-            }
-        }
-    }
-}
-*/
 ?>
 <div class="breadcrumbs">
     <?php echo ActiveHtml::link($good->purchase->name, '/purchase'. $good->purchase_id) ?> &raquo;

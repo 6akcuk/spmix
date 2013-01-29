@@ -508,3 +508,9 @@ table.ordertable td {
     width: 198px;
     text-align: center;
 }
+
+
+/* Orders */
+.orders_controlbar {
+  padding-bottom: 20px;
+}

@@ -13,7 +13,14 @@ $this->pageTitle = Yii::app()->name .' - '. $purchase->name;
 $delta = Yii::app()->controller->module->goodsPerPage;
 ?>
 
-<h1><?php echo $purchase->name ?></h1>
+<h1>
+  <?php echo $purchase->name ?>
+  <?php if (Yii::app()->user->checkAccess('purchases.purchases.edit') &&
+    (Yii::app()->user->checkAccess('purchases.purchases.editSuper') ||
+      Yii::app()->user->checkAccess('purchases.purchases.editOwn', array('purchase' => $purchase)))): ?>
+    <?php echo ActiveHtml::link('Редактировать', '/purchase'. $purchase->purchase_id .'/edit', array('class' => 'button right')) ?>
+  <?php endif; ?>
+</h1>
 <div class="purchase_table clearfix">
     <div class="clearfix">
         <div class="left photo">
@@ -86,8 +93,7 @@ $delta = Yii::app()->controller->module->goodsPerPage;
               (Yii::app()->user->checkAccess('purchases.purchases.editSuper') ||
                Yii::app()->user->checkAccess('purchases.purchases.editOwn', array('purchase' => $purchase)))): ?>
         <?php echo ActiveHtml::link('Список заказов', '/orders'. $purchase->purchase_id, array('class' => 'button')) ?>
-        <?php echo ActiveHtml::link('ЦВЗ', '/purchase'. $purchase->purchase_id .'/oic', array('class' => 'button')) ?>
-        <?php echo ActiveHtml::link('Редактировать', '/purchase'. $purchase->purchase_id .'/edit', array('class' => 'button')) ?>
+        <?php echo ActiveHtml::link('Места выдачи', '/purchase'. $purchase->purchase_id .'/oic', array('class' => 'button')) ?>
         <?php //echo ActiveHtml::link('Удалить', '/purchase'. $purchase->purchase_id .'/delete', array('class' => 'button')) ?>
     <?php endif; ?>
     </div>
