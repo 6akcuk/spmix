@@ -2,15 +2,17 @@
 <?php $page = ($offset + Yii::app()->controller->module->sitesPerPage) / Yii::app()->controller->module->sitesPerPage ?>
 <?php $added = false; ?>
 <?php if($sites): ?>
-<?php foreach ($sites as $site): ?>
-<div class="clearfix">
-  <div class="right">
-    <?php echo ActiveHtml::link($site->author->getDisplayName(), '/id'. $site->author_id) ?>
-  </div>
-  <div class="left"><?php echo $site->site ?></div>
-  <div class="left" style="padding-left: 20px">
+<?php foreach ($sites as $idx => $site): ?>
+<tr id="site<?php echo $site->id ?>"<?php if(!$added) { echo ' rel="page-'. $page .'"'; $added = true; } ?> onclick="editSite(<?php echo $site->id ?>)">
+  <td><?php echo $offset + $idx + 1 ?>.</td>
+  <td id="site<?php echo $site->id ?>_name"><?php echo $site->site ?></td>
+  <td><?php echo ActiveHtml::date($site->datetime) ?></td>
+  <td id="site<?php echo $site->id ?>_shortstory" style="padding-left: 20px">
     <?php echo $site->shortstory ?>
-  </div>
-</div>
+  </td>
+  <td>
+    <?php echo ActiveHtml::link($site->author->getDisplayName(), '/id'. $site->author_id) ?>
+  </td>
+</tr>
 <?php endforeach; ?>
 <?php endif; ?>

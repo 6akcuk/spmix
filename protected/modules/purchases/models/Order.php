@@ -62,9 +62,9 @@ class Order extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('purchase_id, good_id, customer_id, amount, price, total_price', 'required', 'on' => 'create'),
-      array('purchase_id, good_id, customer_id, amount, price, total_price', 'required', 'on' => 'create_range'),
-      array('purchase_id, good_id, customer_id, amount, price, total_price', 'required', 'on' => 'edit'),
+			array('purchase_id, good_id, customer_id, amount, price, total_price, oic', 'required', 'on' => 'create'),
+      array('purchase_id, good_id, customer_id, amount, price, total_price, oic', 'required', 'on' => 'create_range'),
+      array('purchase_id, good_id, customer_id, amount, price, total_price, oic', 'required', 'on' => 'edit'),
       array('purchase_id, customer_id, amount, price, total_price', 'required', 'on' => 'quick'),
 			array('purchase_id, good_id, customer_id, range_id, amount, anonymous', 'numerical', 'integerOnly'=>true),
 			array('price, total_price', 'length', 'max'=>10),
@@ -84,11 +84,11 @@ class Order extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-            'customer' => array(self::BELONGS_TO, 'User', 'customer_id', 'with' => 'profile'),
-            'good' => array(self::BELONGS_TO, 'Good', 'good_id'),
-            'purchase' => array(self::BELONGS_TO, 'Purchase', 'purchase_id'),
-            'payment' => array(self::HAS_ONE, 'OrderPayment', 'order_id'),
-            'grid' => array(self::BELONGS_TO, 'GoodGrid', 'grid_id'),
+      'customer' => array(self::BELONGS_TO, 'User', 'customer_id', 'with' => 'profile'),
+      'good' => array(self::BELONGS_TO, 'Good', 'good_id'),
+      'purchase' => array(self::BELONGS_TO, 'Purchase', 'purchase_id'),
+      'payment' => array(self::HAS_ONE, 'OrderPayment', 'order_id'),
+      'grid' => array(self::BELONGS_TO, 'GoodGrid', 'grid_id'),
 		);
 	}
 
@@ -103,15 +103,15 @@ class Order extends CActiveRecord
 			'good_id' => 'Good',
 			'customer_id' => 'Customer',
 			'creation_date' => 'Creation Date',
-            'size' => 'Размер',
-            'color' => 'Цвет',
+      'size' => 'Размер',
+      'color' => 'Цвет',
 			'amount' => 'Количество',
 			'price' => 'Цена',
 			'total_price' => 'Итог. цена',
 			'client_comment' => 'Комментарий для организатора',
 			'org_comment' => 'Комментарий организатора',
 			'status' => 'Статус',
-			'oic' => 'ЦВЗ',
+			'oic' => 'Место выдачи',
 			'anonymous' => 'Анонимно',
 		);
 	}

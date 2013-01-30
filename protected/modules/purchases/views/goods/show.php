@@ -14,22 +14,31 @@ Yii::app()->getClientScript()->registerCssFile('/css/purchases.css');
 Yii::app()->getClientScript()->registerScriptFile('/js/purchase.js');
 Yii::app()->getClientScript()->registerCssFile('/css/photoview.css');
 Yii::app()->getClientScript()->registerScriptFile('/js/photoview.js');
+Yii::app()->getClientScript()->registerScriptFile('/js/jquery.cookie.js', null, 'after jquery-');
 
 $this->pageTitle = Yii::app()->name .' - '. $good->purchase->name .' - '. $good->name;
 
 $dd_sizes = array();
+$row_sizes = array();
 $dd_colors = array();
+$row_colors = array();
 $dd_oic = array();
+
+$orderc->amount = 1;
 
 if ($good->sizes) {
     foreach ($good->sizes as $size) {
-        $dd_sizes[$size->size] = $size->size;
+      if (!$orderc->size) $orderc->size = $size->size;
+      $dd_sizes[$size->size . (($size->adv_price > 0) ? ' ['. ActiveHtml::price($size->adv_price) .']' : '')] = $size->size;
+      $row_sizes[] = $size->size;
     }
 }
 
 if ($good->colors) {
   foreach ($good->colors as $color) {
+    if (!$orderc->color) $orderc->color = $color->color;
     $dd_colors[$color->color] = $color->color;
+    $row_colors[] = $color->color;
   }
 }
 
@@ -38,6 +47,8 @@ if ($good->oic) {
     $dd_oic[$oic->description .' '. ActiveHtml::price($oic->price)] = $oic->pk;
   }
 }
+
+$cookies = Yii::app()->getRequest()->getCookies();
 ?>
 <div class="breadcrumbs">
     <?php echo ActiveHtml::link($good->purchase->name, '/purchase'. $good->purchase_id) ?> &raquo;
@@ -65,20 +76,25 @@ if ($good->oic) {
       <span>Фотография отсутствует</span>
     <?php endif; ?>
     </div>
-    <div class="left td">
+    <div class="left td good_td">
         <?php $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
             'id' => 'orderform',
             'action' => $this->createUrl('/good'. $good->purchase_id .'_'. $good->good_id .'/order'),
         )); ?>
+      <div class="clearfix price">
+        <?php echo ActiveHtml::price($good->getEndPrice(), $good->currency) ?>
+      </div>
         <?php if ($good->sizes): ?>
-        <div class="row">
+        <div class="clearfix row">
             <?php echo $form->dropdown($orderc, 'size', $dd_sizes) ?>
         </div>
+        <div class="row small">размеры: <?php echo implode('; ', $row_sizes) ?></div>
         <?php endif; ?>
         <?php if ($good->colors): ?>
-        <div class="row">
+        <div class="clearfix row">
           <?php echo $form->dropdown($orderc, 'color', $dd_colors) ?>
         </div>
+        <div class="row small">цвета: <?php echo implode('; ', $row_colors) ?></div>
         <?php endif; ?>
         <div class="row">
             <?php echo $form->inputPlaceholder($orderc, 'amount') ?>
@@ -90,14 +106,27 @@ if ($good->oic) {
             <?php echo $form->checkBox($orderc, 'anonymous') ?>
             <?php echo $form->label($orderc, 'anonymous') ?>
         </div>
-        <?php if($good->oic): ?>
-        <div class="row">
-            Вы можете выбрать Центр Выдачи Заказов, если хотите самостоятельно забрать свой заказ <br/>
+        <div class="clearfix row">
+        <?php if (!isset($cookies['purchase'. $good->purchase_id.'_oic']) ||
+          (isset($cookies['purchase'. $good->purchase_id.'_oic']) && !in_array($cookies['purchase'. $good->purchase_id.'_oic'], $dd_oic))): ?>
             <?php echo $form->dropdown($orderc, 'oic', $dd_oic) ?>
-        </div>
+        <?php else: ?>
+          <div id="oic_text">
+            Место выдачи: <?php echo array_search($cookies['purchase'. $good->purchase_id.'_oic'], $dd_oic) ?>
+            <span class="icon-remove" rel="tooltip" title="Удалить место" onclick="removeSavedOic()"></span>
+          </div>
+          <div id="oic" class="clearfix" style="display:none">
+            <?php $orderc->oic = $cookies['purchase'. $good->purchase_id.'_oic']; ?>
+            <?php echo $form->dropdown($orderc, 'oic', $dd_oic) ?>
+          </div>
+          <script>
+            function removeSavedOic() {
+              $('#oic_text').remove();
+              $('#oic').show();
+              $.removeCookie('purchase<?php echo $good->purchase_id ?>_oic');
+            }
+          </script>
         <?php endif; ?>
-        <div class="clearfix">
-            <?php echo ActiveHtml::price($good->getEndPrice(), $good->currency) ?>
         </div>
         <div class="row">
             <?php if (in_array($good->purchase->state, array(Purchase::STATE_CALL_STUDY, Purchase::STATE_ORDER_COLLECTION, Purchase::STATE_REORDER))): ?>

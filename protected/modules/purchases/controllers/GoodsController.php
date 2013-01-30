@@ -24,14 +24,7 @@ class GoodsController extends Controller {
         {
             /** @var $good Good */
             $good = Good::model()->with(array(
-              'purchase',
-              /*'ranges' => array(
-                'joinType' => 'LEFT JOIN',
-                'condition' => 'ranges.filled = 0',
-              ),
-              'ranges.cols' => array(
-                'joinType' => 'LEFT JOIN',
-              ),*/
+              'purchase', 'sizes',
             ))->findByPk($good_id);
             $order = new Order(($good->is_range) ? 'create_range' : 'create');
 
@@ -51,13 +44,22 @@ class GoodsController extends Controller {
                 $order->good_id = $good_id;
                 $order->customer_id = Yii::app()->user->getId();
                 $order->price = $good->price;
-                $price = $good->getEndPrice();
 
+                foreach ($good->sizes as $size) {
+                  if ($size->size == $order->size && $size->adv_price > 0) {
+                    $order->price = $size->adv_price;
+                    break;
+                  }
+                }
+
+                $price = $good->getEndPrice($order->price);
+
+                $order_oic = $order->oic;
                 if ($order->oic) {
-                    $oic = PurchaseOic::model()->findByPk($order->oic);
-                    $price += floatval($oic->price);
+                  $oic = PurchaseOic::model()->findByPk($order->oic);
+                  $price += floatval($oic->price);
 
-                    $order->oic = $oic->price .' - '. $oic->description;
+                  $order->oic = $oic->price .' - '. $oic->description;
                 }
 
                 $order->total_price = $price * intval($order->amount);
@@ -65,8 +67,13 @@ class GoodsController extends Controller {
 
                 // сохраняем заказ в таблице Заказов
                 if($order->validate() && $order->save()) {
-                  // если товар имеет ряды, необходимо встать в один из рядов, либо создать новый
-                  // если имеются незаполненные ряды
+                  $cookies = Yii::app()->getRequest()->getCookies();
+                  if (!isset($cookies['purchase'. $good->purchase_id .'_oic'])) {
+                    $ck = new CHttpCookie('purchase'. $good->purchase_id .'_oic', $order_oic);
+                    $ck->expire = time() + 2592000;
+
+                    $cookies->add('purchase'. $good->purchase_id .'_oic', $ck);
+                  }
 
                   $result['success'] = true;
                   $result['msg'] = Yii::t('purchase', 'Заказ добавлен в список покупок');
@@ -165,56 +172,104 @@ class GoodsController extends Controller {
             $good = Good::model()->with('images', 'sizes', 'colors')->findByPk($good_id);
 
             if (isset($_POST['Good'])) {
-                $good->attributes=$_POST['Good'];
+              $prev_sizes = $good->sizes;
 
-                if (isset($_POST['grid'])) {
-                    foreach ($_POST['grid'] as $idx => $id) {
-                        if (!isset($_POST['size'][$idx])) {
-                            GoodGrid::model()->deleteByPk($id);
-                            continue;
-                        }
+              $good->attributes=$_POST['Good'];
 
-                        $size = $_POST['size'][$idx];
-                        $colors = $_POST['color'][$idx];
+              if($good->validate() && $good->save()) {
+                $prev_sizes = $good->sizes;
+                $prev_colors = $good->colors;
 
-                        $grid = GoodGrid::model()->findByPk($id);
-                        $grid->colors = json_encode($colors);
-                        $grid->allowed = $_POST['allowed'][$idx];
-                        $grid->save();
+                $sizes = explode(";", trim($_POST['sizes']));
+                $colors = explode(";", trim($_POST['colors']));
 
-                        unset($_POST['size'][$idx]);
-                        unset($_POST['color'][$idx]);
-                        unset($_POST['allowed'][$idx]);
+                /* Редактирование размеров */
+                if ($prev_sizes) {
+                  foreach ($prev_sizes as $gsize) {
+                    if (!$sizes) {
+                      $gsize->delete();
+                      continue;
                     }
-                }
-                // были добавлены новые размеры
-                if (sizeof($_POST['size'])) {
-                    foreach ($_POST['size'] as $idx => $size) {
-                        $grid = GoodGrid::model()->find('good_id = :good_id AND size = :size', array(':good_id' => $good_id, ':size' => $size));
-                        if (!$grid) {
-                            $grid = new GoodGrid('create');
-                            $grid->purchase_id = $purchase_id;
-                            $grid->good_id = $good_id;
-                            $grid->size = $size;
-                            $grid->allowed = $_POST['allowed'][$idx];
-                            $grid->colors = json_encode($_POST['color'][$idx]);
-                            $grid->save();
-                        }
+
+                    $found = false;
+                    foreach ($sizes as $idx => $size) {
+                      if (preg_match("/\[([0-9\.]{1,})\]/i", $size, $price)) {
+                        $price = trim($price[1]);
+                        $size = trim(preg_replace("/\[[0-9\.]{1,}\]$/i", "", $size));
+                      }
+                      else $price = 0;
+
+                      if ($size == $gsize->size && $price == $gsize->adv_price) {
+                        $found = true;
+                        array_splice($sizes, $idx, 1);
+                      }
+                      elseif ($size == $gsize->size && $price != $gsize->adv_price) {
+                        $found = true;
+                        $gsize->adv_price = $price;
+                        $gsize->save(true, array('adv_price'));
+                      }
                     }
+
+                    if (!$found) $gsize->delete();
+                  }
                 }
 
-                if($good->validate() && $good->save()) {
-                    $result['success'] = true;
-                    $result['url'] = '/good'. $purchase_id .'_'. $good_id .'/edit';
-                }
-                else {
-                    foreach ($good->getErrors() as $attr => $error) {
-                        $result[ActiveHtml::activeId($good, $attr)] = $error;
+                if ($sizes && sizeof($sizes)) {
+                  foreach ($sizes as $size) {
+                    if (preg_match("/\[([0-9\.]{1,})\]/i", $size, $price)) {
+                      $price = trim($price[1]);
+                      $size = trim(preg_replace("/\[[0-9\.]{1,}\]$/i", "", $size));
                     }
+                    else $price = 0;
+
+                    $gs = new GoodSize();
+                    $gs->good_id = $good->good_id;
+                    $gs->size = $size;
+                    $gs->adv_price = $price;
+                    $gs->save();
+                  }
                 }
 
-                echo json_encode($result);
-                exit;
+                /* Редактирование цветов */
+                if ($prev_colors) {
+                  foreach ($prev_colors as $gcolor) {
+                    if (!$colors) {
+                      $gcolor->delete();
+                      continue;
+                    }
+
+                    $found = false;
+                    foreach ($colors as $idx => $color) {
+                      if ($color == $gcolor->color) {
+                        $found = true;
+                        array_splice($colors, $idx, 1);
+                      }
+                    }
+
+                    if (!$found) $gcolor->delete();
+                  }
+                }
+
+                if ($colors && sizeof($colors)) {
+                  foreach ($colors as $color) {
+                    $gc = new GoodColor();
+                    $gc->good_id = $good->good_id;
+                    $gc->color = $color;
+                    $gc->save();
+                  }
+                }
+
+                $result['success'] = true;
+                $result['url'] = '/good'. $purchase_id .'_'. $good_id .'/edit';
+              }
+              else {
+                foreach ($good->getErrors() as $attr => $error) {
+                  $result[ActiveHtml::activeId($good, $attr)] = $error;
+                }
+              }
+
+              echo json_encode($result);
+              exit;
             }
 
           $configs = PurchaseGoodConfig::model()->findAll('purchase_id = :id', array(':id' => $purchase->purchase_id));

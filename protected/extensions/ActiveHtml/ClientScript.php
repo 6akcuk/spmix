@@ -162,8 +162,9 @@ class ClientScript extends CClientScript {
                         }
 
                         $tpos = $this->getKeyScriptInList($scripts, $scriptName);
+
                         if (($move == 'after' && $tpos > $key) || ($move == 'before' && $tpos < $key)) {
-                            $needAnotherStep = true;
+                          $needAnotherStep = true;
 
                             $buffer = $scripts[$key];
                             $scripts[$key] = $scripts[$tpos];

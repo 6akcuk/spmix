@@ -130,7 +130,7 @@ $delta = Yii::app()->controller->module->goodsPerPage;
     <div class="purchase_goods">
         <div class="clearfix">
             <h2 class="left"><?php echo Yii::t('purchase', '{n} товар|{n} товара|{n} товаров', $offsets) ?></h2>
-            <a href="/purchase<?php echo $purchase->purchase_id ?>/addgood" class="left button add_good" rel="tooltip" title="Добавить товар"><span class="icon-plus icon-white"></span></a>
+            <a href="/purchase<?php echo $purchase->purchase_id ?>/addgood" onclick="return nav.go(this, null)" class="left button add_good" rel="tooltip" title="Добавить товар"><span class="icon-plus icon-white"></span></a>
             <div class="right">
                 <?php $this->widget('Paginator', array(
                 'url' => '/purchase'. $purchase->purchase_id,

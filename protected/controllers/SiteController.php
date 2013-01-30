@@ -18,6 +18,23 @@ class SiteController extends Controller
 
 	}
 
+  /* Исправляет старые записи с синтаксисом size[price] */
+  public function actionPatch2() {
+    Yii::import('application.modules.purchases.models.*');
+    $sizes = GoodSize::model()->findAll("adv_price = 0 AND size LIKE '%[%'");
+
+    foreach ($sizes as $size) {
+      if (preg_match("/\[([0-9\.]{1,})\]/i", $size->size, $price)) {
+        $size->adv_price = trim($price[1]);
+        $size->size = trim(preg_replace("/\[[0-9\.]{1,}\]$/i", "", $size->size));
+      }
+      else $size->adv_price = 0;
+
+      $size->save(true, array('size', 'adv_price'));
+    }
+  }
+
+  /* */
   public function actionPatch1() {
     Yii::import('application.modules.purchases.models.*');
     $grids = GoodGrid::model()->with(array('good' => array('joinType' => 'INNER JOIN')))->findAll();

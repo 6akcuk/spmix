@@ -7,6 +7,7 @@
  * @property string $size_id
  * @property string $good_id
  * @property string $size
+ * @property string $adv_price
  */
 class GoodSize extends CActiveRecord
 {
@@ -38,7 +39,7 @@ class GoodSize extends CActiveRecord
 		return array(
 			array('good_id, size', 'required'),
 			array('size_id', 'length', 'max'=>20),
-			array('good_id', 'length', 'max'=>10),
+			array('good_id, adv_price', 'length', 'max'=>10),
 			array('size', 'length', 'max'=>200),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.

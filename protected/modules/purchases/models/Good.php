@@ -129,8 +129,8 @@ class Good extends CActiveRecord
 		);
 	}
 
-    public function getEndPrice() {
-        return floatval($this->price) * ($this->purchase->org_tax / 100 + 1);
+    public function getEndPrice($new_price = null) {
+        return floatval(($new_price) ?: $this->price) * ($this->purchase->org_tax / 100 + 1);
     }
 
     public function countImages()

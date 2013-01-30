@@ -84,6 +84,9 @@
     margin-left: 10px;
     width: 235px;
 }
+.purchase_table .good_td {
+    width: 335px;
+}
 .purchase_table .td > div {
     padding: 5px 0px
 }
@@ -93,7 +96,15 @@
 .purchase_table .td .labeled a:hover {
     color: #000;
     text-decoration: underline;
-
+}
+.purchase_table .td textarea {
+    width: 300px;
+}
+.purchase_table .td .price {
+    color: #cd0a0a;
+    font-size: 27px;
+    font-weight: bold;
+    padding: 2px 0px 10px;
 }
 
 .purchase_fullstory {

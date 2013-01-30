@@ -14,7 +14,7 @@ class ActiveHtml extends CHtml {
     public static function publishAssets() {
         if (!self::$assetPublished) {
             $path = Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('ext.ActiveHtml.assets'), false, -1, true);
-            Yii::app()->getClientScript()->registerScriptFile($path .'/activehtmlelements.js', CClientScript::POS_HEAD, 'after jquery');
+            Yii::app()->getClientScript()->registerScriptFile($path .'/activehtmlelements.js', CClientScript::POS_HEAD, 'after jquery-');
             Yii::app()->getClientScript()->registerCssFile($path .'/activehtmlelements.css');
             ActiveHtml::$assetPublished = true;
         }

@@ -672,9 +672,16 @@ class PurchasesController extends Controller {
 
                   if ($sizes) {
                     foreach ($sizes as $size) {
+                      if (preg_match("/\[([0-9\.]{1,})\]/i", $size, $price)) {
+                        $price = $price[1];
+                        $size = preg_replace("/\[[0-9\.]{1,}\]$/i", "", $size);
+                      }
+                      else $price = 0;
+
                       $gs = new GoodSize();
                       $gs->good_id = $model->good_id;
                       $gs->size = $size;
+                      $gs->adv_price = $price;
                       $gs->save();
                     }
                   }
@@ -732,24 +739,34 @@ class PurchasesController extends Controller {
   public function actionSiteList($offset = 0) {
     $model = new SiteList();
 
-    if (isset($_POST['SiteList'])) {
+    if (isset($_POST['SiteList']) || isset($_POST['id'])) {
       $result = array();
 
-      $model->attributes = $_POST['SiteList'];
-      if (Yii::app()->user->checkAccess('purchases.purchases.siteListMyCity'))
-        $model->city_id = Yii::app()->user->model->profile->city_id;
-      elseif (!$_POST['SiteList']['city_id'])
-        $model->city_id = Yii::app()->user->model->profile->city_id;
+      if (isset($_POST['id']))
+        $model = SiteList::model()->findByPk($_POST['id']);
 
-      $model->author_id = Yii::app()->user->getId();
-
-      if ($model->save()) {
+      if (isset($_POST['delete'])) {
+        $model->delete();
         $result['success'] = true;
-        $result['msg'] = 'Сайт успешно добавлен';
+        $result['msg'] = 'Сайт успешно удален';
       }
       else {
-        foreach ($model->getErrors() as $attr => $error) {
-          $result[ActiveHtml::activeId($model, $attr)] = $error;
+        $model->attributes = $_POST['SiteList'];
+        if (Yii::app()->user->checkAccess('purchases.purchases.siteListMyCity'))
+          $model->city_id = Yii::app()->user->model->profile->city_id;
+        elseif (!$_POST['SiteList']['city_id'])
+          $model->city_id = Yii::app()->user->model->profile->city_id;
+
+        $model->author_id = Yii::app()->user->getId();
+
+        if ($model->save()) {
+          $result['success'] = true;
+          $result['msg'] = 'Сайт успешно добавлен';
+        }
+        else {
+          foreach ($model->getErrors() as $attr => $error) {
+            $result[ActiveHtml::activeId($model, $attr)] = $error;
+          }
         }
       }
 

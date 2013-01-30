@@ -82,8 +82,8 @@ class Purchase extends CActiveRecord
 		// will receive user inputs.
 		return array(
       array('name, author_id, category_id, city_id, status', 'required', 'on' => 'create'),
-      array('name, author_id, category_id, status, state, min_sum, min_num, org_tax', 'required', 'on' => 'edit_own_notconfirmed'),
-      array('author_id, status, state, min_sum, min_num', 'required', 'on' => 'edit_own_confirmed'),
+      array('name, author_id, category_id, status, state, supplier_url, min_sum, min_num, org_tax', 'required', 'on' => 'edit_own_notconfirmed'),
+      array('author_id, status, state, supplier_url, min_sum, min_num', 'required', 'on' => 'edit_own_confirmed'),
       array('mod_confirmation', 'safe', 'on' => 'edit_super_admin, edit_super_moderator'),
 
       array('image, hide_supplier, stop_date', 'safe'),

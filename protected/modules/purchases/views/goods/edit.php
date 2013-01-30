@@ -25,7 +25,7 @@ if ($configs) {
 
 $sizes = array();
 foreach ($good->sizes as $size) {
-  $sizes[] = $size->size;
+  $sizes[] = $size->size . (($size->adv_price > 0) ? '['. intval($size->adv_price) .']' : '');
 }
 $colors = array();
 foreach ($good->colors as $color) {
@@ -33,6 +33,11 @@ foreach ($good->colors as $color) {
 }
 
 ?>
+<div class="breadcrumbs">
+  <?php echo ActiveHtml::link($good->purchase->name, '/purchase'. $good->purchase_id) ?> &raquo;
+  <?php echo ActiveHtml::link($good->name, '/good'. $good->purchase_id .'_'. $good->good_id) ?> &raquo;
+  Редактирование товара
+</div>
 <h1>Редактировать товар</h1>
 
 <?php
