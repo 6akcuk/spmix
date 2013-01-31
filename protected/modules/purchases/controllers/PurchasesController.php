@@ -790,7 +790,10 @@ class PurchasesController extends Controller {
     $sitesNum = SiteList::model()->count($criteria);
 
     if (Yii::app()->request->isAjaxRequest) {
-      $this->pageHtml = $this->renderPartial('sitelist', array('model' => $model, 'sites' => $sites, 'offset' => $offset, 'offsets' => $sitesNum), true);
+      if (isset($_POST['pages'])) {
+        $this->pageHtml = $this->renderPartial('_sitelist', array('sites' => $sites, 'offset' => $offset), true);
+      }
+      else $this->pageHtml = $this->renderPartial('sitelist', array('model' => $model, 'sites' => $sites, 'offset' => $offset, 'offsets' => $sitesNum), true);
     }
     else $this->render('sitelist', array('model' => $model, 'sites' => $sites, 'offset' => $offset, 'offsets' => $sitesNum));
   }

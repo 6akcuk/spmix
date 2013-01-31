@@ -38,6 +38,8 @@
   <li>
       <?php echo ActiveHtml::link('Пользователи', '/users') ?>
   </li>
+<?php endif; ?>
+<?php if (Yii::app()->user->checkAccess('purchases.purchases.sitelist')): ?>
   <li>
     <?php echo ActiveHtml::link('Список сайтов', '/purchases/sitelist') ?>
   </li>
