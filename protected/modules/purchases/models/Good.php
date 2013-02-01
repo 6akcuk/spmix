@@ -144,19 +144,21 @@ class Good extends CActiveRecord
   public function getRangeStructure() {
     $structure = array();
 
-    if ($this->is_range) {
+    if ($this->is_range && $this->range) {
       preg_match("'\\[cols\\](.*?)\\[\/cols\\]'si", $this->range, $cols_string);
-      preg_match_all("'\\[col\\](.*?)\\[\/col\\]'si", $cols_string[1], $cols_arr);
+      if (isset($cols_string[1])) {
+        preg_match_all("'\\[col\\](.*?)\\[\/col\\]'si", $cols_string[1], $cols_arr);
 
-      foreach ($cols_arr[1] as $col) {
-        preg_match("'\\[size\\](.*?)\\[\/size\\]'si", $col, $size);
-        preg_match("'\\[color\\](.*?)\\[\/color\\]'si", $col, $color);
+        foreach ($cols_arr[1] as $col) {
+          preg_match("'\\[size\\](.*?)\\[\/size\\]'si", $col, $size);
+          preg_match("'\\[color\\](.*?)\\[\/color\\]'si", $col, $color);
 
-        $helper = array();
-        if (isset($size[1])) $helper['size'] = $size[1];
-        if (isset($color[1])) $helper['color'] = $color[1];
+          $helper = array();
+          if (isset($size[1])) $helper['size'] = $size[1];
+          if (isset($color[1])) $helper['color'] = $color[1];
 
-        $structure[] = $helper;
+          $structure[] = $helper;
+        }
       }
     }
 

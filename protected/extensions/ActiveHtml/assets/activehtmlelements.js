@@ -64,6 +64,11 @@ var report_window = {
     }
 };
 
+/* Input Error */
+var inputError = function(after, msg) {
+  $('<span/>').addClass('input_error').html(msg).insertAfter(after);
+}
+
 /* Tooltip */
 var Tooltip = {
     cur: null,
@@ -976,6 +981,32 @@ function curBox() {
   return _bq._boxes[_bq.curBox];
 }
 
+function boxPopup(text) {
+  var $bp = $('#box_popup'),
+    $bt = $bp.find('div.text'),
+    $bb = $bt.next();
+
+  $bt.html(text);
+  $bp.show().css({
+    top: ($(window).height() - $bt.height()) / 3,
+    left: ($(window).width() - $bt.width()) / 2
+  });
+  $bb.css({
+    width: $bt.outerWidth(),
+    height: $bt.outerHeight()
+  });
+
+  var _hideMe = function(e) {
+    $('body').unbind('click', _hideMe);
+    $bp.hide();
+  }
+
+  $('body').bind('click', _hideMe);
+
+  clearTimeout(A.boxPopupTime);
+  A.boxPopupTime = setTimeout(_hideMe, 2500);
+}
+
 function boxRefreshCoords(cont) {
   (!cont.hasClass('popup_box_absolute'))
     ? cont.css('marginTop', Math.max(10, ($(window).height() - cont.outerHeight()) / 3))
@@ -1223,6 +1254,7 @@ var FormMgr = {
         if (!pos) pos = 'right';
 
         $form.find('input').removeClass('error');
+        $form.find('.input_error').remove();
 
         ajax.post(url, $form.serialize(), function(response) {
             if (response.success) {
@@ -1235,18 +1267,19 @@ var FormMgr = {
                 }
             }
             else {
-                var string = [];
                 $.each(response, function(i, v) {
-                    $('#'+ i).addClass('error');
-                    if ($.isArray(v)) {
-                        $.each(v, function(i2, v2) {
-                            string[string.length] = v2;
-                        })
-                    }
-                    else string[string.length] = v;
+                  $('#'+ i).addClass('error');
+                  if ($.isArray(v)) {
+                    var string = [];
+                    $.each(v, function(i2, v2) {
+                      string.push(v2);
+                    })
+                    $('<span/>').addClass('input_error').html(string.join('')).insertAfter($('#'+ i));
+                  }
+                  else $('<span/>').addClass('input_error').html(v).insertAfter($('#'+ i));
                 });
 
-                report_window.create($form, pos, string.join('<br/>'));
+                //report_window.create($form, pos, string.join('<br/>'));
             }
         });
 
@@ -1595,6 +1628,12 @@ var nav = {
                 q = nav.revoke(q, a[1]);
                 nav.objLoc = nav.q2obj(q);
             }
+          // paginator fix offset
+            if (opts.search) {
+              q = nav.revoke(q, 'pages=1');
+              q = nav.revoke(q, 'offset=x');
+              nav.objLoc = nav.q2obj(q);
+            }
             a[1] = q;
             return a.join('?');
         }
@@ -1685,23 +1724,28 @@ var nav = {
 
                 //logger.showAll();
 
+                // Paginator fix
+                if (typeof Paginato !== "undefined")
+                  Paginator.onNavGo();
+
                 if (!opts.box) {
                   $('title').html(response.title);
                   $(opts.container).html(response.html);
                   if (response.widescreen) {
                       $('#sidebar').hide();
-                      $('#content').removeClass('largecolumn');
+                      $('#content').removeClass('largecolumn').css('width', 960);
                   }
                   else {
                       if (!$('#content').hasClass('wrap') && !$('#content').hasClass('largecolumn')) {
                           $('#sidebar').show();
-                          $('#content').addClass('largecolumn');
+                          $('#content').addClass('largecolumn').css('width', ($('#content').hasClass('edge')) ? 1000 : 750);
                       }
                   }
 
                   if (!loc.match(/im\?sel=(\d+)/i)) {
                       $('body').removeClass('im_fixed');
                       $('#page_layout').css({marginTop: 0});
+                    $('#footer').show();
 
                       if (typeof Im !== "undefined") Im.stopPeer();
                   }
@@ -1711,7 +1755,14 @@ var nav = {
 
                   if (z.match(/write/)) width = 502;
 
-                  var box = Box({hideButtons: true, bodyStyle: 'padding:0px;border:0px', width: width});
+                  var box = Box({
+                    hideButtons: true,
+                    bodyStyle: 'padding:0px;border:0px',
+                    width: width,
+                    onHide: function() {
+                      nav.go(nav.curLoc.replace(/\?z=.*/, ''), null);
+                    }
+                  });
                   box.content(response.html);
                   box.show();
                 }
@@ -1743,7 +1794,8 @@ var nav = {
                         ajex.show('Ошибка: '+ (r && r.html) ? r.html : xhr.responseText);
                         break;
                     default:
-                        ajex.show('Ошибка связи с сервером. Перезагрузите страницу, нажав <b>F5</b>. '+ xhr.responseText);
+                        if (xhr.responseText)
+                          ajex.show('Ошибка связи с сервером. Перезагрузите страницу, нажав <b>F5</b>. '+ xhr.responseText);
                 }
             });
 

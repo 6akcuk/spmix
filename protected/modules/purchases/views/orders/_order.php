@@ -12,12 +12,15 @@
     <?php echo Yii::t('purchase', $order->payment->status) ?>
     <?php endif; ?>
   </td>
-  <td><?php echo ActiveHtml::date($order->creation_date, false) ?></td>
+  <td><?php echo ActiveHtml::date($order->creation_date, false, true) ?></td>
   <td><?php echo ActiveHtml::link($order->good->name, '/good'. $order->purchase_id .'_'. $order->good_id) ?></td>
   <td><?php echo $order->good->artikul ?></td>
   <td><?php echo $order->color ?></td>
   <td><?php echo $order->size ?></td>
-  <td><?php echo $order->customer->login .' '. $order->customer->profile->firstname .' '. $order->customer->profile->lastname ?></td>
+  <td>
+    <?php echo ActiveHtml::link('<span class="icon-comment"></span>', '/write'. $order->customer_id, array('nav' => array('box' => 1))) ?>
+    <?php echo ActiveHtml::link($order->customer->login .' '. $order->customer->profile->firstname .' '. $order->customer->profile->lastname, '/id'. $order->customer_id) ?>
+  </td>
   <td><?php echo $order->customer->profile->city->name ?></td>
   <td><?php echo $order->customer->profile->positive_rep .' | '. $order->customer->profile->negative_rep ?></td>
   <td><?php echo Yii::t('purchase', $order->status) ?></td>

@@ -5,10 +5,10 @@
 table.sites {
     width: 100%;
 }
-table.sites tr {
+table.sites tbody tr {
     cursor: pointer;
 }
-table.sites tr:hover td {
+table.sites tbody tr:hover td {
     background: #f2f2f2;
 }
 table.sites td {

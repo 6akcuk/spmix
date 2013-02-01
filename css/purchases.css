@@ -38,13 +38,34 @@
 .purchase {
     position: relative;
     margin: 5px 0;
-    border-bottom: 1px solid #eeeeee;
+    border-bottom: 1px solid #b9d199;
 }
 .purchase:first-child {
     margin-top: 0
 }
-.purchase .info span {
-    display: block;
+
+.purchase .photo, .purchase_table .photo {
+    margin: 4px 4px 4px 0px;
+}
+.purchase .photo {
+    width: 100px;
+    height: 100px;
+    overflow: hidden;
+}
+
+.purchase .info {
+    padding-left: 10px;
+    width: 500px;
+    overflow: hidden;
+}
+.purchase_labeled {
+  margin-bottom: 3px;
+  width: 500px;
+}
+.purchase .info .name {
+  font-weight: bold;
+  font-size: 1.29em;
+  margin-bottom: 5px;
 }
 .purchase .info a:hover {
     color: #254a10;
@@ -169,10 +190,6 @@ a.purchase_edit_story:hover {
     padding: 4px;
     border: 1px #c2c2c2 solid;
     font-size: 11px;
-}
-
-.purchase .photo, .purchase_table .photo {
-    margin: 4px 4px 4px 0px;
 }
 
 .list_name {
@@ -303,15 +320,6 @@ a.purchase_edit_story:hover {
     background: url('/images/textarea_login.jpg') #fefffa repeat-x top;
     border: 1px solid #557132;
 
-}
-.purchase_name {
-    background: #70973f;
-    color: #fff;
-    padding: 4px 20px 4px 20px;
-}
-.purchase_name a {
-    font-weight: 700;
-    color: #fff;
 }
 
 table.bezborder td {

@@ -162,6 +162,7 @@ class PurchasesController extends Controller {
             $criteria->addCondition('category_id = :category_id');
         }
 
+      if (!Yii::app()->user->checkAccess('purchases.purchases.acquire'))
         $criteria->addCondition("(state IN ('Draft', 'Call Study') OR (state NOT IN ('Draft', 'Call Study') AND mod_confirmation = 1))");
 
         $purchases = Purchase::model()->with('city', 'author', 'ordersNum', 'ordersSum')->findAll($criteria);
@@ -761,6 +762,7 @@ class PurchasesController extends Controller {
 
         if ($model->save()) {
           $result['success'] = true;
+          $result['date'] = ActiveHtml::date($model->datetime);
           $result['msg'] = 'Сайт успешно добавлен';
         }
         else {
@@ -774,10 +776,20 @@ class PurchasesController extends Controller {
       exit;
     }
 
+    $c = (isset($_REQUEST['c'])) ? $_REQUEST['c'] : array();
+
     $criteria = new CDbCriteria();
     $criteria->offset = $offset;
     $criteria->limit = Yii::app()->getModule('purchases')->sitesPerPage;
     $criteria->order = 'site ASC';
+
+    if (isset($c['site'])) {
+      $criteria->addSearchCondition('site', $c['site']);
+    }
+
+    if (isset($c['city_id'])) {
+      $criteria->compare('city_id', $c['city_id']);
+    }
 
     if (Yii::app()->user->checkAccess('purchases.purchases.siteListMyCity')) {
       $criteria->addCondition('city_id = :id');
@@ -789,12 +801,14 @@ class PurchasesController extends Controller {
     $criteria->limit = 0;
     $sitesNum = SiteList::model()->count($criteria);
 
+    $this->wideScreen = true;
+
     if (Yii::app()->request->isAjaxRequest) {
       if (isset($_POST['pages'])) {
         $this->pageHtml = $this->renderPartial('_sitelist', array('sites' => $sites, 'offset' => $offset), true);
       }
-      else $this->pageHtml = $this->renderPartial('sitelist', array('model' => $model, 'sites' => $sites, 'offset' => $offset, 'offsets' => $sitesNum), true);
+      else $this->pageHtml = $this->renderPartial('sitelist', array('model' => $model, 'sites' => $sites, 'offset' => $offset, 'offsets' => $sitesNum, 'c' => $c), true);
     }
-    else $this->render('sitelist', array('model' => $model, 'sites' => $sites, 'offset' => $offset, 'offsets' => $sitesNum));
+    else $this->render('sitelist', array('model' => $model, 'sites' => $sites, 'offset' => $offset, 'offsets' => $sitesNum, 'c' => $c));
   }
 }

@@ -10,7 +10,12 @@ $this->pageTitle = Yii::app()->name .' - Редактирование закуп
     Редактирование закупки
 </div>
 <div class="create">
-<h1>Редактирование закупки</h1>
+<h1>
+  Редактирование закупки
+  <div class="right">
+    <?php echo ActiveHtml::link('Места выдачи', '/purchase'. $model->purchase_id .'/oic', array('class' => 'button')) ?>
+  </div>
+</h1>
 
 <?php
 /** @var $form ActiveForm */

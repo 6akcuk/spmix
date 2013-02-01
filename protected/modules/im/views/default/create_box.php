@@ -78,7 +78,7 @@ $friendsJS[] = "'". Yii::app()->user->getId() ."': {private: true, img: '". ((Yi
   <div class="mail_box_text_wrap">
     <?php echo ActiveHtml::smartTextarea('Im[message]', '') ?>
   </div>
-  <a id="im_send" class="left button" onclick="return Im.sendMessage()">Отправить</a>
+  <a id="im_send" class="left button" onclick="return Im.sendMessage(1)">Отправить</a>
   <br class="clear">
 </div>
 <script type="text/javascript">

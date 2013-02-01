@@ -228,7 +228,11 @@ class DialogMessage extends CActiveRecord
                 }
             }
 
-            return array('success' => true, 'url' => '/im?sel='. $dialog->dialog_id);
+            return array(
+              'success' => true,
+              'url' => '/im?sel='. $dialog->dialog_id,
+              'msg' => 'Ваше сообщение успешно отправлено',
+            );
         }
     }
 }

@@ -4,23 +4,19 @@
 <?php foreach ($purchases as $purchase): ?>
 <div id="purchase<?php echo $purchase->purchase_id ?>"<?php if(!$added) { echo ' rel="page-'. $page .'"'; $added = true; } ?> class="purchase clearfix">
     <div class="clearfix">
-        <div class="purchase_name">
-            <span class="list_name"><?php echo ActiveHtml::link($purchase->name, '/purchase'. $purchase->purchase_id, array('target' => '_blank')) ?></span>
-        </div>
         <div class="left photo">
             <?php echo ActiveHtml::showUploadImage($purchase->image) ?>
         </div>
         <div class="left info">
-            <span>Организатор: <?php echo ActiveHtml::link($purchase->author->getDisplayName(), '/id'. $purchase->author_id) ?></span>
-            <span>Категория: <?php echo $purchase->category->name ?></span>
-            <span>Город: <?php echo $purchase->city->name ?></span>
-            <span>Дата стопа: <?php echo ActiveHtml::date($purchase->stop_date, false) ?></span>
-            <span>Статус: <?php echo Yii::t('purchase', $purchase->state) ?></span>
-            <span>
-                Кол-во заказов: <?php echo $purchase->ordersNum ?>
-                <div class="right"><?php echo $purchase->getMinimalPercentage() ?> %</div>
-            </span>
+          <div class="purchase_labeled name"><?php echo ActiveHtml::link($purchase->name, '/purchase'. $purchase->purchase_id, array('target' => '_blank')) ?></div>
+          <div class="purchase_labeled">Организатор: <?php echo ActiveHtml::link($purchase->author->getDisplayName(), '/id'. $purchase->author_id) ?></div>
+          <div class="purchase_labeled">Категория: <?php echo $purchase->category->name ?></div>
+          <div class="purchase_labeled">Город: <?php echo $purchase->city->name ?></div>
+          <div class="purchase_labeled">Дата стопа: <?php echo ActiveHtml::date($purchase->stop_date, false) ?></div>
+          <div class="purchase_labeled">Статус: <?php echo Yii::t('purchase', $purchase->state) ?></div>
+          <div class="purchase_labeled">Кол-во заказов: <?php echo $purchase->ordersNum ?></div>
         </div>
+        <div class="right"><?php echo $purchase->getMinimalPercentage() ?> %</div>
     </div>
     <div>
         <a class="button" onclick="return Purchase.acquire(<?php echo $purchase->purchase_id ?>)">Одобрить</a>

@@ -33,7 +33,9 @@
             'action' => $this->createUrl('/register'),
         )); ?>
         <input type="hidden" name="step" value="2" />
-        <?php echo $form->dropdown($model, 'gender', array('Мужской' => 'Male', 'Женский' => 'Female')) ?>
+        <div class="clearfix">
+          <?php echo $form->dropdown($model, 'gender', array('Мужской' => 'Male', 'Женский' => 'Female')) ?>
+        </div>
         <div class="row">
             <?php echo $form->inputPlaceholder($model, 'lastname') ?>
         </div>

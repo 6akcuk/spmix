@@ -36,8 +36,13 @@ $cookies = $request->getCookies();
     <div class="filectrl"><iframe id="iframe_200" name="iframe_200"></iframe></div>
 </div>
 <div id="global_progress_bg"></div>
-<div id="global_progress" class="fixed">
+<div id="global_progress" class="box_popup fixed">
   <div class="loader"></div>
+  <div class="back"></div>
+</div>
+
+<div id="box_popup" class="box_popup fixed">
+  <div class="text"></div>
   <div class="back"></div>
 </div>
 
@@ -102,10 +107,13 @@ $cookies = $request->getCookies();
         <div id="sidebar" class="left smallcolumn"<?php if(Yii::app()->controller->wideScreen): ?> style="display:none"<?php endif; ?>>
             <?php echo $this->renderPartial('//layouts/leftmenu') ?>
         </div>
-        <div id="content" class="<?php if(!Yii::app()->controller->wideScreen): ?>largecolumn<?php endif; ?> right">
+        <div id="content" style="<?php if(Yii::app()->controller->wideScreen) echo "width:960px" ?>" class="<?php if(!Yii::app()->controller->wideScreen): ?>largecolumn<?php endif; ?> right">
             <?php echo $content; ?>
         </div>
     </div>
+  <div id="footer">
+    &copy; <?php echo date("Y") ?>
+  </div>
 </div>
 </body>
 <script type="text/javascript">

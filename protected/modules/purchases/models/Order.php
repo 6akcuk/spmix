@@ -11,10 +11,11 @@
  * @property string $creation_date
  * @property string $size
  * @property string $color
- * @property integer $range_id
  * @property integer $amount
  * @property string $price
+ * @property integer $org_tax
  * @property string $total_price
+ * @property string $payed
  * @property string $client_comment
  * @property string $org_comment
  * @property string $status
@@ -66,8 +67,8 @@ class Order extends CActiveRecord
       array('purchase_id, good_id, customer_id, amount, price, total_price, oic', 'required', 'on' => 'create_range'),
       array('purchase_id, good_id, customer_id, amount, price, total_price, oic', 'required', 'on' => 'edit'),
       array('purchase_id, customer_id, amount, price, total_price', 'required', 'on' => 'quick'),
-			array('purchase_id, good_id, customer_id, range_id, amount, anonymous', 'numerical', 'integerOnly'=>true),
-			array('price, total_price', 'length', 'max'=>10),
+			array('purchase_id, good_id, customer_id, amount, org_tax, anonymous', 'numerical', 'integerOnly'=>true),
+			array('price, total_price, payed', 'length', 'max'=>10),
       array('size, color', 'length', 'max' => 50),
 			array('client_comment, org_comment', 'length', 'max'=>200),
 			array('status', 'length', 'max'=>12),
@@ -107,7 +108,9 @@ class Order extends CActiveRecord
       'color' => 'Цвет',
 			'amount' => 'Количество',
 			'price' => 'Цена',
+      'org_tax' => 'Орг. сбор',
 			'total_price' => 'Итог. цена',
+      'payed' => 'Оплачено',
 			'client_comment' => 'Комментарий для организатора',
 			'org_comment' => 'Комментарий организатора',
 			'status' => 'Статус',

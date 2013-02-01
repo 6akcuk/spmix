@@ -13,6 +13,17 @@ var Paginator = {
         Paginator.initPages();
     },
 
+    onNavGo: function() {
+      A.pgTarget = null;
+      A.pgUrl = null;
+      A.pgDelta = 0;
+      A.offset = 0;
+      A.pgPage = 1;
+      A.pgPages = 0;
+      A.pgNoPages = false;
+      A.pgFixedNoMore = false;
+    },
+
     init: function(opts) {
         var $pg = $('div.pagination'),
             ofs = $pg.offset();
@@ -139,7 +150,7 @@ var Paginator = {
             }
         }
 
-        var loc = nav.query(nav.curLoc + ((nav.curLoc.match(/\?/)) ? '&' : '?') + 'offset='+ nextOffset +'&pages=1', {search: true}), // (nav.curLoc.match(/\?/)) ? nav.curLoc.split('?') : [nav.curLoc, ''],
+        var loc = nav.query(nav.curLoc + ((nav.curLoc.match(/\?/)) ? '&' : '?') + 'offset='+ nextOffset +'&pages=1', {}), // (nav.curLoc.match(/\?/)) ? nav.curLoc.split('?') : [nav.curLoc, ''],
             where = loc.split('?'),
             obj = nav.q2obj(where[1]);
 

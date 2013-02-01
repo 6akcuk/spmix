@@ -120,6 +120,9 @@ var Photoview = {
         A.pvLayoutWrap.hide();
         A.pvLeft.hide();
         A.pvClose.hide();
+
+      A.pvLayout.html('');
+      A.pvLayout = null;
     },
 
     doShow: function() {

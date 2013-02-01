@@ -1,12 +1,12 @@
 <?php /** @var $good Good */ ?>
-<?php $page = ($offset + Yii::app()->controller->module->purchasesPerPage) / Yii::app()->controller->module->purchasesPerPage ?>
+<?php $page = ($offset + Yii::app()->controller->module->goodsPerPage) / Yii::app()->controller->module->goodsPerPage ?>
 <?php $added = false; ?>
 <?php if (sizeof($goods) > 0): ?>
 <?php foreach ($goods as $good): ?>
-<div id="good<?php echo $good->purchase_id ?>_<?php echo $good->good_id ?>" class="good_row_cont">
+<div id="good<?php echo $good->purchase_id ?>_<?php echo $good->good_id ?>"<?php if(!$added) { echo ' rel="page-'. $page .'"'; $added = true; } ?> class="good_row_cont">
     <div class="good_row_inner_cont">
         <a class="good_row_relative" onmouseover="Purchase.overGood(this, event)" onmouseout="Purchase.outGood(this, event)" href="/good<?php echo $good->purchase_id ?>_<?php echo $good->good_id ?>" onclick="if(A.glCancelClick) return (A.glCancelClick = false); return nav.go(this, null)">
-        <?php if ($good->is_range): ?>
+        <?php if ($good->is_range && $good->range): ?>
             <div class="good_row_ranges_wrap">
                 <div class="good_row_ranges_bg"></div>
                 <div class="good_row_ranges">Ряды</div>

@@ -42,6 +42,16 @@ $delta = Yii::app()->controller->module->sitesPerPage;
 </h1>
 
 <div class="clearfix">
+  <div class="left">
+    <div rel="filters" class="left">
+      <?php echo ActiveHtml::inputPlaceholder('c[site]', (isset($c['site'])) ? $c['site'] : '', array('placeholder' => 'Сайт')) ?>
+    </div>
+  <?php if (!Yii::app()->user->checkAccess('purchases.purchases.siteListMyCity')): ?>
+    <div rel="filters" class="left">
+      <?php echo ActiveHtml::dropdown('c[city_id]', 'Город', (isset($c['city_id'])) ? $c['city_id'] : '', City::getDataArray()) ?>
+    </div>
+  <?php endif; ?>
+  </div>
   <div class="right">
     <?php $this->widget('Paginator', array(
     'url' => '/purchases/sitelist',
@@ -52,8 +62,16 @@ $delta = Yii::app()->controller->module->sitesPerPage;
   </div>
 </div>
 
-<table class="sites" rel="pagination">
-  <?php $this->renderPartial('_sitelist', array('sites' => $sites, 'offset' => $offset)) ?>
+<table class="sites">
+  <thead>
+    <tr>
+      <td>#</td><td>Сайт</td><td>Описание</td><td>Имя орга</td>
+      <td>ID орга</td><td>Дата</td><td>Автор</td>
+    </tr>
+  </thead>
+  <tbody rel="pagination">
+    <?php $this->renderPartial('_sitelist', array('sites' => $sites, 'offset' => $offset)) ?>
+  </tbody>
 </table>
 
 <script>
@@ -114,6 +132,9 @@ function editSite(id) {
             A.addSiteProgress = false;
             $('#site'+ id +'_name').html(site);
             $('#site'+ id +'_shortstory').html($('#SiteList_shortstory').val());
+            $('#site'+ id +'_orgname').html($('#SiteList_org_name').val());
+            $('#site'+ id +'_orgid').html($('#SiteList_org_id').val());
+            $('#site'+ id +'_datetime').html(r.date);
             box.hideProgress();
             box.hide();
             msi.show(r.msg);
@@ -152,8 +173,11 @@ function editSite(id) {
   });
   //box.content($('#_box_hidden_add').html());
   $('#_box_hidden_add').appendTo(box.bodyNode).show();
-  $('#_box_hidden_add textarea').val($.trim($('#site'+ id +'_shortstory').text())).click();
-  $('#SiteList_site').val($.trim($('#site'+ id +'_name').text())).click();
+  $('#_box_hidden_add textarea').val($.trim($('#site'+ id +'_shortstory').text())).next().hide();
+  $('#SiteList_site').val($.trim($('#site'+ id +'_name').text())).next().hide();
+  $('#SiteList_org_name').val($.trim($('#site'+ id +'_orgname').text())).next().hide();
+  $('#SiteList_org_id').val($.trim($('#site'+ id +'_orgid').text())).next().hide();
+
   box.show();
 }
 

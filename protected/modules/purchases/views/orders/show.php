@@ -36,23 +36,19 @@ if ($good->oic) {
 ?>
 
 <h1>
-    Заказ #<?php echo $order->order_id ?> <?php echo $order->good->name ?>
+    Заказ #<?php echo $order->order_id ?>, <?php echo ActiveHtml::date($order->creation_date, true) ?>
 </h1>
 <?php $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
     'id' => 'orderform',
     'action' => $this->createUrl('/order'. $order->order_id),
 )); ?>
-<div class="purchase_table clearfix">
+<div class="order_table clearfix">
     <div class="left photo">
-        <?php if($order->good->image): ?>
-        <a onclick="Purchase.showImages(<?php echo $order->good->good_id ?>)">
-            <?php echo ActiveHtml::showUploadImage($order->good->image->image, 'a'); ?>
-            <?php $images_num = $order->good->countImages() ?>
-            <div class="subtitle">
-                <div class="text">Просмотреть <?php echo Yii::t('app', 'фотографию|все {n} фотографии|все {n} фотографий', $images_num) ?></div>
-            </div>
-        </a>
-        <?php endif; ?>
+    <?php if($order->good->image): ?>
+      <?php echo ActiveHtml::showUploadImage($order->good->image->image, 'b'); ?>
+    <?php else: ?>
+      <span>Фотография отсутствует</span>
+    <?php endif; ?>
     </div>
     <div class="left td">
         <?php if ($good->grid): ?>

@@ -1,0 +1,22 @@
+#orders_css {
+    display: none;
+}
+
+#orders, .orders_thead {
+    font-size: 10px;
+}
+
+/* User Orders */
+.user_orders {
+    margin-top: 10px;
+    width: 100%;
+}
+.user_orders td {
+    padding: 5px 0px;
+}
+.user_orders .order_purchase_row td {
+    background: #b9d199;
+}
+.user_orders .order_row td.good_name {
+    padding-left: 10px;
+}

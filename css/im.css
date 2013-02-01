@@ -127,18 +127,18 @@
     cursor: default;
 }
 .dialogs_new_msg {
-    background: #edf1e5;
-    border-color: #dae1e8;
+    background: #d4e0c3;
+    border-color: #b9d199;
 }
 .dialogs_row_t {
     width: 100%;
 }
 .dialogs_row_over {
-    background: #edf1e5;
-    border-color: #dae1e8;
+    background: #d4e0c3;
+    border-color: #b9d199;
 }
 .dialogs_row_over .dialogs_new_msg {
-    background: #DAE1E8;
+    background: #b9d199;
 }
 .dialogs_row_over .dialogs_online,
 .dialogs_new_msg .dialogs_online {
@@ -505,7 +505,7 @@ a.im_date_link {
 .im_new_msg .im_log_author,
 .im_new_msg .im_log_body,
 .im_new_msg .im_log_date {
-    background: #EDF1F5;
+    background: #d4e0c3;
 }
 .im_new_msg .im_log_body .audio.over .area {
     background: #DAE1E8;

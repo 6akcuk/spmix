@@ -7,24 +7,26 @@ var Im = {
         $('#im_send').html('Отправить');
     },
 
-    sendMessage: function() {
+    sendMessage: function(is_box) {
         var $im = $('#imform'),
             recipients = $im.find('input[name^="im_wdd"]'),
             rec = [],
             title = $.trim($im.find('[name="Im[title]"]').val()),
             message = $.trim($im.find('[name="Im[message]"]').val());
 
+        $im.find('.input_error').remove();
+
         if (recipients.length == 0) {
             WideDropdown.show('im_wdd', event);
             return false;
         }
         else if (recipients.length > 1 && !title) {
-            report_window.create($im.find('[name="Im[title]"]'), 'left', 'Требуется название для беседы');
-            return false;
+          inputError($im.find('[name="Im[title]"]'), 'Требуется название для беседы');
+          return false;
         }
         else if (recipients.length > 0 && !message) {
-            report_window.create($im.find('[name="Im[message]"]'), 'left', 'Напишите хоть что-нибудь');
-            return false;
+          inputError($im.find('[name="Im[message]"]'), 'Напишите хоть что-нибудь');
+          return false;
         }
 
         if (A.imSending) return;
@@ -37,7 +39,13 @@ var Im = {
 
         ajax.post('/im?sel=-1', {recipients: rec, title: title, message: message}, function(r) {
             A.imSending = false;
-            if (r.success) nav.go(r.url, null);
+            if (r.success) {
+              if (!is_box) nav.go(r.url, null);
+              else {
+                curBox().hide();
+                boxPopup(r.msg);
+              }
+            }
             else report_window.create($im, 'left', r.message);
 
             Im.showSendButton();
@@ -127,6 +135,7 @@ var Im = {
         $('body').addClass('im_fixed');
         $('#sidebar').css({top: $head.outerHeight()});
         $('#im_nav').css({top: $head.outerHeight()});
+        $('#footer').hide();
         //$('#page_layout').css({marginTop: $head.outerHeight()});
 
         Im.peer(dialog_id);

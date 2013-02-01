@@ -26,6 +26,26 @@ input.error {
 }
 
 /* Box */
+.box_popup {
+    display: none;
+    z-index: 1001;
+}
+.box_popup .back {
+    background: #000;
+    opacity: .7;
+    border-radius: 5px;
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.35);
+}
+.box_popup .text {
+    width: 340px;
+    padding: 10px;
+    color: #fff;
+    font-weight: bold;
+    font-size: 1.18em;
+    position: absolute;
+    z-index: 100;
+}
+
 .popup_box_container {
     margin: 0px auto;
     z-index: 1002;
@@ -435,6 +455,13 @@ div.report_window .close {
 }
 div.report_window .close:hover {
     color: #89a;
+}
+
+.input_error {
+    display: block;
+    font-size: 12px;
+    color: #cd0a0a;
+    padding: 4px 0px;
 }
 
 /* AJAX Exception Window */

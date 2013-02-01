@@ -5,6 +5,7 @@
  */
 
 Yii::app()->getClientScript()->registerCssFile('/css/purchases.css');
+Yii::app()->getClientScript()->registerCssFile('/css/orders.css');
 Yii::app()->getClientScript()->registerScriptFile('/js/purchase.js');
 Yii::app()->getClientScript()->registerScriptFile('/js/orders.js');
 
@@ -96,7 +97,6 @@ $delta = $c['limit'];
     <td>
         </td>
             <td>
-
     <div rel="filters" class="left filter_order_id">
         <?php echo ActiveHtml::inputPlaceholder(
         'c[id]',
@@ -168,7 +168,7 @@ $delta = $c['limit'];
             <td>
             </td>
     </tr>
-    <tr>
+    <tr class="orders_thead">
         <td>
             <input type="checkbox" />
         </td>
@@ -176,7 +176,7 @@ $delta = $c['limit'];
         <td>Город</td><td>Реп.</td><td>Статус</td><td>Кол</td><td>Стоимость</td>
     </tr>
     </thead>
-    <tbody id="orders">
+    <tbody id="orders" rel="pagination">
     <?php $this->renderPartial('_order', array('orders' => $orders, 'offset' => $offset, 'c' => $c)) ?>
     </tbody>
 </table>

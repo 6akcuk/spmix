@@ -93,7 +93,6 @@ $delta = Yii::app()->controller->module->goodsPerPage;
               (Yii::app()->user->checkAccess('purchases.purchases.editSuper') ||
                Yii::app()->user->checkAccess('purchases.purchases.editOwn', array('purchase' => $purchase)))): ?>
         <?php echo ActiveHtml::link('Список заказов', '/orders'. $purchase->purchase_id, array('class' => 'button')) ?>
-        <?php echo ActiveHtml::link('Места выдачи', '/purchase'. $purchase->purchase_id .'/oic', array('class' => 'button')) ?>
         <?php //echo ActiveHtml::link('Удалить', '/purchase'. $purchase->purchase_id .'/delete', array('class' => 'button')) ?>
     <?php endif; ?>
     </div>
