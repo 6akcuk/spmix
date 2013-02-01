@@ -8,6 +8,8 @@
  * @property integer $city_id
  * @property string $site
  * @property integer $purchase_id
+ * @property integer $org_id
+ * @property string $org_name
  * @property integer $author_id
  * @property string $shortstory
  * @property string $datetime
@@ -42,9 +44,10 @@ class SiteList extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('city_id, site, author_id, shortstory', 'required'),
-			array('city_id, purchase_id, author_id', 'numerical', 'integerOnly'=>true),
+			array('city_id, site, author_id, org_id, shortstory', 'required'),
+			array('city_id, purchase_id, author_id, org_id', 'numerical', 'integerOnly'=>true),
 			array('site, shortstory', 'length', 'max'=>255),
+      array('org_name', 'length', 'max' => 100),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, city_id, site, purchase_id, author_id, datetime', 'safe', 'on'=>'search'),
@@ -73,6 +76,8 @@ class SiteList extends CActiveRecord
 			'city_id' => 'Город',
 			'site' => 'Сайт',
 			'purchase_id' => 'Закупка',
+      'org_id' => 'ID организатора',
+      'org_name' => 'Имя организатора',
 			'author_id' => 'Author',
       'shortstory' => 'Краткое описание',
 			'datetime' => 'Datetime',

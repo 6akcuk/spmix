@@ -23,6 +23,12 @@ $delta = Yii::app()->controller->module->sitesPerPage;
     <?php echo ActiveHtml::activeFieldPlaceholder('text', $model, 'site') ?>
   </div>
   <div class="row">
+    <?php echo ActiveHtml::activeFieldPlaceholder('text', $model, 'org_id') ?>
+  </div>
+  <div class="row">
+    <?php echo ActiveHtml::activeFieldPlaceholder('text', $model, 'org_name') ?>
+  </div>
+  <div class="row">
     <?php echo ActiveHtml::activeSmartTextarea($model, 'shortstory') ?>
   </div>
   </form>
@@ -150,4 +156,8 @@ function editSite(id) {
   $('#SiteList_site').val($.trim($('#site'+ id +'_name').text())).click();
   box.show();
 }
+
+$().ready(function() {
+  $('#SiteList_site').popupHelp('Сайт указывается без http и www, к примеру, yandex.ru или vk.com');
+});
 </script>
