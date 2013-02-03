@@ -20,3 +20,114 @@
 .user_orders .order_row td.good_name {
     padding-left: 10px;
 }
+
+/* Order */
+.order_table {
+  width: 660px;
+  margin: 0px auto 10px;
+}
+.order_table {
+  border-bottom: 1px solid #ccc;
+}
+.order_table .photo {
+  width: 100px;
+  overflow: hidden;
+}
+.order_table .info {
+  padding-left: 20px;
+  width: 540px;
+}
+.order_row {
+  margin-bottom: 5px;
+}
+.order_row_labeled {
+  float: left;
+  width: 120px;
+}
+.order_row_label {
+  float: left;
+  padding-left: 10px;
+  width: 410px;
+}
+.order_table_org > .left {
+  width: 330px;
+}
+.order_table_org .order_row_label {
+  width: 200px;
+}
+
+.order_buttons {
+  padding-top: 10px;
+}
+.order_help {
+  padding: 10px 0px;
+}
+.order_help p {
+  padding: 0px;
+  margin: 0px;
+}
+
+.order_org_info {
+  line-height: 24px;
+}
+
+table.order_org {
+  width: 100%;
+}
+table.order_org td {
+  padding: 5px 0px;
+}
+table.order_org textarea {
+  width: 400px;
+}
+table.order_org td.label {
+  width: 140px;
+}
+
+/* Org Orders */
+#_box_hidden_status {
+  margin: 0px auto;
+  width: 300px;
+}
+#_box_hidden_status div.dropdown span.text {
+  width: 250px;
+}
+#_box_hidden_status textarea, #_box_hidden_im textarea {
+  width: 270px;
+}
+
+/* Org Box */
+.order_box_header {
+  background: #f2f2f2;
+  padding: 16px 20px 15px;
+  font-size: 1.2em;
+  font-weight: bold;
+}
+.order_box_close {
+  font-size: 11px;
+  font-weight: normal;
+}
+.order_box_cont {
+  padding: 12px 20px 0px;
+}
+.order_box_history_link {
+  display: block;
+  text-align: center;
+  padding: 16px;
+  color: #738392;
+  font-size: 11px;
+  font-weight: normal;
+  background: #eef0f2;
+}
+.order_box_buttons {
+  padding: 10px 25px;
+}
+.order_box_history {
+  padding: 12px 20px 0px;
+}
+.order_box_history > div {
+  padding-bottom: 10px;
+}
+.order_box_history_link:hover {
+  background: #e9edf1;
+}

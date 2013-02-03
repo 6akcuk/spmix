@@ -26,7 +26,7 @@ class GoodsController extends Controller {
             $good = Good::model()->with(array(
               'purchase', 'sizes',
             ))->findByPk($good_id);
-            $order = new Order(($good->is_range) ? 'create_range' : 'create');
+            $order = new Order('create');
 
             if (
                 in_array(
@@ -43,6 +43,7 @@ class GoodsController extends Controller {
                 $order->purchase_id = $purchase_id;
                 $order->good_id = $good_id;
                 $order->customer_id = Yii::app()->user->getId();
+                $order->org_tax = $good->purchase->org_tax;
                 $order->price = $good->price;
 
                 foreach ($good->sizes as $size) {

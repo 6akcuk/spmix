@@ -118,7 +118,7 @@ class User extends CActiveRecord
     }
 
     public function getDisplayName() {
-        return Yii::app()->user->checkAccess('global.fullnameView') ?
+        return !Yii::app()->user->checkAccess('global.fullnameView') ?
             $this->profile->firstname .' '. $this->login :
             $this->profile->firstname .' '. $this->profile->lastname .' ('. $this->login .')';
     }

@@ -277,6 +277,7 @@ class PurchasesController extends Controller {
         if(isset($_POST['Purchase']))
         {
             $model->attributes=$_POST['Purchase'];
+          if (!$_POST['Purchase']['stop_date']) $model->stop_date = null;
             $model->city_id = Yii::app()->user->model->profile->city_id;
             $model->author_id = Yii::app()->user->getId();
             $result = array();
@@ -361,29 +362,9 @@ class PurchasesController extends Controller {
                 }
 
                 $model->attributes=$_POST['Purchase'];
+                if (!$_POST['Purchase']['stop_date']) $model->stop_date = null;
+
                 $result = array();
-                /*
-                if (Yii::app()->user->checkAccess('purchases.purchases.acquireSuper') ||
-                    Yii::app()->user->checkAccess('purchases.purchases.acquireMod', array('purchase' => $model))) {
-                    if ($cache['mod_reason'] != $model->mod_reason) {
-                        $model->mod_id = Yii::app()->user->getId();
-                        $model->mod_date = date("Y-m-d H:i:s");
-
-                        if ($model->mod_reason) {
-                            Yii::import('application.modules.im.models.*');
-
-                            DialogMessage::send(array($model->author_id), $model->mod_reason, '', array(
-                                array(
-                                    'type' => 'purchase_edit',
-                                    'name' => $model->name,
-                                    'purchase_id' => $model->purchase_id,
-                                )
-                            ));
-                        }
-                    }
-
-                    unset($cache['mod_reason']);
-                }*/
 
                 if($model->validate() && $model->save()) {
                     foreach ($history as $h => $m) {

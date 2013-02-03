@@ -998,13 +998,13 @@ function boxPopup(text) {
 
   var _hideMe = function(e) {
     $('body').unbind('click', _hideMe);
-    $bp.hide();
+    $bp.fadeOut();
   }
 
   $('body').bind('click', _hideMe);
 
   clearTimeout(A.boxPopupTime);
-  A.boxPopupTime = setTimeout(_hideMe, 2500);
+  A.boxPopupTime = setTimeout(_hideMe, 3000);
 }
 
 function boxRefreshCoords(cont) {
@@ -1113,9 +1113,9 @@ function Box(opts, dark) {
     if (visible || !_bq._boxes[guid]) return;
     visible = true;
 
+    if (!opts.absolute || opts.showLayer) _bq._showLayer();
     boxContainer.show();
     boxRefreshCoords(boxContainer);
-    if (!opts.absolute || opts.showLayer) _bq._showLayer();
     if ($.isFunction(opts.onShow)) opts.onShow();
   }
 
@@ -1173,6 +1173,21 @@ function Box(opts, dark) {
     destroy: destroyMe
   };
   return retBox;
+}
+
+function showConfirmBox(msg, yes, onYes, no, onNo) {
+  var box = new Box({buttons: [
+    {
+      title: yes,
+      onclick: onYes
+    },
+    {
+      title: no,
+      onclick: onNo
+    }
+  ]});
+  box.content(msg);
+  box.show();
 }
 
 /* Simple Field Add/Remove */
@@ -1525,8 +1540,8 @@ $.fn.filters = function() {
                 nav.go('?'+ $this.attr('name') +'='+ $this.val(), event, {search: true, revoke: ($this.val() == '')});
             });
         }
-        else if ($el.hasClass('dropdown')) {
-            var $this = $el.find('input');
+        else if ($el.attr('tag', 'select')) {
+            var $this = $el;
             $this.change(function() {
                 nav.go('?'+ $this.attr('name') +'='+ $this.val(), event, {search: true, revoke: ($this.val() == '')});
             });
@@ -1732,14 +1747,16 @@ var nav = {
                   $('title').html(response.title);
                   $(opts.container).html(response.html);
                   if (response.widescreen) {
-                      $('#sidebar').hide();
-                      $('#content').removeClass('largecolumn').css('width', 960);
+                    $('#sidebar').hide();
+                    $('div.wrapper').css('width', 1100);
+                    $('#content').removeClass('largecolumn').css('width', 1060);
                   }
                   else {
-                      if (!$('#content').hasClass('wrap') && !$('#content').hasClass('largecolumn')) {
-                          $('#sidebar').show();
-                          $('#content').addClass('largecolumn').css('width', ($('#content').hasClass('edge')) ? 1000 : 750);
-                      }
+                    if (!$('#content').hasClass('wrap') && !$('#content').hasClass('largecolumn')) {
+                      $('div.wrapper').css('width', 1000);
+                      $('#sidebar').show();
+                      $('#content').addClass('largecolumn').css('width', ($('#content').hasClass('edge')) ? 960 : 750);
+                    }
                   }
 
                   if (!loc.match(/im\?sel=(\d+)/i)) {
@@ -1754,6 +1771,7 @@ var nav = {
                   var z = location.hash.match(/\?z=(.*)/i)[1], width = 410;
 
                   if (z.match(/write/)) width = 502;
+                  if (response.boxWidth) width = response.boxWidth;
 
                   var box = Box({
                     hideButtons: true,
@@ -1791,7 +1809,8 @@ var nav = {
                         ajex.show('Страница не найдена');
                         break;
                     case 500:
-                        ajex.show('Ошибка: '+ (r && r.html) ? r.html : xhr.responseText);
+                      ajex.show('Ошибка в работе приложения. Повторите попытку позже');
+                        //ajex.show('Ошибка: '+ (r && r.html) ? r.html : xhr.responseText);
                         break;
                     default:
                         if (xhr.responseText)
@@ -1868,8 +1887,9 @@ var ajax = {
                     ajex.show('Страница не найдена');
                     break;
                 case 500:
-                    var r = $.parseJSON(xhr.responseText);
-                    ajex.show((r && r.html) ? r.html : xhr.responseText);
+                  ajex.show('Ошибка в работе приложения. Повторите попытку позже');
+                    //var r = $.parseJSON(xhr.responseText);
+                    //ajex.show((r && r.html) ? r.html : xhr.responseText);
                     break;
                 default:
                     ajex.show('Ошибка связи с сервером:<br/> '+ xhr.responseText);

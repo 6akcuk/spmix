@@ -48,7 +48,7 @@ class ActiveHtml extends CHtml {
     }
 
     public static function emailPlaceholder($email, $value = '', $htmlOptions = array()) {
-        return self::fieldPlaceholder('email', $name, $value, $htmlOptions);
+        return self::fieldPlaceholder('email', $email, $value, $htmlOptions);
     }
 
     public static function passwordPlaceholder($name, $value = '', $htmlOptions = array()) {
@@ -107,6 +107,11 @@ class ActiveHtml extends CHtml {
 
         $items = array();
 
+      $data = array_flip($data);
+      //array_unshift($data, '- '. $default .' -');
+      $data = array('' => '- '. $default .' -') + $data;
+      return self::dropDownList($name, $value, $data, $htmlOptions);
+/*
         if (sizeof($data) > 0) {
             $items[] = '<li><a data-value="" class="default">'. $default .'</a></li>';
             foreach ($data as $nm => $vl) {
@@ -130,7 +135,7 @@ class ActiveHtml extends CHtml {
             self::openTag('ul') .
                 implode('', $items) .
             self::closeTag('ul') .
-            self::closeTag('div');
+            self::closeTag('div');*/
     }
 
     public static function activeDropdown(CModel $model, $attribute, $data, $htmlOptions = array()) {
@@ -304,4 +309,90 @@ class ActiveHtml extends CHtml {
             return Yii::t('app', '{n} день|{n} дня|{n} дней', $days) .' '. Yii::t('app', 'назад');
         }
     }
+
+  // склонение слова по падежам
+  public static function lex($p, $word)
+  {
+    if(preg_match("/[ ]{1,}/si", $word)) {
+      $words = explode(" ", $word);
+
+      foreach($words as &$word)
+      {
+        $word = self::lex($p, $word);
+      }
+
+      return implode(" ", $words);
+    }
+
+    // падеж
+    switch($p) {
+      case 1:
+
+        return $word;
+
+        break;
+      case 2:
+
+        if(!preg_match("/[^A-z]/si", $word)) return $word;
+        if(!preg_match("/[^0-9]/si", $word)) return $word;
+
+        $last = substr($word, -2);
+        $prelast = substr($word, - 4);
+        $superlast = substr($word, -6);
+        $prelast_ltr = substr($prelast, 0, 2);
+
+        if( $last == 'а' && !in_array($prelast_ltr, array('ж', 'ш', 'к', 'в')) ) return substr($word, 0, -2) .'ы';
+        elseif( $last == 'а' && in_array($prelast_ltr, array('ж', 'ш', 'к')) ) return substr($word, 0, -2) .'и';
+        elseif( in_array($last, array('я')) ) return substr($word, 0, -2) .'и';
+        elseif( $last == 'ь' ) return substr($word, 0, -2) .'я';
+        elseif( $prelast == 'ей' ) return substr($word, 0, -4) .'eя';
+        elseif( $prelast == 'ое' ) return substr($word, 0, -2) .'го';
+        elseif( $prelast == 'ый' ) return substr($word, 0, -4) .'ого';
+        elseif( $superlast == 'ний' ) return substr($word, 0, -2) .'я';
+        elseif( $prelast == 'ий' ) return substr($word, 0, -4) .'ого';
+        elseif( $prelast == 'ай' ) return substr($word, 0, -4) .'ая';
+        elseif( $prelast == 'ва' ) return substr($word, 0, -4) .'вой';
+        elseif( in_array($prelast_ltr, array('е')) && in_array($last, array('б', 'г', 'д', 'ж', 'з', 'к', 'л', 'м', 'н', 'п', 'с', 'ф', 'х', 'ц', 'ч', 'ш', 'щ')) ) return substr($word, 0, -4) . $last . 'а';
+        elseif( in_array($last, array('б', 'в', 'г', 'д', 'ж', 'з', 'к', 'л', 'м', 'н', 'п', 'р', 'с', 'т', 'ф', 'х', 'ц', 'ч', 'ш', 'щ')) ) return $word .'а';
+        else return $word;
+
+        break;
+
+      case 3:
+
+        $last = substr($word, -2);
+        $prelast = substr($word, -4);
+
+        if( in_array($last, array('а', 'я', 'ь')) ) return substr($word, 0, -2) .'е';
+        elseif( $prelast == 'ое' || $prelast == 'ый' ) return substr($word, 0, -4) .'ом';
+        elseif( $prelast == 'ий' ) return substr($word, 0, -4) .'е';
+        elseif( $prelast == 'ай' ) return substr($word, 0, -4) .'ае';
+        elseif( $last == 'о' || $last == 'ы' ) return $word; // анопово
+        else return $word .'е';
+
+        break;
+
+      case 5:
+
+        if(!preg_match("/[^A-z]/si", $word)) return $word;
+        if(!preg_match("/[^0-9]/si", $word)) return $word;
+
+        $last = substr($word, -2);
+        $prelast = substr($word, -4);
+        $superlast = substr($word, -6);
+        $prelast_ltr = substr($prelast, 0, 2);
+
+        if( $last == 'а' && $prelast_ltr != 'ш' ) return substr($word, 0, -2) .'ой';
+        elseif( $last == 'я' ) return substr($word, 0, -2) .'ей';
+        elseif( $prelast == 'ев' ) return $word .'ым';
+        elseif( $prelast == 'ел' ) return substr($word, 0, -4) .'лом';
+        elseif( $superlast == 'ний' ) return substr($word, 0, -2) .'ем';
+        elseif( $prelast == 'ий' ) return substr($word, 0, -4) .'им';
+        elseif( $last == 'ь' ) return substr($word, 0, -2) .'ем';
+        elseif( $prelast == 'ец' ) return substr($word, 0, -4) .'цем';
+        else return $word .'ом';
+
+        break;
+    }
+  }
 }

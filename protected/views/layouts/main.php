@@ -41,7 +41,7 @@ $cookies = $request->getCookies();
   <div class="back"></div>
 </div>
 
-<div id="box_popup" class="box_popup fixed">
+<div id="box_popup" class="box_popup box_popup_dark fixed">
   <div class="text"></div>
   <div class="back"></div>
 </div>

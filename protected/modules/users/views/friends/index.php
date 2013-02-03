@@ -37,7 +37,7 @@ $delta = Yii::app()->controller->module->friendsPerPage;
     </div>
 </div>
 <div class="summary">
-    У <?php if ($user->id == Yii::app()->user->getId()): ?>Вас<?php else: ?><?php echo $user->login ?><?php endif; ?> <?php echo Yii::t('user', '{n} друг|{n} друга|{n} друзей', $offsets) ?>
+    У <?php if ($user->id == Yii::app()->user->getId()): ?>Вас<?php else: ?><?php echo ActiveHtml::lex(2, $user->getDisplayName()) ?><?php endif; ?> <?php echo Yii::t('user', '{n} друг|{n} друга|{n} друзей', $offsets) ?>
 </div>
 <table class="gsearch_table">
     <tr>

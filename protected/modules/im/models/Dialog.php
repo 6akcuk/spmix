@@ -63,11 +63,11 @@ class Dialog extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-            'leader' => array(self::BELONGS_TO, 'User', 'leader_id'),
-            'member' => array(self::HAS_ONE, 'DialogMember', 'dialog_id'),
-            'members' => array(self::HAS_MANY, 'DialogMember', 'dialog_id'),
-            'lastMessage' => array(self::HAS_ONE, 'DialogMessage', 'dialog_id', 'order' => 'creation_date DESC'),
-            'messages' => array(self::HAS_MANY, 'DialogMessage', 'dialog_id'),
+      'leader' => array(self::BELONGS_TO, 'User', 'leader_id'),
+      'member' => array(self::HAS_ONE, 'DialogMember', 'dialog_id'),
+      'members' => array(self::HAS_MANY, 'DialogMember', 'dialog_id'),
+      'lastMessage' => array(self::HAS_ONE, 'DialogMessage', 'dialog_id', 'order' => 'creation_date DESC'),
+      'messages' => array(self::HAS_MANY, 'DialogMessage', 'dialog_id'),
 		);
 	}
 

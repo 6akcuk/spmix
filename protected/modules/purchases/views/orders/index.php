@@ -19,30 +19,33 @@ $this->pageTitle = Yii::app()->name .' - Мои покупки';
 <table class="user_orders">
     <thead>
     <tr>
-        <th>№</th>
-        <th>Закупка / Заказ</th>
-        <th>Статус</th>
-        <th>Кол-во</th>
-        <th>Цена</th>
+      <th>№</th>
+      <th>Закупка / Заказ</th>
+      <th>Статус</th>
+      <th>Кол-во</th>
+      <th>Цена</th>
+      <th>Долг</th>
     </tr>
     </thead>
     <tbody>
     <?php foreach ($orders as $pid => $_orders): ?>
     <?php $purchase = $purchases[$pid]; ?>
     <tr class="order_purchase_row">
-        <td><?php echo $purchase->purchase_id ?></td>
-        <td><?php echo ActiveHtml::link($purchase->name, '/purchase'. $purchase->purchase_id) ?></td>
-        <td><?php echo Yii::t('purchase', $purchase->state) ?></td>
-        <td><?php echo $stat[$pid]['num'] ?></td>
-        <td><?php echo ActiveHtml::price($stat[$pid]['sum']) ?></td>
+      <td><?php echo $purchase->purchase_id ?></td>
+      <td><?php echo ActiveHtml::link($purchase->name, '/purchase'. $purchase->purchase_id) ?></td>
+      <td><?php echo Yii::t('purchase', $purchase->state) ?></td>
+      <td><?php echo $stat[$pid]['num'] ?></td>
+      <td><?php echo ActiveHtml::price($stat[$pid]['sum']) ?></td>
+      <td><?php echo ActiveHtml::price($stat[$pid]['credit']) ?></td>
     </tr>
         <?php foreach ($_orders as $order): ?>
         <tr class="order_row">
-            <td><?php echo $order->order_id ?></td>
-            <td class="good_name"><?php echo ActiveHtml::link($order->good->name, '/order'. $order->order_id) ?></td>
-            <td><?php echo Yii::t('purchase', $order->status) ?></td>
-            <td><?php echo $order->amount ?></td>
-            <td><?php echo ActiveHtml::price($order->total_price) ?></td>
+          <td><?php echo $order->order_id ?></td>
+          <td class="good_name"><?php echo ActiveHtml::link($order->good->name, '/order'. $order->order_id) ?></td>
+          <td><?php echo Yii::t('purchase', $order->status) ?></td>
+          <td><?php echo $order->amount ?></td>
+          <td><?php echo ActiveHtml::price($order->total_price) ?></td>
+          <td><?php echo ActiveHtml::price($order->total_price - $order->payed) ?></td>
         </tr>
         <?php endforeach; ?>
     <?php endforeach; ?>

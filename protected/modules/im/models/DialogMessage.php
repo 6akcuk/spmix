@@ -160,6 +160,11 @@ class DialogMessage extends CActiveRecord
 
             $dialogMembers = DialogMember::model()->with('twin', 'dialog')->findAll($criteria);
             if (!$dialogMembers) {
+              $raw = file_get_contents('/var/log/im_dialog.log');
+              if (!$raw) $raw = '';
+              $raw .= ":user = ". Yii::app()->user->getId() .", :id = ". $recipients[0] ."\n";
+              file_put_contents('/var/log/im_dialog.log', $raw);
+
                 $dialog = new Dialog();
                 $dialog->leader_id = Yii::app()->user->getId();
                 $dialog->type = Dialog::TYPE_TET;

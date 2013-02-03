@@ -121,7 +121,7 @@ var Profile = {
     },
 
     doIncReputation: function(user_id) {
-        var val = parseInt($('#rep_pos_box input[name="rep_value"]').val()),
+        var val = parseInt($('#rep_pos_box input[name="rep_value"]:checked').val()),
             com = $.trim($('#rep_pos_box textarea').val());
 
         if (!val || !com) return;
@@ -139,7 +139,7 @@ var Profile = {
     },
 
     doDecReputation: function(user_id) {
-        var val = parseInt($('#rep_neg_box input[name="rep_value"]').val()),
+        var val = parseInt($('#rep_neg_box input[name="rep_value"]:checked').val()),
             com = $.trim($('#rep_neg_box textarea').val());
 
         if (!val || !com) return;

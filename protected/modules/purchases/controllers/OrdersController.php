@@ -16,6 +16,9 @@ class OrdersController extends Controller {
             array(
                 'ext.RBACFilter.RBACFilter'
             ),
+          array(
+            'ext.DevelopFilter',
+          ),
         );
     }
 
@@ -32,14 +35,15 @@ class OrdersController extends Controller {
         $_orders = Order::model()->with('good')->findAll($criteria);
         /** @var $order Order */
         foreach ($_orders as $order) {
-            if (!isset($orders[$order->purchase_id])) {
-                $orders[$order->purchase_id] = array();
-                $stat[$order->purchase_id] = array('num' => 0, 'sum' => 0.00);
-                $p_ids[] = $order->purchase_id;
-            }
-            $orders[$order->purchase_id][] = $order;
-            $stat[$order->purchase_id]['num'] += $order->amount;
-            $stat[$order->purchase_id]['sum'] += floatval($order->total_price);
+          if (!isset($orders[$order->purchase_id])) {
+            $orders[$order->purchase_id] = array();
+            $stat[$order->purchase_id] = array('num' => 0, 'sum' => 0.00, 'credit' => 0.00);
+            $p_ids[] = $order->purchase_id;
+          }
+          $orders[$order->purchase_id][] = $order;
+          $stat[$order->purchase_id]['num'] += $order->amount;
+          $stat[$order->purchase_id]['sum'] += floatval($order->total_price);
+          $stat[$order->purchase_id]['credit'] += floatval($order->total_price - $order->payed);
         }
 
         $pur_criteria = new CDbCriteria();
@@ -153,7 +157,7 @@ class OrdersController extends Controller {
             $excel->line(array(
                 'ID', 'Товар', 'Артикул', 'Размер', 'Цвет', 'Время заказа', 'Анонимно', 'Заказал',
                 'Имя', 'Фамилия', 'Город', 'Цена', 'Орг.сбор', 'Цена + орг.сбор', 'Кол-во', 'Цена (итог)',
-                'Цена + орг.сбор (итог)', 'Оплачено', 'Комментарии организатора', 'Комментарии для организатора',
+                'Цена + орг.сбор (итог)', 'Оплачено', 'Место выдачи', 'Комментарии организатора', 'Комментарии для организатора',
                 'Телефон', 'Ряд', 'Ряд', 'Ссылка', 'Тел.из профиля', 'Статус заказа'
             ));
 
@@ -167,7 +171,7 @@ class OrdersController extends Controller {
                     $order->customer->profile->city->name, $order->good->price, $purchase->org_tax,
                     $purchase->getPriceWithTax($order->good->price), $order->amount, ($order->good->price * $order->amount),
                     $purchase->getPriceWithTax($order->good->price * $order->amount),
-                    (($order->payment && $order->payment->status == OrderPayment::STATUS_PERFORMED) ? 'Да' : 'Нет'),
+                    $order->payed, $order->oic,
                     $order->org_comment, $order->client_comment, $order->customer->profile->phone, 0, '',
                     $order->good->url, $order->customer->profile->phone, Yii::t('purchase', $order->status)
                 ));
@@ -274,7 +278,8 @@ class OrdersController extends Controller {
     }
 
     public function actionShow($order_id) {
-        $order = Order::model()->with('good', 'purchase')->findByPk($order_id);
+      /** @var $order Order */
+        $order = Order::model()->with('good', 'good.sizes', 'good.colors', 'purchase', 'purchase.oic')->findByPk($order_id);
 
         if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
             Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('order' => $order)) ||
@@ -283,18 +288,10 @@ class OrdersController extends Controller {
             if (isset($_POST['Order'])) {
                 if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
                     Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Org', array('purchase' => $order->purchase)) ||
-                    in_array($order->purchase->state, array(Purchase::STATE_DRAFT, Purchase::STATE_CALL_STUDY)) ||
-                    (
-                        $order->purchase->state == Purchase::STATE_ORDER_COLLECTION &&
-                            in_array($order->status, array(Order::STATUS_PROCEEDING, Order::STATUS_REFUSED, Order::STATUS_ACCEPTED))
-                    ) ||
-                    (
-                        $order->purchase->state == Purchase::STATE_REORDER &&
-                            in_array($order->status, array(Order::STATUS_PROCEEDING, Order::STATUS_REFUSED))
-                    )
+                    $order->canEdit()
                     )
                 {
-                    $order->setScenario('edit');
+                    $order->setScenario('edit_own');
 
                     if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
                         Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Org', array('purchase' => $order->purchase))) {
@@ -305,60 +302,71 @@ class OrdersController extends Controller {
                         unset($_POST['Order']['org_comment']);
                     }
 
+                  $cache = array();
                     $history = array(
-                        //'size' => 'Изменен размер с {from} на {to}',
-                        'color' => 'Изменен цвет с {from} на {to}',
-                        'amount' => 'Изменено количество товара с {from} на {to}',
-                        'total_price' => 'Изменена итог. цена с {from} на {to}',
-                        'status' => 'Изменен статус заказа с {from} на {to}',
+                      'size' => 'Изменен размер с {from} на {to}',
+                      'color' => 'Изменен цвет с {from} на {to}',
+                      'price' => 'Изменена цена с {from} на {to}',
+                      'org_tax' => 'Изменен орг. сбор с {from} на {to}',
+                      'amount' => 'Изменено количество товара с {from} на {to}',
+                      'total_price' => 'Изменена итог. цена с {from} на {to}',
+                      'anonymous' => 'Изменен статус анонимности с {from} на {to}',
+                      'status' => 'Изменен статус заказа с {from} на {to}',
                     );
                     foreach ($history as $h => $m) {
                         $cache[$h] = $order->$h;
                     }
                     $order->attributes = $_POST['Order'];
-                    $order->color = ($order->grid_id) ? $_POST['color'][$order->grid_id] : '';
-                    $price = floatval($order->good->price) * ($order->good->purchase->org_tax / 100 + 1);
+                    $price = $order->good->getEndCustomPrice($order->org_tax, $order->price);
 
                     if ($order->oic) {
-                        $oic = PurchaseOic::model()->findByPk($order->oic);
+                      preg_match("/([0-9\.]{1,})/ui", $order->oic, $oic_price);
+                      $price += floatval($oic_price[1]);
+                        /*$oic = PurchaseOic::model()->findByPk($order->oic);
                         if ($oic) {
                             $price += floatval($oic->price);
 
-                            $order->oic = $oic->price .' - '. $oic->description;
-                        }
+                            //$order->oic = $oic->price .' - '. $oic->description;
+                        }*/
                     }
 
                     $order->total_price = $price * intval($order->amount);
+                    $order->status = Order::STATUS_PROCEEDING;
 
                     if ($order->save()) {
-                        foreach ($history as $h => $m) {
-                            if ($cache[$h] != $order->$h) {
-                                $ph = new OrderHistory();
-                                $ph->order_id = $order_id;
-                                $ph->author_id = Yii::app()->user->getId();
-                                $ph->msg = $m;
+                      foreach ($history as $h => $m) {
+                        if ($cache[$h] != $order->$h) {
+                          $ph = new OrderHistory();
+                          $ph->order_id = $order_id;
+                          $ph->author_id = Yii::app()->user->getId();
+                          $ph->msg = $m;
 
-                                $from = $cache[$h];
-                                $to = $order->$h;
+                          $from = $cache[$h];
+                          $to = $order->$h;
 
-                                switch ($h) {
-                                    case 'status':
-                                        $from = Yii::t('purchase', $from);
-                                        $to = Yii::t('purchase', $to);
-                                        break;
-                                    case 'total_price':
-                                        $from = ActiveHtml::price($from);
-                                        $to = ActiveHtml::price($to);
-                                        break;
-                                }
+                          switch ($h) {
+                            case 'status':
+                              $from = Yii::t('purchase', $from);
+                              $to = Yii::t('purchase', $to);
+                              break;
+                            case 'price':
+                            case 'total_price':
+                              $from = ActiveHtml::price($from);
+                              $to = ActiveHtml::price($to);
+                              break;
+                            case 'anonymous':
+                              $from = ($from == 0) ? 'Не установлен' : 'Установлен';
+                              $to = ($to == 0) ? 'Не установлен' : 'Установлен';
+                              break;
+                          }
 
-                                $ph->params = json_encode(array('{from}' => $from, '{to}' => $to));
-                                $ph->save();
-                            }
+                          $ph->params = json_encode(array('{from}' => $from, '{to}' => $to));
+                          $ph->save();
                         }
+                      }
 
-                        $result['msg'] = 'Изменения сохранены';
-                        $result['success'] = true;
+                      $result['msg'] = 'Изменения сохранены';
+                      $result['success'] = true;
                     }
                     else {
                         foreach ($order->getErrors() as $attr => $error) {
@@ -374,14 +382,244 @@ class OrdersController extends Controller {
                 exit;
             }
 
-            if (Yii::app()->request->isAjaxRequest) {
-                $this->pageHtml = $this->renderPartial('show', array('order' => $order), true);
-            }
-            else $this->render('show', array('order' => $order));
+
+
+          if (Yii::app()->request->isAjaxRequest) {
+              $this->pageHtml = $this->renderPartial('show', array('order' => $order), true);
+          }
+          else $this->render('show', array('order' => $order));
         }
         else
             throw new CHttpException(403, 'В доступе отказано');
     }
+
+  public function actionShowForOrg($id) {
+    /** @var $order Order */
+    $order = Order::model()->with('good', 'good.sizes', 'good.colors', 'purchase', 'purchase.oic')->findByPk($id);
+
+    if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
+      Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('purchase' => $order->purchase))) {
+
+      if (isset($_POST['Order'])) {
+        if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
+          Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('purchase' => $order->purchase)) ||
+          $order->canEdit()
+        )
+        {
+          $order->setScenario('edit_org');
+
+          $cache = array();
+          $history = array(
+            'size' => 'Изменен размер с {from} на {to}',
+            'color' => 'Изменен цвет с {from} на {to}',
+            'price' => 'Изменена цена с {from} на {to}',
+            'org_tax' => 'Изменен орг. сбор с {from} на {to}',
+            'amount' => 'Изменено количество товара с {from} на {to}',
+            'total_price' => 'Изменена итог. цена с {from} на {to}',
+            'anonymous' => 'Изменен статус анонимности с {from} на {to}',
+            'status' => 'Изменен статус заказа с {from} на {to}',
+          );
+          foreach ($history as $h => $m) {
+            $cache[$h] = $order->$h;
+          }
+          $order->attributes = $_POST['Order'];
+          $price = $order->good->getEndCustomPrice($order->org_tax, $order->price);
+
+          if ($order->oic) {
+            preg_match("/([0-9\.]{1,})/ui", $order->oic, $oic_price);
+            $price += floatval($oic_price[1]);
+            /*$oic = PurchaseOic::model()->findByPk($order->oic);
+            if ($oic) {
+                $price += floatval($oic->price);
+
+                //$order->oic = $oic->price .' - '. $oic->description;
+            }*/
+          }
+
+          $order->total_price = $price * intval($order->amount);
+
+          if ($order->save()) {
+            foreach ($history as $h => $m) {
+              if ($cache[$h] != $order->$h) {
+                $ph = new OrderHistory();
+                $ph->order_id = $id;
+                $ph->author_id = Yii::app()->user->getId();
+                $ph->msg = $m;
+
+                $from = $cache[$h];
+                $to = $order->$h;
+
+                switch ($h) {
+                  case 'status':
+                    $from = Yii::t('purchase', $from);
+                    $to = Yii::t('purchase', $to);
+                    break;
+                  case 'price':
+                  case 'total_price':
+                    $from = ActiveHtml::price($from);
+                    $to = ActiveHtml::price($to);
+                    break;
+                  case 'anonymous':
+                    $from = ($from == 0) ? 'Не установлен' : 'Установлен';
+                    $to = ($to == 0) ? 'Не установлен' : 'Установлен';
+                    break;
+                }
+
+                $ph->params = json_encode(array('{from}' => $from, '{to}' => $to));
+                $ph->save();
+              }
+            }
+
+            $result['msg'] = 'Изменения сохранены';
+            $result['success'] = true;
+            $result['status'] = Yii::t('purchase', $order->status);
+            $result['total_price'] = ActiveHtml::price($order->total_price);
+          }
+          else {
+            foreach ($order->getErrors() as $attr => $error) {
+              $result[ActiveHtml::activeId($order, $attr)] = $error;
+            }
+          }
+        }
+        else {
+          $result[''] = 'Сохранение изменений отклонено';
+        }
+
+        echo json_encode($result);
+        exit;
+      }
+
+      if (Yii::app()->request->isAjaxRequest) {
+        $this->pageHtml = $this->renderPartial((isset($_POST['box_request'])) ? 'show_org_box' : 'show_org', array('order' => $order), true);
+        if (isset($_POST['box_request'])) $this->boxWidth = 660;
+      }
+      else $this->render('show_org', array('order' => $order));
+    }
+    else
+      throw new CHttpException(403, 'В доступе отказано');
+  }
+
+  public function actionDeleteOrder() {
+    /** @var $order Order */
+    $order = Order::model()->with('purchase')->findByPk($_POST['id']);
+
+    if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
+      Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('order' => $order)) ||
+      Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Org', array('purchase' => $order->purchase))) {
+
+      if (!$order) {
+        throw new CHttpException(500, 'Заказ не найден');
+      }
+      else {
+        $order->delete();
+        OrderHistory::model()->deleteAll('order_id = :id', array(':id' => $_POST['id']));
+
+        echo json_encode(array('success' => true, 'msg' => 'Заказ успешно удален'));
+        exit;
+      }
+    }
+    else
+      throw new CHttpException(403, 'В доступе отказано');
+  }
+
+  public function actionMarkOrderAsDelivered() {
+    /** @var $order Order */
+    $order = Order::model()->with('purchase')->findByPk($_POST['id']);
+
+    if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
+      Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('order' => $order))) {
+
+      if (!$order) {
+        throw new CHttpException(500, 'Заказ не найден');
+      }
+      elseif ($order->status != Order::STATUS_PAID) {
+        throw new CHttpException(500, 'Заказ еще не оплачен');
+      }
+      else {
+        $order->status = Order::STATUS_DELIVERED;
+        $order->save(true, array('status'));
+
+        echo json_encode(array('success' => true, 'msg' => 'Заказ успешно отмечен как полученный'));
+        exit;
+      }
+    }
+    else
+      throw new CHttpException(403, 'В доступе отказано');
+  }
+
+  public function actionMassChangeStatus($id) {
+    $purchase = Purchase::model()->findByPk($id);
+
+    if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
+      Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Org', array('purchase' => $purchase))) {
+
+      if (!is_array($_POST['ids']) || sizeof($_POST['ids']) == 0)
+        throw new CHttpException(500, 'Не выбраны заказы для обновления статуса');
+
+      if (!$_POST['status'] || !in_array($_POST['status'], Order::getStatusDataArray()))
+        throw new CHttpException(500, 'Передано неверное значения для статуса заказа');
+
+      $criteria = new CDbCriteria();
+      $criteria->addInCondition('order_id', $_POST['ids']);
+
+      $orders = Order::model()->findAll($criteria);
+      foreach ($orders as $order) {
+        $oh = new OrderHistory();
+        $oh->author_id = Yii::app()->user->getId();
+        $oh->order_id = $order->order_id;
+        $oh->msg = 'Статус заказа изменен с {from} на {to}';
+        $oh->params = json_encode(array('{from}' => Yii::t('purchase', $order->status), '{to}' => Yii::t('purchase', $_POST['status'])));
+        $oh->save();
+      }
+
+      Order::model()->updateAll(array(
+        'status' => $_POST['status'],
+        'org_comment' => $_POST['org_comment'],
+      ), $criteria);
+
+      $statuses = Order::getStatusDataArray();
+
+      echo json_encode(array('success' => true, 'msg' => 'Все заказы были обновлены', 'status' => array_search($_POST['status'], $statuses)));
+      exit;
+    }
+    else
+      throw new CHttpException(403, 'В доступе отказано');
+  }
+
+  public function actionMassSendMessage($id) {
+    $purchase = Purchase::model()->findByPk($id);
+
+    if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
+      Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Org', array('purchase' => $purchase))) {
+
+      if (!is_array($_POST['ids']) || sizeof($_POST['ids']) == 0)
+        throw new CHttpException(500, 'Не выбраны заказы');
+
+      if (!$_POST['message'])
+        throw new CHttpException(500, 'Введите сообщение для отправки');
+
+      $criteria = new CDbCriteria();
+      $criteria->addInCondition('order_id', $_POST['ids']);
+
+      $cache = array();
+      $msg_counter = 0;
+      $orders = Order::model()->findAll($criteria);
+      /** @var $order Order */
+      foreach ($orders as $order) {
+        if (!isset($cache[$order->customer_id])) {
+          Yii::import('application.modules.im.models.*');
+          $result = DialogMessage::send(array($order->customer_id), $_POST['message']);
+          if ($result['success']) $msg_counter++;
+          $cache[$order->customer_id] = true;
+        }
+      }
+
+      echo json_encode(array('success' => true, 'msg' => 'Успешно отправлено сообщений: '. $msg_counter .' из '. sizeof($cache)));
+      exit;
+    }
+    else
+      throw new CHttpException(403, 'В доступе отказано');
+  }
 
     public function actionCreatePayment($id) {
         $order = Order::model()->findByPk($id);

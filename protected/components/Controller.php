@@ -16,6 +16,7 @@ class Controller extends CController
     public $pageCounters = array('friends' => 0, 'pm' => 0);
     public $pageHtml = '';
     public $wideScreen = false;
+  public $boxWidth = 0;
 
     public function init() {
         if (Yii::app()->controller->id == "site" && Yii::app()->user->getIsGuest()) {

@@ -116,11 +116,12 @@ html {
 }
 
 body {
-    font-family: sans-serif;
-    font-size: 14px;
-    line-height: 18px;
-    min-width: 960px;
-    background: #d4e5c5; /* url('/images/bg.jpg') repeat-x #ffffff;*/
+  font-family: tahoma, arial, verdana, sans-serif;
+  font-size: 11px;
+  font-weight: normal;
+  /*line-height: 18px;*/
+  min-width: 960px;
+  background: #d4e5c5; /* url('/images/bg.jpg') repeat-x #ffffff;*/
 }
 
 body.progress {
@@ -488,22 +489,6 @@ textarea {
 #footer {
     padding: 30px 0 10px;
     text-align: center;
-}
-
-.footers_foot {
-    margin: 0 auto 15px;
-    color: #acb1b4;
-    font-size: 11px;
-    overflow: auto;
-}
-.footers_foot a {
-    font-weight: normal;
-}
-.footers_foot .iconify {
-    font-size: 13px;
-}
-.footers_foot .love {
-    color: #f27490;
 }
 
 #edge_content {

@@ -183,5 +183,6 @@ function editSite(id) {
 
 $().ready(function() {
   $('#SiteList_site').popupHelp('Сайт указывается без http и www, к примеру, yandex.ru или vk.com');
+  $('#SiteList_org_id').popupHelp('Указывается только числовое значение');
 });
 </script>

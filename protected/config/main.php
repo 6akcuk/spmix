@@ -89,6 +89,7 @@ return array(
                 'purchase<id:\d+>/<action:\w+>' => 'purchases/purchases/<action>',
                 'purchase<id:\d+>' => 'purchases/purchases/show',
                 'order<order_id:\d+>' => 'purchases/orders/show',
+                'order-<id:\d+>' => 'purchases/orders/showForOrg',
                 'orders' => 'purchases/orders',
                 'orders<purchase_id:\d+>' => 'purchases/orders/purchase',
                 'orders<purchase_id:\d+>/excel' => 'purchases/orders/purchase2Excel',

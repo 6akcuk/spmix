@@ -10,6 +10,8 @@
  * @property string $datetime
  * @property string $msg
  * @property string $params
+ *
+ * @property User $author
  */
 class OrderHistory extends CActiveRecord
 {
@@ -39,7 +41,7 @@ class OrderHistory extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('order_id, author_id, datetime, msg, params', 'required'),
+			array('order_id, author_id, msg, params', 'required'),
 			array('author_id', 'numerical', 'integerOnly'=>true),
 			array('order_id', 'length', 'max'=>10),
 			array('msg, params', 'length', 'max'=>200),
@@ -57,6 +59,7 @@ class OrderHistory extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+      'author' => array(self::BELONGS_TO, 'User', 'author_id', 'with' => 'profile'),
 		);
 	}
 
@@ -75,26 +78,13 @@ class OrderHistory extends CActiveRecord
 		);
 	}
 
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// Warning: Please modify the following code to remove attributes that
-		// should not be searched.
+  public function beforeSave() {
+    if (parent::beforeSave()) {
+      if ($this->isNewRecord)
+        $this->datetime = date("Y-m-d H:i:s");
 
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('history_id',$this->history_id,true);
-		$criteria->compare('order_id',$this->order_id,true);
-		$criteria->compare('author_id',$this->author_id);
-		$criteria->compare('datetime',$this->datetime,true);
-		$criteria->compare('msg',$this->msg,true);
-		$criteria->compare('params',$this->params,true);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
-	}
+      return true;
+    }
+    else return false;
+  }
 }

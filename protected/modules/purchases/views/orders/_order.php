@@ -6,7 +6,7 @@
 <tr>
   <td><?php echo ActiveHtml::checkBox('select['. $order->order_id .']') ?></td>
   <td>
-    <?php echo ActiveHtml::link('Зак№'. $order->order_id, '/order'. $order->order_id) ?><br/>
+    <?php echo ActiveHtml::link('Зак№'. $order->order_id, '/order-'. $order->order_id, array('nav' => array('box' => 1))) ?><br/>
     <?php if ($order->payment): ?>
     <?php echo ActiveHtml::link('Платеж №'. $order->payment->payment_id .' от '. ActiveHtml::date($order->payment->datetime, false, true), '/payment'. $order->payment->payment_id) ?>
     <?php echo Yii::t('purchase', $order->payment->status) ?>
@@ -23,9 +23,9 @@
   </td>
   <td><?php echo $order->customer->profile->city->name ?></td>
   <td><?php echo $order->customer->profile->positive_rep .' | '. $order->customer->profile->negative_rep ?></td>
-  <td><?php echo Yii::t('purchase', $order->status) ?></td>
+  <td id="order<?php echo $order->order_id ?>_status"><?php echo Yii::t('purchase', $order->status) ?></td>
   <td><?php echo $order->amount ?></td>
-  <td><?php echo ActiveHtml::price($order->total_price) ?></td>
+  <td id="order<?php echo $order->order_id ?>_total_price"><?php echo ActiveHtml::price($order->total_price) ?></td>
 </tr>
 <?php endforeach; ?>
 <?php endif; ?>

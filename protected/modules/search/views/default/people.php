@@ -29,8 +29,11 @@ $delta = Yii::app()->controller->module->peoplesPerPage;
 </div>
 <table class="gsearch_table">
 <tr>
-    <td rel="pagination" class="searchresults">
-    <?php echo $this->renderPartial('_people', array('peoples' => $peoples, 'offset' => $offset)) ?>
+    <td class="searchresults">
+      <div rel="pagination">
+        <?php echo $this->renderPartial('_people', array('peoples' => $peoples, 'offset' => $offset)) ?>
+      </div>
+      <? if ($offset + $delta < $offsets && $offsets > $delta): ?><a id="pg_more" class="pg_more" onclick="Paginator.showMore()">Еще пользователи</a><? endif; ?>
     </td>
     <td class="filters">
         <div rel="filters">

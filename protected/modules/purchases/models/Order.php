@@ -27,12 +27,14 @@
  * @property Purchase $purchase
  * @property OrderPayment $payment
  * @property GoodGrid $grid
+ * @property OrderHistory $history
  */
 class Order extends CActiveRecord
 {
     const STATUS_PROCEEDING = 'Proceeding';
     const STATUS_REFUSED = 'Refused';
     const STATUS_ACCEPTED = 'Accepted';
+    const STATUS_RANGE_ACCEPTED = 'Range Accepted';
     const STATUS_DELIVERED = 'Delivered';
     const STATUS_AWAITING = 'Awaiting';
     const STATUS_PAID = 'Paid';
@@ -63,18 +65,19 @@ class Order extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('purchase_id, good_id, customer_id, amount, price, total_price, oic', 'required', 'on' => 'create'),
-      array('purchase_id, good_id, customer_id, amount, price, total_price, oic', 'required', 'on' => 'create_range'),
-      array('purchase_id, good_id, customer_id, amount, price, total_price, oic', 'required', 'on' => 'edit'),
-      array('purchase_id, customer_id, amount, price, total_price', 'required', 'on' => 'quick'),
-			array('purchase_id, good_id, customer_id, amount, org_tax, anonymous', 'numerical', 'integerOnly'=>true),
-			array('price, total_price, payed', 'length', 'max'=>10),
-      array('size, color', 'length', 'max' => 50),
-			array('client_comment, org_comment', 'length', 'max'=>200),
-			array('status', 'length', 'max'=>12),
-			array('oic', 'length', 'max'=>100),
-	    );
+      array('purchase_id, good_id, customer_id, amount, price, oic', 'required'),
+      array('purchase_id, good_id, customer_id, amount', 'numerical', 'integerOnly' => true),
 
+			array('size, color, client_comment', 'length', 'max' => 200, 'on' => 'create, edit_own'),
+      array('anonymous', 'numerical', 'integerOnly' => true, 'on' => 'create, edit_own'),
+      array('oic', 'length', 'max'=>100, 'on' => 'create, edit_own'),
+      array('price, total_price, status, org_comment, payed, org_tax', 'unsafe', 'on' => 'create, edit_own'),
+
+      array('org_tax', 'numerical', 'integerOnly' => true, 'on' => 'edit_org'),
+      array('price, payed', 'length', 'max' => 10, 'on' => 'edit_org'),
+      array('status', 'length', 'max' => 12, 'on' => 'edit_org'),
+      array('org_comment', 'length', 'max' => 200, 'on' => 'edit_org'),
+	    );
 	}
 
 	/**
@@ -90,6 +93,7 @@ class Order extends CActiveRecord
       'purchase' => array(self::BELONGS_TO, 'Purchase', 'purchase_id'),
       'payment' => array(self::HAS_ONE, 'OrderPayment', 'order_id'),
       'grid' => array(self::BELONGS_TO, 'GoodGrid', 'grid_id'),
+      'history' => array(self::HAS_MANY, 'OrderHistory', 'order_id', 'with' => 'author'),
 		);
 	}
 
@@ -136,9 +140,48 @@ class Order extends CActiveRecord
             'В обработке' => self::STATUS_PROCEEDING,
             'Отказ' => self::STATUS_REFUSED,
             'Принят орг-ом' => self::STATUS_ACCEPTED,
+            'Принят орг-ом в ряд' => self::STATUS_RANGE_ACCEPTED,
             'Ожидание оплаты' => self::STATUS_AWAITING,
             'Получен' => self::STATUS_DELIVERED,
             'Оплачен' => self::STATUS_PAID,
         );
     }
+
+  public function canEdit() {
+    if (in_array($this->purchase->state, array(Purchase::STATE_DRAFT, Purchase::STATE_CALL_STUDY)) ||
+      (
+        $this->purchase->state == Purchase::STATE_ORDER_COLLECTION &&
+          in_array($this->status, array(Order::STATUS_PROCEEDING, Order::STATUS_REFUSED, Order::STATUS_ACCEPTED))
+      ) ||
+      (
+        $this->purchase->state == Purchase::STATE_REORDER &&
+          in_array($this->status, array(Order::STATUS_PROCEEDING, Order::STATUS_REFUSED))
+      )
+    )
+      return true;
+    else
+      return false;
+  }
+
+  public function canDelete() {
+    if (in_array($this->purchase->state, array(Purchase::STATE_DRAFT, Purchase::STATE_CALL_STUDY)) ||
+      (
+        $this->purchase->state == Purchase::STATE_ORDER_COLLECTION &&
+          in_array($this->status, array(Order::STATUS_PROCEEDING, Order::STATUS_REFUSED, Order::STATUS_ACCEPTED))
+      ) ||
+      (
+        in_array($this->purchase->state, array(
+          Purchase::STATE_REORDER,
+          Purchase::STATE_STOP,
+          Purchase::STATE_PAY,
+          Purchase::STATE_DISTRIBUTION,
+          Purchase::STATE_COMPLETED
+        )) &&
+          in_array($this->status, array(Order::STATUS_PROCEEDING, Order::STATUS_REFUSED))
+      )
+    )
+      return true;
+    else
+      return false;
+  }
 }

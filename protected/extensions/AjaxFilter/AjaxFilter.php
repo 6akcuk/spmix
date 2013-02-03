@@ -23,6 +23,9 @@ class AjaxFilter extends CFilter {
             if (Yii::app()->user->getIsGuest())
                 $return['guest'] = true;
 
+          if (Yii::app()->controller->boxWidth > 0)
+            $return['boxWidth'] = Yii::app()->controller->boxWidth;
+
             echo json_encode($return);
             Yii::app()->end();
         }

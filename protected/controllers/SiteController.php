@@ -18,6 +18,40 @@ class SiteController extends Controller
 
 	}
 
+  /* Исправляет проблему дублирования диалогов */
+  public function actionPatch3() {
+    Yii::import('application.modules.im.models.*');
+
+    $criteria = new CDbCriteria();
+    $criteria->compare('t.type', Dialog::TYPE_TET);
+    $criteria->order = 't.dialog_id, members.member_id';
+
+    $fix = array();
+    $dialogs = Dialog::model()->with('members')->findAll($criteria);
+    /** @var $dialog Dialog */
+    foreach ($dialogs as $dialog) {
+      $hash = array();
+      foreach ($dialog->members as $member) {
+        $hash[] = $member->member_id;
+      }
+      $hash = implode(',', $hash);
+
+      if (!isset($fix[$hash])) {
+        $fix[$hash] = $dialog->dialog_id;
+        echo 'Parent dialog for hash '. $hash .' is '. $fix[$hash] .'<br>';
+      }
+      else {
+        echo 'Moving '. $dialog->dialog_id .' to '. $fix[$hash] .'<br>';
+
+        Dialog::model()->deleteByPk($dialog->dialog_id);
+        DialogMember::model()->deleteAll('dialog_id = :id', array(':id' => $dialog->dialog_id));
+        DialogMessage::model()->updateAll(array('dialog_id' => $fix[$hash]), 'dialog_id = :id', array(':id' => $dialog->dialog_id));
+      }
+    }
+
+    exit;
+  }
+
   /* Исправляет старые записи с синтаксисом size[price] */
   public function actionPatch2() {
     Yii::import('application.modules.purchases.models.*');

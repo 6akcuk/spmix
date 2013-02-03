@@ -122,6 +122,16 @@ $this->pageTitle = $title;
                     <?php echo ActiveHtml::link($userinfo->profile->city->name, '/search?c[section]=people&c[city_id]='. $userinfo->profile->city_id) ?>
                 </div>
             </div>
+          <?php if (Yii::app()->user->checkAccess('global.phoneView')): ?>
+          <div class="clearfix miniblock">
+            <div class="label left">
+              Телефон:
+            </div>
+            <div class="labeled left">
+              <?php echo $userinfo->profile->phone ?>
+            </div>
+          </div>
+          <?php endif; ?>
             <div class="clearfix miniblock">
                 <div class="label left">
                     Зарегистрирован<?php echo (($userinfo->profile->gender == 'Female') ? "а" : "") ?>:
@@ -165,9 +175,9 @@ $this->pageTitle = $title;
                         <div id="rep_neg_box" class="reputation_box" style="display:none">
                             <div class="row">
                                 <?php if (!Yii::app()->user->checkAccess('users.profiles.decreaseReputationAny')): ?>
-                                <input type="radio" id="rep_neg_value_1" name="rep_value" value="-1" />
+                                <input type="radio" id="rep_neg_value_1" name="rep_value" value="1" />
                                 <label for="rep_neg_value_1">-1</label>
-                                <input type="radio" id="rep_neg_value_5" name="rep_value" value="-5" />
+                                <input type="radio" id="rep_neg_value_5" name="rep_value" value="5" />
                                 <label for="rep_neg_value_5">-5</label>
                                 <?php else: ?>
                                 <span class="input_placeholder">
