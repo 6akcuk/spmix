@@ -63,30 +63,10 @@ $cookies = $request->getCookies();
             <div class="slider-boxed"><div class="slider-wrapper theme-default">
                 <div class="ribbon"></div>
                 <div id="slider" class="nivoSlider">
-                    <img src="/images/1.jpg" alt="" title="#htmlcaption" />
-                    <img src="/images/2.jpg" alt="" title="#htmlcaption1" />
-                    <img src="/images/3.jpg" alt="" title="#htmlcaption2" />
-                </div>
-                <div id="htmlcaption" class="nivo-html-caption">
-                    Любая цитата из новости, которую хотите опубливать в слайдере.
-                </div>
-                <div id="htmlcaption1" class="nivo-html-caption">
-                    Любая цитата из новости, которую хотите опубливать в слайдере.
-                </div>
-                <div id="htmlcaption2" class="nivo-html-caption">
-                    Любая цитата из новости, которую хотите опубливать в слайдере.
-                </div>
-                <div id="htmlcaption3" class="nivo-html-caption">
-                    Любая цитата из новости, которую хотите опубливать в слайдере.
-                </div>
-                <div id="htmlcaption4" class="nivo-html-caption">
-                    Любая цитата из новости, которую хотите опубливать в слайдере.
-                </div>
-                <div id="htmlcaption5" class="nivo-html-caption">
-                    Любая цитата из новости, которую хотите опубливать в слайдере.
+                    <img src="/images/1.jpg" alt=""  />
+                    <img src="/images/3.jpg" alt=""  />
                 </div>
             </div></div></div>
-
         </div>
     </div>
     <div class="main">
