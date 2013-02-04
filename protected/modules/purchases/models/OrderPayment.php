@@ -13,12 +13,14 @@
  * @property string $description
  *
  * @property Order $order
+ * @property User $payer
  * @property ProfilePaydetail $paydetails
  */
 class OrderPayment extends CActiveRecord
 {
-    const STATUS_AWAITING = 'Awaiting payment';
-    const STATUS_PERFORMED = 'Performed payment';
+  const STATUS_AWAITING = 'Awaiting payment';
+  const STATUS_PERFORMED = 'Performed payment';
+  const STATUS_REFUSED = 'Refused payment';
 
 	/**
 	 * Returns the static model of the specified AR class.
@@ -62,6 +64,7 @@ class OrderPayment extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
       'orders' => array(self::HAS_MANY, 'OrderPaymentLink', 'payment_id'),
+      'payer' => array(self::BELONGS_TO, 'User', 'payer_id'),
 		);
 	}
 
@@ -98,4 +101,56 @@ class OrderPayment extends CActiveRecord
         }
         else return false;
     }
+
+  public static function getAllPaymentsForOrg($org_id, $offset = 0, $c = array()) {
+    $result = array();
+
+    $command = Yii::app()->db->createCommand("
+SELECT *, t.datetime AS t_datetime, t.status AS t_status FROM `orders_payments` AS t
+  INNER JOIN `orders_payment_link` AS link ON link.payment_id = t.payment_id
+  INNER JOIN `orders` AS `order` ON `order`.order_id = link.order_id
+  INNER JOIN `purchases` AS purchase ON purchase.purchase_id = `order`.purchase_id
+  INNER JOIN `users` AS user ON user.id = t.payer_id
+  INNER JOIN `profiles` AS profile ON profile.user_id = user.id
+WHERE purchase.author_id = ". $org_id ."
+GROUP BY t.payment_id
+ORDER BY t.datetime DESC
+LIMIT ". $offset .", ". Yii::app()->getModule('purchases')->paymentsPerPage);
+
+    $dataReader = $command->query();
+    while (($row = $dataReader->read()) !== false) {
+      $p = new OrderPayment();
+      $p->payment_id = $row['payment_id'];
+      $p->payer_id = $row['payer_id'];
+      $p->datetime = $row['t_datetime'];
+      $p->sum = $row['sum'];
+      $p->status = $row['t_status'];
+      $p->description = $row['description'];
+
+      $p->payer = new User();
+      $p->payer->id = $row['user_id'];
+      $p->payer->login = $row['login'];
+
+      $p->payer->profile = new Profile();
+      $p->payer->profile->firstname = $row['firstname'];
+      $p->payer->profile->lastname = $row['lastname'];
+
+      $result[] = $p;
+    }
+
+    return $result;
+  }
+
+  public static function countAllPaymentsForOrg($org_id) {
+    $command = Yii::app()->db->createCommand("
+SELECT COUNT(*) AS num FROM `orders_payments` AS t
+  INNER JOIN `orders_payment_link` AS link ON link.payment_id = t.payment_id
+  INNER JOIN `orders` AS `order` ON `order`.order_id = link.order_id
+  INNER JOIN `purchases` AS purchase ON purchase.purchase_id = `order`.purchase_id
+WHERE purchase.author_id = ". $org_id ."
+GROUP BY t.payment_id");
+
+    $row = $command->queryRow();
+    return $row['num'];
+  }
 }

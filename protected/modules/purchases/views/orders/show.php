@@ -148,7 +148,7 @@ if ($good->oic) {
     <div class="order_row clearfix">
       <div class="order_row_labeled">Место выдачи</div>
       <div class="order_row_label">
-        <?php echo $order->oic ?>
+        <?php echo $order->oic->oic_name .' '. $order->oic->oic_price ?>
       </div>
     </div>
   </div>

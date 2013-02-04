@@ -19,7 +19,6 @@
  * @property string $client_comment
  * @property string $org_comment
  * @property string $status
- * @property string $oic
  * @property integer $anonymous
  *
  * @property User $customer
@@ -28,6 +27,7 @@
  * @property OrderPayment $payment
  * @property GoodGrid $grid
  * @property OrderHistory $history
+ * @property OrderOic $oic
  */
 class Order extends CActiveRecord
 {
@@ -65,12 +65,11 @@ class Order extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-      array('purchase_id, good_id, customer_id, amount, price, oic', 'required'),
+      array('purchase_id, good_id, customer_id, amount, price', 'required'),
       array('purchase_id, good_id, customer_id, amount', 'numerical', 'integerOnly' => true),
 
 			array('size, color, client_comment', 'length', 'max' => 200, 'on' => 'create, edit_own'),
       array('anonymous', 'numerical', 'integerOnly' => true, 'on' => 'create, edit_own'),
-      array('oic', 'length', 'max'=>100, 'on' => 'create, edit_own'),
       array('price, total_price, status, org_comment, payed, org_tax', 'unsafe', 'on' => 'create, edit_own'),
 
       array('org_tax', 'numerical', 'integerOnly' => true, 'on' => 'edit_org'),
@@ -93,6 +92,7 @@ class Order extends CActiveRecord
       'purchase' => array(self::BELONGS_TO, 'Purchase', 'purchase_id'),
       'payment' => array(self::HAS_ONE, 'OrderPayment', 'order_id'),
       'history' => array(self::HAS_MANY, 'OrderHistory', 'order_id', 'with' => 'author'),
+      'oic' => array(self::BELONGS_TO, 'OrderOic', ''),
 		);
 	}
 

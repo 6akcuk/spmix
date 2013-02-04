@@ -146,9 +146,13 @@ class OrdersController extends Controller {
             $criteria = new CDbCriteria();
             $criteria->addCondition('t.purchase_id = :purchase_id');
             $criteria->params[':purchase_id'] = $purchase_id;
+
             $criteria->order = 'creation_date DESC';
 
-            $orders = Order::model()->with('good', 'customer', 'payment')->findAll($criteria);
+            $orders = Order::model()->with('good', 'customer', array('oic' => array(
+              'on' => 'oic.customer_id = t.customer_id AND oic.purchase_id = '. $purchase_id,
+            )
+            ))->findAll($criteria);
 
             header('Content-Disposition: attachment; filename="zakazi.xls"');
             header("Content-Type: application/vnd.ms-excel");
@@ -172,7 +176,7 @@ class OrdersController extends Controller {
                     $order->customer->profile->city->name, $order->good->price, $purchase->org_tax,
                     $purchase->getPriceWithTax($order->good->price), $order->amount, ($order->good->price * $order->amount),
                     $purchase->getPriceWithTax($order->good->price * $order->amount),
-                    $order->payed, $order->oic,
+                    $order->payed, $order->oic->oic_name .' '. $order->oic->oic_price,
                     $order->org_comment, $order->client_comment, $order->customer->profile->phone, 0, '',
                     $order->good->url, $order->customer->profile->phone, Yii::t('purchase', $order->status)
                 ));
@@ -219,7 +223,7 @@ class OrdersController extends Controller {
                 $criteria->addSearchCondition('good.artikul', $c['artikul']);
             }
             if (isset($c['size'])) {
-                $criteria->addSearchCondition('grid.size', $c['size']);
+                $criteria->addSearchCondition('t.size', $c['size']);
             }
             if (isset($c['color'])) {
                 $criteria->addSearchCondition('t.color', $c['color']);
@@ -237,15 +241,15 @@ class OrdersController extends Controller {
                 $criteria->addCondition('t.status = :status');
             }
 
-            $orders = Order::model()->with('good', 'customer', 'payment')->findAll($criteria);
+            $orders = Order::model()->with('good', 'customer')->findAll($criteria);
 
           $criteria->limit = 0;
-          $ordersNum = Order::model()->with('good', 'customer', 'payment')->count($criteria);
+          $ordersNum = Order::model()->with('good', 'customer')->count($criteria);
 
             $this->wideScreen = true;
             if (Yii::app()->request->isAjaxRequest) {
               if (isset($_POST['pages'])) {
-                $this->pageHtml = $this->renderPartial('_acquire', array(
+                $this->pageHtml = $this->renderPartial('_order', array(
                   'orders' => $orders,
                   'c' => $c,
                   'offset' => $offset,
@@ -280,7 +284,7 @@ class OrdersController extends Controller {
 
     public function actionShow($order_id) {
       /** @var $order Order */
-        $order = Order::model()->with('good', 'good.sizes', 'good.colors', 'purchase', 'purchase.oic')->findByPk($order_id);
+        $order = Order::model()->with('good', 'good.sizes', 'good.colors', 'purchase', 'oic')->findByPk($order_id);
 
         if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
             Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('order' => $order)) ||
@@ -319,17 +323,6 @@ class OrdersController extends Controller {
                     }
                     $order->attributes = $_POST['Order'];
                     $price = $order->good->getEndCustomPrice($order->org_tax, $order->price);
-
-                    if ($order->oic) {
-                      preg_match("/([0-9\.]{1,})/ui", $order->oic, $oic_price);
-                      $price += floatval($oic_price[1]);
-                        /*$oic = PurchaseOic::model()->findByPk($order->oic);
-                        if ($oic) {
-                            $price += floatval($oic->price);
-
-                            //$order->oic = $oic->price .' - '. $oic->description;
-                        }*/
-                    }
 
                     $order->total_price = $price * intval($order->amount);
                     $order->status = Order::STATUS_PROCEEDING;
@@ -396,7 +389,7 @@ class OrdersController extends Controller {
 
   public function actionShowForOrg($id) {
     /** @var $order Order */
-    $order = Order::model()->with('good', 'good.sizes', 'good.colors', 'purchase', 'purchase.oic')->findByPk($id);
+    $order = Order::model()->with('good', 'good.sizes', 'good.colors', 'purchase')->findByPk($id);
 
     if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
       Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('purchase' => $order->purchase))) {
@@ -425,17 +418,6 @@ class OrdersController extends Controller {
           }
           $order->attributes = $_POST['Order'];
           $price = $order->good->getEndCustomPrice($order->org_tax, $order->price);
-
-          if ($order->oic) {
-            preg_match("/([0-9\.]{1,})/ui", $order->oic, $oic_price);
-            $price += floatval($oic_price[1]);
-            /*$oic = PurchaseOic::model()->findByPk($order->oic);
-            if ($oic) {
-                $price += floatval($oic->price);
-
-                //$order->oic = $oic->price .' - '. $oic->description;
-            }*/
-          }
 
           $order->total_price = $price * intval($order->amount);
 
@@ -718,6 +700,43 @@ class OrdersController extends Controller {
         'offset' => $offset,
       ));
     }
+
+  public function actionOrgPayments($offset = 0) {
+    $criteria = new CDbCriteria();
+    //$criteria->compare('orders.order.purchase.author_id', Yii::app()->user->getId());
+    //$criteria->order = 'payment.datetime DESC';
+    $criteria->offset = $offset;
+    $criteria->limit = Yii::app()->getModule('purchases')->paymentsPerPage;
+
+//    $purchases = Purchase::model()->with('orders', 'orders.payment')->findAll($criteria);
+    /*$payments = OrderPayment::model()->with('orders', 'orders.order', array(
+      'orders.order.purchase' => array(
+        'on' => 'purchase.purchase_id = order.purchase_id AND purchase.author_id = '. Yii::app()->user->getId(),
+      )
+    ))->findAll($criteria);*/
+    $payments = OrderPayment::getAllPaymentsForOrg(Yii::app()->user->getId(), $offset);
+    $paymentsNum = OrderPayment::countAllPaymentsForOrg(Yii::app()->user->getId());
+
+    $this->wideScreen = true;
+    if (Yii::app()->request->isAjaxRequest) {
+      if (isset($_POST['pages'])) {
+        $this->pageHtml = $this->renderPartial('_orgpayments', array(
+          'payments' => $payments,
+          'offset' => $offset,
+        ), true);
+      }
+      else $this->pageHtml = $this->renderPartial('orgpayments', array(
+        'payments' => $payments,
+        'offsets' => $paymentsNum,
+        'offset' => $offset,
+      ), true);
+    }
+    else $this->render('orgpayments', array(
+      'payments' => $payments,
+      'offsets' => $paymentsNum,
+      'offset' => $offset,
+    ));
+  }
 
     public function actionPayment($payment_id) {
         /** @var $payment OrderPayment */

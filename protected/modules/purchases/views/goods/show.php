@@ -43,12 +43,10 @@ if ($good->colors) {
 }
 
 if ($good->oic) {
-  foreach ($good->oic as $oic) {
-    $dd_oic[$oic->description .' '. ActiveHtml::price($oic->price)] = $oic->pk;
+  foreach ($good->oic as $purchase_oic) {
+    $dd_oic[$purchase_oic->description .' '. ActiveHtml::price($purchase_oic->price)] = $purchase_oic->pk;
   }
 }
-
-$cookies = Yii::app()->getRequest()->getCookies();
 ?>
 <div class="breadcrumbs">
     <?php echo ActiveHtml::link($good->purchase->name, '/purchase'. $good->purchase_id) ?> &raquo;
@@ -107,23 +105,20 @@ $cookies = Yii::app()->getRequest()->getCookies();
             <?php echo $form->label($orderc, 'anonymous') ?>
         </div>
         <div class="clearfix row">
-        <?php if (!isset($cookies['purchase'. $good->purchase_id.'_oic']) ||
-          (isset($cookies['purchase'. $good->purchase_id.'_oic']) && !in_array($cookies['purchase'. $good->purchase_id.'_oic'], $dd_oic))): ?>
+        <?php if (!$oic): ?>
             <?php echo $form->dropdown($orderc, 'oic', $dd_oic) ?>
         <?php else: ?>
           <div id="oic_text">
-            Место выдачи: <?php echo array_search($cookies['purchase'. $good->purchase_id.'_oic'], $dd_oic) ?>
-            <span class="icon-remove" rel="tooltip" title="Удалить место" onclick="removeSavedOic()"></span>
+            Место выдачи: <?php echo $oic->oic_name ?>
+            <!--<span class="icon-remove" rel="tooltip" title="Удалить место" onclick="removeSavedOic()"></span> -->
           </div>
           <div id="oic" class="clearfix" style="display:none">
-            <?php $orderc->oic = $cookies['purchase'. $good->purchase_id.'_oic']; ?>
             <?php echo $form->dropdown($orderc, 'oic', $dd_oic) ?>
           </div>
           <script>
             function removeSavedOic() {
               $('#oic_text').remove();
               $('#oic').show();
-              $.removeCookie('purchase<?php echo $good->purchase_id ?>_oic');
             }
           </script>
         <?php endif; ?>

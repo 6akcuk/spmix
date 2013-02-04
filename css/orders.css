@@ -82,6 +82,9 @@ table.order_org {
 table.order_org td {
   padding: 5px 0px;
 }
+table.order_org input[type="text"] {
+  width: 200px;
+}
 table.order_org textarea {
   width: 400px;
 }

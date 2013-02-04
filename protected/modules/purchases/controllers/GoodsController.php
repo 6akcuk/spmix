@@ -55,27 +55,31 @@ class GoodsController extends Controller {
 
                 $price = $good->getEndPrice($order->price);
 
-                $order_oic = $order->oic;
-                if ($order->oic) {
-                  $oic = PurchaseOic::model()->findByPk($order->oic);
-                  $price += floatval($oic->price);
+                $oic = OrderOic::model()->find('purchase_id = :pid AND customer_id = :cid', array(':pid' => $purchase_id, ':cid' => Yii::app()->user->getId()));
+                if (!$oic && intval($_POST['Order']['oic']) == 0) {
+                  $order->addError('oic', 'Укажите место выдачи заказа');
+                }
 
-                  $order->oic = $oic->price .' - '. $oic->description;
+                if (!$oic && intval($_POST['Order']['oic']) > 0) {
+                  $purchase_oic = PurchaseOic::model()->findByPk($_POST['Order']['oic']);
+                  if (!$purchase_oic) {
+                    $order->addError('oic', 'Место выдачи не найдено в закупке');
+                  }
+                  else {
+                    $oic = new OrderOic();
+                    $oic->purchase_id = $purchase_id;
+                    $oic->customer_id = Yii::app()->user->getId();
+                    $oic->oic_name = $purchase_oic->description;
+                    $oic->oic_price = $purchase_oic->price;
+                    $oic->save();
+                  }
                 }
 
                 $order->total_price = $price * intval($order->amount);
                 $result = array();
 
                 // сохраняем заказ в таблице Заказов
-                if($order->validate() && $order->save()) {
-                  $cookies = Yii::app()->getRequest()->getCookies();
-                  if (!isset($cookies['purchase'. $good->purchase_id .'_oic'])) {
-                    $ck = new CHttpCookie('purchase'. $good->purchase_id .'_oic', $order_oic);
-                    $ck->expire = time() + 2592000;
-
-                    $cookies->add('purchase'. $good->purchase_id .'_oic', $ck);
-                  }
-
+                if($order->validate(null, false) && $order->save()) {
                   $result['success'] = true;
                   $result['msg'] = Yii::t('purchase', 'Заказ добавлен в список покупок');
                   $result['url'] = '/orders';
@@ -158,10 +162,24 @@ class GoodsController extends Controller {
       $ranges = $good->buildRanges();
       $struct = $good->getRangeStructure();
 
+      $oic = OrderOic::model()->find('purchase_id = :pid AND customer_id = :cid', array(':pid' => $purchase_id, ':cid' => Yii::app()->user->getId()));
+
       if (Yii::app()->request->isAjaxRequest) {
-          $this->pageHtml = $this->renderPartial('show', array('good' => $good, 'orderc' => $orderc, 'struct' => $struct, 'ranges' => $ranges), true);
+          $this->pageHtml = $this->renderPartial('show', array(
+            'good' => $good,
+            'orderc' => $orderc,
+            'struct' => $struct,
+            'ranges' => $ranges,
+            'oic' => $oic,
+          ), true);
       }
-      else $this->render('show', array('good' => $good, 'orderc' => $orderc, 'struct' => $struct, 'ranges' => $ranges));
+      else $this->render('show', array(
+        'good' => $good,
+        'orderc' => $orderc,
+        'struct' => $struct,
+        'ranges' => $ranges,
+        'oic' => $oic,
+      ));
     }
 
     public function actionEdit($purchase_id, $good_id) {

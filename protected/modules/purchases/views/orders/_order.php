@@ -6,11 +6,7 @@
 <tr<?php if(!$added) { echo ' rel="page-'. $page .'"'; $added = true; } ?>>
   <td><?php echo ActiveHtml::checkBox('select['. $order->order_id .']') ?></td>
   <td>
-    <?php echo ActiveHtml::link('Зак№'. $order->order_id, '/order-'. $order->order_id, array('nav' => array('box' => 1))) ?><br/>
-    <?php if ($order->payment): ?>
-    <?php echo ActiveHtml::link('Платеж №'. $order->payment->payment_id .' от '. ActiveHtml::date($order->payment->datetime, false, true), '/payment'. $order->payment->payment_id) ?>
-    <?php echo Yii::t('purchase', $order->payment->status) ?>
-    <?php endif; ?>
+    <?php echo ActiveHtml::link('Зак№'. $order->order_id, '/order-'. $order->order_id, array('nav' => array('box' => 1))) ?>
   </td>
   <td><?php echo ActiveHtml::date($order->creation_date, false, true) ?></td>
   <td><?php echo ActiveHtml::link($order->good->name, '/good'. $order->purchase_id .'_'. $order->good_id) ?></td>

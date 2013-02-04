@@ -29,6 +29,7 @@ return array(
     'Paid' => 'Оплачен',
     'Delivered' => 'Выдан',
 
-    'Awaiting payment' => 'Платеж не обработан',
-    'Performed payment' => 'Платеж выполнен',
+  'Awaiting payment' => 'В обработке',
+  'Performed payment' => 'Принят',
+  'Refused payment' => 'Платеж не принят'
 );

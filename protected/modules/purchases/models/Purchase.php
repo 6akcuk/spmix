@@ -108,17 +108,17 @@ class Purchase extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-            'city' => array(self::HAS_ONE, 'City', array('id' => 'city_id')),
-            'category' => array(self::BELONGS_TO, 'PurchaseCategory', 'category_id'),
-            'author' => array(self::BELONGS_TO, 'User', 'author_id'),
-            'mod_request' => array(self::BELONGS_TO, 'PurchaseModRequest', 'mod_request_id', 'order' => 'mod_request.request_date DESC'),
-            'external' => array(self::BELONGS_TO, 'PurchaseExternal', 'purchase_id'),
-            'history' => array(self::HAS_MANY, 'PurchaseHistory', 'purchase_id', 'order' => 'history.datetime DESC'),
-            'oic' => array(self::HAS_MANY, 'PurchaseOic', 'purchase_id'),
-            'orders' => array(self::HAS_MANY, 'Order', 'purchase_id'),
-            'ordersNum' => array(self::STAT, 'Order', 'purchase_id'),
-            'ordersSum' => array(self::STAT, 'Order', 'purchase_id', 'select' => 'SUM(total_price)'),
-            'goodsNum' => array(self::STAT, 'Good', 'purchase_id', 'condition' => 'is_quick = 0'),
+      'city' => array(self::HAS_ONE, 'City', array('id' => 'city_id')),
+      'category' => array(self::BELONGS_TO, 'PurchaseCategory', 'category_id'),
+      'author' => array(self::BELONGS_TO, 'User', 'author_id'),
+      'mod_request' => array(self::BELONGS_TO, 'PurchaseModRequest', 'mod_request_id', 'order' => 'mod_request.request_date DESC'),
+      'external' => array(self::BELONGS_TO, 'PurchaseExternal', 'purchase_id'),
+      'history' => array(self::HAS_MANY, 'PurchaseHistory', 'purchase_id', 'order' => 'history.datetime DESC'),
+      'oic' => array(self::HAS_MANY, 'PurchaseOic', 'purchase_id'),
+      'orders' => array(self::HAS_MANY, 'Order', 'purchase_id'),
+      'ordersNum' => array(self::STAT, 'Order', 'purchase_id'),
+      'ordersSum' => array(self::STAT, 'Order', 'purchase_id', 'select' => 'SUM(total_price)'),
+      'goodsNum' => array(self::STAT, 'Good', 'purchase_id', 'condition' => 'is_quick = 0'),
 		);
 	}
 

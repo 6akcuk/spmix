@@ -1,18 +1,21 @@
 <?php
 
 /**
- * This is the model class for table "orders_payment_link".
+ * This is the model class for table "orders_oic".
  *
- * The followings are the available columns in table 'orders_payment_link':
- * @property string $payment_id
- * @property string $order_id
+ * The followings are the available columns in table 'orders_oic':
+ * @property string $pk
+ * @property string $purchase_id
+ * @property integer $customer_id
+ * @property string $oic_name
+ * @property string $oic_price
  */
-class OrderPaymentLink extends CActiveRecord
+class OrderOic extends CActiveRecord
 {
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
-	 * @return OrderPaymentLink the static model class
+	 * @return OrderOic the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
@@ -24,7 +27,7 @@ class OrderPaymentLink extends CActiveRecord
 	 */
 	public function tableName()
 	{
-		return 'orders_payment_link';
+		return 'orders_oic';
 	}
 
 	/**
@@ -35,11 +38,9 @@ class OrderPaymentLink extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('payment_id, order_id', 'required'),
-			array('payment_id, order_id', 'length', 'max'=>10),
-			// The following rule is used by search().
-			// Please remove those attributes that should not be searched.
-			array('payment_id, order_id', 'safe', 'on'=>'search'),
+			array('purchase_id, customer_id, oic_name, oic_price', 'required'),
+			array('customer_id', 'numerical', 'integerOnly'=>true),
+			array('purchase_id', 'length', 'max'=>10),
 		);
 	}
 
@@ -51,7 +52,6 @@ class OrderPaymentLink extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-      'order' => array(self::BELONGS_TO, 'Order', 'order_id'),
 		);
 	}
 
@@ -61,8 +61,10 @@ class OrderPaymentLink extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'payment_id' => 'Payment',
-			'order_id' => 'Order',
+			'pk' => 'Pk',
+			'purchase_id' => 'Purchase',
+			'customer_id' => 'Customer',
+			'oic_id' => 'Oic',
 		);
 	}
 
@@ -77,8 +79,10 @@ class OrderPaymentLink extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('payment_id',$this->payment_id,true);
-		$criteria->compare('order_id',$this->order_id,true);
+		$criteria->compare('pk',$this->pk,true);
+		$criteria->compare('purchase_id',$this->purchase_id,true);
+		$criteria->compare('customer_id',$this->customer_id);
+		$criteria->compare('oic_id',$this->oic_id,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

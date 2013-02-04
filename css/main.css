@@ -784,3 +784,20 @@ div.ls_columns div.column.options div {
     overflow: hidden;
     font-size: 12px;
 }
+
+#org_menu {
+  position: absolute;
+  border: 1px solid #bbb;
+  border-radius: 3px;
+  background: #fff;
+  z-index: 2000;
+}
+#org_menu a {
+  display: block;
+  padding: 10px 15px;
+  color: #508033;
+}
+#org_menu a:hover {
+  background-color: #508033;
+  color: #fff;
+}
