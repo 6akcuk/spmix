@@ -111,7 +111,7 @@ button, input[type="submit"], input[type="button"] {
 /* End of null section */
 html {
     color: #557132;
-    background: #fff;
+    background: #d7e4c3;
     overflow-y: scroll;
 }
 
@@ -739,7 +739,7 @@ div.ls_columns div.column.options div {
 }
 
 .main_a li a  {
-    padding: 4px 20px 6px 20px;
+    padding: 8px 20px 8px 20px;
     display: block;
     color: #fff;
     }
