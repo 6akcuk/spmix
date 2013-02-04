@@ -1,0 +1,14 @@
+#users_css {
+    display: none;
+}
+
+.users_filters {
+    padding-bottom: 10px;
+}
+
+.users_table {
+    width: 100%;
+}
+.users_table td {
+    padding: 5px 0px;
+}

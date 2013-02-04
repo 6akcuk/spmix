@@ -2,9 +2,10 @@
 
 class PurchasesModule extends CWebModule
 {
-    public $purchasesPerPage = 20;
-    public $goodsPerPage = 50;
+  public $purchasesPerPage = 20;
+  public $goodsPerPage = 50;
   public $sitesPerPage = 50;
+  public $paymentsPerPage = 50;
   //public $ordersPerPage
 
 	public function init()

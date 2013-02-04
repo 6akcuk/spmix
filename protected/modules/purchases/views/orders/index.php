@@ -11,9 +11,9 @@ $this->pageTitle = Yii::app()->name .' - Мои покупки';
 ?>
 
 <div class="tabs">
-    <?php echo ActiveHtml::link('Текущие заказы', '/orders', array('class' => 'selected')) ?>
-    <?php echo ActiveHtml::link('Ожидают оплаты'. (($awaitingNum > 0) ? ' ('. $awaitingNum .')' : ''), '/orders/awaiting') ?>
-    <?php echo ActiveHtml::link('Платежи', '/orders/payments') ?>
+  <?php echo ActiveHtml::link('Текущие заказы', '/orders', array('class' => 'selected')) ?>
+  <?php echo ActiveHtml::link('Ожидают оплаты'. (($awaitingNum > 0) ? ' ('. $awaitingNum .')' : ''), '/orders/awaiting') ?>
+  <?php echo ActiveHtml::link('Платежи', '/orders/payments') ?>
 </div>
 
 <table class="user_orders">

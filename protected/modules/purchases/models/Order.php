@@ -92,7 +92,6 @@ class Order extends CActiveRecord
       'good' => array(self::BELONGS_TO, 'Good', 'good_id'),
       'purchase' => array(self::BELONGS_TO, 'Purchase', 'purchase_id'),
       'payment' => array(self::HAS_ONE, 'OrderPayment', 'order_id'),
-      'grid' => array(self::BELONGS_TO, 'GoodGrid', 'grid_id'),
       'history' => array(self::HAS_MANY, 'OrderHistory', 'order_id', 'with' => 'author'),
 		);
 	}

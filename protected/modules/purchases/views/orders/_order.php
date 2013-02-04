@@ -3,7 +3,7 @@
 <?php $added = false; ?>
 <?php if ($orders): ?>
 <?php foreach ($orders as $order): ?>
-<tr>
+<tr<?php if(!$added) { echo ' rel="page-'. $page .'"'; $added = true; } ?>>
   <td><?php echo ActiveHtml::checkBox('select['. $order->order_id .']') ?></td>
   <td>
     <?php echo ActiveHtml::link('Зак№'. $order->order_id, '/order-'. $order->order_id, array('nav' => array('box' => 1))) ?><br/>

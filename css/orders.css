@@ -115,6 +115,12 @@ table.order_org td.label {
 .order_box_cont {
   padding: 12px 20px 0px;
 }
+.order_box_cont .row {
+    padding: 5px 0px;
+}
+.order_box_cont input[type="text"], .order_box_cont textarea {
+  width: 350px;
+}
 .order_box_history_link {
   display: block;
   text-align: center;
@@ -125,7 +131,7 @@ table.order_org td.label {
   background: #eef0f2;
 }
 .order_box_buttons {
-  padding: 10px 25px;
+  padding: 10px 20px;
 }
 .order_box_history {
   padding: 12px 20px 0px;
@@ -135,4 +141,9 @@ table.order_org td.label {
 }
 .order_box_history_link:hover {
   background: #e9edf1;
+}
+
+/* Paydetails */
+.order_org_paydetails {
+    padding-top: 5px;
 }

@@ -1887,7 +1887,13 @@ var ajax = {
                     ajex.show('Страница не найдена');
                     break;
                 case 500:
-                  ajex.show('Ошибка в работе приложения. Повторите попытку позже');
+                  var r = null;
+                  try {
+                    r = $.parseJSON(xhr.responseText);
+                  } catch(e) {}
+
+                  if (r && r.html) ajex.show(r.html);
+                  else ajex.show('Ошибка в работе приложения. Повторите попытку позже');
                     //var r = $.parseJSON(xhr.responseText);
                     //ajex.show((r && r.html) ? r.html : xhr.responseText);
                     break;

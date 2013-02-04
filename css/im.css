@@ -182,7 +182,7 @@
     text-align: center;
 }
 .dialogs_msg_text {
-    color: #67829E;
+    color: #1f3104; /* #67829E;*/
     line-height: 160%;
     width: 345px;
 }

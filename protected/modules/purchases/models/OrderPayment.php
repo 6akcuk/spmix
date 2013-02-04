@@ -5,10 +5,10 @@
  *
  * The followings are the available columns in table 'orders_payments':
  * @property string $payment_id
- * @property string $order_id
  * @property integer $payer_id
  * @property string $datetime
  * @property string $status
+ * @property string $sum
  * @property string $pay_id
  * @property string $description
  *
@@ -46,13 +46,10 @@ class OrderPayment extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('order_id, pay_id, description', 'required', 'on' => 'create'),
-			array('order_id, pay_id', 'length', 'max'=>10),
+			array('sum, description', 'required', 'on' => 'create'),
+			array('pay_id', 'length', 'max'=>10),
 			array('status', 'length', 'max'=>20),
 			array('description', 'length', 'max'=>200),
-			// The following rule is used by search().
-			// Please remove those attributes that should not be searched.
-			array('payment_id, order_id, datetime, status, pay_id, description', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -64,8 +61,7 @@ class OrderPayment extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-            'order' => array(self::BELONGS_TO, 'Order', 'order_id'),
-            'paydetails' => array(self::HAS_ONE, 'ProfilePaydetail', 'pay_id'),
+      'orders' => array(self::HAS_MANY, 'OrderPaymentLink', 'payment_id'),
 		);
 	}
 

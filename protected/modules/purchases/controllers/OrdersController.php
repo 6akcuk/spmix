@@ -90,7 +90,7 @@ class OrdersController extends Controller {
         $orders = array();
         $stat = array();
         $p_ids = array();
-        $_orders = Order::model()->with('good', 'payment')->findAll($criteria);
+        $_orders = Order::model()->with('good')->findAll($criteria);
         /** @var $order Order */
         foreach ($_orders as $order) {
           if (!isset($orders[$order->purchase_id])) {
@@ -622,69 +622,101 @@ class OrdersController extends Controller {
       throw new CHttpException(403, 'В доступе отказано');
   }
 
-    public function actionCreatePayment($id) {
-        $order = Order::model()->findByPk($id);
+  public function actionGetPayDetails() {
+    $criteria = new CDbCriteria();
+    $criteria->compare('customer_id', Yii::app()->user->getId());
+    $criteria->addInCondition('order_id', $_POST['ids']);
+    $criteria->order = 't.order_id';
 
-        if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('order' => $order))) {
-            if (isset($_POST['OrderPayment'])) {
-                $pay = new OrderPayment('create');
-                $pay->attributes = $_POST['OrderPayment'];
-                $pay->order_id = $id;
+    $orders = Order::model()->with('purchase', 'purchase.author', 'purchase.author.profile')->findAll($criteria);
 
-                if ($pay->save()) {
-                    $result['success'] = true;
-                    $result['msg'] = Yii::t('app', 'Изменения сохранены');
-                    $result['url'] = '/orders/awaiting';
-                }
-                else {
-                    foreach ($pay->getErrors() as $attr => $error) {
-                        $result[ActiveHtml::activeId($pay, $attr)] = $error;
-                    }
-                }
+    if (!$orders)
+      throw new CHttpException(500, 'Заказы не найдены');
 
-                echo json_encode($result);
-                exit;
-            }
+    $grouped_orders = array();
 
-            $awaitingNum = Order::model()->count('customer_id = :customer_id AND status = :status', array(':customer_id' => Yii::app()->user->getId(), ':status' => Order::STATUS_AWAITING));
-            $org_details = ProfilePaydetail::model()->findAll('user_id = :user_id', array(':user_id' => $order->purchase->author_id));
-
-            if (Yii::app()->request->isAjaxRequest) {
-                $this->pageHtml = $this->renderPartial('createPayment', array(
-                    'order' => $order,
-                    'awaitingNum' => $awaitingNum,
-                    'paydetails' => $org_details,
-                ), true);
-            }
-            else $this->render('createPayment', array(
-                'order' => $order,
-                'awaitingNum' => $awaitingNum,
-                'paydetails' => $org_details,
-            ));
-        }
-        else
-            throw new CHttpException(403, 'В доступе отказано');
+    /** @var $order Order */
+    foreach ($orders as $order) {
+      if (!isset($grouped_orders[$order->purchase->author_id]))
+        $grouped_orders[$order->purchase->author_id] = array('author' => $order->purchase->author, 'items' => array());
+      $grouped_orders[$order->purchase->author_id]['items'][] = $order;
     }
 
-    public function actionPayments() {
-        $criteria = new CDbCriteria();
-        $criteria->addCondition('payer_id = :payer_id');
-        $criteria->params[':payer_id'] = Yii::app()->user->getId();
-        $criteria->order = 'datetime DESC';
+    $result = array('success' => true);
+    $result['html'] = $this->renderPartial('getpaydetails', array('orders' => $grouped_orders), true);
 
-        $payments = OrderPayment::model()->with('order', 'paydetails')->findAll($criteria);
-        $awaitingNum = Order::model()->count('customer_id = :customer_id AND status = :status', array(':customer_id' => Yii::app()->user->getId(), ':status' => Order::STATUS_AWAITING));
+    echo json_encode($result);
+    exit;
+  }
 
-        if (Yii::app()->request->isAjaxRequest) {
-            $this->pageHtml = $this->renderPartial('payments', array(
-                'payments' => $payments,
-                'awaitingNum' => $awaitingNum,
-            ), true);
-        }
-        else $this->render('payments', array(
-            'payments' => $payments,
-            'awaitingNum' => $awaitingNum,
-        ));
+  public function actionCreatePayment() {
+    $criteria = new CDbCriteria();
+    $criteria->compare('customer_id', Yii::app()->user->getId());
+    $criteria->addInCondition('order_id', $_POST['ids']);
+    $criteria->order = 't.order_id';
+
+    $orders = Order::model()->with('purchase', 'purchase.author', 'purchase.author.profile')->findAll($criteria);
+
+    if (!$orders)
+      throw new CHttpException(500, 'Заказы не найдены');
+
+    $grouped_orders = array();
+    /** @var $order Order */
+    foreach ($orders as $order) {
+      if (!isset($grouped_orders[$order->purchase->author_id]))
+        $grouped_orders[$order->purchase->author_id] = array('author' => $order->purchase->author, 'items' => array());
+      $grouped_orders[$order->purchase->author_id]['items'][] = $order;
+    }
+
+    if (sizeof($grouped_orders) > 1)
+      throw new CHttpException(500, 'Вы выбрали заказы от разных организаторов');
+
+    $payment = new OrderPayment('create');
+    $payment->payer_id = Yii::app()->user->getId();
+    $payment->sum = $_POST['sum'];
+    $payment->description = $_POST['comment'];
+    if (!$payment->save())
+      throw new CHttpException(500, 'Ошибка при создании нового платежа');
+
+    foreach ($orders as $order) {
+      $link = new OrderPaymentLink();
+      $link->payment_id = $payment->payment_id;
+      $link->order_id = $order->order_id;
+      $link->save();
+    }
+
+    echo json_encode(array('success' => true, 'msg' => 'Информация о платеже успешно сохранена'));
+    exit;
+  }
+
+    public function actionPayments($offset = 0) {
+      $criteria = new CDbCriteria();
+      $criteria->compare('payer_id', Yii::app()->user->getId());
+      $criteria->order = 'datetime DESC';
+      $criteria->offset = $offset;
+      $criteria->limit = Yii::app()->getModule('purchases')->paymentsPerPage;
+
+      $payments = OrderPayment::model()->with('orders')->findAll($criteria);
+
+      $criteria->limit = 0;
+      $paymentsNum = OrderPayment::model()->count($criteria);
+
+      $awaitingNum = Order::model()->count('customer_id = :customer_id AND status = :status', array(':customer_id' => Yii::app()->user->getId(), ':status' => Order::STATUS_AWAITING));
+
+      if (Yii::app()->request->isAjaxRequest) {
+        $this->pageHtml = $this->renderPartial('payments', array(
+          'payments' => $payments,
+          'offsets' => $paymentsNum,
+          'awaitingNum' => $awaitingNum,
+          'offset' => $offset,
+        ), true);
+      }
+      else $this->render('payments', array(
+        'payments' => $payments,
+        'offsets' => $paymentsNum,
+        'awaitingNum' => $awaitingNum,
+        'offset' => $offset,
+      ));
     }
 
     public function actionPayment($payment_id) {

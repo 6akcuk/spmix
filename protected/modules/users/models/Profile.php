@@ -75,8 +75,8 @@ class Profile extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-            'city' => array(self::HAS_ONE, 'City', array('id' => 'city_id')),
-            'paydetails' => array(self::HAS_MANY, 'ProfilePaydetail', array('user_id' => 'user_id')),
+      'city' => array(self::HAS_ONE, 'City', array('id' => 'city_id')),
+      'paydetails' => array(self::HAS_MANY, 'ProfilePaydetail', array('user_id' => 'user_id')),
 		);
 	}
 

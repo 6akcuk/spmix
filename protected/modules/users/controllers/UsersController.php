@@ -20,21 +20,51 @@ class UsersController extends Controller {
     }
 
     public function actionIndex($offset = 0) {
-        $criteria = new CDbCriteria();
-        $criteria->limit = 100;
-        $criteria->offset = $offset;
+      $c = (isset($_REQUEST['c'])) ? $_REQUEST['c'] : array();
 
-        if (isset($_POST['q']) && !empty($_POST['q'])) {
-            $criteria->compare('name', $_POST['q'], true);
+      $criteria = new CDbCriteria();
+      $criteria->limit = Yii::app()->getModule('users')->usersPerPage;
+      $criteria->offset = $offset;
+
+      if (isset($c['name']) && $c['name']) {
+        $criteria->addSearchCondition('profile.firstname', $c['name'], true, 'OR');
+        $criteria->addSearchCondition('profile.lastname', $c['name'], true, 'OR');
+        $criteria->addSearchCondition('t.login', $c['name'], true, 'OR');
+      }
+
+      if (isset($c['city_id']) && $c['city_id']) {
+        $criteria->compare('profile.city_id', $c['city_id']);
+      }
+
+      if (isset($c['role']) && $c['role']) {
+        $criteria->compare('role.itemname', $c['role']);
+      }
+
+      $users = User::model()->with('role', 'profile')->findAll($criteria);
+      $usersNum = User::model()->with('role', 'profile')->count($criteria);
+      $roles = RbacItem::model()->findAll('type = :type', array(':type' => RbacItem::TYPE_ROLE));
+
+      if (Yii::app()->request->isAjaxRequest) {
+        if (isset($_POST['pages'])) {
+          $this->pageHtml = $this->renderPartial('_userlist', array('users' => $users, 'offset' => $offset), true);
         }
-
-        $users = User::model()->findAll($criteria);
-        $roles = RbacItem::model()->findAll('type = :type', array(':type' => RbacItem::TYPE_ROLE));
-
-        if (Yii::app()->request->isAjaxRequest) {
-            $this->pageHtml =  $this->renderPartial('index', array('users' => $users, 'roles' => $roles), true);
-        }
-        else $this->render('index', array('users' => $users, 'roles' => $roles));
+        else
+          $this->pageHtml =  $this->renderPartial('index',
+            array(
+              'users' => $users,
+              'roles' => $roles,
+              'c' => $c,
+              'offset' => $offset,
+              'offsets' => $usersNum,
+            ), true);
+      }
+      else $this->render('index', array(
+        'users' => $users,
+        'roles' => $roles,
+        'c' => $c,
+        'offset' => $offset,
+        'offsets' => $usersNum,
+      ));
     }
 
     public function actionAssignRole() {
