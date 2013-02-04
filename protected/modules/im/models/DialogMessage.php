@@ -158,13 +158,18 @@ class DialogMessage extends CActiveRecord
             $criteria->params[':id'] = $recipients[0];
             $criteria->params[':type'] = Dialog::TYPE_TET;
 
-            $dialogMembers = DialogMember::model()->with('twin', 'dialog')->findAll($criteria);
-            if (!$dialogMembers) {
-              $raw = file_get_contents('/var/log/im_dialog.log');
-              if (!$raw) $raw = '';
-              $raw .= ":user = ". Yii::app()->user->getId() .", :id = ". $recipients[0] ."\n";
-              file_put_contents('/var/log/im_dialog.log', $raw);
+            /** @var $db CDbConnection */
+            $db = Yii::app()->db;
+            $command = $db->createCommand("
+  SELECT dialog.* FROM `dialog_members` AS t
+    INNER JOIN `dialog_members` AS twin ON twin.dialog_id = t.dialog_id
+    INNER JOIN `dialogs` AS dialog ON dialog.dialog_id = t.dialog_id
+  WHERE twin.member_id = ". Yii::app()->user->getId() ." AND t.member_id = ". intval($recipients[0]) ."
+    AND dialog.type = ". Dialog::TYPE_TET);
+            $row = $command->queryRow();
 
+            //$dialogMembers = DialogMember::model()->with('twin', 'dialog')->findAll($criteria);
+            if (!$row) {
                 $dialog = new Dialog();
                 $dialog->leader_id = Yii::app()->user->getId();
                 $dialog->type = Dialog::TYPE_TET;
@@ -198,7 +203,10 @@ class DialogMessage extends CActiveRecord
                 }
             }
             else {
-                $dialog = $dialogMembers[0]->dialog;
+              $dialog = new Dialog();
+              $dialog->dialog_id = $row['dialog_id'];
+
+              $dialogMembers = DialogMember::model()->findAll('dialog_id = :id', array(':id' => $dialog->dialog_id));
             }
         }
         else

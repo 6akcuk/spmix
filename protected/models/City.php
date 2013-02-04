@@ -89,7 +89,11 @@ class City extends CActiveRecord
     {
         if (!self::$_cities) {
             $arr = array();
-            $data = self::model()->findAll();
+
+          $criteria = new CDbCriteria();
+          $criteria->order = 'name';
+
+            $data = self::model()->findAll($criteria);
             foreach ($data as $dt) {
                 $arr[$dt->name] = $dt->id;
             }

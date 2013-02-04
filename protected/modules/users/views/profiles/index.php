@@ -62,12 +62,12 @@ $this->pageTitle = $title;
             if ($relationship != null) {
                 if ($relationship->rel_type == ProfileRelationship::TYPE_FRIENDS) {
                     ?>
-            <div class="social-status"><?php echo $userinfo->login ?> у Вас в друзьях</div>
+            <div class="social-status"><?php echo $userinfo->getDisplayName() ?> у Вас в друзьях</div>
                     <?php
                 }
                 elseif (Yii::app()->user->model->profile->isProfileRelationIncome($relationship)) {
                     ?>
-            <div class="social-status"><?php echo $userinfo->login ?> подписан<?php echo ($userinfo->profile->gender == 'Female') ? "а" : "" ?> на Вас</div>
+            <div class="social-status"><?php echo $userinfo->getDisplayName() ?> подписан<?php echo ($userinfo->profile->gender == 'Female') ? "а" : "" ?> на Вас</div>
                     <?php
                 }
                 elseif (Yii::app()->user->model->profile->isProfileRelationOutcome($relationship)) {
@@ -99,7 +99,7 @@ $this->pageTitle = $title;
         <div class="clearfix people_row">
         <?php endif; ?>
             <div class="left people_cell">
-                <?php echo ActiveHtml::link(($friend->friend->profile->photo) ? ActiveHtml::showUploadImage($friend->friend->profile->photo, 'c') : '<img src="/iamges/camera_a.gif" />', '/id'. $friend->friend->id, array('class' => 'ava')) ?>
+                <?php echo ActiveHtml::link(($friend->friend->profile->photo) ? ActiveHtml::showUploadImage($friend->friend->profile->photo, 'c') : '<img src="/images/camera_a.gif" />', '/id'. $friend->friend->id, array('class' => 'ava')) ?>
                 <div class="people_name">
                 <?php echo ActiveHtml::link($friend->friend->login, '/id'. $friend->friend->id) ?>
                 </div>

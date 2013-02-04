@@ -95,12 +95,13 @@ class OrdersController extends Controller {
         foreach ($_orders as $order) {
           if (!isset($orders[$order->purchase_id])) {
             $orders[$order->purchase_id] = array();
-            $stat[$order->purchase_id] = array('num' => 0, 'sum' => 0.00);
+            $stat[$order->purchase_id] = array('num' => 0, 'sum' => 0.00, 'credit' => 0.00);
             $p_ids[] = $order->purchase_id;
           }
           $orders[$order->purchase_id][] = $order;
           $stat[$order->purchase_id]['num'] += $order->amount;
           $stat[$order->purchase_id]['sum'] += floatval($order->total_price);
+          $stat[$order->purchase_id]['credit'] += floatval($order->total_price - $order->payed);
         }
 
         $pur_criteria = new CDbCriteria();
