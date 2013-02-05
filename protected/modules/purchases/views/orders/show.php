@@ -197,35 +197,18 @@ if ($good->oic) {
 </div>
 <div class="order_buttons clearfix">
   <?php
-  if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
-    Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Org', array('purchase' => $order->purchase)) ||
-    in_array($order->purchase->state, array(Purchase::STATE_DRAFT, Purchase::STATE_CALL_STUDY)) ||
-    (
-      $order->purchase->state == Purchase::STATE_ORDER_COLLECTION &&
-        in_array($order->status, array(Order::STATUS_PROCEEDING, Order::STATUS_REFUSED, Order::STATUS_ACCEPTED))
-    ) ||
-    (
-      $order->purchase->state == Purchase::STATE_REORDER &&
-        in_array($order->status, array(Order::STATUS_PROCEEDING, Order::STATUS_REFUSED))
-    )
-  ):
+  if ($order->canEdit()):
     ?>
     <a class="button" onclick="return FormMgr.submit('#orderform')">Сохранить изменения</a>
     <?php endif; ?>
   <?php
-  if (in_array($order->purchase->state, array(Purchase::STATE_DRAFT, Purchase::STATE_CALL_STUDY)) ||
-    (
-      $order->purchase->state == Purchase::STATE_ORDER_COLLECTION &&
-        in_array($order->status, array(Order::STATUS_PROCEEDING, Order::STATUS_REFUSED, Order::STATUS_ACCEPTED))
-    ) ||
-    (
-    in_array($order->status, array(Order::STATUS_PROCEEDING, Order::STATUS_REFUSED))
-    )
-  ):
+  if ($order->canDelete()):
     ?>
     <a class="button" onclick="deleteOrder()">Удалить заказ</a>
-    <a class="button" onclick="markAsDelivered()">Отметить заказ как полученный</a>
     <?php endif; ?>
+  <?php if ($order->status == Order::STATUS_WAIT_FOR_DELIVER): ?>
+    <a class="button" onclick="markAsDelivered()">Отметить заказ как полученный</a>
+  <?php endif; ?>
 </div>
 <div class="order_help">
   <p>- удалить или изменить заказ возможно только при определенных статусах заказа и закупки;</p>

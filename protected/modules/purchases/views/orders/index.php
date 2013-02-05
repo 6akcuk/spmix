@@ -7,12 +7,17 @@ Yii::app()->getClientScript()->registerCssFile('/css/orders.css');
 Yii::app()->getClientScript()->registerCssFile('/css/purchases.css');
 Yii::app()->getClientScript()->registerScriptFile('/js/purchase.js');
 
+Yii::app()->getClientScript()->registerCssFile('/css/pagination.css');
+Yii::app()->getClientScript()->registerScriptFile('/js/pagination.js');
+
 $this->pageTitle = Yii::app()->name .' - Мои покупки';
 ?>
 
 <div class="tabs">
-  <?php echo ActiveHtml::link('Текущие заказы', '/orders', array('class' => 'selected')) ?>
+  <?php echo ActiveHtml::link('Текущие заказы', '/orders', array('class' => (Yii::app()->controller->action->id == 'index') ? 'selected' : '')) ?>
   <?php echo ActiveHtml::link('Ожидают оплаты'. (($awaitingNum > 0) ? ' ('. $awaitingNum .')' : ''), '/orders/awaiting') ?>
+  <?php echo ActiveHtml::link('Ожидают выдачи'. (($deliveringNum > 0) ? ' ('. $deliveringNum .')' : ''), '/orders/delivering', array('class' => (Yii::app()->controller->action->id == 'delivering') ? 'selected' : '')) ?>
+  <?php echo ActiveHtml::link('Полученные заказы', '/orders/delivered', array('class' => (Yii::app()->controller->action->id == 'delivered') ? 'selected' : '')) ?>
   <?php echo ActiveHtml::link('Платежи', '/orders/payments') ?>
 </div>
 
@@ -38,6 +43,16 @@ $this->pageTitle = Yii::app()->name .' - Мои покупки';
       <td><?php echo ActiveHtml::price($stat[$pid]['sum']) ?></td>
       <td><?php echo ActiveHtml::price($stat[$pid]['credit']) ?></td>
     </tr>
+    <?php if ($purchase->user_oic->oic_price > 0): ?>
+    <tr class="order_user_oic">
+      <td></td>
+      <td>Место выдачи: <?php echo $purchase->user_oic->oic_name ?></td>
+      <td><?php echo ($purchase->user_oic->payed == 1) ? 'Оплачено' : 'Не оплачено' ?></td>
+      <td></td>
+      <td><?php echo ActiveHtml::price($purchase->user_oic->oic_price) ?></td>
+      <td><?php echo ($purchase->user_oic->payed == 0) ? ActiveHtml::price($purchase->user_oic->oic_price) : ActiveHtml::price(0) ?></td>
+    </tr>
+    <?php endif; ?>
         <?php foreach ($_orders as $order): ?>
         <tr class="order_row">
           <td><?php echo $order->order_id ?></td>

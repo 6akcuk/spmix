@@ -66,6 +66,7 @@ var report_window = {
 
 /* Input Error */
 var inputError = function(after, msg) {
+  if ($(after).parent().hasClass('input_placeholder')) after = $(after).parent();
   $('<span/>').addClass('input_error').html(msg).insertAfter(after);
 }
 
@@ -1311,9 +1312,10 @@ var FormMgr = {
                     $.each(v, function(i2, v2) {
                       string.push(v2);
                     })
-                    $('<span/>').addClass('input_error').html(string.join('')).insertAfter($('#'+ i));
+                    //$('<span/>').addClass('input_error').html(string.join('')).insertAfter($('#'+ i));
+                    inputError($('#'+ i), string.join(''));
                   }
-                  else $('<span/>').addClass('input_error').html(v).insertAfter($('#'+ i));
+                  else inputError($('#'+ i), v);
                 });
 
                 //report_window.create($form, pos, string.join('<br/>'));

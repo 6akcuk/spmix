@@ -5,11 +5,16 @@
 Yii::app()->getClientScript()->registerCssFile('/css/purchases.css');
 Yii::app()->getClientScript()->registerScriptFile('/js/purchase.js');
 
+Yii::app()->getClientScript()->registerCssFile('/css/pagination.css');
+Yii::app()->getClientScript()->registerScriptFile('/js/pagination.js');
+
 $this->pageTitle = Yii::app()->name .' - Мои закупки';
 
 foreach (Purchase::getStateDataArray() as $state) {
     $statesJs[] = "'". Yii::t('purchase', $state) ."'";
 }
+
+$delta = $c['limit'];
 ?>
 
 <h1>
@@ -30,96 +35,62 @@ foreach (Purchase::getStateDataArray() as $state) {
         <label for="dont_show">не отображать завершенные закупки</label>
     </div>
     <div class="right">
-    <? /*$this->widget('Paginator', array(
-        'offsets' => $model->imagesCountRN,
-        'offset' => $offset,
-        'delta' => 18,
-        'url' => array(
-            '/photosessions/associate',
-            'id' => $model->id,
-            'offset' => $offset,
-        )
-    ));*/ ?>
+    <?php $this->widget('Paginator', array(
+      'url' => '/purchases/my',
+      'offset' => $offset,
+      'offsets' => $offsets,
+      'delta' => $delta,
+    )); ?>
     </div>
 </div>
 
-<div class="clearfix">
-    <table class="bezborder" style="margin-top: 4px">
-        <thead>
-        <tr>
-            <td>Категория:</td>
-            <td>   <div rel="filters" class="filters_my_category">
-                <?php echo ActiveHtml::dropdown(
-                'c[category_id]',
-                'Категория',
-                (isset($c['category_id'])) ? $c['category_id'] : '',
-                PurchaseCategory::getDataArray()
-            ); ?>
-            </div></td>
-        </tr>
-        <tr>
-            <td>Статус:</td>
-            <td>
-                <div rel="filters" class="filters_my_status">
-                <?php echo ActiveHtml::dropdown(
-                'c[state]',
-                'Статус',
-                (isset($c['state'])) ? $c['state'] : '',
-                Purchase::getStateDataArray()
-            ); ?>
-            </div></td>
-        </tr>
-        </thead>
-
-    <table class="mytable">
-        <thead>
-        <tr>
-        <td>
-    <div rel="filters" class="filters_my_id">
-    <?php echo ActiveHtml::inputPlaceholder(
-        'c[id]',
-        (isset($c['id'])) ? $c['id'] : '',
-        array('placeholder' => 'ID')
-    ); ?>
-    </div>
-            <td>
-    <div rel="filters" class="filters_my_date">
-    <?php echo ActiveHtml::inputCalendar(
-        'c[create_date]',
-        (isset($c['create_date'])) ? $c['create_date'] : '',
-        'Создана'
-    ); ?>
-    </div>
-            </td>
-        <td>
-
-            </td>
-        <td>
-            <div rel="filters" class="filters_my_name">
-                <?php echo ActiveHtml::inputPlaceholder(
-                'c[name]',
-                (isset($c['name'])) ? $c['name'] : '',
-                array('placeholder' => 'Название')
-            ); ?>
-            </div>
-            </td>
-        <td>
-       </td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-</tr>
-</div>
-    <tr>
-        <td>ID</td><td>Создана</td><td>Категория</td><td>Название</td><td>Статус</td><td>Стоп заказов</td>
-        <td>Кол-во товаров</td><td>Заказы</td><td>% от мин</td>
-    </tr>
-    </thead>
-    <tbody id="purchases">
-    <?php $this->renderPartial('_listtable', array('purchases' => $purchases)) ?>
-    </tbody>
+<table class="mytable">
+<thead>
+  <tr>
+      <td>ID</td><td>Создана</td><td>Категория</td><td>Название</td><td>Статус</td><td>Стоп заказов</td>
+      <td>Кол-во товаров</td><td>Заказы</td><td>% от мин</td>
+  </tr>
+  <tr>
+    <td>
+      <div rel="filters" class="filters_my_id">
+        <?php echo ActiveHtml::textField('c[id]', (isset($c['id'])) ? $c['id'] : ''); ?>
+      </div>
+    </td>
+    <td>
+      <div rel="filters" class="filters_my_date">
+        <?php echo ActiveHtml::inputCalendar('c[create_date]', (isset($c['create_date'])) ? $c['create_date'] : '', 'Создана'); ?>
+      </div>
+    </td>
+    <td>
+      <div rel="filters">
+        <?php echo ActiveHtml::dropdown('c[category_id]', '', (isset($c['category_id'])) ? $c['category_id'] : '', PurchaseCategory::getDataArray()) ?>
+      </div>
+    </td>
+    <td>
+      <div rel="filters" class="filters_my_name">
+        <?php echo ActiveHtml::textField('c[name]', (isset($c['name'])) ? $c['name'] : ''); ?>
+      </div>
+    </td>
+    <td>
+      <div rel="filters" class="filters_my_status">
+        <?php echo ActiveHtml::dropdown('c[state]', 'Статус', (isset($c['state'])) ? $c['state'] : '', Purchase::getStateDataArray()); ?>
+      </div>
+    </td>
+    <td>
+      <div rel="filters" class="filters_my_date">
+        <?php echo ActiveHtml::inputCalendar('c[stop_date]', (isset($c['stop_date'])) ? $c['stop_date'] : '', 'Стоп'); ?>
+      </div>
+    </td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+</thead>
+<tbody id="purchases" rel="pagination">
+  <?php $this->renderPartial('_listtable', array('purchases' => $purchases)) ?>
+</tbody>
 </table>
+  <? if ($offset + $delta < $offsets && $offsets > $delta): ?><a id="pg_more" class="pg_more" onclick="Paginator.showMore()">Еще закупки</a><? endif; ?>
 
 <script type="text/javascript">
 var statesList = [<?php echo implode(',', $statesJs) ?>];

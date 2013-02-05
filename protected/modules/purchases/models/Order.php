@@ -31,13 +31,14 @@
  */
 class Order extends CActiveRecord
 {
-    const STATUS_PROCEEDING = 'Proceeding';
-    const STATUS_REFUSED = 'Refused';
-    const STATUS_ACCEPTED = 'Accepted';
-    const STATUS_RANGE_ACCEPTED = 'Range Accepted';
-    const STATUS_DELIVERED = 'Delivered';
-    const STATUS_AWAITING = 'Awaiting';
-    const STATUS_PAID = 'Paid';
+  const STATUS_PROCEEDING = 'Proceeding';
+  const STATUS_REFUSED = 'Refused';
+  const STATUS_ACCEPTED = 'Accepted';
+  const STATUS_RANGE_ACCEPTED = 'Range Accepted';
+  const STATUS_DELIVERED = 'Delivered';
+  const STATUS_AWAITING = 'Awaiting';
+  const STATUS_PAID = 'Paid';
+  const STATUS_WAIT_FOR_DELIVER = 'Wait For Deliver';
 
 	/**
 	 * Returns the static model of the specified AR class.
@@ -92,7 +93,7 @@ class Order extends CActiveRecord
       'purchase' => array(self::BELONGS_TO, 'Purchase', 'purchase_id'),
       'payment' => array(self::HAS_ONE, 'OrderPayment', 'order_id'),
       'history' => array(self::HAS_MANY, 'OrderHistory', 'order_id', 'with' => 'author'),
-      'oic' => array(self::BELONGS_TO, 'OrderOic', ''),
+      'oic' => array(self::BELONGS_TO, 'OrderOic', 'purchase_id', 'condition' => 'oic.customer_id = '. Yii::app()->user->getId()),
 		);
 	}
 
@@ -136,13 +137,14 @@ class Order extends CActiveRecord
 
     public static function getStatusDataArray() {
         return array(
-            'В обработке' => self::STATUS_PROCEEDING,
-            'Отказ' => self::STATUS_REFUSED,
-            'Принят орг-ом' => self::STATUS_ACCEPTED,
-            'Принят орг-ом в ряд' => self::STATUS_RANGE_ACCEPTED,
-            'Ожидание оплаты' => self::STATUS_AWAITING,
-            'Получен' => self::STATUS_DELIVERED,
-            'Оплачен' => self::STATUS_PAID,
+          'В обработке' => self::STATUS_PROCEEDING,
+          'Отказ' => self::STATUS_REFUSED,
+          'Принят орг-ом' => self::STATUS_ACCEPTED,
+          'Принят орг-ом в ряд' => self::STATUS_RANGE_ACCEPTED,
+          'Ожидание оплаты' => self::STATUS_AWAITING,
+          'Оплачен' => self::STATUS_PAID,
+          'Ожидание выдачи' => self::STATUS_WAIT_FOR_DELIVER,
+          'Получен' => self::STATUS_DELIVERED,
         );
     }
 

@@ -230,15 +230,36 @@ class PurchasesController extends Controller {
             $criteria->addCondition('category_id = :category_id');
         }
 
+      if (isset($c['stop_date'])) {
+        $criteria->compare('stop_date', $c['stop_date']);
+      }
+
         $criteria->addCondition('purchase_delete IS NULL');
 
-        $purchases = Purchase::model()->resetScope()->with('city', 'ordersNum', 'ordersSum', 'goodsNum')->findAll($criteria);
+      $purchases = Purchase::model()->resetScope()->with('city', 'ordersNum', 'ordersSum', 'goodsNum')->findAll($criteria);
+      $purchasesNum = Purchase::model()->resetScope()->count($criteria);
 
-        $this->wideScreen = true;
-        if (Yii::app()->request->isAjaxRequest) {
-            $this->pageHtml = $this->renderPartial('my', array('purchases' => $purchases, 'c' => $c), true);
+      $this->wideScreen = true;
+      if (Yii::app()->request->isAjaxRequest) {
+        if (isset($_POST['pages'])) {
+          $this->pageHtml = $this->renderPartial('_listtable', array(
+            'purchases' => $purchases,
+            'offset' => $offset,
+          ), true);
         }
-        else $this->render('my', array('purchases' => $purchases, 'c' => $c));
+        else $this->pageHtml = $this->renderPartial('my', array(
+          'purchases' => $purchases,
+          'c' => $c,
+          'offset' => $offset,
+          'offsets' => $purchasesNum,
+        ), true);
+      }
+      else $this->render('my', array(
+        'purchases' => $purchases,
+        'c' => $c,
+        'offset' => $offset,
+        'offsets' => $purchasesNum,
+      ));
     }
 
     public function actionShow($id, $offset = 0) {
@@ -303,29 +324,34 @@ class PurchasesController extends Controller {
     }
 
     public function actionUpdateState($id) {
-        $model = Purchase::model()->findByPk($id);
+      /** @var $model Purchase */
+      $model = Purchase::model()->findByPk($id);
 
-        if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
-            Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('purchase' => $model)))
-        {
-            $states = Purchase::getStateDataArray();
-            $model->state = $states[$_POST['state']];
+      if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
+          Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('purchase' => $model)))
+      {
+        $states = Purchase::getStateDataArray();
+        $model->state = $states[$_POST['state']];
 
-            if ($model->save()) {
-                $result['success'] = true;
-                $result['msg'] = 'Изменения сохранены';
-            }
-            else {
-                foreach ($model->getErrors() as $attr => $error) {
-                    $result[ActiveHtml::activeId($model, $attr)] = $error;
-                }
-            }
+        if ($model->mod_confirmation == 0 &&
+          !in_array($model->state, array(Purchase::STATE_DRAFT, Purchase::STATE_CALL_STUDY)))
+          throw new CHttpException(500, 'Закупка не согласована');
 
-            echo json_encode($result);
-            exit;
+        if ($model->save()) {
+            $result['success'] = true;
+            $result['msg'] = 'Изменения сохранены';
         }
-        else
-            throw new CHttpException(403, 'В доступе отказано');
+        else {
+            foreach ($model->getErrors() as $attr => $error) {
+                $result[ActiveHtml::activeId($model, $attr)] = $error;
+            }
+        }
+
+        echo json_encode($result);
+        exit;
+      }
+      else
+        throw new CHttpException(403, 'В доступе отказано');
     }
 
     public function actionEdit($id) {
@@ -561,74 +587,86 @@ class PurchasesController extends Controller {
     }
 
     public function actionQuick($id) {
-        $purchase = Purchase::model()->findByPk($id);
-        $good = new Good('quick');
-        $order = new Order('quick');
+      $purchase = Purchase::model()->findByPk($id);
+      $good = new Good('quick');
+      $order = new Order('quick');
 
-        if (isset($_POST['Good'])) {
-            $good->attributes = $_POST['Good'];
-            $good->purchase_id = $id;
-            $good->currency = 'RUR';
-            $good->is_quick = 1;
+      $oic = OrderOic::model()->find('purchase_id = :pid AND customer_id = :cid', array(':pid' => $id, ':cid' => Yii::app()->user->getId()));
 
-            if ($good->validate()) {
-                $order->attributes = $_POST['Order'];
-                $order->purchase_id = $id;
-                $order->customer_id = Yii::app()->user->getId();
-                $order->price = $good->price;
-                $price = floatval($good->price) * ($good->purchase->org_tax / 100 + 1);
+      if (isset($_POST['Good'])) {
+        $good->attributes = $_POST['Good'];
+        $good->purchase_id = $id;
+        $good->currency = 'RUR';
+        $good->is_quick = 1;
 
-                if ($order->oic) {
-                    $oic = PurchaseOic::model()->findByPk($order->oic);
-                    $price += floatval($oic->price);
+        if ($good->validate()) {
+          $order->attributes = $_POST['Order'];
+          $order->purchase_id = $id;
+          $order->customer_id = Yii::app()->user->getId();
+          $order->price = $good->price;
+          $price = floatval($good->price) * ($good->purchase->org_tax / 100 + 1);
 
-                    $order->oic = $oic->price .' - '. $oic->description;
-                }
+          if ($order->oic) {
+            $oic = PurchaseOic::model()->findByPk($order->oic);
+            $price += floatval($oic->price);
 
-                $order->total_price = $price * intval($order->amount);
+            $order->oic = $oic->price .' - '. $oic->description;
+          }
 
-                if($order->validate()) {
-                    $good->save();
+          $order->total_price = $price * intval($order->amount);
 
-                    if ($_POST['size']) {
-                        $grid = new GoodGrid('create');
-                        $grid->purchase_id = $id;
-                        $grid->good_id = $good->good_id;
-                        $grid->size = $_POST['size'];
-                        $grid->colors = json_encode(array($_POST['color']));
-                        $grid->save();
+          if($order->validate()) {
+            $good->save();
 
-                        $order->grid_id = $grid->grid_id;
-                    }
+            if ($_POST['size']) {
+              $grid = new GoodGrid('create');
+              $grid->purchase_id = $id;
+              $grid->good_id = $good->good_id;
+              $grid->size = $_POST['size'];
+              $grid->colors = json_encode(array($_POST['color']));
+              $grid->save();
 
-                    $order->good_id = $good->good_id;
-                    $order->color = $_POST['color'];
-                    $order->save();
-
-                    $result['success'] = true;
-                    $result['msg'] = Yii::t('purchase', 'Заказ добавлен в список покупок');
-                    $result['url'] = '/orders';
-                }
-                else {
-                    foreach ($order->getErrors() as $attr => $error) {
-                        $result[ActiveHtml::activeId($order, $attr)] = $error;
-                    }
-                }
-            }
-            else {
-                foreach ($good->getErrors() as $attr => $error) {
-                    $result[ActiveHtml::activeId($good, $attr)] = $error;
-                }
+              $order->grid_id = $grid->grid_id;
             }
 
-            echo json_encode($result);
-            exit;
+            $order->good_id = $good->good_id;
+            $order->color = $_POST['color'];
+            $order->save();
+
+            $result['success'] = true;
+            $result['msg'] = Yii::t('purchase', 'Заказ добавлен в список покупок');
+            $result['url'] = '/orders';
+          }
+          else {
+            foreach ($order->getErrors() as $attr => $error) {
+                $result[ActiveHtml::activeId($order, $attr)] = $error;
+            }
+          }
+        }
+        else {
+          foreach ($good->getErrors() as $attr => $error) {
+            $result[ActiveHtml::activeId($good, $attr)] = $error;
+          }
         }
 
-        if (Yii::app()->request->isAjaxRequest) {
-            $this->pageHtml = $this->renderPartial('quick', array('purchase' => $purchase, 'good' => $good, 'order' => $order), true);
-        }
-        else $this->render('quick', array('purchase' => $purchase, 'good' => $good, 'order' => $order));
+        echo json_encode($result);
+        exit;
+      }
+
+      if (Yii::app()->request->isAjaxRequest) {
+          $this->pageHtml = $this->renderPartial('quick', array(
+            'purchase' => $purchase,
+            'good' => $good,
+            'order' => $order,
+            'oic' => $oic,
+          ), true);
+      }
+      else $this->render('quick', array(
+        'purchase' => $purchase,
+        'good' => $good,
+        'order' => $order,
+        'oic' => $oic,
+      ));
     }
 
     public function actionAddGood($id) {

@@ -468,8 +468,10 @@ class ClientScript extends CClientScript {
      */
     public function registerScriptFile($url, $position = null, $priority = null)
     {
-        //if (!preg_match("/assets/ui", $url)) {
-            if (!file_exists(Yii::app()->basePath .'/../'. $url)) return;
+            if (!file_exists(Yii::app()->basePath .'/../'. $url)) {
+              echo '<!-- not found '. $url .'-->';
+              return;
+            }
 
             $hash = hash_file('md5', Yii::app()->basePath .'/../'. $url);
 

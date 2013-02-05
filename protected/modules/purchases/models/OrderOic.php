@@ -9,6 +9,7 @@
  * @property integer $customer_id
  * @property string $oic_name
  * @property string $oic_price
+ * @property integer $payed
  */
 class OrderOic extends CActiveRecord
 {

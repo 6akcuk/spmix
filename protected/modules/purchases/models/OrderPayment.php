@@ -12,7 +12,7 @@
  * @property string $pay_id
  * @property string $description
  *
- * @property Order $order
+ * @property OrderPaymentLink $orders
  * @property User $payer
  * @property ProfilePaydetail $paydetails
  */
@@ -85,8 +85,9 @@ class OrderPayment extends CActiveRecord
 
     public static function getStatusArray() {
         return array(
-            Yii::t('purchase', self::STATUS_AWAITING) => self::STATUS_AWAITING,
-            Yii::t('purchase', self::STATUS_PERFORMED) => self::STATUS_PERFORMED,
+          Yii::t('purchase', self::STATUS_AWAITING) => self::STATUS_AWAITING,
+          Yii::t('purchase', self::STATUS_PERFORMED) => self::STATUS_PERFORMED,
+          Yii::t('purchase', self::STATUS_REFUSED) => self::STATUS_REFUSED,
         );
     }
 
@@ -103,8 +104,34 @@ class OrderPayment extends CActiveRecord
     }
 
   public static function getAllPaymentsForOrg($org_id, $offset = 0, $c = array()) {
-    $result = array();
+    $db = Yii::app()->db;
 
+    $result = array();
+    $where = array();
+
+    $where[] = 'purchase.author_id = '. $org_id;
+    if (isset($c['payment_id']))
+      $where[] = 't.payment_id = '. intval($c['payment_id']);
+
+    if (isset($c['creation_date']))
+      $where[] = "(t.datetime BETWEEN '". date("Y-m-d 00:00:00", strtotime($c['creation_date'])) ."' AND '". date("Y-m-d 23:59:59", strtotime($c['creation_date'])) ."')";
+
+    if (isset($c['payer'])) {
+      /** @var $db CDbConnection */
+      $c['payer'] = mysql_escape_string($c['payer']);
+      $where[] = "(user.login LIKE '%". $c['payer'] ."%' OR profile.firstname LIKE '%". $c['payer'] ."%' OR profile.lastname LIKE '%". $c['payer'] ."%')";
+    }
+
+    if (isset($c['sum']))
+      $where[] = "t.sum = ". $db->quoteValue($c['sum']);
+
+    if (isset($c['description']))
+      $where[] = "t.description LIKE '%". mysql_escape_string($c['description']) ."'";
+
+    if (isset($c['status']))
+      $where[] = "t.status = ". $db->quoteValue($c['status']);
+
+    /** @var $command CDbCommand */
     $command = Yii::app()->db->createCommand("
 SELECT *, t.datetime AS t_datetime, t.status AS t_status FROM `orders_payments` AS t
   INNER JOIN `orders_payment_link` AS link ON link.payment_id = t.payment_id
@@ -112,10 +139,12 @@ SELECT *, t.datetime AS t_datetime, t.status AS t_status FROM `orders_payments` 
   INNER JOIN `purchases` AS purchase ON purchase.purchase_id = `order`.purchase_id
   INNER JOIN `users` AS user ON user.id = t.payer_id
   INNER JOIN `profiles` AS profile ON profile.user_id = user.id
-WHERE purchase.author_id = ". $org_id ."
+WHERE ". implode(" AND ", $where) ."
 GROUP BY t.payment_id
 ORDER BY t.datetime DESC
 LIMIT ". $offset .", ". Yii::app()->getModule('purchases')->paymentsPerPage);
+
+    //echo $command->text;
 
     $dataReader = $command->query();
     while (($row = $dataReader->read()) !== false) {

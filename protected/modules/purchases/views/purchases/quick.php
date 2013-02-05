@@ -8,9 +8,9 @@ $this->pageTitle = Yii::app()->name .' - Быстрый заказ';
 
 $dd_oic = array();
 if (is_array($purchase->oic)) {
-    foreach ($purchase->oic as $oic) {
-        $dd_oic[$oic->description .' '. ActiveHtml::price($oic->price)] = $oic->pk;
-    }
+  foreach ($purchase->oic as $purchase_oic) {
+    $dd_oic[$purchase_oic->description .' '. ActiveHtml::price($purchase_oic->price)] = $purchase_oic->pk;
+  }
 }
 
 ?>
@@ -50,11 +50,24 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
     <?php echo $form->smartTextarea($order, 'client_comment') ?>
 </div>
 <?php if ($purchase->oic): ?>
-<div class="row">
-    Вы можете выбрать Центр Выдачи Заказов, если хотите самостоятельно забрать свой заказ <br/>
-</div>
-<div class="row clearfix">
+<div class="clearfix row">
+  <?php if (!$oic): ?>
+  <?php echo $form->dropdown($orderc, 'oic', $dd_oic) ?>
+  <?php else: ?>
+  <div id="oic_text">
+    Место выдачи: <?php echo $oic->oic_name ?>
+    <!--<span class="icon-remove" rel="tooltip" title="Удалить место" onclick="removeSavedOic()"></span> -->
+  </div>
+  <div id="oic" class="clearfix" style="display:none">
     <?php echo $form->dropdown($order, 'oic', $dd_oic) ?>
+  </div>
+  <script>
+    function removeSavedOic() {
+      $('#oic_text').remove();
+      $('#oic').show();
+    }
+  </script>
+  <?php endif; ?>
 </div>
 <?php endif; ?>
 <div class="row">

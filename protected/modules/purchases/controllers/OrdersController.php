@@ -22,119 +22,258 @@ class OrdersController extends Controller {
         );
     }
 
-    public function actionIndex() {
-        $criteria = new CDbCriteria();
-        $criteria->addCondition('customer_id = :customer_id');
-        $criteria->params[':customer_id'] = Yii::app()->user->getId();
-        $criteria->order = 't.purchase_id';
+  public function actionIndex() {
+    $criteria = new CDbCriteria();
+    $criteria->addCondition('customer_id = :customer_id');
+    $criteria->params[':customer_id'] = Yii::app()->user->getId();
+    $criteria->order = 't.purchase_id';
 
-        $purchases = array();
-        $orders = array();
-        $stat = array();
-        $p_ids = array();
-        $_orders = Order::model()->with('good')->findAll($criteria);
-        /** @var $order Order */
-        foreach ($_orders as $order) {
-          if (!isset($orders[$order->purchase_id])) {
-            $orders[$order->purchase_id] = array();
-            $stat[$order->purchase_id] = array('num' => 0, 'sum' => 0.00, 'credit' => 0.00);
-            $p_ids[] = $order->purchase_id;
-          }
-          $orders[$order->purchase_id][] = $order;
-          $stat[$order->purchase_id]['num'] += $order->amount;
-          $stat[$order->purchase_id]['sum'] += floatval($order->total_price);
-          $stat[$order->purchase_id]['credit'] += floatval($order->total_price - $order->payed);
-        }
-
-        $pur_criteria = new CDbCriteria();
-        $pur_criteria->addInCondition('purchase_id', $p_ids);
-        $_purchases = Purchase::model()->findAll($pur_criteria);
-        foreach ($_purchases as $p) {
-            $purchases[$p->purchase_id] = $p;
-        }
-
-        $awaitingNum = Order::model()->count('customer_id = :customer_id AND status = :status', array(':customer_id' => Yii::app()->user->getId(), ':status' => Order::STATUS_AWAITING));
-
-        if (Yii::app()->request->isAjaxRequest) {
-            $this->pageHtml = $this->renderPartial(
-                'index',
-                array(
-                    'orders' => $orders,
-                    'purchases' => $purchases,
-                    'stat' => $stat,
-                    'awaitingNum' => $awaitingNum,
-                ),
-                true);
-        }
-        else
-            $this->render(
-                'index',
-                array(
-                    'orders' => $orders,
-                    'purchases' => $purchases,
-                    'stat' => $stat,
-                    'awaitingNum' => $awaitingNum,
-                )
-            );
+    $purchases = array();
+    $orders = array();
+    $stat = array();
+    $p_ids = array();
+    $_orders = Order::model()->with('good')->findAll($criteria);
+    /** @var $order Order */
+    foreach ($_orders as $order) {
+      if (!isset($orders[$order->purchase_id])) {
+        $orders[$order->purchase_id] = array();
+        $stat[$order->purchase_id] = array('num' => 0, 'sum' => 0.00, 'credit' => 0.00);
+        $p_ids[] = $order->purchase_id;
+      }
+      $orders[$order->purchase_id][] = $order;
+      $stat[$order->purchase_id]['num'] += $order->amount;
+      $stat[$order->purchase_id]['sum'] += floatval($order->total_price);
+      $stat[$order->purchase_id]['credit'] += floatval($order->total_price - $order->payed);
     }
 
-    public function actionAwaiting() {
-        $criteria = new CDbCriteria();
-        $criteria->addCondition('customer_id = :customer_id');
-        $criteria->addCondition('t.status = :status');
-        $criteria->params[':customer_id'] = Yii::app()->user->getId();
-        $criteria->params[':status'] = Order::STATUS_AWAITING;
-        $criteria->order = 't.purchase_id';
+    $pur_criteria = new CDbCriteria();
+    $pur_criteria->addInCondition('t.purchase_id', $p_ids);
+    $pur_criteria->compare('user_oic.customer_id', Yii::app()->user->getId());
+    $_purchases = Purchase::model()->with('user_oic')->findAll($pur_criteria);
+    foreach ($_purchases as $p) {
+      $purchases[$p->purchase_id] = $p;
+      $stat[$p->purchase_id]['sum'] += floatval($p->user_oic->oic_price);
 
-        $purchases = array();
-        $orders = array();
-        $stat = array();
-        $p_ids = array();
-        $_orders = Order::model()->with('good')->findAll($criteria);
-        /** @var $order Order */
-        foreach ($_orders as $order) {
-          if (!isset($orders[$order->purchase_id])) {
-            $orders[$order->purchase_id] = array();
-            $stat[$order->purchase_id] = array('num' => 0, 'sum' => 0.00, 'credit' => 0.00);
-            $p_ids[] = $order->purchase_id;
-          }
-          $orders[$order->purchase_id][] = $order;
-          $stat[$order->purchase_id]['num'] += $order->amount;
-          $stat[$order->purchase_id]['sum'] += floatval($order->total_price);
-          $stat[$order->purchase_id]['credit'] += floatval($order->total_price - $order->payed);
-        }
-
-        $pur_criteria = new CDbCriteria();
-        $pur_criteria->addInCondition('purchase_id', $p_ids);
-        $_purchases = Purchase::model()->findAll($pur_criteria);
-        foreach ($_purchases as $p) {
-          $purchases[$p->purchase_id] = $p;
-        }
-
-        $awaitingNum = Order::model()->count('customer_id = :customer_id AND status = :status', array(':customer_id' => Yii::app()->user->getId(), ':status' => Order::STATUS_AWAITING));
-
-        if (Yii::app()->request->isAjaxRequest) {
-            $this->pageHtml = $this->renderPartial(
-                'awaiting',
-                array(
-                    'orders' => $orders,
-                    'purchases' => $purchases,
-                    'stat' => $stat,
-                    'awaitingNum' => $awaitingNum,
-                ),
-                true);
-        }
-        else
-            $this->render(
-                'awaiting',
-                array(
-                    'orders' => $orders,
-                    'purchases' => $purchases,
-                    'stat' => $stat,
-                    'awaitingNum' => $awaitingNum,
-                )
-            );
+      if ($p->user_oic->payed == 0)
+        $stat[$p->purchase_id]['credit'] += floatval($p->user_oic->oic_price);
     }
+
+    $awaitingNum = Order::model()->count('customer_id = :customer_id AND status = :status', array(':customer_id' => Yii::app()->user->getId(), ':status' => Order::STATUS_AWAITING));
+    $deliveringNum = Order::model()->count('customer_id = :customer_id AND status = :status', array(':customer_id' => Yii::app()->user->getId(), ':status' => Order::STATUS_WAIT_FOR_DELIVER));
+
+    if (Yii::app()->request->isAjaxRequest) {
+      $this->pageHtml = $this->renderPartial(
+        'index',
+        array(
+          'orders' => $orders,
+          'purchases' => $purchases,
+          'stat' => $stat,
+          'awaitingNum' => $awaitingNum,
+          'deliveringNum' => $deliveringNum,
+        ),
+        true);
+    }
+    else
+      $this->render(
+        'index',
+        array(
+          'orders' => $orders,
+          'purchases' => $purchases,
+          'stat' => $stat,
+          'awaitingNum' => $awaitingNum,
+          'deliveringNum' => $deliveringNum,
+        )
+      );
+  }
+
+  public function actionAwaiting() {
+      $criteria = new CDbCriteria();
+      $criteria->addCondition('customer_id = :customer_id');
+      $criteria->addCondition('t.status = :status');
+      $criteria->params[':customer_id'] = Yii::app()->user->getId();
+      $criteria->params[':status'] = Order::STATUS_AWAITING;
+      $criteria->order = 't.purchase_id';
+
+      $purchases = array();
+      $orders = array();
+      $stat = array();
+      $p_ids = array();
+      $_orders = Order::model()->with('good')->findAll($criteria);
+      /** @var $order Order */
+      foreach ($_orders as $order) {
+        if (!isset($orders[$order->purchase_id])) {
+          $orders[$order->purchase_id] = array();
+          $stat[$order->purchase_id] = array('num' => 0, 'sum' => 0.00, 'credit' => 0.00);
+          $p_ids[] = $order->purchase_id;
+        }
+        $orders[$order->purchase_id][] = $order;
+        $stat[$order->purchase_id]['num'] += $order->amount;
+        $stat[$order->purchase_id]['sum'] += floatval($order->total_price);
+        $stat[$order->purchase_id]['credit'] += floatval($order->total_price - $order->payed);
+      }
+
+      $pur_criteria = new CDbCriteria();
+      $pur_criteria->addInCondition('t.purchase_id', $p_ids);
+      $pur_criteria->compare('user_oic.customer_id', Yii::app()->user->getId());
+      $_purchases = Purchase::model()->with('user_oic')->findAll($pur_criteria);
+      foreach ($_purchases as $p) {
+        $purchases[$p->purchase_id] = $p;
+        $stat[$p->purchase_id]['sum'] += floatval($p->user_oic->oic_price);
+
+        if ($p->user_oic->payed == 0)
+          $stat[$p->purchase_id]['credit'] += floatval($p->user_oic->oic_price);
+      }
+
+    $awaitingNum = Order::model()->count('customer_id = :customer_id AND status = :status', array(':customer_id' => Yii::app()->user->getId(), ':status' => Order::STATUS_AWAITING));
+    $deliveringNum = Order::model()->count('customer_id = :customer_id AND status = :status', array(':customer_id' => Yii::app()->user->getId(), ':status' => Order::STATUS_WAIT_FOR_DELIVER));
+
+    if (Yii::app()->request->isAjaxRequest) {
+      $this->pageHtml = $this->renderPartial(
+        'awaiting',
+        array(
+          'orders' => $orders,
+          'purchases' => $purchases,
+          'stat' => $stat,
+          'awaitingNum' => $awaitingNum,
+          'deliveringNum' => $deliveringNum,
+        ),
+        true);
+    }
+    else
+      $this->render(
+        'awaiting',
+        array(
+          'orders' => $orders,
+          'purchases' => $purchases,
+          'stat' => $stat,
+          'awaitingNum' => $awaitingNum,
+          'deliveringNum' => $deliveringNum,
+        )
+      );
+  }
+
+  public function actionDelivering() {
+    $criteria = new CDbCriteria();
+    $criteria->addCondition('customer_id = :customer_id');
+    $criteria->addCondition('t.status = :status');
+    $criteria->params[':customer_id'] = Yii::app()->user->getId();
+    $criteria->params[':status'] = Order::STATUS_WAIT_FOR_DELIVER;
+    $criteria->order = 't.purchase_id';
+
+    $purchases = array();
+    $orders = array();
+    $stat = array();
+    $p_ids = array();
+    $_orders = Order::model()->with('good')->findAll($criteria);
+    /** @var $order Order */
+    foreach ($_orders as $order) {
+      if (!isset($orders[$order->purchase_id])) {
+        $orders[$order->purchase_id] = array();
+        $stat[$order->purchase_id] = array('num' => 0, 'sum' => 0.00, 'credit' => 0.00);
+        $p_ids[] = $order->purchase_id;
+      }
+      $orders[$order->purchase_id][] = $order;
+      $stat[$order->purchase_id]['num'] += $order->amount;
+      $stat[$order->purchase_id]['sum'] += floatval($order->total_price);
+      $stat[$order->purchase_id]['credit'] += floatval($order->total_price - $order->payed);
+    }
+
+    $pur_criteria = new CDbCriteria();
+    $pur_criteria->addInCondition('t.purchase_id', $p_ids);
+    $pur_criteria->compare('user_oic.customer_id', Yii::app()->user->getId());
+    $_purchases = Purchase::model()->with('user_oic')->findAll($pur_criteria);
+    foreach ($_purchases as $p) {
+      $purchases[$p->purchase_id] = $p;
+      $stat[$p->purchase_id]['sum'] += floatval($p->user_oic->oic_price);
+
+      if ($p->user_oic->payed == 0)
+        $stat[$p->purchase_id]['credit'] += floatval($p->user_oic->oic_price);
+    }
+
+    $awaitingNum = Order::model()->count('customer_id = :customer_id AND status = :status', array(':customer_id' => Yii::app()->user->getId(), ':status' => Order::STATUS_AWAITING));
+    $deliveringNum = Order::model()->count('customer_id = :customer_id AND status = :status', array(':customer_id' => Yii::app()->user->getId(), ':status' => Order::STATUS_WAIT_FOR_DELIVER));
+
+    if (Yii::app()->request->isAjaxRequest) {
+      $this->pageHtml = $this->renderPartial(
+        'index',
+        array(
+          'orders' => $orders,
+          'purchases' => $purchases,
+          'stat' => $stat,
+          'awaitingNum' => $awaitingNum,
+          'deliveringNum' => $deliveringNum,
+        ),
+        true);
+    }
+    else
+      $this->render(
+        'index',
+        array(
+          'orders' => $orders,
+          'purchases' => $purchases,
+          'stat' => $stat,
+          'awaitingNum' => $awaitingNum,
+          'deliveringNum' => $deliveringNum,
+        )
+      );
+  }
+
+  public function actionDelivered($offset = 0) {
+    $criteria = new CDbCriteria();
+    $criteria->addCondition('customer_id = :customer_id');
+    $criteria->addCondition('t.status = :status');
+    $criteria->params[':customer_id'] = Yii::app()->user->getId();
+    $criteria->params[':status'] = Order::STATUS_DELIVERED;
+    $criteria->order = 't.creation_date DESC';
+
+    $criteria->limit = Yii::app()->getModule('purchases')->ordersPerPage;
+    $criteria->offset = $offset;
+
+    $purchases = array();
+    $orders = array();
+    $stat = array();
+    $p_ids = array();
+    $orders = Order::model()->with('good')->findAll($criteria);
+
+    $criteria->limit = 0;
+    $ordersNum = Order::model()->with('good')->count($criteria);
+
+    $awaitingNum = Order::model()->count('customer_id = :customer_id AND status = :status', array(':customer_id' => Yii::app()->user->getId(), ':status' => Order::STATUS_AWAITING));
+    $deliveringNum = Order::model()->count('customer_id = :customer_id AND status = :status', array(':customer_id' => Yii::app()->user->getId(), ':status' => Order::STATUS_WAIT_FOR_DELIVER));
+
+    if (Yii::app()->request->isAjaxRequest) {
+      if (isset($_POST['pages'])) {
+        $this->pageHtml = $this->renderPartial(
+          '_delivered',
+          array(
+            'orders' => $orders,
+            'offset' => $offset,
+          ),
+          true);
+      }
+      else $this->pageHtml = $this->renderPartial(
+        'delivered',
+        array(
+          'orders' => $orders,
+          'awaitingNum' => $awaitingNum,
+          'deliveringNum' => $deliveringNum,
+          'offset' => $offset,
+          'offsets' => $ordersNum,
+        ),
+        true);
+    }
+    else
+      $this->render(
+        'delivered',
+        array(
+          'orders' => $orders,
+          'awaitingNum' => $awaitingNum,
+          'deliveringNum' => $deliveringNum,
+          'offset' => $offset,
+          'offsets' => $ordersNum,
+        )
+      );
+  }
 
     public function actionPurchase2Excel($purchase_id) {
         /** @var $purchase Purchase */
@@ -190,96 +329,96 @@ class OrdersController extends Controller {
     }
 
     public function actionPurchase($purchase_id, $offset = 0) {
-        $purchase = Purchase::model()->findByPk($purchase_id);
+      $purchase = Purchase::model()->findByPk($purchase_id);
 
-        if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
-            Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('purchase' => $purchase))) {
-            $c = (isset($_REQUEST['c'])) ? $_REQUEST['c'] : array();
-            if (!isset($c['limit'])) $c['limit'] = 30;
+      if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
+        Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('purchase' => $purchase))) {
+        $c = (isset($_REQUEST['c'])) ? $_REQUEST['c'] : array();
+        if (!isset($c['limit'])) $c['limit'] = 30;
 
-            $criteria = new CDbCriteria();
-            $criteria->limit = $c['limit'];
-            $criteria->offset = $offset;
-            $criteria->addCondition('t.purchase_id = :purchase_id');
-            $criteria->params[':purchase_id'] = $purchase_id;
-            $criteria->order = 'creation_date DESC';
+        $criteria = new CDbCriteria();
+        $criteria->limit = $c['limit'];
+        $criteria->offset = $offset;
+        $criteria->addCondition('t.purchase_id = :purchase_id');
+        $criteria->params[':purchase_id'] = $purchase_id;
+        $criteria->order = 'creation_date DESC';
 
-            if (isset($c['id'])) {
-                $criteria->addSearchCondition('t.order_id', $c['id']);
-            }
+        if (isset($c['id'])) {
+            $criteria->addSearchCondition('t.order_id', $c['id']);
+        }
 
-            if (isset($c['creation_date'])) {
-                $criteria->params[':create_date'] = $c['creation_date'];
-                $next_date = new DateTime($c['creation_date']);
-                $next_date->add(new DateInterval("P1D"));
-                $criteria->params[':next_date'] = $next_date->format('Y-m-d');
-                $criteria->addCondition('creation_date >= :create_date AND creation_date < :next_date');
-            }
+        if (isset($c['creation_date'])) {
+            $criteria->params[':create_date'] = $c['creation_date'];
+            $next_date = new DateTime($c['creation_date']);
+            $next_date->add(new DateInterval("P1D"));
+            $criteria->params[':next_date'] = $next_date->format('Y-m-d');
+            $criteria->addCondition('creation_date >= :create_date AND creation_date < :next_date');
+        }
 
-            if (isset($c['good'])) {
-                $criteria->addSearchCondition('good.name', $c['good']);
-            }
-            if (isset($c['artikul'])) {
-                $criteria->addSearchCondition('good.artikul', $c['artikul']);
-            }
-            if (isset($c['size'])) {
-                $criteria->addSearchCondition('t.size', $c['size']);
-            }
-            if (isset($c['color'])) {
-                $criteria->addSearchCondition('t.color', $c['color']);
-            }
-            if (isset($c['name'])) {
-                $criteria->addSearchCondition('profile.lastname', $c['name']);
-                $criteria->addSearchCondition('profile.firstname', $c['name'], true, 'OR');
-            }
-            if (isset($c['city_id'])) {
-                $criteria->params[':city_id'] = $c['city_id'];
-                $criteria->addCondition('profile.city_id = :city_id');
-            }
-            if (isset($c['status'])) {
-                $criteria->params[':status'] = $c['status'];
-                $criteria->addCondition('t.status = :status');
-            }
+        if (isset($c['good'])) {
+            $criteria->addSearchCondition('good.name', $c['good']);
+        }
+        if (isset($c['artikul'])) {
+            $criteria->addSearchCondition('good.artikul', $c['artikul']);
+        }
+        if (isset($c['size'])) {
+            $criteria->addSearchCondition('t.size', $c['size']);
+        }
+        if (isset($c['color'])) {
+            $criteria->addSearchCondition('t.color', $c['color']);
+        }
+        if (isset($c['name'])) {
+            $criteria->addSearchCondition('profile.lastname', $c['name']);
+            $criteria->addSearchCondition('profile.firstname', $c['name'], true, 'OR');
+        }
+        if (isset($c['city_id'])) {
+            $criteria->params[':city_id'] = $c['city_id'];
+            $criteria->addCondition('profile.city_id = :city_id');
+        }
+        if (isset($c['status'])) {
+            $criteria->params[':status'] = $c['status'];
+            $criteria->addCondition('t.status = :status');
+        }
 
-            $orders = Order::model()->with('good', 'customer')->findAll($criteria);
+        $orders = Order::model()->with('good', 'customer')->findAll($criteria);
 
-          $criteria->limit = 0;
-          $ordersNum = Order::model()->with('good', 'customer')->count($criteria);
+      $criteria->limit = 0;
+      $ordersNum = Order::model()->with('good', 'customer')->count($criteria);
 
-            $this->wideScreen = true;
-            if (Yii::app()->request->isAjaxRequest) {
-              if (isset($_POST['pages'])) {
-                $this->pageHtml = $this->renderPartial('_order', array(
-                  'orders' => $orders,
-                  'c' => $c,
+        $this->wideScreen = true;
+        if (Yii::app()->request->isAjaxRequest) {
+          if (isset($_POST['pages'])) {
+            $this->pageHtml = $this->renderPartial('_order', array(
+              'orders' => $orders,
+              'c' => $c,
+              'offset' => $offset,
+            ), true);
+          }
+          else $this->pageHtml = $this->renderPartial(
+                'orders',
+                array(
+                    'purchase' => $purchase,
+                    'orders' => $orders,
+                    'c' => $c,
                   'offset' => $offset,
-                ), true);
-              }
-              else $this->pageHtml = $this->renderPartial(
-                    'orders',
-                    array(
-                        'purchase' => $purchase,
-                        'orders' => $orders,
-                        'c' => $c,
-                      'offset' => $offset,
-                      'offsets' => $ordersNum,
-                    ),
-                    true);
-            }
-            else
-                $this->render(
-                    'orders',
-                    array(
-                        'purchase' => $purchase,
-                        'orders' => $orders,
-                        'c' => $c,
-                      'offset' => $offset,
-                      'offsets' => $ordersNum,
-                    )
-                );
+                  'offsets' => $ordersNum,
+                ),
+                true);
         }
         else
-            throw new CHttpException(403, 'В доступе отказано');
+          $this->render(
+            'orders',
+            array(
+              'purchase' => $purchase,
+              'orders' => $orders,
+              'c' => $c,
+              'offset' => $offset,
+              'offsets' => $ordersNum,
+            )
+          );
+      }
+      else
+          throw new CHttpException(403, 'В доступе отказано');
     }
 
     public function actionShow($order_id) {
@@ -494,6 +633,9 @@ class OrdersController extends Controller {
         throw new CHttpException(500, 'Заказ не найден');
       }
       else {
+        if (!$order->canDelete())
+          throw new CHttpException(500, 'Удалить заказ невозможно');
+
         $order->delete();
         OrderHistory::model()->deleteAll('order_id = :id', array(':id' => $_POST['id']));
 
@@ -515,8 +657,8 @@ class OrdersController extends Controller {
       if (!$order) {
         throw new CHttpException(500, 'Заказ не найден');
       }
-      elseif ($order->status != Order::STATUS_PAID) {
-        throw new CHttpException(500, 'Заказ еще не оплачен');
+      elseif ($order->status != Order::STATUS_WAIT_FOR_DELIVER) {
+        throw new CHttpException(500, 'Заказ еще не в очереди выдачи');
       }
       else {
         $order->status = Order::STATUS_DELIVERED;
@@ -684,12 +826,14 @@ class OrdersController extends Controller {
       $paymentsNum = OrderPayment::model()->count($criteria);
 
       $awaitingNum = Order::model()->count('customer_id = :customer_id AND status = :status', array(':customer_id' => Yii::app()->user->getId(), ':status' => Order::STATUS_AWAITING));
+      $deliveringNum = Order::model()->count('customer_id = :customer_id AND status = :status', array(':customer_id' => Yii::app()->user->getId(), ':status' => Order::STATUS_WAIT_FOR_DELIVER));
 
       if (Yii::app()->request->isAjaxRequest) {
         $this->pageHtml = $this->renderPartial('payments', array(
           'payments' => $payments,
           'offsets' => $paymentsNum,
           'awaitingNum' => $awaitingNum,
+          'deliveringNum' => $deliveringNum,
           'offset' => $offset,
         ), true);
       }
@@ -697,11 +841,14 @@ class OrdersController extends Controller {
         'payments' => $payments,
         'offsets' => $paymentsNum,
         'awaitingNum' => $awaitingNum,
+        'deliveringNum' => $deliveringNum,
         'offset' => $offset,
       ));
     }
 
   public function actionOrgPayments($offset = 0) {
+    $c = (isset($_REQUEST['c'])) ? $_REQUEST['c'] : array();
+
     $criteria = new CDbCriteria();
     //$criteria->compare('orders.order.purchase.author_id', Yii::app()->user->getId());
     //$criteria->order = 'payment.datetime DESC';
@@ -714,7 +861,7 @@ class OrdersController extends Controller {
         'on' => 'purchase.purchase_id = order.purchase_id AND purchase.author_id = '. Yii::app()->user->getId(),
       )
     ))->findAll($criteria);*/
-    $payments = OrderPayment::getAllPaymentsForOrg(Yii::app()->user->getId(), $offset);
+    $payments = OrderPayment::getAllPaymentsForOrg(Yii::app()->user->getId(), $offset, $c);
     $paymentsNum = OrderPayment::countAllPaymentsForOrg(Yii::app()->user->getId());
 
     $this->wideScreen = true;
@@ -729,53 +876,82 @@ class OrdersController extends Controller {
         'payments' => $payments,
         'offsets' => $paymentsNum,
         'offset' => $offset,
+        'c' => $c,
       ), true);
     }
     else $this->render('orgpayments', array(
       'payments' => $payments,
       'offsets' => $paymentsNum,
       'offset' => $offset,
+      'c' => $c,
     ));
   }
 
-    public function actionPayment($payment_id) {
-        /** @var $payment OrderPayment */
-        $payment = OrderPayment::model()->with('order', 'order.purchase')->findByPk($payment_id);
+  public function actionOrgPayment($id) {
+    /** @var $payment OrderPayment */
+    $payment = OrderPayment::model()->with('payer', 'orders', 'orders.order', 'orders.order.good', 'orders.order.purchase')->findByPk($id);
+    if (!$payment)
+      throw new CHttpException(500, 'Платеж не найден');
 
-        if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
-            //Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('order' => $payment->order)) ||
-            Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Org', array('purchase' => $payment->order->purchase))) {
-            if (isset($_POST['OrderPayment'])) {
-                $cache['status'] = $payment->status;
-                $payment->attributes = $_POST['OrderPayment'];
+    $purchase = $payment->orders[0]->order->purchase;
 
-                if ($cache['status'] == OrderPayment::STATUS_AWAITING &&
-                    $payment->status == OrderPayment::STATUS_PERFORMED) {
-                    $payment->order->status = Order::STATUS_PAID;
-                    $payment->order->save(true, array('status'));
-                }
+    $oic = OrderOic::model()->find('purchase_id = :pid AND customer_id = :cid', array(
+      ':pid' => $purchase->purchase_id,
+      ':cid' => $payment->payer_id,
+    ));
 
-                if ($payment->save()) {
-                    $result['success'] = true;
-                    $result['msg'] = 'Статус платежа и заказа успешно изменены';
-                    $result['url'] = '/orders'. $payment->order->purchase_id;
-                }
-                else {
-                    foreach ($payment->getErrors() as $attr => $error) {
-                        $result[ActiveHtml::activeId($payment, $attr)] = $error;
-                    }
-                }
+    if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
+        Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Org', array('purchase' => $purchase))) {
 
-                echo json_encode($result);
-                exit;
+      if (isset($_POST['paydirection'])) {
+        if ($_POST['paydirection'] == 1) {
+          if (isset($_POST['oic_payed']) && $_POST['oic_payed'] == 1) {
+            $oic->payed = 1;
+            $oic->save(true, array('payed'));
+          }
+
+          /** @var $order Order */
+          foreach ($payment->orders as $_order) {
+            $order = $_order->order;
+
+            if (isset($_POST['Payed'][$order->order_id])) {
+              $order->payed = $_POST['Payed'][$order->order_id];
+            }
+            if (isset($_POST['Status'][$order->order_id])) {
+              $order->status = $_POST['Status'][$order->order_id];
             }
 
-            if (Yii::app()->request->isAjaxRequest) {
-                $this->pageHtml = $this->renderPartial('payment', array('payment' => $payment), true);
-            }
-            else $this->render('payment', array('payment' => $payment));
+            $order->save(true, array('payed', 'status'));
+          }
+
+          $payment->status = OrderPayment::STATUS_PERFORMED;
+          $payment->save(true, array('status'));
+
+          echo json_encode(array('success' => true, 'msg' => 'Платеж отмечен как принятый'));
         }
-        else
-            throw new CHttpException(403, 'В доступе отказано');
+        elseif ($_POST['paydirection'] == 0) {
+          $payment->status = OrderPayment::STATUS_REFUSED;
+          $payment->save(true, array('status'));
+
+          echo json_encode(array('success' => true, 'msg' => 'Платеж отмечен как непринятый'));
+        }
+        else throw new CHttpException(403, 'Данные формы неверны');
+        exit;
+      }
+
+      if (Yii::app()->request->isAjaxRequest) {
+        $this->pageHtml = $this->renderPartial((isset($_POST['box_request'])) ? 'orgpayment_box' : 'orgpayment', array(
+          'payment' => $payment,
+          'oic' => $oic,
+        ), true);
+        $this->boxWidth = 660;
+      }
+      else $this->render('orgpayment', array(
+        'payment' => $payment,
+        'oic' => $oic,
+      ));
     }
+    else
+      throw new CHttpException(403, 'В доступе отказано');
+  }
 }

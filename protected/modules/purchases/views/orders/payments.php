@@ -6,6 +6,9 @@ Yii::app()->getClientScript()->registerCssFile('/css/orders.css');
 Yii::app()->getClientScript()->registerCssFile('/css/purchases.css');
 Yii::app()->getClientScript()->registerScriptFile('/js/purchase.js');
 
+Yii::app()->getClientScript()->registerCssFile('/css/pagination.css');
+Yii::app()->getClientScript()->registerScriptFile('/js/pagination.js');
+
 $this->pageTitle = Yii::app()->name .' - Платежи';
 $delta = Yii::app()->controller->module->paymentsPerPage;
 ?>
@@ -13,6 +16,8 @@ $delta = Yii::app()->controller->module->paymentsPerPage;
 <div class="tabs">
   <?php echo ActiveHtml::link('Текущие заказы', '/orders') ?>
   <?php echo ActiveHtml::link('Ожидают оплаты'. (($awaitingNum > 0) ? ' ('. $awaitingNum .')' : ''), '/orders/awaiting') ?>
+  <?php echo ActiveHtml::link('Ожидают выдачи'. (($deliveringNum > 0) ? ' ('. $deliveringNum .')' : ''), '/orders/delivering') ?>
+  <?php echo ActiveHtml::link('Полученные заказы', '/orders/delivered') ?>
   <?php echo ActiveHtml::link('Платежи', '/orders/payments', array('class' => 'selected')) ?>
 </div>
 <div class="clearfix">

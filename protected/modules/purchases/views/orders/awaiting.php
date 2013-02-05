@@ -21,6 +21,9 @@ $this->pageTitle = Yii::app()->name .' - Мои покупки, ожидающи
     <div class="row">
       <?php echo ActiveHtml::smartTextarea('comment', '', array('placeholder' => 'Реквизиты платежа, комментарии для организатора')) ?>
     </div>
+    <div class="row">
+      Для оплаты места выдачи, просто укажите в реквизитах, что сумма платежа содержит стоимость доставки
+    </div>
   </div>
   <div class="order_box_buttons">
     <a class="button" onclick="doPayment()">Оплатить</a>
@@ -28,9 +31,11 @@ $this->pageTitle = Yii::app()->name .' - Мои покупки, ожидающи
 </div>
 
 <div class="tabs">
-    <?php echo ActiveHtml::link('Текущие заказы', '/orders') ?>
-    <?php echo ActiveHtml::link('Ожидают оплаты'. (($awaitingNum > 0) ? ' ('. $awaitingNum .')' : ''), '/orders/awaiting',  array('class' => 'selected')) ?>
-    <?php echo ActiveHtml::link('Платежи', '/orders/payments') ?>
+  <?php echo ActiveHtml::link('Текущие заказы', '/orders') ?>
+  <?php echo ActiveHtml::link('Ожидают оплаты'. (($awaitingNum > 0) ? ' ('. $awaitingNum .')' : ''), '/orders/awaiting',  array('class' => 'selected')) ?>
+  <?php echo ActiveHtml::link('Ожидают выдачи'. (($deliveringNum > 0) ? ' ('. $deliveringNum .')' : ''), '/orders/delivering') ?>
+  <?php echo ActiveHtml::link('Полученные заказы', '/orders/delivered') ?>
+  <?php echo ActiveHtml::link('Платежи', '/orders/payments') ?>
 </div>
 <div class="order_buttons">
   <a class="button" onclick="getPayDetails()">Получить реквизиты для оплаты</a>
@@ -60,6 +65,16 @@ $this->pageTitle = Yii::app()->name .' - Мои покупки, ожидающи
       <td><?php echo ActiveHtml::price($stat[$pid]['sum']) ?></td>
       <td><?php echo ActiveHtml::price($stat[$pid]['credit']) ?></td>
     </tr>
+      <?php if ($purchase->user_oic->oic_price > 0 && $purchase->user_oic->payed == 0): ?>
+      <tr class="order_user_oic">
+        <td></td>
+        <td></td>
+        <td>Место выдачи: <?php echo $purchase->user_oic->oic_name ?></td>
+        <td></td>
+        <td><?php echo ActiveHtml::price($purchase->user_oic->oic_price) ?></td>
+        <td><?php echo ActiveHtml::price($purchase->user_oic->oic_price) ?></td>
+      </tr>
+        <?php endif; ?>
       <?php foreach ($_orders as $order): ?>
       <tr>
         <td><?php echo ActiveHtml::checkBox('select['. $purchase->purchase_id .']['. $order->order_id .']', false, array('value' => $order->order_id)) ?></td>
@@ -145,10 +160,10 @@ function doPayment() {
   }
 
   if (!sum) {
-    inputError($('#sum'), 'Укажите сумму осуществленного платежа');
+    inputError($('#sum').parent(), 'Укажите сумму осуществленного платежа');
   }
   if (!comment) {
-    inputError($('#comment'), 'Укажите информацию о платеже');
+    inputError($('#comment').parent(), 'Укажите информацию о платеже');
   }
 
   $.each(orders, function(i, v) {

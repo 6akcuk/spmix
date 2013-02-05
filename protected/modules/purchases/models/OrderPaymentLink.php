@@ -6,6 +6,8 @@
  * The followings are the available columns in table 'orders_payment_link':
  * @property string $payment_id
  * @property string $order_id
+ *
+ * @property Order $order
  */
 class OrderPaymentLink extends CActiveRecord
 {

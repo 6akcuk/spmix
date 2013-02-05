@@ -6,6 +6,9 @@ Yii::app()->getClientScript()->registerCssFile('/css/orders.css');
 Yii::app()->getClientScript()->registerCssFile('/css/purchases.css');
 Yii::app()->getClientScript()->registerScriptFile('/js/purchase.js');
 
+Yii::app()->getClientScript()->registerCssFile('/css/pagination.css');
+Yii::app()->getClientScript()->registerScriptFile('/js/pagination.js');
+
 $this->pageTitle = Yii::app()->name .' - Поступившая оплата';
 $delta = Yii::app()->controller->module->paymentsPerPage;
 ?>
@@ -25,12 +28,49 @@ $delta = Yii::app()->controller->module->paymentsPerPage;
 <table class="user_orders">
   <thead>
   <tr>
-    <th>№</th>
+    <th style="width:50px">№</th>
     <th>Дата платежа</th>
     <th>От кого</th>
     <th>Сумма</th>
     <th>Реквизиты</th>
     <th>Статус</th>
+  </tr>
+  <tr>
+    <td>
+      <div rel="filters">
+        <?php echo ActiveHtml::textField('c[payment_id]', (isset($c['payment_id'])) ? $c['payment_id'] : '', array('style' => 'width:40px')) ?>
+      </div>
+    </td>
+    <td>
+      <div rel="filters">
+        <?php echo ActiveHtml::inputCalendar('c[creation_date]', (isset($c['creation_date'])) ? $c['creation_date'] : '') ?>
+      </div>
+    </td>
+    <td>
+      <div rel="filters">
+        <?php echo ActiveHtml::textField('c[payer]', (isset($c['payer'])) ? $c['payer'] : '') ?>
+      </div>
+    </td>
+    <!--<td>
+      <div rel="filters">
+        <?php echo ActiveHtml::textField('c[orders]', (isset($c['orders'])) ? $c['orders'] : '') ?>
+      </div>
+    </td>-->
+    <td>
+      <div rel="filters">
+        <?php echo ActiveHtml::textField('c[sum]', (isset($c['sum'])) ? $c['sum'] : '') ?>
+      </div>
+    </td>
+    <td>
+      <div rel="filters">
+        <?php echo ActiveHtml::textField('c[description]', (isset($c['description'])) ? $c['description'] : '') ?>
+      </div>
+    </td>
+    <td>
+      <div rel="filters">
+        <?php echo ActiveHtml::dropdown('c[status]', '', (isset($c['status'])) ? $c['status'] : '', OrderPayment::getStatusArray()) ?>
+      </div>
+    </td>
   </tr>
   </thead>
   <tbody rel="pagination">

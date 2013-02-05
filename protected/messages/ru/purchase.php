@@ -27,6 +27,7 @@ return array(
     'Accepted' => 'Принят орг-ом',
     'Awaiting' => 'Ожидание оплаты',
     'Paid' => 'Оплачен',
+    'Wait For Deliver' => 'Ожидание выдачи',
     'Delivered' => 'Выдан',
 
   'Awaiting payment' => 'В обработке',

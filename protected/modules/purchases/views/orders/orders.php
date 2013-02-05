@@ -165,4 +165,5 @@ $delta = $c['limit'];
     <?php $this->renderPartial('_order', array('orders' => $orders, 'offset' => $offset, 'c' => $c)) ?>
   </tbody>
 </table>
+<? if ($offset + $delta < $offsets && $offsets > $delta): ?><a id="pg_more" class="pg_more" onclick="Paginator.showMore()">Еще заказы</a><? endif; ?>
 </div>
