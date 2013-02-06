@@ -36,6 +36,12 @@ class Controller extends CController
                 $criteria->params[':type'] = ProfileRequest::TYPE_PM;
                 $this->pageCounters['pm'] = ProfileRequest::model()->count($criteria);
 
+              Yii::import('application.modules.purchases.models.*');
+              $order_criteria = new CDbCriteria();
+              $order_criteria->compare('customer_id', Yii::app()->user->getId());
+              $order_criteria->addInCondition('status', array(Order::STATUS_AWAITING, Order::STATUS_WAIT_FOR_DELIVER));
+              $this->pageCounters['orders'] = Order::model()->count($order_criteria);
+
                 if (Yii::app()->user->checkAccess('purchases.purchases.acquire')) {
                     $criteria = new CDbCriteria();
                     $criteria->addCondition('purchase_delete IS NULL');

@@ -9,17 +9,14 @@
 
 class OrdersController extends Controller {
     public function filters() {
-        return array(
-            array(
-                'ext.AjaxFilter.AjaxFilter'
-            ),
-            array(
-                'ext.RBACFilter.RBACFilter'
-            ),
-          array(
-            'ext.DevelopFilter',
-          ),
-        );
+      return array(
+        array(
+          'ext.AjaxFilter.AjaxFilter'
+        ),
+        array(
+          'ext.RBACFilter.RBACFilter'
+        ),
+      );
     }
 
   public function actionIndex() {
@@ -27,6 +24,13 @@ class OrdersController extends Controller {
     $criteria->addCondition('customer_id = :customer_id');
     $criteria->params[':customer_id'] = Yii::app()->user->getId();
     $criteria->order = 't.purchase_id';
+
+    $criteria->addInCondition('t.status', array(
+      Order::STATUS_ACCEPTED,
+      Order::STATUS_PROCEEDING,
+      Order::STATUS_RANGE_ACCEPTED,
+      Order::STATUS_PAID,
+    ));
 
     $purchases = array();
     $orders = array();
@@ -704,7 +708,7 @@ class OrdersController extends Controller {
 
       $statuses = Order::getStatusDataArray();
 
-      echo json_encode(array('success' => true, 'msg' => 'Все заказы были обновлены', 'status' => array_search($_POST['status'], $statuses)));
+      echo json_encode(array('success' => true, 'msg' => 'Статусы заказов изменены', 'status' => array_search($_POST['status'], $statuses)));
       exit;
     }
     else

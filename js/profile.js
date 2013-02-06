@@ -121,7 +121,7 @@ var Profile = {
     },
 
     doIncReputation: function(user_id) {
-        var val = parseInt($('#rep_pos_box input[type="checkbox"][name="rep_value"]:checked').val()),
+        var val = parseInt($('#rep_pos_box input[name="rep_value"]:checked').val()),
             com = $.trim($('#rep_pos_box textarea').val());
 
       if ($('#rep_pos_box input[type="text"][name="rep_value"]').val())

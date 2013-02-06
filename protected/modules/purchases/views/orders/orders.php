@@ -3,7 +3,7 @@
  * @var $order Order
  * @var $purchase Purchase
  */
-
+Yii::app()->getClientScript()->registerCssFile('/css/profile.css');
 Yii::app()->getClientScript()->registerCssFile('/css/purchases.css');
 Yii::app()->getClientScript()->registerCssFile('/css/orders.css');
 Yii::app()->getClientScript()->registerScriptFile('/js/purchase.js');
@@ -15,6 +15,12 @@ Yii::app()->getClientScript()->registerScriptFile('/js/pagination.js');
 $this->pageTitle = Yii::app()->name .' - Заказы к закупке #'. $purchase->purchase_id;
 $delta = $c['limit'];
 ?>
+<div class="breadcrumbs">
+  <?php echo ActiveHtml::link('Моя страница', '/id'. Yii::app()->user->getId()) ?> &raquo;
+  <?php echo ActiveHtml::link('Мои закупки', '/purchases/my') ?> &raquo;
+  Заказы к закупке #<?php echo $purchase->purchase_id ?>
+</div>
+
 <div id="_box_hidden_status" style="display:none">
   <div class="clearfix row">
     <?php echo ActiveHtml::dropdown('new_status', 'Новый статус', '', Order::getStatusDataArray()) ?>

@@ -39,6 +39,17 @@ WHERE twin.member_id = 111 AND t.member_id = 1 AND dialog.type = 0");
     var_dump($row);
   }
 
+  /**
+   * Переводит старые заказы на новую систему
+   *
+   * От 05.02.2013
+   *
+   * Не актуален
+   */
+  public function actionPatch4() {
+
+  }
+
   /* Исправляет проблему дублирования диалогов */
   public function actionPatch3() {
     Yii::import('application.modules.im.models.*');

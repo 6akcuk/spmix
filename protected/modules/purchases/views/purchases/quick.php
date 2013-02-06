@@ -52,7 +52,7 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
 <?php if ($purchase->oic): ?>
 <div class="clearfix row">
   <?php if (!$oic): ?>
-  <?php echo $form->dropdown($orderc, 'oic', $dd_oic) ?>
+  <?php echo $form->dropdown($order, 'oic', $dd_oic) ?>
   <?php else: ?>
   <div id="oic_text">
     Место выдачи: <?php echo $oic->oic_name ?>

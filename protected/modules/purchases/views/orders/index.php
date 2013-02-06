@@ -36,8 +36,8 @@ $this->pageTitle = Yii::app()->name .' - Мои покупки';
     <?php foreach ($orders as $pid => $_orders): ?>
     <?php $purchase = $purchases[$pid]; ?>
     <tr class="order_purchase_row">
-      <td><?php echo $purchase->purchase_id ?></td>
-      <td><?php echo ActiveHtml::link($purchase->name, '/purchase'. $purchase->purchase_id) ?></td>
+      <td></td>
+      <td>#<?php echo $purchase->purchase_id ?> <?php echo ActiveHtml::link($purchase->name, '/purchase'. $purchase->purchase_id) ?></td>
       <td><?php echo Yii::t('purchase', $purchase->state) ?></td>
       <td><?php echo $stat[$pid]['num'] ?></td>
       <td><?php echo ActiveHtml::price($stat[$pid]['sum']) ?></td>

@@ -1760,6 +1760,7 @@ var nav = {
                 if (response.counters['friends']) updFriendCounter(parseInt(response.counters['friends']));
                 if (response.counters['pm']) updMessCounter(parseInt(response.counters['pm']));
                 if (response.counters['purchases']) updPurchaseCounter(parseInt(response.counters['purchases']));
+                if (response.counters['orders']) updOrdersCounter(parseInt(response.counters['orders']));
 
                 //logger.showAll();
 

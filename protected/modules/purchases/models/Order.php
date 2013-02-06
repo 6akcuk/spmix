@@ -66,12 +66,12 @@ class Order extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-      array('purchase_id, good_id, customer_id, amount, price', 'required'),
+      array('purchase_id, customer_id, amount, price', 'required'),
       array('purchase_id, good_id, customer_id, amount', 'numerical', 'integerOnly' => true),
 
-			array('size, color, client_comment', 'length', 'max' => 200, 'on' => 'create, edit_own'),
+			array('size, color, client_comment', 'length', 'max' => 200, 'on' => 'create, edit_own, quick'),
       array('anonymous', 'numerical', 'integerOnly' => true, 'on' => 'create, edit_own'),
-      array('price, total_price, status, org_comment, payed, org_tax', 'unsafe', 'on' => 'create, edit_own'),
+      array('price, total_price, status, org_comment, payed, org_tax', 'unsafe', 'on' => 'create, edit_own, quick'),
 
       array('org_tax', 'numerical', 'integerOnly' => true, 'on' => 'edit_org'),
       array('price, payed', 'length', 'max' => 10, 'on' => 'edit_org'),

@@ -16,6 +16,10 @@ foreach (Purchase::getStateDataArray() as $state) {
 
 $delta = $c['limit'];
 ?>
+<div class="breadcrumbs">
+  <?php echo ActiveHtml::link('Моя страница', '/id'. Yii::app()->user->getId()) ?> &raquo;
+  Мои закупки
+</div>
 
 <h1>
     Мои закупки

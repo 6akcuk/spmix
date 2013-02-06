@@ -12,6 +12,10 @@ Yii::app()->getClientScript()->registerScriptFile('/js/pagination.js');
 $this->pageTitle = Yii::app()->name .' - Поступившая оплата';
 $delta = Yii::app()->controller->module->paymentsPerPage;
 ?>
+<div class="breadcrumbs">
+  <?php echo ActiveHtml::link('Мои закупки', '/purchases/my') ?> &raquo;
+  Платежи от пользователей
+</div>
 
 <h1>Платежи от пользователей по Вашим закупкам</h1>
 

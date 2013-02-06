@@ -88,7 +88,6 @@ $delta = Yii::app()->controller->module->goodsPerPage;
         <?php endif; ?>
     </div>
     <div class="right">
-        <?php echo ActiveHtml::link('Быстрый заказ', '/purchase'. $purchase->purchase_id .'/quick', array('class' => 'button')) ?>
     <?php if (Yii::app()->user->checkAccess('purchases.purchases.edit') &&
               (Yii::app()->user->checkAccess('purchases.purchases.editSuper') ||
                Yii::app()->user->checkAccess('purchases.purchases.editOwn', array('purchase' => $purchase)))): ?>
@@ -127,6 +126,7 @@ $delta = Yii::app()->controller->module->goodsPerPage;
         <?php endif; ?>
     </div>
     <div class="purchase_goods">
+      <?php echo ActiveHtml::link('Быстрый заказ товара', '/purchase'. $purchase->purchase_id .'/quick', array('class' => 'purchase_quick_link')) ?>
         <div class="clearfix">
             <h2 class="left"><?php echo Yii::t('purchase', '{n} товар|{n} товара|{n} товаров', $offsets) ?></h2>
             <a href="/purchase<?php echo $purchase->purchase_id ?>/addgood" onclick="return nav.go(this, null)" class="left button add_good" rel="tooltip" title="Добавить товар"><span class="icon-plus icon-white"></span></a>

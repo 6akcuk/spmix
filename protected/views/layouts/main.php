@@ -80,16 +80,17 @@ $cookies = $request->getCookies();
                 <div class="main_a">
                 <?php if (!Yii::app()->user->getIsGuest()): ?>
                 <ul class="clearfix">
-                  <?php if (Yii::app()->user->getId() == 1): ?>
+                <?php if (Yii::app()->user->checkAccess('purchases.purchases.create')): ?>
                   <li>
                     <a rel="menu">Организатор</a>
                     <div id="org_menu" style="display: none">
+                      <?php echo ActiveHtml::link('Моя страница', '/id'. Yii::app()->user->getId()) ?>
                       <?php echo ActiveHtml::link('Создать закупку', '/purchases/create') ?>
                       <?php echo ActiveHtml::link('Мои закупки', '/purchases/my') ?>
                       <?php echo ActiveHtml::link('Поступившая оплата', '/orders/orgPayments') ?>
                     </div>
                   </li>
-                  <?php endif; ?>
+                <?php endif; ?>
                     <li>
                         <?php echo ActiveHtml::link('Будем знакомы', '/search?c[section]=people') ?>
                     </li>

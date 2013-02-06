@@ -223,6 +223,10 @@ textarea {
     resize: none;
 }
 
+table td {
+  color: #000000;
+}
+
 /* End of default declaration */
 
 .wrap {

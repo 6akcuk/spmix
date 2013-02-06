@@ -73,6 +73,13 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
     </div>
 </div>
 <div class="row">
-    <?php echo ActiveHtml::submitButton('Сохранить изменения', array('class' => 'button', 'onclick' => 'return FormMgr.submit(\'#editform\')')); ?>
+    <?php echo ActiveHtml::submitButton('Сохранить изменения', array('class' => 'button', 'onclick' => 'saveProfileInfo(); return false')); ?>
 </div>
+<script>
+function saveProfileInfo() {
+  FormMgr.submit('#editform', 'left', function(r) {
+    boxPopup('Изменения успешно сохранены');
+  });
+}
+</script>
 <?php $this->endWidget(); ?>

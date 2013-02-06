@@ -263,33 +263,39 @@ class PurchasesController extends Controller {
     }
 
     public function actionShow($id, $offset = 0) {
-        $purchase = Purchase::model()->with('city', 'author', 'category', 'ordersNum', 'ordersSum')->findByPk($id);
-        if (isset($_POST['offset'])) $offset = $_POST['offset'];
+      $purchase = Purchase::model()->with('city', 'author', 'category', 'ordersNum', 'ordersSum')->findByPk($id);
+      if (isset($_POST['offset'])) $offset = $_POST['offset'];
 
-        if (!$purchase)
-            throw new CHttpException(500, 'Закупка не обнаружена');
+      if (!$purchase)
+          throw new CHttpException(500, 'Закупка не обнаружена');
 
-        $criteria = new CDbCriteria();
-        $criteria->limit = Yii::app()->controller->module->goodsPerPage;
-        $criteria->offset = $offset;
-        $criteria->addCondition('purchase_id = :purchase_id');
-        $criteria->params[':purchase_id'] = $id;
+      $criteria = new CDbCriteria();
+      $criteria->limit = Yii::app()->controller->module->goodsPerPage;
+      $criteria->offset = $offset;
+      $criteria->addCondition('purchase_id = :purchase_id');
+      $criteria->params[':purchase_id'] = $id;
 
+      if (!in_array($purchase->state, array(Purchase::STATE_PAY, Purchase::STATE_CARGO_FORWARD, Purchase::STATE_DISTRIBUTION))) {
         $goods = Good::model()->quick()->with('image')->findAll($criteria);
 
         $criteria->limit = 0;
         $goodsNum = Good::model()->quick()->count($criteria);
+      }
+      else {
+        $goods = null;
+        $goodsNum = 0;
+      }
 
-        if (Yii::app()->request->isAjaxRequest) {
-            if (isset($_POST['pages'])) {
-                $this->pageHtml = $this->renderPartial('_goodlist', array(
-                    'goods' => $goods,
-                    'offset' => $offset,
-                ), true);
-            }
-            else $this->pageHtml = $this->renderPartial('show', array('purchase' => $purchase, 'goods' => $goods, 'offset' => $offset, 'offsets' => $goodsNum), true);
-        }
-        else $this->render('show', array('purchase' => $purchase, 'goods' => $goods, 'offset' => $offset, 'offsets' => $goodsNum));
+      if (Yii::app()->request->isAjaxRequest) {
+          if (isset($_POST['pages'])) {
+              $this->pageHtml = $this->renderPartial('_goodlist', array(
+                  'goods' => $goods,
+                  'offset' => $offset,
+              ), true);
+          }
+          else $this->pageHtml = $this->renderPartial('show', array('purchase' => $purchase, 'goods' => $goods, 'offset' => $offset, 'offsets' => $goodsNum), true);
+      }
+      else $this->render('show', array('purchase' => $purchase, 'goods' => $goods, 'offset' => $offset, 'offsets' => $goodsNum));
     }
 
     public function actionCreate() {
@@ -599,18 +605,30 @@ class PurchasesController extends Controller {
         $good->currency = 'RUR';
         $good->is_quick = 1;
 
-        if ($good->validate()) {
+        if (!$oic && intval($_POST['Order']['oic']) == 0)
+          throw new CHttpException(500, 'Вы не указали место выдачи товара');
+
+        if ($good->validate(null, false)) {
           $order->attributes = $_POST['Order'];
           $order->purchase_id = $id;
           $order->customer_id = Yii::app()->user->getId();
           $order->price = $good->price;
+          $order->org_tax = $good->purchase->org_tax;
           $price = floatval($good->price) * ($good->purchase->org_tax / 100 + 1);
 
-          if ($order->oic) {
-            $oic = PurchaseOic::model()->findByPk($order->oic);
-            $price += floatval($oic->price);
-
-            $order->oic = $oic->price .' - '. $oic->description;
+          if (!$oic) {
+            $purchase_oic = PurchaseOic::model()->findByPk($_POST['Order']['oic']);
+            if (!$purchase_oic) {
+              throw new CHttpException(500, 'Место выдачи не найдено в закупке');
+            }
+            else {
+              $oic = new OrderOic();
+              $oic->purchase_id = $id;
+              $oic->customer_id = Yii::app()->user->getId();
+              $oic->oic_name = $purchase_oic->description;
+              $oic->oic_price = $purchase_oic->price;
+              $oic->save();
+            }
           }
 
           $order->total_price = $price * intval($order->amount);
@@ -618,19 +636,7 @@ class PurchasesController extends Controller {
           if($order->validate()) {
             $good->save();
 
-            if ($_POST['size']) {
-              $grid = new GoodGrid('create');
-              $grid->purchase_id = $id;
-              $grid->good_id = $good->good_id;
-              $grid->size = $_POST['size'];
-              $grid->colors = json_encode(array($_POST['color']));
-              $grid->save();
-
-              $order->grid_id = $grid->grid_id;
-            }
-
             $order->good_id = $good->good_id;
-            $order->color = $_POST['color'];
             $order->save();
 
             $result['success'] = true;

@@ -15,7 +15,7 @@ return array(
     'Draft' => 'Черновик',
     'Call Study' => 'Изучение спроса',
     'Order Collection' => 'Сбор заказов',
-    'Stop' => 'Приостановлено',
+    'Stop' => 'Стоп',
     'Reorder' => 'Дозаказ',
     'Pay' => 'Оплата',
     'Cargo Forward' => 'Ждем груз',

@@ -18,6 +18,9 @@ function updMessCounter(num) {
 function updPurchaseCounter(num) {
     updMenuCounter('#ac_purchase_link', '/purchases/acquire', num);
 }
+function updOrdersCounter(num) {
+  updMenuCounter('#orders_link', '/orders', num);
+}
 
 function showGlobalPrg() {
   var $gp = $('#global_progress');

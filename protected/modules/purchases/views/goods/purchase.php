@@ -9,6 +9,12 @@ Yii::app()->getClientScript()->registerScriptFile('/js/purchase.js');
 
 $this->pageTitle = Yii::app()->name .' - Товары к закупке #'. $purchase->purchase_id;
 ?>
+<div class="breadcrumbs">
+  <?php echo ActiveHtml::link('Моя страница', '/id'. Yii::app()->user->getId()) ?> &raquo;
+  <?php echo ActiveHtml::link('Мои закупки', '/purchases/my') ?> &raquo;
+  Товары к закупке #<?php echo $purchase->purchase_id ?>
+</div>
+
 <div class="goods_purchases">
 <h1>
     Товары к закупке #<?php echo $purchase->purchase_id ?> "<?php echo $purchase->name ?>"

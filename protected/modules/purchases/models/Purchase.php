@@ -188,15 +188,15 @@ class Purchase extends CActiveRecord
 
     public static function getStateDataArray() {
         return array(
-            'Черновик' => self::STATE_DRAFT,
-            'Изучение спроса' => self::STATE_CALL_STUDY,
-            'Сбор заказов' => self::STATE_ORDER_COLLECTION,
-            'Приостановлено' => self::STATE_STOP,
-            'Дозаказ' => self::STATE_REORDER,
-            'Оплата' => self::STATE_PAY,
-            'Ждем груз' => self::STATE_CARGO_FORWARD,
-            'Раздача' => self::STATE_DISTRIBUTION,
-            'Завершено' => self::STATE_COMPLETED,
+          'Черновик' => self::STATE_DRAFT,
+          'Изучение спроса' => self::STATE_CALL_STUDY,
+          'Сбор заказов' => self::STATE_ORDER_COLLECTION,
+          'Стоп' => self::STATE_STOP,
+          'Дозаказ' => self::STATE_REORDER,
+          'Оплата' => self::STATE_PAY,
+          'Ждем груз' => self::STATE_CARGO_FORWARD,
+          'Раздача' => self::STATE_DISTRIBUTION,
+          'Завершено' => self::STATE_COMPLETED,
         );
     }
     public static function getStateSearchArray() {

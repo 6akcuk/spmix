@@ -17,8 +17,12 @@
             echo ActiveHtml::link('+'. $this->pageCounters['pm'], '/im', array('class' => 'right lm-counter'))
         ?>
     </li>
-    <li>
-        <?php echo ActiveHtml::link('Мои покупки', '/orders') ?>
+    <li id="orders_link">
+      <?php echo ActiveHtml::link('Мои покупки', '/orders') ?>
+      <?php
+      if ($this->pageCounters['orders'])
+        echo ActiveHtml::link('+'. $this->pageCounters['orders'], '/orders', array('class' => 'right lm-counter'))
+      ?>
     </li>
     <li>
         <?php echo ActiveHtml::link('Мой пристрой', '/annexe') ?>
@@ -46,28 +50,15 @@
     <?php echo ActiveHtml::link('Список сайтов', '/purchases/sitelist') ?>
   </li>
 <?php endif; ?>
-<?php if (in_array(Yii::app()->user->model->role->itemname, array('Администратор', 'Модератор'))): ?>
-</ul>
-<?php endif; ?>
 <?php if (Yii::app()->user->checkAccess('purchases.purchases.acquire')): ?>
-<ul class="modmenu">
-    <li id="ac_purchase_link">
-        <?php echo ActiveHtml::link('Одобрить закупки', '/purchases/acquire') ?>
-        <?php
-        if ($this->pageCounters['purchases'])
-            echo ActiveHtml::link('+'. $this->pageCounters['purchases'], '/purchases/acquire', array('class' => 'right lm-counter'))
-        ?>
-    </li>
-</ul>
+  <li id="ac_purchase_link">
+    <?php echo ActiveHtml::link('Одобрить закупки', '/purchases/acquire') ?>
+    <?php
+    if ($this->pageCounters['purchases'])
+      echo ActiveHtml::link('+'. $this->pageCounters['purchases'], '/purchases/acquire', array('class' => 'right lm-counter'))
+    ?>
+  </li>
 <?php endif; ?>
-<?php if(Yii::app()->user->checkAccess('purchases.purchases.create')): ?>
-<ul class="orgmenu">
-    <li>
-        <?php echo ActiveHtml::link('Создать закупку', '/purchases/create') ?>
-    </li>
-    <li>
-        <?php echo ActiveHtml::link('Мои закупки', '/purchases/my') ?>
-    </li>
-
+<?php if (in_array(Yii::app()->user->model->role->itemname, array('Администратор', 'Модератор'))): ?>
 </ul>
 <?php endif; ?>

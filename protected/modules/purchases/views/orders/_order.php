@@ -18,7 +18,15 @@
     <?php echo ActiveHtml::link($order->customer->login .' '. $order->customer->profile->firstname .' '. $order->customer->profile->lastname, '/id'. $order->customer_id) ?>
   </td>
   <td><?php echo $order->customer->profile->city->name ?></td>
-  <td><?php echo $order->customer->profile->positive_rep .' | '. $order->customer->profile->negative_rep ?></td>
+  <td>
+    <b class="profile-positive-rep">
+      <?php echo $order->customer->profile->positive_rep ?>
+    </b>
+    |
+    <b class="profile-negative-rep">
+      <?php echo $order->customer->profile->negative_rep ?>
+    </b>
+  </td>
   <td id="order<?php echo $order->order_id ?>_status"><?php echo Yii::t('purchase', $order->status) ?></td>
   <td><?php echo $order->amount ?></td>
   <td id="order<?php echo $order->order_id ?>_total_price"><?php echo ActiveHtml::price($order->total_price) ?></td>

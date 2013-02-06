@@ -132,6 +132,18 @@
     border-bottom: 1px solid #ddd;
 }
 
+.purchase_quick_link {
+  display: block;
+  text-align: center;
+  padding: 10px 0px;
+  margin-bottom: 10px;
+  background: #f2f2f2;
+  font-size: 1.18em;
+}
+.purchase_quick_link:hover {
+  background: #dae1e8;
+}
+
 .add_good {
     margin-left: 10px;
 }
