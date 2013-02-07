@@ -128,6 +128,9 @@ body.progress {
     cursor: progress !important;
 }
 
+table {
+    width: 100%;
+}
 table td {
     vertical-align: top;
 }

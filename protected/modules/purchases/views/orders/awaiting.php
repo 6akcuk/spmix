@@ -10,24 +10,7 @@ Yii::app()->getClientScript()->registerScriptFile('/js/purchase.js');
 $this->pageTitle = Yii::app()->name .' - Мои покупки, ожидающие оплаты';
 ?>
 <div id="_box_hidden_pay" style="display: none">
-  <div class="order_box_header">
-    Сообщение об оплате
-    <a onclick="curBox().hide()" class="order_box_close right">Закрыть</a>
-  </div>
-  <div class="order_box_cont">
-    <div class="row">
-      <?php echo ActiveHtml::inputPlaceholder('sum', '', array('placeholder' => 'Сумма платежа')) ?>
-    </div>
-    <div class="row">
-      <?php echo ActiveHtml::smartTextarea('comment', '', array('placeholder' => 'Реквизиты платежа, комментарии для организатора')) ?>
-    </div>
-    <div class="row">
-      Для оплаты места выдачи, просто укажите в реквизитах, что сумма платежа содержит стоимость доставки
-    </div>
-  </div>
-  <div class="order_box_buttons">
-    <a class="button" onclick="doPayment()">Оплатить</a>
-  </div>
+
 </div>
 
 <div class="tabs">
@@ -133,16 +116,24 @@ function payOrders() {
     return;
   }
 
-  box = Box({
-    hideButtons: true,
-    bodyStyle: 'padding:0px;border:0px',
-    onHide: function() {
-      $('#_box_hidden_pay').insertBefore('div.tabs').hide();
-      $('#_box_hidden_pay textarea, #_box_hidden_add input').val('');
-    }
+  $.each(orders, function(i, v) {
+    ids.push(parseInt(v.value));
+  })
+
+  showGlobalPrg();
+
+  ajax.post('/purchases/orders/createPayment', {ids: ids}, function(r) {
+    hideGlobalPrg();
+
+    box = Box({
+      hideButtons: true,
+      bodyStyle: 'padding:0px;border:0px'
+    });
+    box.content(r.html);
+    box.show();
+  }, function(r) {
+    hideGlobalPrg();
   });
-  $('#_box_hidden_pay').appendTo(box.bodyNode).show();
-  box.show();
 }
 
 function doPayment() {

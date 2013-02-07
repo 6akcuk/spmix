@@ -1,60 +1,80 @@
 <?php
 /**
  * @var $order Order
- * @var $paydetail ProfilePaydetail
+ * @var $oic OrderOic
  */
 
 Yii::app()->getClientScript()->registerCssFile('/css/purchases.css');
 Yii::app()->getClientScript()->registerScriptFile('/js/purchase.js');
 
-$this->pageTitle = Yii::app()->name .' - Оплата заказа';
-
-$details = array();
-$popup = array();
-foreach ($paydetails as $paydetail) {
-    $details[$paydetail->paysystem_name] = $paydetail->pay_id;
-    $popup[$paydetail->pay_id] = $paydetail->paysystem_details;
-}
+$sum = 0.00;
 ?>
-
-<h1>Мои покупки - Оплата заказа</h1>
-
-<div id="tabs">
-    <?php echo ActiveHtml::link('Текущие заказы', '/orders') ?>
-    <?php echo ActiveHtml::link('Ожидают оплаты'. (($awaitingNum > 0) ? ' ('. $awaitingNum .')' : ''), '/orders/awaiting',  array('class' => 'selected')) ?>
-    <?php echo ActiveHtml::link('Платежи', '/orders/payments') ?>
+<form id="payment_form">
+<div class="order_box_header">
+  Сообщение об оплате
+  <a onclick="curBox().hide()" class="order_box_close right">Закрыть</a>
 </div>
-
-<?php
-/** @var $form ActiveForm */
-$form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
-    'id' => 'paymentform',
-    'action' => $this->createUrl('/orders/createPayment?id='. $order->order_id),
-)); ?>
-<div class="row">
-    Заказ: <?php echo ActiveHtml::link($order->good->name, '/good'. $order->purchase_id .'_'. $order->good_id) ?>
-</div>
-<div class="row">
-    <?php echo ActiveHtml::dropdown('OrderPayment[pay_id]', 'Реквизиты', '', $details, array('onchange' => 'showDetails($(this))')) ?>
-</div>
-<div class="row">
-<?php foreach ($popup as $id => $pop): ?>
-    <div id="det<?php echo $id ?>" class="details" style="display:none">
-        <?php echo nl2br($pop) ?>
+<div class="order_box_cont">
+  <div class="row clearfix">
+    <div class="left">
+      Получатель:
     </div>
-<?php endforeach; ?>
+    <div class="left" style="padding-left: 10px">
+      <?php echo $orders[0]->purchase->author->getDisplayName() ?>
+    </div>
+  </div>
+  <table class="user_orders">
+    <thead>
+    <tr>
+      <th>#</th>
+      <th>Товар</th>
+      <th>Кол</th>
+      <th>Сумма</th>
+    </tr>
+    </thead>
+    <?php foreach ($orders as $order): ?>
+    <?php $sum += $order->total_price - $order->payed ?>
+    <tr>
+      <td>
+        <input type="hidden" name="ids[]" value="<?php echo $order->order_id ?>" />
+        <?php echo $order->order_id ?>
+      </td>
+      <td>
+        <?php echo $order->good->name ?>
+      </td>
+      <td>
+        <?php echo $order->amount ?>
+      </td>
+      <td>
+        <?php echo ActiveHtml::price($order->total_price - $order->payed) ?>
+      </td>
+    </tr>
+    <?php endforeach; ?>
+    <?php if ($oic->oic_price > 0 && $oic->payed == 0): ?>
+    <?php $sum += $oic->oic_price ?>
+    <tr>
+      <td colspan="2">
+        Место выдачи: <?php echo $oic->oic_name ?>
+      </td>
+      <td>-</td>
+      <td><?php echo ActiveHtml::price($oic->oic_price) ?></td>
+    </tr>
+    <?php endif; ?>
+    <tr>
+      <td colspan="3" align="right">
+        Итого:
+      </td>
+      <td>
+        <b><?php echo ActiveHtml::price($sum) ?></b>
+      </td>
+    </tr>
+  </table>
+  <div class="row">
+    <div style="font-weight: bold; font-size: 1.08em; padding: 5px 0px 10px">Реквизиты платежа, комментарии для организатора:</div>
+    <?php echo ActiveHtml::smartTextarea('comment', '', array('style' => 'width: 350px')) ?>
+  </div>
 </div>
-<div class="row">
-    <?php echo ActiveHtml::smartTextarea('OrderPayment[description]', '', array('placeholder' => 'Информация о платеже')) ?>
+<div class="order_box_buttons">
+  <a class="button" onclick="doPayment()">Оплатить</a>
 </div>
-<div class="row">
-    <?php echo ActiveHtml::submitButton('Оплатить', array('class' => 'btn light_blue', 'onclick' => 'return FormMgr.submit(\'#paymentform\')')) ?>
-</div>
-<?php $this->endWidget(); ?>
-
-<script type="text/javascript">
-function showDetails(o) {
-    $('div.details').hide();
-    $('#det'+ o.attr('data-value')).show();
-}
-</script>
+</form>

@@ -16,6 +16,9 @@ class OrdersController extends Controller {
         array(
           'ext.RBACFilter.RBACFilter'
         ),
+        array(
+          'ext.DevelopFilter',
+        )
       );
     }
 
@@ -798,6 +801,18 @@ class OrdersController extends Controller {
 
     if (sizeof($grouped_orders) > 1)
       throw new CHttpException(500, 'Вы выбрали заказы от разных организаторов');
+
+    $oic = OrderOic::model()->find('purchase_id = :pid AND customer_id = :cid', array(
+      ':pid' => $orders[0]->purchase->purchase_id,
+      ':cid' => Yii::app()->user->getId(),
+    ));
+
+    if (!isset($_POST['save'])) {
+      echo json_encode(array(
+        'html' => $this->renderPartial('createPayment', array('orders' => $orders, 'oic' => $oic), true),
+      ));
+      exit;
+    }
 
     $payment = new OrderPayment('create');
     $payment->payer_id = Yii::app()->user->getId();
