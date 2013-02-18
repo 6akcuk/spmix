@@ -396,6 +396,11 @@ class PurchasesController extends Controller {
                 $model->attributes=$_POST['Purchase'];
                 if (!$_POST['Purchase']['stop_date']) $model->stop_date = null;
 
+                if (trim($_POST['Purchase']['price_file_url']))
+                  $model->price_url = $_POST['Purchase']['price_file_url'];
+                elseif (trim($_POST['Purchase']['price_text_url']))
+                  $model->price_url = $_POST['Purchase']['price_text_url'];
+
                 $result = array();
 
                 if($model->validate() && $model->save()) {
@@ -814,6 +819,10 @@ class PurchasesController extends Controller {
 
     if (isset($c['city_id'])) {
       $criteria->compare('city_id', $c['city_id']);
+    }
+
+    if (isset($c['org_id'])) {
+      $criteria->compare('org_id', $c['org_id']);
     }
 
     if (Yii::app()->user->checkAccess('purchases.purchases.siteListMyCity')) {

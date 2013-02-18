@@ -8,7 +8,7 @@
 return array(
 	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
 	'name'=>'SPMix',
-    'language' => 'ru',
+  'language' => 'ru',
 
 	// preloading 'log' component
 	'preload'=>array('log'),
@@ -143,8 +143,9 @@ return array(
 	'params'=>array(
 		// this is used in contact page
 		'adminEmail'=>'webmaster@example.com',
-        'smsUsername' => '24314_spmix',
-        'smsPassword' => 'jbS!D?z',
-        'smsNumber' => 'SPMIX',
+    'domain' => 'spmix.ru',
+    'smsUsername' => '24314_spmix',
+    'smsPassword' => 'jbS!D?z',
+    'smsNumber' => 'SPMIX',
 	),
 );

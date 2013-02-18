@@ -132,25 +132,28 @@ class WebUser extends CApplicationComponent implements IWebUser {
     }
 
     public function removeCookies() {
-        Yii::app()->getRequest()->getCookies()->remove('uid');
-        Yii::app()->getRequest()->getCookies()->remove('p');
+      $options = array('domain' => '.'. Yii::app()->params['domain']);
+      Yii::app()->getRequest()->getCookies()->remove('uid', $options);
+      Yii::app()->getRequest()->getCookies()->remove('p', $options);
     }
 
     public function saveToCookie() {
-        $app=Yii::app();
+      $app=Yii::app();
 
-        $uid = new CHttpCookie('uid', $this->getId());
-        $uid->expire = time() + $this->duration;
+      $uid = new CHttpCookie('uid', $this->getId());
+      $uid->expire = time() + $this->duration;
+      $uid->domain = '.'. Yii::app()->params['domain'];
 
-        $phash = new CHttpCookie('p', $this->createCookieHash());
-        $phash->expire = time() + $this->duration;
+      $phash = new CHttpCookie('p', $this->createCookieHash());
+      $phash->expire = time() + $this->duration;
+      $phash->domain = '.'. Yii::app()->params['domain'];
 
-        $user = User::model()->findByPk($this->getId());
-        $user->hash = $phash->value;
-        $user->save(true, array('hash'));
+      $user = User::model()->findByPk($this->getId());
+      $user->hash = $phash->value;
+      $user->save(true, array('hash'));
 
-        $app->getRequest()->getCookies()->add('uid', $uid);
-        $app->getRequest()->getCookies()->add('p', $phash);
+      $app->getRequest()->getCookies()->add('uid', $uid);
+      $app->getRequest()->getCookies()->add('p', $phash);
     }
 
     public function createCookieHash() {

@@ -137,34 +137,21 @@ function payOrders() {
 }
 
 function doPayment() {
-  var orders = $('input[type="checkbox"][name*="select"]:checked'), ids = [], box,
-      comment, sum;
+  var box, comment;
 
-  $('#_box_hidden_pay .input_error').remove();
+  $('#payment_form .input_error').remove();
 
   comment = $.trim($('#comment').val());
-  sum = $.trim($('#sum').val());
 
-  if (!orders.length) {
-    ajex.show('Выберите для начала заказы');
-    return;
-  }
-
-  if (!sum) {
-    inputError($('#sum').parent(), 'Укажите сумму осуществленного платежа');
-  }
   if (!comment) {
     inputError($('#comment').parent(), 'Укажите информацию о платеже');
+    return;
   }
-
-  $.each(orders, function(i, v) {
-    ids.push(parseInt(v.value));
-  });
 
   if (A.orderPayment) return;
   A.orderPayment = true;
 
-  ajax.post('/purchases/orders/createPayment', {ids: ids, sum: sum, comment: comment}, function(r) {
+  ajax.post('/purchases/orders/createPayment', $('#payment_form').serialize(), function(r) {
     A.orderPayment = false;
     curBox().hide();
     if (r.success)

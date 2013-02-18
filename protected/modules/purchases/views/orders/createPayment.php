@@ -10,6 +10,7 @@ Yii::app()->getClientScript()->registerScriptFile('/js/purchase.js');
 $sum = 0.00;
 ?>
 <form id="payment_form">
+<input type="hidden" name="save" value="1" />
 <div class="order_box_header">
   Сообщение об оплате
   <a onclick="curBox().hide()" class="order_box_close right">Закрыть</a>

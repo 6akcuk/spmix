@@ -19,6 +19,8 @@
  * @property string $supplier_url
  * @property integer $hide_supplier
  * @property string $price_url
+ * @property string $price_text_url
+ * @property string $price_file_url
  * @property string $message
  * @property string $org_tax
  * @property string $image
@@ -55,6 +57,9 @@ class Purchase extends CActiveRecord
     const STATE_CARGO_FORWARD = 'Cargo Forward';
     const STATE_DISTRIBUTION = 'Distribution';
     const STATE_COMPLETED = 'Completed';
+
+  public $price_text_url;
+  public $price_file_url;
 
 	/**
 	 * Returns the static model of the specified AR class.
@@ -129,29 +134,31 @@ class Purchase extends CActiveRecord
 	 */
 	public function attributeLabels()
 	{
-        return array(
-            'purchase_id' => 'ID закупки',
-            'name' => 'Название',
-            'category_id' => 'Категория',
-            'city_id' => 'Город',
-            'create_date' => 'Дата создания',
-            'stop_date' => 'Дата окончания (стопа)',
-            'status' => 'Видимость по репутации',
-            'state' => 'Статус закупки',
-            'accept_add' => 'Разрешить добавление товаров пользователями',
-            'min_sum' => 'Мин. сумма заказа',
-            'min_num' => 'Мин. кол-во заказов',
-            'supplier_url' => 'Ссылка на сайт поставщика',
-            'hide_supplier' => 'Скрыть сайт поставщика',
-            'price_url' => 'Ссылка на прайс',
-            'message' => 'Оповещение',
-            'org_tax' => '% наценки организатора',
-            'image' => 'Аватар',
-            'vip' => 'VIP',
-            'mod_confirmation' => 'Подтверждение модератора',
-            'mod_reason' => 'Сообщение организатору',
-            'sizes' => 'Размеры',
-        );
+      return array(
+        'purchase_id' => 'ID закупки',
+        'name' => 'Название',
+        'category_id' => 'Категория',
+        'city_id' => 'Город',
+        'create_date' => 'Дата создания',
+        'stop_date' => 'Дата окончания (стопа)',
+        'status' => 'Видимость по репутации',
+        'state' => 'Статус закупки',
+        'accept_add' => 'Разрешить добавление товаров пользователями',
+        'min_sum' => 'Мин. сумма заказа',
+        'min_num' => 'Мин. кол-во заказов',
+        'supplier_url' => 'Ссылка на сайт поставщика',
+        'hide_supplier' => 'Скрыть сайт поставщика',
+        'price_url' => 'Ссылка на прайс',
+        'price_text_url' => 'Ссылка на прайс',
+        'price_file_url' => 'Прайс',
+        'message' => 'Оповещение',
+        'org_tax' => '% наценки организатора',
+        'image' => 'Аватар',
+        'vip' => 'VIP',
+        'mod_confirmation' => 'Подтверждение модератора',
+        'mod_reason' => 'Сообщение организатору',
+        'sizes' => 'Размеры',
+      );
 	}
 
     public function defaultScope() {

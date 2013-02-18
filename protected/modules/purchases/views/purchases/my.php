@@ -51,8 +51,8 @@ $delta = $c['limit'];
 <table class="mytable">
 <thead>
   <tr>
-      <td>ID</td><td>Создана</td><td>Категория</td><td>Название</td><td>Статус</td><td>Стоп заказов</td>
-      <td>Кол-во товаров</td><td>Заказы</td><td>% от мин</td>
+    <td>ID</td><td>Создана</td><td>Категория</td><td>Название</td><td>Статус</td><td>Стоп заказов</td>
+    <td>Согласование</td><td>Кол-во товаров</td><td>Заказы</td><td>% от мин</td>
   </tr>
   <tr>
     <td>

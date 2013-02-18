@@ -56,7 +56,7 @@ $sum = 0.00;
       <td>Не оплачен</td>
       <td><?php echo ActiveHtml::price($oic->oic_price) ?></td>
       <td>
-        <?php echo ActiveHtml::checkBox('oic_payed') ?>
+        <?php echo ActiveHtml::checkBox('oic_payed', true) ?>
         <?php echo ActiveHtml::label('Оплачен', 'oic_payed') ?>
       </td>
     </tr>
