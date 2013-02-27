@@ -49,7 +49,9 @@ $delta = Yii::app()->controller->module->goodsPerPage;
               <?php if(!Yii::app()->user->checkAccess('global.supplierView') && $purchase->hide_supplier): ?>
                 скрыт
               <?php else: ?>
-              <?php echo ActiveHtml::link('сайт поставщика', $purchase->supplier_url, array('target' => '_blank')) ?>
+              <?php $url = $purchase->supplier_url; ?>
+              <?php if (!stristr($url, 'http://')) $url = 'http://'. $url; ?>
+              <?php echo ActiveHtml::link('сайт поставщика', $url, array('target' => '_blank')) ?>
               <?php endif; ?>
               </div>
             </div>

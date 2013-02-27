@@ -411,8 +411,8 @@ class PurchasesController extends Controller {
                             $ph->author_id = Yii::app()->user->getId();
                             $ph->msg = $m;
 
-                            $from = $cache[$h];
-                            $to = $model->$h;
+                            $from = floatval($cache[$h]);
+                            $to = floatval($model->$h);
 
                             switch ($h) {
                                 case 'stop_date':
@@ -767,6 +767,32 @@ class PurchasesController extends Controller {
             throw new CHttpException(403, 'В доступе отказано');
     }
 
+  /**
+   * Добавить несколько товаров одновременно к закупке
+   *
+   * @param $id ID закупки
+   */
+  public function actionAddMany($id) {
+    /** @var $purchase Purchase */
+    $purchase = Purchase::model()->findByPk($id);
+
+    if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
+      Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('purchase' => $purchase)))
+    {
+      if (Yii::app()->request->isAjaxRequest) {
+        $this->pageHtml = $this->renderPartial('addmany', array('id' => $id, 'purchase' => $purchase), true);
+      }
+      else $this->render('addmany', array('id' => $id, 'purchase' => $purchase));
+    }
+    else
+      throw new CHttpException(403, 'В доступе отказано');
+  }
+
+  /**
+   * Список сайтов, утвержденных для организаторов
+   *
+   * @param int $offset
+   */
   public function actionSiteList($offset = 0) {
     $model = new SiteList();
 
