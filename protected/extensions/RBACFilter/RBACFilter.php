@@ -22,6 +22,6 @@ class RBACFilter extends CFilter {
         $action = $ctrl->action;
         $module = $ctrl->module;
 
-        return $module->name .'.'. $ctrl->id .'.'. $action->id;
+        return (($module) ? $module->name .'.' : ''). $ctrl->id .'.'. $action->id;
     }
 }

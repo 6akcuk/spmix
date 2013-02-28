@@ -8,10 +8,10 @@ $operationsJs = array();
 $childsJs = array();
 
 foreach ($roles as $role) {
-    $rolesJs[] = "['". $role->name ."','". $role->description ."']";
+    $rolesJs[] = "['". addslashes($role->name) ."','". addslashes($role->description) ."']";
 }
 foreach ($operations as $op) {
-    $operationsJs[] = "['". $op->name ."','". $op->description ."']";
+    $operationsJs[] = "['". addslashes($op->name) ."','". addslashes($op->description) ."']";
 }
 foreach ($roleChilds as $role => $childs) {
     $c = array();
