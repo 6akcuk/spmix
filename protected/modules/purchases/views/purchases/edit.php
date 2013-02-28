@@ -4,6 +4,11 @@ Yii::app()->getClientScript()->registerCssFile('/css/purchases.css');
 Yii::app()->getClientScript()->registerScriptFile('/js/purchase.js');
 
 $this->pageTitle = Yii::app()->name .' - Редактирование закупки';
+
+$price = json_decode($model->price_url, true);
+
+if ($price) $model->price_file_url = $model->price_url;
+else $model->price_text_url = $model->price_url;
 ?>
 <div class="breadcrumbs">
     <?php echo ActiveHtml::link($model->name, '/purchase'. $model->purchase_id) ?> &raquo;
@@ -48,6 +53,10 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
             <?php echo $form->label($model, 'status') ?>
             <?php echo $form->dropdown($model, 'status', Purchase::getStatusDataArray()) ?>
         </div>
+      <div class="row">
+        <?php echo $form->label($model, 'price_file_url') ?>
+        <?php echo $form->upload($model, 'price_file_url', 'Прикрепить файл прайса') ?>
+      </div>
     </div>
     <div class="left purchase_column">
         <div class="row">
@@ -75,8 +84,8 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
             <?php echo $form->checkBox($model, 'hide_supplier') ?>
         </div>
         <div class="row">
-            <?php echo $form->label($model, 'price_url') ?>
-            <?php echo $form->textfield($model, 'price_url') ?>
+            <?php echo $form->label($model, 'price_text_url') ?>
+            <?php echo $form->textfield($model, 'price_text_url') ?>
         </div>
         <div class="row">
             <?php echo $form->label($model, 'accept_add') ?>

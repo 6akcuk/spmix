@@ -18,6 +18,15 @@
         </a>
     </td>
     <td><?php echo ActiveHtml::date($purchase->stop_date, false, true) ?></td>
+  <td>
+    <?php if($purchase->mod_confirmation == 0 && $purchase->mod_request_id == 0): ?>
+    Не согласовано
+    <?php elseif($purchase->mod_confirmation == 0 && $purchase->mod_request_id > 0): ?>
+    Есть замечания
+    <?php elseif($purchase->mod_confirmation == 1): ?>
+    Согласовано
+    <?php endif; ?>
+  </td>
     <td><?php echo ActiveHtml::link(Yii::t('purchase', '{n} товар|{n} товара|{n} товаров', $purchase->goodsNum), '/goods'. $purchase->purchase_id) ?></td>
     <td>
         <?php echo ActiveHtml::link(Yii::t('purchase', '{n} заказ|{n} заказа|{n} заказов', $purchase->ordersNum), '/orders'. $purchase->purchase_id) ?>

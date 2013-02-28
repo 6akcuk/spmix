@@ -137,11 +137,14 @@
   text-align: center;
   padding: 10px 0px;
   margin-bottom: 10px;
-  background: #f2f2f2;
-  font-size: 1.18em;
+  background: #70973f;
+  font-size: 1.28em;
+  font-weight: bold;
+  color: #fff;
 }
 .purchase_quick_link:hover {
-  background: #dae1e8;
+  background: #508033;
+
 }
 
 .add_good {

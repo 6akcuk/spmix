@@ -1498,12 +1498,14 @@ var Upload = {
     },
     renderData: function(id, json) {
         if (json['x']) {
-            var size = $('#file_button_'+ id).attr('data-image');
-            $('<img/>').attr({src: 'http://cs'+ json[size][2] +'.spmix.ru/'+ json[size][0] + '/'+ json[size][1], alt: ''})
-                .prependTo('#file_button_'+ id +' div.filedata');
+          var size = $('#file_button_'+ id).attr('data-image');
+          $('<img/>').attr({src: 'http://cs'+ json[size][2] +'.spmix.ru/'+ json[size][0] + '/'+ json[size][1], alt: ''})
+            .prependTo('#file_button_'+ id +' div.filedata');
+          $('#file_button_'+ id +' div.filedata a.tt').find('em').addClass('icon-white');
         }
         else if (json['doc']) {
-
+          $('<div/>').html('<span class="icon-file"></span> '+ json['doc'][1]).prependTo('#file_button_'+ id +' div.filedata');
+          $('#file_button_'+ id +' div.filedata a.tt').find('em').removeClass('icon-white');
         }
     },
     onStart: function(id) {
@@ -1834,11 +1836,21 @@ var nav = {
                         ajex.show('Страница не найдена');
                         break;
                     case 500:
+
+                      if (A.user_id != 1) {
+                        $.post('/site/autoreportPhpError', {url: where.url, text: xhr.responseText});
+                      }
+
                       ajex.show('Ошибка в работе приложения. Повторите попытку позже');
                         //ajex.show('Ошибка: '+ (r && r.html) ? r.html : xhr.responseText);
                         break;
                     default:
-                        if (xhr.responseText)
+
+                      if (A.user_id != 1) {
+                        $.post('/site/autoreportPhpError', {url: where.url, text: xhr.responseText});
+                      }
+
+                      if (xhr.responseText)
                           ajex.show('Ошибка связи с сервером. Перезагрузите страницу, нажав <b>F5</b>. '+ xhr.responseText);
                 }
             });
@@ -1917,13 +1929,22 @@ var ajax = {
                     r = $.parseJSON(xhr.responseText);
                   } catch(e) {}
 
+                  if (A.user_id != 1) {
+                    $.post('/site/autoreportPhpError', {url: url, text: xhr.responseText});
+                  }
+
                   if (r && r.html) ajex.show(r.html);
                   else ajex.show('Ошибка в работе приложения. Повторите попытку позже');
                     //var r = $.parseJSON(xhr.responseText);
                     //ajex.show((r && r.html) ? r.html : xhr.responseText);
                     break;
                 default:
-                    ajex.show('Ошибка связи с сервером:<br/> '+ xhr.responseText);
+
+                  if (A.user_id != 1) {
+                    $.post('/site/autoreportPhpError', {url: url, text: xhr.responseText});
+                  }
+
+                  ajex.show('Ошибка связи с сервером:<br/> '+ xhr.responseText);
             }
         });
 

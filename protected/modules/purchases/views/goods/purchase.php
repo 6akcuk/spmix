@@ -17,10 +17,15 @@ $this->pageTitle = Yii::app()->name .' - Товары к закупке #'. $pur
 
 <div class="goods_purchases">
 <h1>
-    Товары к закупке #<?php echo $purchase->purchase_id ?> "<?php echo $purchase->name ?>"
-    <div class="right">
-        <?php echo ActiveHtml::link('Добавить товар', '/purchase'. $purchase->purchase_id .'/addgood', array('class' => 'button')) ?>
-    </div>
+  Товары к закупке #<?php echo $purchase->purchase_id ?> "<?php echo $purchase->name ?>"
+  <div class="right">
+    <?php echo ActiveHtml::link('Добавить товар', '/purchase'. $purchase->purchase_id .'/addgood', array('class' => 'button')) ?>
+  <?php if (Yii::app()->user->getId() == 1): ?>
+    <?php echo ActiveHtml::link('Добавить несколько товаров', '/purchase'. $purchase->purchase_id .'/addmany', array('class' => 'button')) ?>
+    <?php echo ActiveHtml::link('Добавить из другой', '/purchase'. $purchase->purchase_id .'/addfrom', array('class' => 'button')) ?>
+
+    <?php endif; ?>
+  </div>
 </h1>
 
 <div class="clearfix">

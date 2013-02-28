@@ -395,4 +395,17 @@ class ActiveHtml extends CHtml {
         break;
     }
   }
+
+  public static function filesize($size) {
+    if( $size >= 1073741824 ) {
+      $size = round( $size / 1073741824 * 100 ) / 100 . " ". Yii::t('app', 'Гб');
+    } elseif( $size >= 1048576 ) {
+      $size = round( $size / 1048576 * 100 ) / 100 . " ". Yii::t('app', 'Мб');
+    } elseif( $size >= 1024 ) {
+      $size = round( $size / 1024 * 100 ) / 100 . " ". Yii::t('app', 'Кб');
+    } else {
+      $size = $size . " ". Yii::t('app', 'б');
+    }
+    return $size;
+  }
 }

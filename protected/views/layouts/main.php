@@ -84,13 +84,15 @@ $cookies = $request->getCookies();
                   <li>
                     <a rel="menu">Организатор</a>
                     <div id="org_menu" style="display: none">
-                      <?php echo ActiveHtml::link('Моя страница', '/id'. Yii::app()->user->getId()) ?>
                       <?php echo ActiveHtml::link('Создать закупку', '/purchases/create') ?>
                       <?php echo ActiveHtml::link('Мои закупки', '/purchases/my') ?>
                       <?php echo ActiveHtml::link('Поступившая оплата', '/orders/orgPayments') ?>
                     </div>
                   </li>
                 <?php endif; ?>
+                  <li>
+                    <?php echo ActiveHtml::link('Моя страница', '/id'. Yii::app()->user->getId()) ?>
+                  </li>
                     <li>
                         <?php echo ActiveHtml::link('Будем знакомы', '/search?c[section]=people') ?>
                     </li>

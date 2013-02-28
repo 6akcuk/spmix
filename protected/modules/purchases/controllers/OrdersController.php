@@ -16,9 +16,6 @@ class OrdersController extends Controller {
         array(
           'ext.RBACFilter.RBACFilter'
         ),
-        array(
-          'ext.DevelopFilter',
-        )
       );
     }
 
@@ -814,9 +811,18 @@ class OrdersController extends Controller {
       exit;
     }
 
+    $sum = 0.00;
+    foreach ($orders as $order) {
+      $sum += $order->total_price - $order->payed;
+    }
+
+    if ($oic->oic_price > 0 && $oic->payed == 0) {
+      $sum += $oic->oic_price;
+    }
+
     $payment = new OrderPayment('create');
     $payment->payer_id = Yii::app()->user->getId();
-    $payment->sum = $_POST['sum'];
+    $payment->sum = $sum;
     $payment->description = $_POST['comment'];
     if (!$payment->save())
       throw new CHttpException(500, 'Ошибка при создании нового платежа');

@@ -133,6 +133,11 @@ if ($good->oic) {
             <?php endif; ?>
         </div>
         <?php $this->endWidget(); ?>
+        <?php if ($good->url): ?>
+        <div class="row">
+          <?php echo ActiveHtml::link('Информация о товаре на сайте поставщика', $good->url, array('target' => '_blank')) ?>
+        </div>
+        <?php endif; ?>
     </div>
 </div>
 <div data-link="#tabs_content" class="tabs">

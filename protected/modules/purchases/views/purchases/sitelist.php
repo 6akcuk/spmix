@@ -51,6 +51,9 @@ $delta = Yii::app()->controller->module->sitesPerPage;
       <?php echo ActiveHtml::dropdown('c[city_id]', 'Город', (isset($c['city_id'])) ? $c['city_id'] : '', City::getDataArray()) ?>
     </div>
   <?php endif; ?>
+    <div rel="filters" class="left">
+      <?php echo ActiveHtml::inputPlaceholder('c[org_id]', (isset($c['org_id'])) ? $c['org_id'] : '', array('placeholder' => 'ID орга')) ?>
+    </div>
   </div>
   <div class="right">
     <?php $this->widget('Paginator', array(

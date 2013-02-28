@@ -44,8 +44,16 @@ $delta = Yii::app()->controller->module->goodsPerPage;
                 <div class="left labeled"><?php echo Yii::t('purchase', $purchase->status) ?></div>
             </div>
             <div class="clearfix">
-                <div class="left label">Поставщик:</div>
-                <div class="left labeled"><?php echo (!Yii::app()->user->checkAccess('global.supplierView') && $purchase->hide_supplier) ? 'скрыт' : $purchase->supplier_url ?></div>
+              <div class="left label">Поставщик:</div>
+              <div class="left labeled">
+              <?php if(!Yii::app()->user->checkAccess('global.supplierView') && $purchase->hide_supplier): ?>
+                скрыт
+              <?php else: ?>
+              <?php $url = $purchase->supplier_url; ?>
+              <?php if (!stristr($url, 'http://')) $url = 'http://'. $url; ?>
+              <?php echo ActiveHtml::link('сайт поставщика', $url, array('target' => '_blank')) ?>
+              <?php endif; ?>
+              </div>
             </div>
             <div class="clearfix">
                 <div class="left label">Организатор:</div>
@@ -70,8 +78,15 @@ $delta = Yii::app()->controller->module->goodsPerPage;
                 <div class="left labeled"><?php echo ActiveHtml::price($purchase->min_sum) ?> (<?php echo $purchase->min_num ?> шт.)</div>
             </div>
             <div class="clearfix">
-                <div class="left label">Прайс:</div>
-                <div class="left labeled"><?php echo $purchase->price_url ?></div>
+              <div class="left label">Прайс:</div>
+              <div class="left labeled">
+              <?php $price = json_decode($purchase->price_url, true); ?>
+              <?php if ($price): ?>
+                <a href="http://cs<?php echo $price['doc'][2] ?>.<?php echo Yii::app()->params['domain'] ?>/<?php echo $price['doc'][0] ?>/<?php echo $price['doc'][1] ?>"><span class="icon-file"></span> <?php echo $price['doc'][1] ?><?php if(isset($price['doc'][3])): ?>, <?php echo ActiveHtml::filesize($price['doc'][3]) ?><?php endif; ?></a>
+              <?php else: ?>
+                <?php echo $purchase->price_url ?>
+              <?php endif; ?>
+              </div>
             </div>
             <div class="clearfix">
                 <div class="left label">Репутация:</div>
@@ -118,6 +133,8 @@ $delta = Yii::app()->controller->module->goodsPerPage;
         <div>Сделано всего заказов: <b><?php echo $purchase->ordersNum ?></b></div>
         <div>Сделано заказов на общую сумму: <b><?php echo ActiveHtml::price($purchase->ordersSum) ?></b></div>
     </div>
+  <?php if (Yii::app()->user->checkAccess('purchases.purchases.editSuper') ||
+  Yii::app()->user->checkAccess('purchases.purchases.editOwn', array('purchase' => $purchase))): ?>
     <div class="purchase_history" style="display: none">
         <?php if ($purchase->history): ?>
         <?php foreach ($purchase->history as $history): ?>
@@ -125,6 +142,7 @@ $delta = Yii::app()->controller->module->goodsPerPage;
         <?php endforeach; ?>
         <?php endif; ?>
     </div>
+  <?php endif; ?>
     <div class="purchase_goods">
       <?php echo ActiveHtml::link('Быстрый заказ товара', '/purchase'. $purchase->purchase_id .'/quick', array('class' => 'purchase_quick_link')) ?>
         <div class="clearfix">

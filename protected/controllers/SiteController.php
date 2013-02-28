@@ -18,6 +18,19 @@ class SiteController extends Controller
 
 	}
 
+  public function actionAutoReportPhpError() {
+    $report = new Autoreport();
+    $report->user_id = Yii::app()->user->getId();
+    $report->datetime = date("Y-m-d H:i:s");
+    $report->url = substr($_POST['url'], 0, 100);
+    $report->response = $_POST['text'];
+    if (!$report->save()) {
+      var_dump($report->getErrors());
+    }
+
+    exit;
+  }
+
   public function actionPreviewDialog() {
     Yii::import('application.modules.im.models.*');
 
