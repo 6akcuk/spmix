@@ -1,11 +1,20 @@
 var Comment = {
   add: function(hoop_id) {
+    if (A.commentSending) return;
+    $('#comment'+ hoop_id + '_progress').show();
+    A.commentSending = true;
+
     var $form = $('#hoop'+ hoop_id + '_form');
     FormMgr.submit($form, null, function(r) {
-      if (r.success) {
-        $form.find('input[type="hidden"]').remove();
-        $form.find('div.comment_attach_photo').remove();
-      }
+      $('#comment'+ hoop_id + '_progress').hide();
+      A.commentSending = false;
+
+      $form.find('input[type="hidden"]').remove();
+      $form.find('div.comment_attach_photo').remove();
+      $form.find('textarea').val('').blur();
+    }, function(xhr) {
+      $('#comment'+ hoop_id + '_progress').hide();
+      A.commentSending = false;
     });
   },
 
@@ -39,3 +48,5 @@ var Comment = {
     });
   }
 };
+
+try {stmgr.loaded('comments.js');}catch(e){}

@@ -6,7 +6,7 @@ a.comment_show_more {
   display: block;
   text-align: center;
   padding: 10px;
-  background-color: #b9d199;
+  background-color: #f5f7f6;
 }
 
 .comments_list {
@@ -23,7 +23,7 @@ a.comment_show_more {
   margin-left: 10px;
 }
 .comment_author {
-  display: block;
+  display: inline-block;
   font-size: 12px;
   padding-bottom: 10px;
 }
@@ -31,12 +31,27 @@ a.comment_show_more {
   overflow: hidden;
   width: 670px;
 }
+.comment_attaches {
+  width: 670px;
+  padding-top: 10px;
+}
 .comment_control {
   padding-top: 10px;
   font-size: 11px;
 }
 .comment_date {
   color: #999;
+}
+.comment_attached_photo {
+  display: block;
+  overflow: hidden;
+  margin: 0px 3px 3px 0px;
+  position: relative;
+}
+.comment_attached_photo img {
+  position: absolute;
+  top: 0px;
+  left: 0px;
 }
 
 /* Reply */
@@ -48,6 +63,10 @@ div.comment_reply textarea {
 }
 div.comment_post {
   padding-top: 10px
+}
+div.comment_post_progress {
+  display: none;
+  padding: 7px 10px;
 }
 div.comment_post_attaches {
   padding-top: 10px;

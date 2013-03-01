@@ -13,6 +13,16 @@ class Comments extends CPortlet {
   public $hoop_type;
 
   protected function renderContent() {
-    $this->render('comments');
+    $criteria = new CDbCriteria();
+    $criteria->order = 'creation_date DESC';
+    $criteria->compare('hoop_id', $this->hoop_id);
+    $criteria->compare('hoop_type', $this->hoop_type);
+
+    $commentsNum = Comment::model()->count($criteria);
+
+    if ($commentsNum > 10) $criteria->limit = 3;
+    $comments = array_reverse(Comment::model()->with('author', 'author.profile')->findAll($criteria));
+
+    $this->render('comments', array('comments' => $comments, 'offsets' => $commentsNum));
   }
 }

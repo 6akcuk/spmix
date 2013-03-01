@@ -157,7 +157,7 @@ var Photoview = {
     genUrl: function() {
         //var path = A.pvItems[A.pvOffset].x //A.pvItems[A.pvOffset].src.split('/');
         var item = A.pvItems[A.pvOffset].w;
-        return 'http://cs'+ item[2] +'.spmix.ru/'+ item[0] +'/'+ item[1];
+        return 'http://cs'+ item[2] +'.'+ A.host +'/'+ item[0] +'/'+ item[1];
     },
 
     prev: function() {

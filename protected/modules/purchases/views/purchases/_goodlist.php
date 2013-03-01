@@ -7,10 +7,25 @@
     <div class="good_row_inner_cont">
         <a class="good_row_relative" onmouseover="Purchase.overGood(this, event)" onmouseout="Purchase.outGood(this, event)" href="/good<?php echo $good->purchase_id ?>_<?php echo $good->good_id ?>" onclick="if(A.glCancelClick) return (A.glCancelClick = false); return nav.go(this, null)">
         <?php if ($good->is_range && $good->range): ?>
-            <div class="good_row_ranges_wrap">
+            <div class="good_row_ranges_wrap <?php if ($good->ordersNum > 0): ?>good_row_ranges_wrap_orders<?php endif; ?>">
                 <div class="good_row_ranges_bg"></div>
-                <div class="good_row_ranges">Ряды</div>
+                <div class="good_row_ranges">
+                  Ряды
+                  <?php if ($good->ordersNum > 0): ?>
+                  <br>
+                  Заказано: <?php echo $good->ordersNum ?> шт.
+                  <?php endif; ?>
+                </div>
             </div>
+        <?php else: ?>
+          <?php if ($good->ordersNum > 0): ?>
+          <div class="good_row_orders_wrap">
+            <div class="good_row_orders_bg"></div>
+            <div class="good_row_orders">
+              Заказано: <?php echo $good->ordersNum ?> шт.
+            </div>
+          </div>
+          <?php endif; ?>
         <?php endif; ?>
             <div class="good_row_info_line_wrap">
                 <div class="good_row_info_line"></div>

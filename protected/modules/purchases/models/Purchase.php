@@ -124,7 +124,7 @@ class Purchase extends CActiveRecord
       'user_oic' => array(self::HAS_ONE, 'OrderOic', 'purchase_id'),
       'orders' => array(self::HAS_MANY, 'Order', 'purchase_id'),
       'ordersNum' => array(self::STAT, 'Order', 'purchase_id'),
-      'ordersSum' => array(self::STAT, 'Order', 'purchase_id', 'select' => 'SUM(total_price)'),
+      'ordersSum' => array(self::STAT, 'Order', 'purchase_id', 'select' => 'SUM(price * amount)'),
       'goodsNum' => array(self::STAT, 'Good', 'purchase_id', 'condition' => 'is_quick = 0'),
 		);
 	}
@@ -168,9 +168,9 @@ class Purchase extends CActiveRecord
     }
 
     public function getMinimalPercentage() {
-        $sum_perc = ceil((floatval($this->min_sum) > 0) ? ($this->ordersSum / $this->min_sum) * 100 : 0);
-        $num_perc = ceil((floatval($this->min_num) > 0) ? ($this->ordersNum / $this->min_num) * 100 : 0);
-        return ($num_perc > $sum_perc) ? $num_perc : $sum_perc;
+      $sum_perc = ceil((floatval($this->min_sum) > 0) ? ($this->ordersSum / $this->min_sum) * 100 : 0);
+      $num_perc = ceil((floatval($this->min_num) > 0) ? ($this->ordersNum / $this->min_num) * 100 : 0);
+      return ($num_perc > $sum_perc) ? $num_perc : $sum_perc;
     }
 
     public function getPriceWithTax($price) {

@@ -103,6 +103,10 @@ class Profile extends CActiveRecord
 		);
 	}
 
+  public function getProfileImage($size = 'b') {
+    return ($this->photo) ? ActiveHtml::showUploadImage($this->photo, $size) : '<img src="/images/camera_a.gif" />';
+  }
+
     public function genderToInt() {
         return ($this->gender == 'Male') ? self::GENDER_MALE : self::GENDER_FEMALE;
     }

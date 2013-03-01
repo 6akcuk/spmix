@@ -112,10 +112,13 @@ $delta = Yii::app()->controller->module->goodsPerPage;
     </div>
 </div>
 <div data-link="#tabs_content" class="tabs">
-    <a target="div.purchase_fullstory">Условие</a>
-    <a target="div.purchase_customers">Статистика</a>
-    <a target="div.purchase_history">История действий</a>
-    <a target="div.purchase_goods" class="selected">Альбом</a>
+  <a target="div.purchase_fullstory">Условие</a>
+  <a target="div.purchase_customers">Статистика</a>
+<?php if (Yii::app()->user->checkAccess('purchases.purchases.editSuper') ||
+  Yii::app()->user->checkAccess('purchases.purchases.editOwn', array('purchase' => $purchase))): ?>
+  <a target="div.purchase_history">История действий</a>
+  <?php endif; ?>
+  <a target="div.purchase_goods" class="selected">Альбом</a>
 </div>
 <div id="tabs_content">
     <div class="purchase_fullstory" style="display: none">

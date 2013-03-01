@@ -1285,7 +1285,7 @@ var FormMgr = {
             }
         });
     },
-    submit: function(el, pos, onDone) {
+    submit: function(el, pos, onDone, onFail) {
         var $form = $(el),
             url = $form.attr('action');
 
@@ -1300,26 +1300,30 @@ var FormMgr = {
                 else {
                     var scs = $('<div/>').addClass('success').insertAfter($form.children('h2'));
                     scs.html(response.message);
-                    if (response.msg) msi.show(response.msg);
+                    if (response.msg) boxPopup(response.msg);
                     if (response.url) nav.go(response.url);
                 }
             }
             else {
-                $.each(response, function(i, v) {
-                  $('#'+ i).addClass('error');
-                  if ($.isArray(v)) {
-                    var string = [];
-                    $.each(v, function(i2, v2) {
-                      string.push(v2);
-                    })
-                    //$('<span/>').addClass('input_error').html(string.join('')).insertAfter($('#'+ i));
-                    inputError($('#'+ i), string.join(''));
-                  }
-                  else inputError($('#'+ i), v);
-                });
+              if ($.isFunction(onFail)) onFail(response);
 
-                //report_window.create($form, pos, string.join('<br/>'));
+              $.each(response, function(i, v) {
+                $('#'+ i).addClass('error');
+                if ($.isArray(v)) {
+                  var string = [];
+                  $.each(v, function(i2, v2) {
+                    string.push(v2);
+                  })
+                  //$('<span/>').addClass('input_error').html(string.join('')).insertAfter($('#'+ i));
+                  inputError($('#'+ i), string.join(''));
+                }
+                else inputError($('#'+ i), v);
+              });
+
+              //report_window.create($form, pos, string.join('<br/>'));
             }
+        }, function(xhr) {
+          if ($.isFunction(onFail)) onFail(xhr);
         });
 
         return false;

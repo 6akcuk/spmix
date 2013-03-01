@@ -416,12 +416,42 @@ table.ordertable td {
     filter: alpha(opacity=50);
     border-radius: 3px;
 }
+.good_row_ranges_wrap_orders .good_row_ranges_bg {
+  height: 48px;
+  width: 111px;
+}
 .good_row_ranges {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    padding: 6px 8px;
-    color: #fff;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  padding: 6px 8px;
+  color: #fff;
+  line-height: 18px;
+}
+.good_row_ranges_wrap_orders .good_row_ranges {
+  width: 95px;
+}
+.good_row_orders_wrap {
+   position: absolute;
+   top: 6px;
+   left: 6px;
+   cursor: pointer;
+ }
+.good_row_orders_bg {
+  background: #000;
+  width: 111px;
+  height: 30px;
+  opacity: .5;
+  filter: alpha(opacity=50);
+  border-radius: 3px;
+}
+.good_row_orders {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  padding: 6px 8px;
+  color: #fff;
+  line-height: 18px;
 }
 .good_row_controls {
     position: absolute;

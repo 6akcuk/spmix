@@ -12,6 +12,8 @@
  * @property string $answer_to
  * @property string $text
  * @property string $attaches
+ *
+ * @property User $author
  */
 class Comment extends CActiveRecord
 {
@@ -41,10 +43,12 @@ class Comment extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('author_id, hoop_id, hoop_type, creation_date, answer_to, text, attaches', 'required'),
-			array('author_id', 'numerical', 'integerOnly'=>true),
+			array('author_id, hoop_id, hoop_type, text', 'required'),
+      array('author_id, attaches', 'unsafe'),
+			array('author_id', 'numerical', 'integerOnly' => true),
 			array('hoop_id, hoop_type', 'length', 'max'=>10),
 			array('answer_to', 'length', 'max'=>20),
+      array('text', 'length', 'min' => 2, 'max' => 4096),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('comment_id, author_id, hoop_id, hoop_type, creation_date, answer_to, text, attaches', 'safe', 'on'=>'search'),
@@ -59,6 +63,7 @@ class Comment extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+      'author' => array(self::BELONGS_TO, 'User', 'author_id'),
 		);
 	}
 
@@ -72,35 +77,19 @@ class Comment extends CActiveRecord
 			'author_id' => 'Author',
 			'hoop_id' => 'Hoop',
 			'hoop_type' => 'Hoop Type',
-			'creation_date' => 'Creation Date',
+			'creation_date' => 'Дата создания',
 			'answer_to' => 'Answer To',
-			'text' => 'Text',
-			'attaches' => 'Attaches',
+			'text' => 'Комментарий',
+			'attaches' => 'Прикрепления',
 		);
 	}
 
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// Warning: Please modify the following code to remove attributes that
-		// should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('comment_id',$this->comment_id,true);
-		$criteria->compare('author_id',$this->author_id);
-		$criteria->compare('hoop_id',$this->hoop_id,true);
-		$criteria->compare('hoop_type',$this->hoop_type,true);
-		$criteria->compare('creation_date',$this->creation_date,true);
-		$criteria->compare('answer_to',$this->answer_to,true);
-		$criteria->compare('text',$this->text,true);
-		$criteria->compare('attaches',$this->attaches,true);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
-	}
+  public function beforeSave() {
+    if (parent::beforeSave()) {
+      if ($this->isNewRecord)
+        $this->creation_date = date("Y-m-d H:i:s");
+      return true;
+    }
+    else return false;
+  }
 }

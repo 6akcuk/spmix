@@ -276,7 +276,7 @@ class PurchasesController extends Controller {
       $criteria->params[':purchase_id'] = $id;
 
       if (!in_array($purchase->state, array(Purchase::STATE_PAY, Purchase::STATE_CARGO_FORWARD, Purchase::STATE_DISTRIBUTION))) {
-        $goods = Good::model()->quick()->with(array('image' => array('joinType' => 'LEFT JOIN', 'group' => 'image.good_id')))->findAll($criteria);
+        $goods = Good::model()->quick()->with(array('image' => array('joinType' => 'LEFT JOIN', 'group' => 'image.good_id')), 'ordersNum')->findAll($criteria);
 
         $criteria->limit = 0;
         $goodsNum = Good::model()->quick()->count($criteria);

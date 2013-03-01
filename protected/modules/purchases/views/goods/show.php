@@ -195,7 +195,7 @@ if ($good->oic) {
             <td><?php echo $order->order_id ?></td><td><?php echo ActiveHtml::date($order->creation_date, false, true) ?></td>
             <td><?php echo ($order->anonymous) ? 'анонимно' : ActiveHtml::link($order->customer->login, '/id'. $order->customer_id) ?></td>
             <td><?php echo $order->size ?></td>
-            <td><?php echo $order->color ?></td><td><?php echo ActiveHtml::price($order->price); $sum += $order->price ?></td>
+            <td><?php echo $order->color ?></td><td><?php echo ActiveHtml::price($order->price); $sum += ($order->price * $order->amount) ?></td>
             <td><?php echo $order->amount ?></td><td><?php echo ActiveHtml::price($order->total_price) ?></td>
         </tr>
         <?php endforeach; ?>
