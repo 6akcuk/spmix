@@ -66,7 +66,7 @@ $length = sizeof($attaches);
     </div>
     <?php endif; ?>
     <div class="comment_control">
-      <span class="comment_date"><?php echo ActiveHtml::date($comment->creation_date, true, true) ?></span>
+      <span class="comment_date"><?php echo ActiveHtml::timeback($comment->creation_date) ?></span>
       | <a id="comment_<?php echo $comment->comment_id ?>_edit" onclick="Comment.edit(<?php echo $comment->comment_id ?>)">Редактировать</a>
       <?php if (Yii::app()->user->checkAccess('comment.deleteSuper') ||
       Yii::app()->user->checkAccess('comment.deleteOwn', array('comment' => $comment)) ||

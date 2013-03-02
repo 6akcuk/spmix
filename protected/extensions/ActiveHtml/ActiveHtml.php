@@ -299,15 +299,17 @@ class ActiveHtml extends CHtml {
 
         $hour = floor($min / 60);
 
-        if($hour <= 23) {
+        if($hour <= 3) {
             return Yii::t('app', '{n} час|{n} часа|{n} часов', $hour) .' '. Yii::t('app', 'назад');
         }
 
-        $days = floor($hour / 24);
+      return self::date($date, true, true);
 
-        if($days <= 31) {
-            return Yii::t('app', '{n} день|{n} дня|{n} дней', $days) .' '. Yii::t('app', 'назад');
-        }
+      $days = floor($hour / 24);
+
+      if($days <= 31) {
+          return Yii::t('app', '{n} день|{n} дня|{n} дней', $days) .' '. Yii::t('app', 'назад');
+      }
     }
 
   // склонение слова по падежам

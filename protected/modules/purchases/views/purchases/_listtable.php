@@ -19,9 +19,9 @@
     </td>
     <td><?php echo ActiveHtml::date($purchase->stop_date, false, true) ?></td>
   <td>
-    <?php if($purchase->mod_confirmation == 0 && $purchase->mod_request_id == 0): ?>
+    <?php if($purchase->mod_confirmation == 0 && (!$purchase->mod_request_id || $purchase->mod_request->status != PurchaseModRequest::STATUS_CLOSED)): ?>
     Не согласовано
-    <?php elseif($purchase->mod_confirmation == 0 && $purchase->mod_request_id > 0): ?>
+    <?php elseif($purchase->mod_confirmation == 0 && ($purchase->mod_request_id > 0 && $purchase->mod_request->status == PurchaseModRequest::STATUS_CLOSED)): ?>
     Есть замечания
     <?php elseif($purchase->mod_confirmation == 1): ?>
     Согласовано

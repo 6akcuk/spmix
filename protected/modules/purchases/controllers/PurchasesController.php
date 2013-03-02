@@ -236,7 +236,7 @@ class PurchasesController extends Controller {
 
         $criteria->addCondition('purchase_delete IS NULL');
 
-      $purchases = Purchase::model()->resetScope()->with('city', 'ordersNum', 'ordersSum', 'goodsNum')->findAll($criteria);
+      $purchases = Purchase::model()->resetScope()->with('city', 'ordersNum', 'ordersSum', 'goodsNum', 'mod_request')->findAll($criteria);
       $purchasesNum = Purchase::model()->resetScope()->count($criteria);
 
       $this->wideScreen = true;
@@ -411,8 +411,8 @@ class PurchasesController extends Controller {
                             $ph->author_id = Yii::app()->user->getId();
                             $ph->msg = $m;
 
-                            $from = floatval($cache[$h]);
-                            $to = floatval($model->$h);
+                            $from = $cache[$h];
+                            $to = $model->$h;
 
                             switch ($h) {
                                 case 'stop_date':
@@ -424,8 +424,8 @@ class PurchasesController extends Controller {
                                     $to = Yii::t('purchase', $to);
                                     break;
                                 case 'min_sum':
-                                    $from = ActiveHtml::price($from);
-                                    $to = ActiveHtml::price($to);
+                                    $from = ActiveHtml::price(floatval($from));
+                                    $to = ActiveHtml::price(floatval($to));
                                     break;
                             }
 
