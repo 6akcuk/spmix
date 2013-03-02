@@ -17,67 +17,16 @@ Yii::app()->getClientScript()->registerScriptFile('/js/photoview.js');
 Yii::app()->getClientScript()->registerScriptFile('/js/jquery.cookie.js', null, 'after jquery-');
 
 ?>
-<?php if ($offsets > 10): ?><a class="comment_show_more">Показать <?php echo Yii::t('app', 'предыдущий {n} комментарий|предыдущие {n} комментария|предыдущие {n} комментариев', ($offsets - 3)) ?></a><?php endif; ?>
+<?php if ($offsets > 10): ?><a class="comment_show_more" onclick="Comment.showMore(<?php echo $this->hoop_id ?>, '<?php echo $this->hoop_type ?>', <?php echo $comments[0]->comment_id ?>)">Показать <?php echo Yii::t('app', 'предыдущий {n} комментарий|предыдущие {n} комментария|предыдущие {n} комментариев', ($offsets - 3)) ?></a><?php endif; ?>
 <div id="hoop<?php echo $this->hoop_id ?>_comments" class="comments_list">
   <?php foreach ($comments as $comment): ?>
-  <div id="comment_<?php echo $comment->comment_id ?>" class="comment_block clearfix">
-    <div class="left photo">
-      <?php echo ActiveHtml::link($comment->author->profile->getProfileImage('c'), '/id'. $comment->author_id) ?>
-    </div>
-    <div class="left comment_data">
-      <?php echo ActiveHtml::link($comment->author->getDisplayName(), '/id'. $comment->author_id, array('class' => 'comment_author')) ?>
-      <div class="comment_text">
-        <?php echo nl2br($comment->text) ?>
-      </div>
-      <div class="comment_attaches clearfix">
-      <?php
-        $photo_sizes = array();
-        $attaches = json_decode($comment->attaches, true);
-        $length = sizeof($attaches);
-        $list = array('items' => array(), 'count' => $length);
-        /*
-        if ($length == 1) {
-          $photo_sizes[0] = array('w', min($attaches[0]['w'][3], 604), min($attaches[0]['w'][4], 604));
-        }
-        elseif ($length == 2) {
-          $min_height = min($attaches[0]['d'][4], $attaches[1]['d'][4]);
-
-          $photo_sizes[0] = array('d', min($attaches[0]['d'][3], 320), $min_height);
-          $photo_sizes[1] = array('d', min($attaches[1]['d'][3], 320), $min_height);
-        }
-        elseif ($length == 3) {
-          $master_height = floor(434 * $attaches[0]['w'][4]) / $attaches[0]['w'][3];
-          $slave_height = $master_height / 2;
-
-          $photo_sizes[0] = array('w', min($attaches[0]['w'][3], 434), $master_height);
-          $photo_sizes[1] = array('d', min($attaches[1]['d'][3], 210), $slave_height);
-          $photo_sizes[2] = array('d', min($attaches[2]['d'][3], 210), $slave_height);
-        }*/
-      ?>
-      <?php foreach ($attaches as $akey => $photo): ?>
-      <?php $photo = json_decode($photo, true) ?>
-      <?php $list['items'][] = $photo ?>
-        <a class="left comment_attached_photo" onclick="Photoview.show('comment<?php echo $comment->comment_id ?>', <?php echo $akey ?>)">
-          <img src="http://cs<?php echo $photo['w'][2] ?>.<?php echo Yii::app()->params['domain'] ?>/<?php echo $photo['w'][0] ?>/<?php echo $photo['w'][1] ?>" />
-        </a>
-      <?php endforeach; ?>
-      <script>
-      Photoview.list('comment<?php echo $comment->comment_id ?>', <?php echo json_encode($list) ?>);
-      </script>
-      </div>
-      <div class="comment_control">
-        <span class="comment_date"><?php echo ActiveHtml::date($comment->creation_date, true, true) ?> |</span>
-        <a onclick="Comment.edit(<?php echo $comment->comment_id ?>)">Редактировать</a> |
-        <a onclick="Comment.delete(<?php echo $comment->comment_id ?>)">Удалить</a>
-      </div>
-    </div>
-  </div>
+  <?php $this->controller->renderPartial('//comment/_comment', array('comment' => $comment)) ?>
   <?php endforeach; ?>
 </div>
 <div class="comment_reply">
   <form id="hoop<?php echo $this->hoop_id ?>_form" action="comment/add?hoop_id=<?php echo $this->hoop_id ?>&hoop_type=<?php echo $this->hoop_type ?>" method="post">
   <h6>Ваш комментарий</h6>
-  <?php echo ActiveHtml::smartTextarea('Comment[text]', '', array('placeholder' => 'Комментировать..')) ?>
+  <?php echo ActiveHtml::smartTextarea('Comment[text]', '', array('placeholder' => 'Комментировать..', 'onkeydown' => 'if (event.ctrlKey && event.keyCode == 13) Comment.add('. $this->hoop_id .')')) ?>
   <div id="hoop<?php echo $this->hoop_id ?>_attaches" class="comment_post_attaches clearfix">
   </div>
   <div class="comment_post clearfix">
@@ -96,8 +45,15 @@ Yii::app()->getClientScript()->registerScriptFile('/js/jquery.cookie.js', null, 
   $.extend(A, {
     commentPhotoAttaches: 0,
     commentHoop: {
-      <?php echo $this->hoop_id ?>: [null, 0, 68876]
+      <?php echo $this->hoop_id ?>: {
+        timer: null, type: '<?php echo $this->hoop_type ?>', last_id: <?php echo (isset($comment->comment_id)) ? $comment->comment_id : 0 ?>,
+        counter: 0
+      }
     }
   });
+
+  A.commentHoop[<?php echo $this->hoop_id ?>][0] = setTimeout(function() {
+    Comment.peer(<?php echo $this->hoop_id ?>);
+  }, 5000);
   </script>
 </div>

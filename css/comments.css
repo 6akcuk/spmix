@@ -18,13 +18,16 @@ a.comment_show_more {
   border-top: 1px solid #dae1e8;
   padding: 10px 0px;
 }
+.comment_new {
+  display: none;
+}
 
 .comment_data {
   margin-left: 10px;
 }
 .comment_author {
   display: inline-block;
-  font-size: 12px;
+  font-weight: bold;
   padding-bottom: 10px;
 }
 .comment_text {
@@ -39,8 +42,11 @@ a.comment_show_more {
   padding-top: 10px;
   font-size: 11px;
 }
-.comment_date {
+.comment_date, .comment_editing {
   color: #999;
+}
+.comment_editing {
+  margin-left: 2px;
 }
 .comment_attached_photo {
   display: block;
@@ -60,6 +66,9 @@ div.comment_reply {
 }
 div.comment_reply textarea {
   width: 733px;
+}
+div.comment_block textarea {
+  width: 643px;
 }
 div.comment_post {
   padding-top: 10px

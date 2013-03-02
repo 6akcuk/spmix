@@ -888,7 +888,7 @@ $.fn.autosize = function(options) {
 }
 
 /* Tabs */
-$.fn.tabs = function()
+$.fn.activeTabs = function()
 {
     this.each(function()
     {
@@ -2045,7 +2045,7 @@ $().ready(function() {
         Upload.onDOMReady(this);
     });
 
-    $('div.tabs').tabs();
+    $('div.tabs').activeTabs();
     $('.smarttext textarea').autosize();
     $('[rel="filters"]').filters();
     WideDropdown.setup();
@@ -2053,12 +2053,12 @@ $().ready(function() {
   $('[rel="menu"]').quickMenu();
 
     // content updates with ajax
-    $('#content').on('contentChanged', function() {
+    $('#content').on('contentChanged', function(ev, opts) {
         $('#content span.input_placeholder input, #content span.input_placeholder textarea').inputPlaceholder();
         $('div.dropdown').dropdown();
         Tooltip.init();
         $('a.input_calendar').calendar();
-        $('div.tabs').tabs();
+        $('div.tabs').activeTabs();
 
         $('div.autosize').remove();
         $('.smarttext textarea').autosize();
@@ -2075,7 +2075,7 @@ $().ready(function() {
 
         $(window).resize();
         if (!$('body').hasClass('im_fixed')) {
-            $(window).scrollTop(0);
+          if (!opts || !opts.noscroll) $(window).scrollTop(0);
         }
 
         cur = {};

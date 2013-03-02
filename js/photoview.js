@@ -79,12 +79,14 @@ var Photoview = {
         });
 
         A.pvOffset = 0;
+        if (photo >= 0) A.pvOffset = photo;
 
         $.each(A.pvItems, function(i, item) {
-            if (item.a[1] == photo) {
+          //A.pvOffset =
+            /*if (item.a[1] == photo) {
                 A.pvOffset = i;
                 return false;
-            }
+            }*/
         });
 
         $win = $(window);

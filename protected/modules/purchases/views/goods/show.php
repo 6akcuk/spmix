@@ -207,8 +207,6 @@ if ($good->oic) {
         Всего на сумму (без орг.сбора): <b><?php echo ActiveHtml::price($sum) ?></b>
     </div>
 </div>
-<?php if (Yii::app()->user->getId() == 1): ?>
 <div style="margin-top: 10px">
-  <?php $this->widget('Comments', array('hoop_id' => $good->good_id, 'hoop_type' => 'good')) ?>
+  <?php $this->widget('Comments', array('hoop' => $good->purchase, 'hoop_id' => $good->good_id, 'hoop_type' => 'good')) ?>
 </div>
-<?php endif; ?>

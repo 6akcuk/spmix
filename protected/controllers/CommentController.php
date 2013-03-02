@@ -25,6 +25,9 @@ class CommentController extends Controller {
         /** @var $hoop Good */
         $hoop = Good::model()->with('purchase')->findByPk($hoop_id);
         break;
+      case 'purchase':
+        $hoop = Purchase::model()->findByPk($hoop_id);
+        break;
     }
 
     $comment = new Comment();
@@ -51,6 +54,197 @@ class CommentController extends Controller {
       foreach ($comment->getErrors() as $attr => $error) {
         $result[ActiveHtml::activeId($comment, $attr)] = $error;
       }
+    }
+
+    echo json_encode($result);
+    exit;
+  }
+
+  public function actionEdit($id) {
+    /** @var $comment Comment */
+    $comment = Comment::model()->resetScope()->findByPk($id);
+
+    if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
+      Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('comment' => $comment)))
+    {
+      if (isset($_POST['Comment'])) {
+        $comment->attributes = $_POST['Comment'];
+
+        $attaches = array();
+        if (isset($_POST['Comment']['attach'])) {
+          $k = min(sizeof($_POST['Comment']['attach']), 3);
+          for ($i = 0; $i < $k; $i++) {
+            $attaches[] = $_POST['Comment']['attach'][$i];
+          }
+        }
+
+        $comment->attaches = json_encode($attaches);
+        $result = array();
+
+        if ($comment->save()) {
+          $result['success'] = true;
+          $result['html'] = $this->renderPartial('_comment', array('comment' => $comment), true);
+        }
+        else {
+          foreach ($comment->getErrors() as $attr => $error) {
+            $result[ActiveHtml::activeId($comment, $attr)] = $error;
+          }
+        }
+
+        echo json_encode($result);
+        exit;
+      }
+
+      echo json_encode(array('html' => $this->renderPartial('edit', array('comment' => $comment), true)));
+      exit;
+    }
+    else
+      throw new CHttpException(403, 'В доступе отказано');
+  }
+
+  public function actionDelete($id) {
+    /** @var $comment Comment */
+    $comment = Comment::model()->resetScope()->findByPk($id);
+
+    switch ($comment->hoop_type) {
+      case 'good':
+          $h = Good::model()->with('purchase')->findByPk($comment->hoop_id);
+          $hoop = $h->purchase;
+        break;
+      case 'purchase':
+        $hoop = Purchase::model()->findByPk($comment->hoop_id);
+        break;
+    }
+
+    if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
+      Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('comment' => $comment)) ||
+      Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Owner', array('hoop' => $hoop)))
+    {
+      $comment->comment_delete = date("Y-m-d H:i:s");
+      if (!$comment->save(true, array('comment_delete')))
+        throw new CHttpException(500, 'Удаление комментария невозможно');
+
+      if (!isset($_SESSION['comment.delete'])) $_SESSION['comment.delete'] = array();
+      if (!isset($_SESSION['comment.delete'][$comment->author_id])) $_SESSION['comment.delete'][$comment->author_id] = array('count' => 0, 'items' => array(), 'hash' => '');
+
+      $_SESSION['comment.delete'][$comment->author_id]['count']++;
+      $restore = $_SESSION['comment.delete'][$comment->author_id]['items'][$comment->comment_id] = substr(md5(time() . $comment->author_id), 8, 8);
+      if ($_SESSION['comment.delete'][$comment->author_id]['count'] >= 3) $hash = $_SESSION['comment.delete'][$comment->author_id]['hash'] = substr(md5(time() . $comment->author_id), 0, 8);
+
+      $html = array();
+      $html[] = 'Комментарий удален. <a onclick="Comment.restore(this, '. $comment->comment_id .', \''. $restore .'\')">Восстановить</a>';
+      if (isset($hash)) $html[] = '<br><a onclick="Comment.massDelete('. $comment->hoop_id .', \''. $comment->hoop_type .'\', '. $comment->author_id .', \''. $hash .'\')">Удалить все комментарии пользователя за последний день</a>';
+
+      echo json_encode(array('html' => implode('', $html)));
+      exit;
+    }
+    else
+      throw new CHttpException(403, 'В доступе отказано');
+  }
+
+  public function actionMassDelete() {
+    $hoop_id = $_POST['hoop_id'];
+    $hoop_type = $_POST['hoop_type'];
+    $author_id = $_POST['author_id'];
+    $hash = $_POST['hash'];
+
+    switch  ($hoop_type) {
+      case 'good':
+        /** @var $hoop Good */
+        $h = Good::model()->with('purchase')->findByPk($hoop_id);
+        $hoop = $h->purchase;
+        break;
+      case 'purchase':
+        $hoop = Purchase::model()->findByPk($hoop_id);
+        break;
+    }
+
+    if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
+      Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Owner', array('hoop' => $hoop)))
+    {
+      $criteria = new CDbCriteria();
+      $criteria->compare('hoop_id', $hoop_id);
+      $criteria->compare('hoop_type', $hoop_type);
+      $criteria->compare('author_id', $author_id);
+      $criteria->select = 'comment_id';
+
+      $comments = Comment::model()->findAll($criteria);
+      Comment::model()->updateAll(array('comment_delete' => date("Y-m-d H:i:s")), $criteria);
+
+      $ids = array();
+      foreach ($comments as $comment) {
+        $ids[] = $comment->comment_id;
+      }
+
+      echo json_encode($ids);
+      exit;
+    }
+    else
+      throw new CHttpException(403, 'В доступе отказано');
+  }
+
+  public function actionRestore($id) {
+    if (!isset($_POST['hash']))
+      throw new CHttpException(500, 'Не переданы все переменные');
+
+    $hash = $_POST['hash'];
+
+    /** @var $comment Comment */
+    $comment = Comment::model()->resetScope()->findByPk($id);
+    if (!$comment)
+      throw new CHttpException(404, 'Комментарий не найден');
+
+    if (!isset($_SESSION['comment.delete']) ||
+      !isset($_SESSION['comment.delete'][$comment->author_id]) ||
+      !isset($_SESSION['comment.delete'][$comment->author_id]['items'][$comment->comment_id]))
+      throw new CHttpException(500, 'Не найдена цепочка последовательностей');
+
+    if ($hash != $_SESSION['comment.delete'][$comment->author_id]['items'][$comment->comment_id])
+      throw new CHttpException(500, 'Неверный код восстановления');
+
+    $comment->comment_delete = null;
+    if (!$comment->save(true, array('comment_delete')))
+      throw new CHttpException(500, 'Ошибка при восстановлении');
+
+    unset($_SESSION['comment.delete'][$comment->author_id]['items'][$comment->comment_id]);
+    $_SESSION['comment.delete'][$comment->author_id]['count']--;
+  }
+
+  public function actionPeer($hoop_id, $hoop_type) {
+    $last_id = intval($_POST['last_id']);
+
+    $criteria = new CDbCriteria();
+    $criteria->compare('hoop_id', $hoop_id);
+    $criteria->compare('hoop_type', $hoop_type);
+    $criteria->addCondition('comment_id > :id');
+    $criteria->params[':id'] = $last_id;
+
+    $result = array('items' => array(), 'count' => 0, 'last_id' => $last_id);
+    $comments = Comment::model()->findAll($criteria);
+    foreach ($comments as $comment) {
+      $result['items'][] = $this->renderPartial('_comment', array('comment' => $comment), true);
+    }
+
+    $result['count'] = sizeof($comments);
+    if (isset($comment)) $result['last_id'] = $comment->comment_id;
+
+    echo json_encode($result);
+    exit;
+  }
+
+  public function actionMore($hoop_id, $hoop_type) {
+    $first_id = intval($_POST['first_id']);
+
+    $criteria = new CDbCriteria();
+    $criteria->compare('hoop_id', $hoop_id);
+    $criteria->compare('hoop_type', $hoop_type);
+    $criteria->addCondition('comment_id < :id');
+    $criteria->params[':id'] = $first_id;
+
+    $result = array('items' => array());
+    $comments = array_reverse(Comment::model()->findAll($criteria));
+    foreach ($comments as $comment) {
+      $result['items'][] = $this->renderPartial('_comment', array('comment' => $comment), true);
     }
 
     echo json_encode($result);

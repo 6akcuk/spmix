@@ -9,10 +9,23 @@
 Yii::import('zii.widgets.CPortlet');
 
 class Comments extends CPortlet {
+  public $hoop;
   public $hoop_id;
   public $hoop_type;
 
   protected function renderContent() {
+    if (!$this->hoop) {
+      switch ($this->hoop_type) {
+        case 'good':
+          $h = Good::model()->with('purchase')->findByPk($this->hoop_id);
+          $hoop = $h->purchase;
+          break;
+        case 'purchase':
+          $hoop = Purchase::model()->findByPk($this->hoop_id);
+          break;
+      }
+    }
+
     $criteria = new CDbCriteria();
     $criteria->order = 'creation_date DESC';
     $criteria->compare('hoop_id', $this->hoop_id);

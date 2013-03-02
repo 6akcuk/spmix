@@ -12,6 +12,7 @@
  * @property string $answer_to
  * @property string $text
  * @property string $attaches
+ * @property string $comment_delete
  *
  * @property User $author
  */
@@ -35,7 +36,13 @@ class Comment extends CActiveRecord
 		return 'comments';
 	}
 
-	/**
+  public function defaultScope() {
+    return array(
+      'condition' => 'comment_delete IS NULL',
+    );
+  }
+
+  /**
 	 * @return array validation rules for model attributes.
 	 */
 	public function rules()

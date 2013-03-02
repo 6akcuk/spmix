@@ -611,11 +611,12 @@ form .row {
 form .row a[class*="iconify_"] {
     display: inline-block;
 }
-form .success {
-    margin: 5px 0;
-    padding: 10px;
-    background: #eef6dc;
-    border: 1px solid #e0efc0
+form .success, .op_report {
+  margin: 5px 0;
+  padding: 10px;
+  background: #eef6dc;
+  border: 1px solid #e0efc0;
+  line-height: 21px;
 }
 
 div.maincolumns {}

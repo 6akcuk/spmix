@@ -60,7 +60,8 @@ WHERE twin.member_id = 111 AND t.member_id = 1 AND dialog.type = 0");
    * Не актуален
    */
   public function actionPatch4() {
-
+    $user = new User();
+    echo $user->hashPassword('79375005024', 'tjb0qjuhj9ytyh8');
   }
 
   /* Исправляет проблему дублирования диалогов */

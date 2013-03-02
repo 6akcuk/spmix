@@ -30,6 +30,7 @@ $cookies = $request->getCookies();
             location.replace(location.protocol + '//' + location.host + '/' + hshtest.replace(/^(\/|!)/, ''));
         }
     </script>
+  <script type="text/javascript" src="http://code.jquery.com/ui/1.10.1/jquery-ui.js"></script>
 </head>
 <body>
 <div id="utils">
@@ -94,16 +95,7 @@ $cookies = $request->getCookies();
                     <?php echo ActiveHtml::link('Моя страница', '/id'. Yii::app()->user->getId()) ?>
                   </li>
                     <li>
-                        <?php echo ActiveHtml::link('Будем знакомы', '/search?c[section]=people') ?>
-                    </li>
-                    <li>
                         <?php echo ActiveHtml::link('Закупки', '/purchases') ?>
-                    </li>
-                    <li>
-                        <?php echo ActiveHtml::link('Пристрой', '/annexe') ?>
-                    </li>
-                    <li>
-                        <?php echo ActiveHtml::link('Хотелки', '/wishlist') ?>
                     </li>
                     <li>
                         <a href="/logout">Выйти</a>

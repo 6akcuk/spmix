@@ -119,6 +119,7 @@ $delta = Yii::app()->controller->module->goodsPerPage;
   <a target="div.purchase_history">История действий</a>
   <?php endif; ?>
   <a target="div.purchase_goods" class="selected">Альбом</a>
+  <a target="div.purchase_comments">Комментарии</a>
 </div>
 <div id="tabs_content">
     <div class="purchase_fullstory" style="display: none">
@@ -165,4 +166,7 @@ $delta = Yii::app()->controller->module->goodsPerPage;
         </div>
         <? if ($offset + $delta < $offsets && $offsets > $delta): ?><a id="pg_more" class="pg_more" onclick="Paginator.showMore()">Еще товары</a><? endif; ?>
     </div>
+  <div class="purchase_comments" style="display: none">
+    <?php $this->widget('Comments', array('hoop' => $purchase, 'hoop_id' => $purchase->purchase_id, 'hoop_type' => 'purchase')) ?>
+  </div>
 </div>
