@@ -67,10 +67,13 @@ $length = sizeof($attaches);
     <?php endif; ?>
     <div class="comment_control">
       <span class="comment_date"><?php echo ActiveHtml::timeback($comment->creation_date) ?></span>
+      <?php if (Yii::app()->user->checkAccess('comment.editSuper') ||
+        Yii::app()->user->checkAccess('comment.editOwn', array('comment' => $comment))): ?>
       | <a id="comment_<?php echo $comment->comment_id ?>_edit" onclick="Comment.edit(<?php echo $comment->comment_id ?>)">Редактировать</a>
+      <?php endif; ?>
       <?php if (Yii::app()->user->checkAccess('comment.deleteSuper') ||
-      Yii::app()->user->checkAccess('comment.deleteOwn', array('comment' => $comment)) ||
-      Yii::app()->user->checkAccess('comment.deleteOwner', array('hoop' => $this->hoop))): ?>
+        Yii::app()->user->checkAccess('comment.deleteOwn', array('comment' => $comment)) ||
+        Yii::app()->user->checkAccess('comment.deleteOwner', array('hoop' => $hoop))): ?>
       | <a id="comment_<?php echo $comment->comment_id ?>_delete" onclick="Comment.delete(<?php echo $comment->comment_id ?>)">Удалить</a>
       <?php endif; ?>
     </div>
