@@ -67,6 +67,17 @@ class CommentController extends Controller {
     if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
       Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('comment' => $comment)))
     {
+      switch  ($comment->hoop_type) {
+        case 'good':
+          /** @var $hoop Purchase */
+          $h = Good::model()->with('purchase')->findByPk($comment->hoop_id);
+          $hoop = $h->purchase;
+          break;
+        case 'purchase':
+          $hoop = Purchase::model()->findByPk($comment->hoop_id);
+          break;
+      }
+
       if (isset($_POST['Comment'])) {
         $comment->attributes = $_POST['Comment'];
 
@@ -83,7 +94,7 @@ class CommentController extends Controller {
 
         if ($comment->save()) {
           $result['success'] = true;
-          $result['html'] = $this->renderPartial('_comment', array('comment' => $comment), true);
+          $result['html'] = $this->renderPartial('_comment', array('comment' => $comment, 'hoop' => $hoop), true);
         }
         else {
           foreach ($comment->getErrors() as $attr => $error) {
@@ -108,8 +119,8 @@ class CommentController extends Controller {
 
     switch ($comment->hoop_type) {
       case 'good':
-          $h = Good::model()->with('purchase')->findByPk($comment->hoop_id);
-          $hoop = $h->purchase;
+        $h = Good::model()->with('purchase')->findByPk($comment->hoop_id);
+        $hoop = $h->purchase;
         break;
       case 'purchase':
         $hoop = Purchase::model()->findByPk($comment->hoop_id);
@@ -235,6 +246,16 @@ class CommentController extends Controller {
   public function actionMore($hoop_id, $hoop_type) {
     $first_id = intval($_POST['first_id']);
 
+    switch ($hoop_type) {
+      case 'good':
+        $h = Good::model()->with('purchase')->findByPk($hoop_id);
+        $hoop = $h->purchase;
+        break;
+      case 'purchase':
+        $hoop = Purchase::model()->findByPk($hoop_id);
+        break;
+    }
+
     $criteria = new CDbCriteria();
     $criteria->compare('hoop_id', $hoop_id);
     $criteria->compare('hoop_type', $hoop_type);
@@ -244,7 +265,7 @@ class CommentController extends Controller {
     $result = array('items' => array());
     $comments = array_reverse(Comment::model()->findAll($criteria));
     foreach ($comments as $comment) {
-      $result['items'][] = $this->renderPartial('_comment', array('comment' => $comment), true);
+      $result['items'][] = $this->renderPartial('_comment', array('comment' => $comment, 'hoop' => $hoop), true);
     }
 
     echo json_encode($result);

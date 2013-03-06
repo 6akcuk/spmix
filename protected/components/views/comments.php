@@ -20,7 +20,7 @@ Yii::app()->getClientScript()->registerScriptFile('/js/jquery.cookie.js', null, 
 <?php if ($offsets > 10): ?><a class="comment_show_more" onclick="Comment.showMore(<?php echo $this->hoop_id ?>, '<?php echo $this->hoop_type ?>', <?php echo $comments[0]->comment_id ?>)">Показать <?php echo Yii::t('app', 'предыдущий {n} комментарий|предыдущие {n} комментария|предыдущие {n} комментариев', ($offsets - 3)) ?></a><?php endif; ?>
 <div id="hoop<?php echo $this->hoop_id ?>_comments" class="comments_list">
   <?php foreach ($comments as $comment): ?>
-  <?php $this->controller->renderPartial('//comment/_comment', array('comment' => $comment)) ?>
+  <?php $this->controller->renderPartial('//comment/_comment', array('comment' => $comment, 'hoop' => $this->hoop)) ?>
   <?php endforeach; ?>
 </div>
 <div class="comment_reply">
