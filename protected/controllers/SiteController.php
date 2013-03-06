@@ -52,6 +52,19 @@ WHERE twin.member_id = 111 AND t.member_id = 1 AND dialog.type = 0");
     var_dump($row);
   }
 
+  // Тест почтовых систем
+  public function actionPatch5() {
+    Yii::import('application.vendors.*');
+    require_once 'Mail/Mail.php';
+
+    $mail = Mail::getInstance();
+    $mail->setSender(array(Yii::app()->params['noreplymail'], Yii::app()->params['noreplyname']));
+    $mail->IsMail();
+
+    $mail->sendMail(Yii::app()->params['noreplymail'], Yii::app()->params['noreplyname'], '6akcuk@gmail.com', 'Тест почты', 'Письмо обыкновенное', true, null, null, null);
+    $mail->ClearAddresses();
+  }
+
   /**
    * Переводит старые заказы на новую систему
    *
@@ -61,7 +74,7 @@ WHERE twin.member_id = 111 AND t.member_id = 1 AND dialog.type = 0");
    */
   public function actionPatch4() {
     $user = new User();
-    echo $user->hashPassword('79375005024', 'tjb0qjuhj9ytyh8');
+    echo $user->hashPassword('79273413817', 'oh9p-epx4bb');
   }
 
   /* Исправляет проблему дублирования диалогов */
@@ -351,8 +364,40 @@ WHERE twin.member_id = 111 AND t.member_id = 1 AND dialog.type = 0");
         exit;
     }
 
-    public function actionNullForm() {
-        echo 'OK';
-        exit;
+  public function actionForgot() {
+    $this->layout = '//layouts/edge';
+
+    if (isset($_POST['email'])) {
+      $email = $_POST['email'];
+      $type = $_POST['type'];
+      /** @var $user User */
+      $user = User::model()->with('profile')->find('email = :mail', array(':mail' => $email));
+
+      if (!$user)
+        throw new CHttpException(404, 'Данный E-Mail не зарегистрирован на сайте');
+
+      switch ($type) {
+        case 'cellular':
+          $pc = new PhoneConfirmation();
+          $pc->generateCode();
+          $user->pwdresethash = $pc->code;
+          $user->pwdresetstamp = date("Y-m-d H:i:s");
+          //$user->save(true, array('pwdresethash', 'pwdresetstamp'));
+
+          $sms = new SmsDelivery(Yii::app()->params['smsUsername'], Yii::app()->params['smsPassword']);
+          //$sms->SendMessage($user->profile->phone, Yii::app()->params['smsNumber'], 'Код восстановления '. $pc->code .'. Проигнорируйте, если вы не запрашивали.');
+
+          $result['msg'] = 'Код восстановления отправлен на Ваш сотовый телефон '. preg_replace("/.*([0-9]{4})$/i", "*******$1", $user->profile->phone);
+          break;
+      }
+
+      echo json_encode($result);
+      exit;
     }
+
+    if (Yii::app()->request->isAjaxRequest) {
+      $this->pageHtml = $this->renderPartial('forgot', null, true);
+    }
+    else $this->render('forgot', null);
+  }
 }

@@ -11,9 +11,10 @@
  * @property string $usergroup
  * @property string $hash
  * @property string $salt
- * @property string $lockedauth_until
  * @property string $regdate
  * @property string $lastvisit
+ * @property string $pwdresethash
+ * @property string $pwdresetstamp
  *
  * @property RbacAssignment $role
  * @property Profile $profile

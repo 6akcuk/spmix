@@ -143,6 +143,8 @@ return array(
 	'params'=>array(
 		// this is used in contact page
 		'adminEmail'=>'webmaster@example.com',
+    'noreplymail' => 'noreply@spmix.ru',
+    'noreplyname' => 'SPMIX.ru',
     'domain' => 'spmix.ru',
     'smsUsername' => '24314_spmix',
     'smsPassword' => 'jbS!D?z',

@@ -30,6 +30,11 @@ Yii::app()->getClientScript()->registerCssFile('/css/elements.css');
         <img src="<?php echo Yii::app()->request->baseUrl; ?>/images/2.gif" alt="" />
     </div>
 
+    <div id="box_popup" class="box_popup box_popup_dark fixed">
+      <div class="text"></div>
+      <div class="back"></div>
+    </div>
+
     <div class="wrapper">
       <div id="top">
           <div class="wrap">
