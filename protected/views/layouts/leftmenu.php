@@ -24,18 +24,6 @@
         echo ActiveHtml::link('+'. $this->pageCounters['orders'], '/orders', array('class' => 'right lm-counter'))
       ?>
     </li>
-    <li>
-        <?php echo ActiveHtml::link('Мой пристрой', '/annexe') ?>
-    </li>
-    <li>
-        <?php echo ActiveHtml::link('Мои закладки', '/favorites') ?>
-    </li>
-    <li>
-        <?php echo ActiveHtml::link('Мои новости', '/feed') ?>
-    </li>
-    <li>
-        <?php echo ActiveHtml::link('Мои настройки', '/settings') ?>
-    </li>
 </ul>
 <?php if (in_array(Yii::app()->user->model->role->itemname, array('Администратор', 'Модератор'))): ?>
 <ul>

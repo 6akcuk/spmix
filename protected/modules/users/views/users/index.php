@@ -4,6 +4,9 @@ $this->pageTitle=Yii::app()->name . ' - Пользователи';
 Yii::app()->getClientScript()->registerCssFile('/css/users.css');
 Yii::app()->getClientScript()->registerScriptFile('/js/usermgr.js');
 
+Yii::app()->getClientScript()->registerCssFile('/css/pagination.css');
+Yii::app()->getClientScript()->registerScriptFile('/js/pagination.js');
+
 foreach ($roles as $role) {
     $rolesJs[] = "'". $role->name ."'";
 }

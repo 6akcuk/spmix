@@ -32,7 +32,7 @@ return array(
 			'class'=>'system.gii.GiiModule',
 			'password'=>'s1a55j7',
 			// If removed, Gii defaults to localhost only. Edit carefully to taste.
-			'ipFilters'=>array('127.0.0.1','::1','46.191.208.135','92.50.166.78'),
+			'ipFilters'=>array('127.0.0.1','::1','46.191.182.195','92.50.166.78'),
 		),
         'users' => array(
             'onlineInterval' => 10, // сколько минут считать пользователя онлайн

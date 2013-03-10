@@ -10,7 +10,7 @@
 </div>
 <div id="code_row" class="row" style="display: none; margin-top: 10px">
   <?php echo ActiveHtml::inputPlaceholder('code', '', array('placeholder' => 'Код восстановления доступа')) ?>
-  <a class="button">Продолжить</a>
+  <a class="button" onclick="proceed()">Продолжить</a>
 </div>
 <div style="margin-top: 10px">&nbsp;</div>
 
@@ -28,5 +28,22 @@ function restore(type) {
   ajax.post('/site/forgot', {email: $email.val(), type: type}, function(r) {
     boxPopup(r.msg);
   }, function(xhr) {});
+}
+
+function proceed() {
+  var $code = $('#code'),
+      $email = $('#email');;
+  $('.input_error').remove();
+
+  if (!$.trim($email.val())) {
+    inputError($email, 'Укажите E-Mail, на который зарегистрирован потерянный аккаунт');
+    return;
+  }
+  if (!$.trim($code.val())) {
+    inputError($code, 'Укажите код восстановления для продолжения');
+    return;
+  }
+
+  location.href = '/site/forgot?email='+ $.trim($email.val()) +'&code='+ $.trim($code.val());
 }
 </script>

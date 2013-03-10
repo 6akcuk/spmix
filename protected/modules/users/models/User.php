@@ -13,6 +13,7 @@
  * @property string $salt
  * @property string $regdate
  * @property string $lastvisit
+ * @property integer $pwdresetfaults
  * @property string $pwdresethash
  * @property string $pwdresetstamp
  *

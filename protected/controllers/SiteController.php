@@ -367,6 +367,80 @@ WHERE twin.member_id = 111 AND t.member_id = 1 AND dialog.type = 0");
   public function actionForgot() {
     $this->layout = '//layouts/edge';
 
+    // Вторая страница восстановления пароля
+    if (isset($_GET['code'])) {
+      /** @var $user User */
+      $user = (isset($_GET['user_id'])) ? User::model()->findByPk($_GET['user_id']) : User::model()->find('email = :mail', array(':mail' => $_GET['email']));
+
+      if (!$user)
+        throw new CHttpException(500, 'Пользователь не найден');
+
+      if (strtotime($user->pwdresetstamp) < (time() - 300))
+        throw new CHttpException(500, 'Сгенерируйте новый код восстановления, т.к. истек срок действия текущего');
+
+      if ($user->pwdresetfaults > 5)
+        throw new CHttpException(500, 'Вы ошиблись более 5 раз при вводе кода восстановления, сгенерируйте новый');
+
+      if ($user->pwdresethash != $_GET['code']) {
+        $user->pwdresetfaults++;
+        $user->save(true, array('pwdresetfaults'));
+
+        throw new CHttpException(500, 'Код восстановления не совпадает');
+      }
+
+      if (isset($_POST['new_password'])) {
+        $new_pwd = trim($_POST['new_password']);
+        $rpt_pwd = trim($_POST['new_password_rpt']);
+
+        if ($new_pwd != $rpt_pwd) {
+          $result['new_password'] = 'Пароли не совпадают';
+
+          echo json_encode($result);
+          exit;
+        }
+
+        if (strlen($new_pwd) < 3) {
+          $result['new_password'] = 'Длина пароля не меньше 3-х символов';
+
+          echo json_encode($result);
+          exit;
+        }
+
+        $user->password = $user->hashPassword($new_pwd, $user->salt);
+        $user->pwdresetfaults = 0;
+        $user->pwdresethash = null;
+        $user->pwdresetstamp = null;
+
+        $user->save(true, array('password', 'pwdresetfaults', 'pwdresethash', 'pwdresetstamp'));
+
+        // Сообщить об изменениях
+        $sms = new SmsDelivery(Yii::app()->params['smsUsername'], Yii::app()->params['smsPassword']);
+        $sms->SendMessage($user->profile->phone, Yii::app()->params['smsNumber'], 'На вашем аккаунте '. $user->email .' был изменен пароль');
+
+        Yii::import('application.vendors.*');
+        require_once 'Mail/Mail.php';
+
+        $mail = Mail::getInstance();
+        $mail->setSender(array(Yii::app()->params['noreplymail'], Yii::app()->params['noreplyname']));
+        $mail->IsMail();
+
+        $html = $this->renderPartial("//mail/report_change_password", array('password' => $new_pwd), true);
+
+        $mail->sendMail(Yii::app()->params['noreplymail'], Yii::app()->params['noreplyname'], $user->email, 'Смена пароля на SPMIX', $html, true, null, null, null);
+        $mail->ClearAddresses();
+
+        $result = array('success' => true, 'msg' => 'Пароль успешно изменен');
+        echo json_encode($result);
+        exit;
+      }
+
+      if (Yii::app()->request->isAjaxRequest) {
+        $this->pageHtml = $this->renderPartial('forgot2', array('code' => $_GET['code'], 'email' => $user->email), true);
+      }
+      else $this->render('forgot2', array('code' => $_GET['code'], 'email' => $user->email));
+      return;
+    }
+
     if (isset($_POST['email'])) {
       $email = $_POST['email'];
       $type = $_POST['type'];
@@ -380,14 +454,35 @@ WHERE twin.member_id = 111 AND t.member_id = 1 AND dialog.type = 0");
         case 'cellular':
           $pc = new PhoneConfirmation();
           $pc->generateCode();
+          $user->pwdresetfaults = 0;
           $user->pwdresethash = $pc->code;
           $user->pwdresetstamp = date("Y-m-d H:i:s");
-          //$user->save(true, array('pwdresethash', 'pwdresetstamp'));
+          $user->save(true, array('pwdresetfaults', 'pwdresethash', 'pwdresetstamp'));
 
           $sms = new SmsDelivery(Yii::app()->params['smsUsername'], Yii::app()->params['smsPassword']);
-          //$sms->SendMessage($user->profile->phone, Yii::app()->params['smsNumber'], 'Код восстановления '. $pc->code .'. Проигнорируйте, если вы не запрашивали.');
+          $sms->SendMessage($user->profile->phone, Yii::app()->params['smsNumber'], 'Код восстановления '. $pc->code .'. Проигнорируйте, если вы не запрашивали.');
 
           $result['msg'] = 'Код восстановления отправлен на Ваш сотовый телефон '. preg_replace("/.*([0-9]{4})$/i", "*******$1", $user->profile->phone);
+          break;
+        case 'email':
+          $user->pwdresetfaults = 0;
+          $user->pwdresethash = md5(rand(1000000, 9999999) . $user->email);
+          $user->pwdresetstamp = date("Y-m-d H:i:s");
+          $user->save(true, array('pwdresetfaults', 'pwdresethash', 'pwdresetstamp'));
+
+          Yii::import('application.vendors.*');
+          require_once 'Mail/Mail.php';
+
+          $mail = Mail::getInstance();
+          $mail->setSender(array(Yii::app()->params['noreplymail'], Yii::app()->params['noreplyname']));
+          $mail->IsMail();
+
+          $html = $this->renderPartial("//mail/forgot_password", array('id' => $user->id, 'code' => $user->pwdresethash), true);
+
+          $mail->sendMail(Yii::app()->params['noreplymail'], Yii::app()->params['noreplyname'], $user->email, 'Восстановление доступа к SPMIX', $html, true, null, null, null);
+          $mail->ClearAddresses();
+
+          $result['msg'] = 'Код восстановления отправлен на указанный Вами E-Mail';
           break;
       }
 
