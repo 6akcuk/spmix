@@ -13,6 +13,7 @@ class RegisterForm extends CFormModel {
     public $lastname;
     public $firstname;
     public $middlename;
+  public $invite_code;
     public $login;
     public $email;
     public $password;
@@ -26,6 +27,7 @@ class RegisterForm extends CFormModel {
     public function rules()
     {
         return array(
+          array('invite_code', 'numerical'),
             // Step 1 Scenario
             array('city', 'required', 'on' => 'step1', 'message' => '{attribute} не может быть пустым'),
             array('city', 'numerical', 'integerOnly' => true, 'on' => 'step1'),
@@ -69,6 +71,7 @@ class RegisterForm extends CFormModel {
             'lastname' => 'Фамилия',
             'firstname' => 'Имя',
             'middlename' => 'Отчество',
+          'invite_code' => 'Номер приглашения',
             'login' => 'Логин',
             'email' => 'E-Mail',
             'password' => 'Пароль',

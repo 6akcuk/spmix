@@ -240,6 +240,29 @@ class ProfilesController extends Controller {
             throw new CHttpException(403, 'В доступе отказано');
     }
 
+  public function actionInviteBySMS() {
+    $invite = new InviteBySMS();
+    $invite->attributes = (isset($_POST['InviteBySMS'])) ? $_POST['InviteBySMS'] : array();
+
+    $result = array();
+
+    if ($invite->validate()) {
+      $sms = new SmsDelivery(Yii::app()->params['smsUsername'], Yii::app()->params['smsPassword']);
+      $sms->SendMessage($invite->phone, Yii::app()->params['smsNumber'], $invite->name .', '. Yii::app()->user->model->profile->firstname .' приглашает Вас на сайт SPMIX.ru. Номер приглашения '. Yii::app()->user->getId());
+
+      $result['success'] = true;
+      $result['msg'] = 'Сообщение успешно отправлено';
+    }
+    else {
+      foreach ($invite->getErrors() as $attr => $error) {
+        $result[ActiveHtml::activeId($invite, $attr)] = $error;
+      }
+    }
+
+    echo json_encode($result);
+    exit;
+  }
+
     public function actionEdit() {
         /** @var $userinfo User */
         $userinfo = User::model()->with('profile')->findByPk(Yii::app()->user->getId());
@@ -278,4 +301,17 @@ class ProfilesController extends Controller {
         }
         else $this->render('edit', array('userinfo' => $userinfo));
     }
+
+  public function actionSettings() {
+    $changepwdmdl = new ChangePasswordForm();
+
+    if (Yii::app()->request->isAjaxRequest) {
+      $this->pageHtml = $this->renderPartial('settings', array(
+        'changepwdmdl' => $changepwdmdl,
+      ), true);
+    }
+    else $this->render('settings', array(
+      'changepwdmdl' => $changepwdmdl,
+    ));
+  }
 }

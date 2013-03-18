@@ -200,35 +200,58 @@ $this->pageTitle = $title;
                 </div>
             </div>
         </div>
+      <?php if ($userinfo->id == Yii::app()->user->getId()): ?>
         <div class="module">
-            <a class="module-header">
-                <div class="header-top">
-                    Пригласить друзей на сайт
-                </div>
-            </a>
-            <div class="module-body">
-                <small class="profile-invite-info">За каждого зарегистрированного пользователя вы получите +1 балл в репутацию.</small>
-                <div class="profile-invite">
-                    <div class="clearfix">
-                        <span class="left label">Ваш номер для приглашений</span>
-                        <span class="left labeled"><b><?php echo $userinfo->id ?></b></span>
-                    </div>
-                    <div class="clearfix">
-                        <span class="left label">Ваша ссылка для приглашений</span>
-                        <span class="left labeled"><a>http://spmix.ru/invite<?php echo $userinfo->id ?></a></span>
-                    </div>
-                </div>
-                <p>
-                    Вы можете пригласить своих коллег, друзей, знакомых на наш сайт сообщив им свой номер для
-                    приглашений или отправив ссылку (ссылку можно разместит, например на вашей странице в
-                    социальных сетях), также вы можете отправить им СМС сообщение. Отправка сообщения
-                    бесплатная.
-                </p>
-                <form action="/inviteBySMS" method="post">
-
-                </form>
+          <a class="module-header">
+            <div class="header-top">
+              Пригласить друзей на сайт
             </div>
+          </a>
+          <div class="module-body">
+            <small class="profile-invite-info">За каждого зарегистрированного пользователя вы получите +1 балл в репутацию.</small>
+            <div class="profile-invite">
+              <div class="clearfix">
+                <span class="left label">Ваш номер для приглашений</span>
+                <span class="left labeled"><b><?php echo $userinfo->id ?></b></span>
+              </div>
+              <div class="clearfix">
+                <span class="left label">Ваша ссылка для приглашений</span>
+                <span class="left labeled"><a>http://spmix.ru/invite<?php echo $userinfo->id ?></a></span>
+              </div>
+            </div>
+            <p>
+              Вы можете пригласить своих коллег, друзей, знакомых на наш сайт сообщив им свой номер для
+              приглашений или отправив ссылку (ссылку можно разместит, например на вашей странице в
+              социальных сетях), также вы можете отправить им СМС сообщение. Отправка сообщения
+              бесплатная.
+            </p>
+            <?php $invite = new InviteBySMS(); ?>
+            <?php
+              $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
+                'id' => 'profile-invite-form',
+                'action' => $this->createUrl('/inviteBySMS'),
+                'method' => 'post',
+              ));
+            ?>
+              <div class="row">
+                <?php echo $form->inputPlaceholder($invite, 'phone') ?>
+              </div>
+              <div class="row">
+                <?php echo $form->inputPlaceholder($invite, 'name') ?>
+              </div>
+              <div class="row profile-invite-text">
+                <h6>Текст СМСки</h6>
+                <p>
+                  <?php echo $userinfo->profile->firstname ?> приглашает Вас на сайт SPMIX.ru. Номер приглашения <?php echo $userinfo->id ?>
+                </p>
+              </div>
+              <div class="row">
+                <a class="button" onclick="Profile.sendInvite()">Отправить</a>
+              </div>
+            <?php $this->endWidget(); ?>
+          </div>
         </div>
+      <?php endif; ?>
         <div class="module">
             <a class="module-header">
                 <div class="header-top">

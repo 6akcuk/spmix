@@ -7,6 +7,8 @@ class UsersModule extends CWebModule
   public $friendsPerPage = 10;
   public $reputationPerPage = 10;
 
+  public $inviteReputationBonus = 1;
+
 	public function init()
 	{
 		// this method is called when the module is being created

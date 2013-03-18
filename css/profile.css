@@ -96,6 +96,29 @@
 .profile-invite-info {
     display: inline-block;
 }
+.profile-invite-text {
+  margin-top: 5px;
+  padding: 10px !important;
+  background: #f5f7f6;
+}
+
+#profile-invite-form input {
+  width: 465px;
+}
+
+.profile-settings {
+  padding-top: 25px;
+}
+
+.settings {
+  width: 400px;
+  margin: 0px 0px 25px 143px;
+}
+.settings h2 {
+  font-size: 14px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #ededf0;
+}
 
 .module-header {
     background: #f2f2f2;

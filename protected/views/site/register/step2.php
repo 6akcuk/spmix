@@ -25,7 +25,7 @@
     <div class="right">
         <h3>Укажите личные данные</h3>
         <p>
-            ФИО требуется для идентификация вашей личности при проведении платежей
+            ФИО требуется для идентификация вашей личности при проведении платежей. <b>Поле Код приглашения не является обязательным.</b>
         </p>
         <?php /** @var $form ActiveForm */
         $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
@@ -44,6 +44,9 @@
         </div>
         <div class="row">
             <?php echo $form->inputPlaceholder($model, 'middlename') ?>
+        </div>
+        <div class="row">
+          <?php echo $form->inputPlaceholder($model, 'invite_code') ?>
         </div>
         <?php $this->endWidget(); ?>
         <div class="buttons clearfix">

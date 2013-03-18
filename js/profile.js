@@ -195,7 +195,16 @@ var Profile = {
         }, function(xhr) {
             A.repRestore = false;
         });
-    }
+    },
+
+  sendInvite: function() {
+    FormMgr.submit('#profile-invite-form', 'left', function(r) {
+      if (r.msg) boxPopup(r.msg);
+      $('#phone').val(''); $('#name').val('');
+    }, function(r) {
+
+    });
+  }
 };
 
 try {stmgr.loaded('profile.js');}catch(e){}

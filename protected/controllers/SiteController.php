@@ -232,6 +232,11 @@ WHERE twin.member_id = 111 AND t.member_id = 1 AND dialog.type = 0");
         $this->redirect(Yii::app()->homeUrl);
     }
 
+  public function actionInvite($id) {
+    $_SESSION['invite.id'] = $id;
+    $this->redirect('/register');
+  }
+
     public function actionRegister($step = 1) {
         /** @var $user WebUser */
         $user = Yii::app()->user;
@@ -240,6 +245,8 @@ WHERE twin.member_id = 111 AND t.member_id = 1 AND dialog.type = 0");
 
         $model = new RegisterForm('step'. $step);
         $model->attributes = $user->getState('regform', null);
+
+      if (isset($_SESSION['invite.id']) && !$model->invite_code) $model->invite_code = $_SESSION['invite.id'];
 
         if (isset($_POST['RegisterForm'])) {
             $model->attributes=$_POST['RegisterForm'];
@@ -273,18 +280,38 @@ WHERE twin.member_id = 111 AND t.member_id = 1 AND dialog.type = 0");
                         $pstatus = $profile->save();
 
                         if ($pstatus) {
-                            /** @var $auth IAuthManager */
-                            $auth = Yii::app()->getAuthManager();
-                            $auth->assign('Пользователь', $user->id);
+                          /** @var $auth IAuthManager */
+                          $auth = Yii::app()->getAuthManager();
+                          $auth->assign('Пользователь', $user->id);
 
-                            $loginform = new LoginForm();
-                            $loginform->email = $model->email;
-                            $loginform->password = $password;
-                            $loginform->login();
+                          $loginform = new LoginForm();
+                          $loginform->email = $model->email;
+                          $loginform->password = $password;
+                          $loginform->login();
 
-                            $result['success'] = true;
-                            $result['step'] = 5;
-                            $result['id'] = $user->id;
+                          if ($model->invite_code) {
+                            $invite = new UserInvite();
+                            $invite->master_id = $model->invite_code;
+                            $invite->child_id = $user->id;
+                            $invite->datetime = date("Y-m-d H:i:s");
+                            $invite->save();
+
+                            $reputation = new ProfileReputation();
+                            $reputation->author_id = $user->id;
+                            $reputation->owner_id = $model->invite_code;
+                            $reputation->value = Yii::app()->getModule('users')->inviteReputationBonus;
+                            $reputation->comment = 'За приглашение пользователя '. $user->login .' #'. $invite->invite_id;
+
+                            if ($reputation->save()) {
+                              $conn = $reputation->getDbConnection();
+                              $command = $conn->createCommand("UPDATE `profiles` SET positive_rep = positive_rep + ". $reputation->value ." WHERE `user_id` = ". $reputation->owner_id);
+                              $command->execute();
+                            }
+                          }
+
+                          $result['success'] = true;
+                          $result['step'] = 5;
+                          $result['id'] = $user->id;
                         }
                         else {
                             $user->delete();
