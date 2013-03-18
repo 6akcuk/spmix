@@ -9,8 +9,8 @@
     <?php echo ActiveHtml::link('Зак№'. $order->order_id, '/order-'. $order->order_id, array('nav' => array('box' => 1))) ?>
   </td>
   <td><?php echo ActiveHtml::date($order->creation_date, false, true) ?></td>
-  <td><?php echo ActiveHtml::link($order->good->name, '/good'. $order->purchase_id .'_'. $order->good_id) ?></td>
-  <td><?php echo $order->good->artikul ?></td>
+  <td><?php echo ($order->good) ? ActiveHtml::link($order->good->name, '/good'. $order->purchase_id .'_'. $order->good_id) : 'Товар не найден' ?></td>
+  <td><?php echo ($order->good) ? $order->good->artikul : 'Товар не найден' ?></td>
   <td><?php echo $order->color ?></td>
   <td><?php echo $order->size ?></td>
   <td>

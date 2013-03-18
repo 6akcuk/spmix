@@ -56,7 +56,7 @@ $this->pageTitle = Yii::app()->name .' - Мои покупки';
         <?php foreach ($_orders as $order): ?>
         <tr class="order_row">
           <td><?php echo $order->order_id ?></td>
-          <td class="good_name"><?php echo ActiveHtml::link($order->good->name, '/order'. $order->order_id) ?></td>
+          <td class="good_name"><?php echo ($order->good) ? ActiveHtml::link($order->good->name, '/order'. $order->order_id) : 'Товар не найден' ?></td>
           <td><?php echo Yii::t('purchase', $order->status) ?></td>
           <td><?php echo $order->amount ?></td>
           <td><?php echo ActiveHtml::price($order->total_price) ?></td>

@@ -54,9 +54,11 @@ if ($good->oic) {
   <div class="order_org_info">
     Телефон заказчика: <?php echo $order->customer->profile->phone ?>
   </div>
+  <?php if ($order->oic): ?>
   <div class="order_org_info">
     Место выдачи: <?php echo $order->oic->oic_name .' '. $order->oic->oic_price ?>
   </div>
+  <?php endif; ?>
 
   <table class="order_org">
     <tr>

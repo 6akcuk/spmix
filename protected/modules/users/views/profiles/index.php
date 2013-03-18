@@ -242,7 +242,7 @@ $this->pageTitle = $title;
               <div class="row profile-invite-text">
                 <h6>Текст СМСки</h6>
                 <p>
-                  <?php echo $userinfo->profile->firstname ?> приглашает Вас на сайт SPMIX.ru. Номер приглашения <?php echo $userinfo->id ?>
+                  <?php echo $userinfo->profile->firstname ?>, удобный сайт оптовых закупок SPMIX.ru. Приглашение №<?php echo $userinfo->id ?>
                 </p>
               </div>
               <div class="row">
