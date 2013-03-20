@@ -204,6 +204,36 @@ var Profile = {
     }, function(r) {
 
     });
+  },
+
+  changePassword: function() {
+    FormMgr.submit('#changepwdform', 'left', function(r) {
+      if (r.msg) boxPopup(r.msg);
+      $('input[name*="ChangePasswordForm"]').val('').blur();
+    }, function(r) {
+
+    });
+  },
+
+  saveEmail: function() {
+    FormMgr.submit('#changeemailform', 'left', function(r) {
+      if (r.msg) boxPopup(r.msg);
+      $('input[name*="ChangeEmailForm"]').val('').blur();
+    }, function(r) {
+
+    });
+  },
+
+  changePhone: function() {
+    ajax.post('/settings', {act: 'changephone'}, function(r) {
+      var box = new Box({
+        hideButtons: true,
+        bodyStyle: 'padding: 0px',
+        width: 500
+      });
+      box.content(r.html);
+      box.show();
+    });
   }
 };
 

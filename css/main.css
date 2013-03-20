@@ -619,6 +619,15 @@ form .success, .op_report {
   line-height: 21px;
 }
 
+form .error, .op_error {
+  margin: 5px 0;
+  padding: 10px;
+  background: #ffefe8;
+  border: 1px solid #e89b88;
+  line-height: 21px;
+  color: #123;
+}
+
 div.maincolumns {}
 div.smallcolumn {
     width: 190px;
@@ -808,4 +817,25 @@ div.ls_columns div.column.options div {
 #org_menu a:hover {
   background-color: #508033;
   color: #fff;
+}
+
+/* Box */
+.box_header {
+  background: #f2f2f2;
+  padding: 16px 20px 15px;
+  font-size: 1.2em;
+  font-weight: bold;
+}
+.box_close {
+  font-size: 11px;
+  font-weight: normal;
+}
+.box_cont {
+  padding: 12px 20px 0px;
+}
+.box_cont .row {
+  padding: 5px 0px;
+}
+.box_buttons {
+  padding: 10px 20px;
 }

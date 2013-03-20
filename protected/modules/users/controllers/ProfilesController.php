@@ -304,14 +304,122 @@ class ProfilesController extends Controller {
 
   public function actionSettings() {
     $changepwdmdl = new ChangePasswordForm();
+    $changeemailmdl = new ChangeEmailForm();
+
+    $err = '';
+    $report = '';
+
+    /** Удаленные действия через E-Mail */
+    if (isset($_GET['act'])) {
+      switch ($_GET['act']) {
+        case 'change_email':
+          $email = EditEmail::model()->findByPk($_GET['eid']);
+
+          if ($email && $email->hash == $_GET['hash']) {
+            /** @var $user User */
+            $user = Yii::app()->user->model;
+            $user->email = $email->new_mail;
+            $user->save(true, array('email'));
+
+            Yii::import('application.vendors.*');
+            require_once 'Mail/Mail.php';
+
+            $mail = Mail::getInstance();
+            $mail->setSender(array(Yii::app()->params['noreplymail'], Yii::app()->params['noreplyname']));
+            $mail->IsMail();
+
+            $html = $this->renderPartial("//mail/report_edit_email", array('email' => $email->new_mail), true);
+
+            $mail->sendMail(Yii::app()->params['noreplymail'], Yii::app()->params['noreplyname'], $email->old_mail, 'Смена адреса электронной почты', $html, true, null, null, null);
+            $mail->ClearAddresses();
+
+            $report = 'Адрес электронной почты успешно изменен';
+          }
+          else $err = 'Неверные данные для смены адреса электронной почты. Попробуйте повторить запрос';
+
+          break;
+      }
+    }
+
+    /** Прямые действия */
+    if (isset($_POST['act'])) {
+      $result = array();
+
+      switch ($_POST['act']) {
+        /* Изменить пароль пользователя */
+        case 'changepwd':
+          $changepwdmdl->attributes = $_POST['ChangePasswordForm'];
+          if ($changepwdmdl->validate()) {
+            /** @var $user User */
+            $user = Yii::app()->user->model;
+            $user->password = $user->hashPassword($changepwdmdl->new_password, $user->salt);
+            $user->save(true, array('password'));
+
+            $result['success'] = true;
+            $result['msg'] = 'Пароль успешно изменен';
+          }
+          else {
+            foreach ($changepwdmdl->getErrors() as $attr => $error) {
+              $result[ActiveHtml::activeId($changepwdmdl, $attr)] = $error;
+            }
+          }
+          break;
+        case 'changeemail':
+          $changeemailmdl->attributes = $_POST['ChangeEmailForm'];
+          if ($changeemailmdl->validate()) {
+            $email = new EditEmail();
+            $email->date = date("Y-m-d H:i:s");
+            $email->old_mail = Yii::app()->user->model->email;
+            $email->new_mail = $changeemailmdl->new_mail;
+            $email->owner_id = Yii::app()->user->getId();
+            $email->ip = ip2long($_SERVER['REMOTE_ADDR']);
+            $email->hash = md5($email->ip . $email->owner_id . $email->new_mail . $email->old_mail . $email->date . rand(0, 10));
+            $email->save();
+
+            Yii::import('application.vendors.*');
+            require_once 'Mail/Mail.php';
+
+            $mail = Mail::getInstance();
+            $mail->setSender(array(Yii::app()->params['noreplymail'], Yii::app()->params['noreplyname']));
+            $mail->IsMail();
+
+            $html = $this->renderPartial("//mail/edit_email", array('id' => $email->edit_id, 'hash' => $email->hash), true);
+
+            $mail->sendMail(Yii::app()->params['noreplymail'], Yii::app()->params['noreplyname'], $email->new_mail, 'Смена адреса электронной почты', $html, true, null, null, null);
+            $mail->ClearAddresses();
+
+            $result['success'] = true;
+            $result['msg'] = 'На адрес '. $email->new_mail .' отправлена ссылка для подтверждения';
+          }
+          else {
+            foreach ($changeemailmdl->getErrors() as $attr => $error) {
+              $result[ActiveHtml::activeId($changeemailmdl, $attr)] = $error;
+            }
+          }
+          break;
+        case 'changephone':
+
+          $result['html'] = $this->renderPartial('editphone_box', array(), true);
+          break;
+      }
+
+      echo json_encode($result);
+      exit;
+    }
 
     if (Yii::app()->request->isAjaxRequest) {
       $this->pageHtml = $this->renderPartial('settings', array(
         'changepwdmdl' => $changepwdmdl,
+        'changeemailmdl' => $changeemailmdl,
+        'error' => $err,
+        'report' => $report,
       ), true);
     }
     else $this->render('settings', array(
       'changepwdmdl' => $changepwdmdl,
+      'changeemailmdl' => $changeemailmdl,
+      'error' => $err,
+      'report' => $report,
     ));
   }
 }
