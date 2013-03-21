@@ -8,7 +8,6 @@ $this->pageTitle = Yii::app()->name .' - Общие настройки';
 
 <div class="tabs">
   <?php echo ActiveHtml::link('Общие', '/settings', array('class' => 'selected')) ?>
-  <?php echo ActiveHtml::link('Оповещения', '/notify') ?>
 </div>
 
 <div class="profile-settings">
@@ -72,6 +71,15 @@ $this->pageTitle = Yii::app()->name .' - Общие настройки';
     </div>
     <div class="row" style="margin-top: 10px">
       <a class="button" onclick="Profile.changePhone()">Изменить номер телефона</a>
+    </div>
+  </div>
+  <div class="settings">
+    <h2>Безопасность Вашей страницы</h2>
+    <div class="row">
+      Последняя активность:
+      <span rel="tooltip" title="IP последнего посещения: <?php echo long2ip($activity->ip) ?>">
+        <?php echo ActiveHtml::timeback($activity->getTimestamp()) ?>
+      </span>
     </div>
   </div>
 </div>

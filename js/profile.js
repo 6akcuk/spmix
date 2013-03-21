@@ -225,7 +225,11 @@ var Profile = {
   },
 
   changePhone: function() {
+    showGlobalPrg();
+
     ajax.post('/settings', {act: 'changephone'}, function(r) {
+      hideGlobalPrg();
+
       var box = new Box({
         hideButtons: true,
         bodyStyle: 'padding: 0px',
@@ -233,6 +237,24 @@ var Profile = {
       });
       box.content(r.html);
       box.show();
+    });
+  },
+
+  getPhoneCode: function() {
+    var $form = $('#changephoneform');
+
+    FormMgr.submit($form, 'left', function(r) {
+      if (r.msg) boxPopup(r.msg);
+      if (r.step == 1) {
+        $('#change_phone_code').slideDown();
+        $('#change_phone_button').html('Сменить номер');
+        $form.find('input[name="eid"]').val(r.eid);
+      }
+      else if (r.step == 2) {
+        curBox().hide();
+      }
+    }, function(r) {
+
     });
   }
 };

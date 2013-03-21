@@ -79,6 +79,7 @@ return array(
         'id<id:\d+>' => 'users/profiles',
         'edit' => 'users/profiles/edit',
         'settings' => 'users/profiles/settings',
+        'notify' => 'users/profiles/notify',
         'write<id:\d+>' => '/im/default/create',
         'reputation<id:\d+>' => 'users/profiles/reputation',
         '<controller:(friends)>' => 'users/friends/',

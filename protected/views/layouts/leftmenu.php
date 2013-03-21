@@ -24,11 +24,9 @@
       echo ActiveHtml::link('+'. $this->pageCounters['orders'], '/orders', array('class' => 'right lm-counter'))
     ?>
   </li>
-  <?php if (Yii::app()->user->getId() == 1): ?>
   <li>
     <?php echo ActiveHtml::link('Мои настройки', '/settings') ?>
   </li>
-  <?php endif; ?>
 </ul>
 <?php if (in_array(Yii::app()->user->model->role->itemname, array('Администратор', 'Модератор'))): ?>
 <ul>

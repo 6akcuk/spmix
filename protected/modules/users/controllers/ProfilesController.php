@@ -398,8 +398,61 @@ class ProfilesController extends Controller {
           }
           break;
         case 'changephone':
+          $changephonemdl = new ChangePhoneForm();
 
-          $result['html'] = $this->renderPartial('editphone_box', array(), true);
+          if (isset($_POST['ChangePhoneForm'])) {
+            $changephonemdl->setScenario(($_POST['eid'] == 0) ? 'receive_code' : 'change_phone');
+            $changephonemdl->attributes = $_POST['ChangePhoneForm'];
+
+            if ($changephonemdl->validate()) {
+              if ($changephonemdl->getScenario() == 'receive_code') {
+                $phone = new EditPhone();
+                $phone->owner_id = Yii::app()->user->getId();
+                $phone->date = date("Y-m-d H:i:s");
+                $phone->old_phone = Yii::app()->user->model->profile->phone;
+                $phone->new_phone = str_replace('+', '', $changephonemdl->phone);
+                $phone->ip = ip2long($_SERVER['REMOTE_ADDR']);
+                $phone->code = $phone->generateCode();
+                $phone->save();
+
+                $sms = new SmsDelivery(Yii::app()->params['smsUsername'], Yii::app()->params['smsPassword']);
+                $sms->SendMessage($phone->new_phone, Yii::app()->params['smsNumber'], 'Код для подтверждения номера: '. $phone->code);
+
+                $result['success'] = true;
+                $result['step'] = 1;
+                $result['eid'] = $phone->edit_id;
+              }
+              else {
+                $phone = EditPhone::model()->findByPk($_POST['eid']);
+
+                if ($phone && $phone->code == $changephonemdl->code) {
+                  /** @var $user User */
+                  $user = Yii::app()->user->model;
+                  $user->profile->phone = $phone->new_phone;
+                  $user->profile->save(true, array('phone'));
+
+                  $result['success'] = true;
+                  $result['step'] = 2;
+                  $result['msg'] = 'Номер телефона успешно изменен';
+                }
+                else {
+                  $result[ActiveHtml::activeId($changephonemdl, 'code')] = 'Неверный код';
+                }
+              }
+            }
+            else {
+              foreach ($changephonemdl->getErrors() as $attr => $error) {
+                $result[ActiveHtml::activeId($changephonemdl, $attr)] = $error;
+              }
+            }
+
+            echo json_encode($result);
+            exit;
+          }
+
+          $result['html'] = $this->renderPartial('editphone_box', array(
+            'changephonemdl' => $changephonemdl,
+          ), true);
           break;
       }
 
@@ -407,10 +460,18 @@ class ProfilesController extends Controller {
       exit;
     }
 
+    $act_criteria = new CDbCriteria();
+    $act_criteria->order = 'act_id DESC';
+    $act_criteria->limit = 1;
+    $act_criteria->offset = 1;
+    $act_criteria->compare('author_id', Yii::app()->user->getId());
+    $activity = Activity::model()->find($act_criteria);
+
     if (Yii::app()->request->isAjaxRequest) {
       $this->pageHtml = $this->renderPartial('settings', array(
         'changepwdmdl' => $changepwdmdl,
         'changeemailmdl' => $changeemailmdl,
+        'activity' => $activity,
         'error' => $err,
         'report' => $report,
       ), true);
@@ -418,8 +479,20 @@ class ProfilesController extends Controller {
     else $this->render('settings', array(
       'changepwdmdl' => $changepwdmdl,
       'changeemailmdl' => $changeemailmdl,
+      'activity' => $activity,
       'error' => $err,
       'report' => $report,
+    ));
+  }
+
+  public function actionNotify() {
+    if (Yii::app()->request->isAjaxRequest) {
+      $this->pageHtml = $this->renderPartial('notify', array(
+
+      ), true);
+    }
+    else $this->render('notify', array(
+
     ));
   }
 }

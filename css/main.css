@@ -831,10 +831,14 @@ div.ls_columns div.column.options div {
   font-weight: normal;
 }
 .box_cont {
-  padding: 12px 20px 0px;
+  padding: 20px;
+  font-size: 12px;
 }
 .box_cont .row {
   padding: 5px 0px;
+}
+.box_cont h6 {
+  color: #00641c;
 }
 .box_buttons {
   padding: 10px 20px;
