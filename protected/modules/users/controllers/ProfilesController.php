@@ -20,14 +20,25 @@ class ProfilesController extends Controller {
     }
 
     public function actionIndex($id) {
-        $userinfo = User::model()->with('profile')->findByPk($id);
-        $friends = $userinfo->profile->getFriends();
-        $friendsNum = $userinfo->profile->countFriends();
+      $userinfo = User::model()->with('profile')->findByPk($id);
+      $friends = $userinfo->profile->getFriends();
+      $friendsNum = $userinfo->profile->countFriends();
+      $purchasesNum = Purchase::model()->count('author_id = :id', array(':id' => $id));
 
-        if (Yii::app()->request->isAjaxRequest) {
-            $this->pageHtml = $this->renderPartial('index', array('userinfo' => $userinfo, 'friends' => $friends, 'friendsNum' => $friendsNum), true);
-        }
-        else $this->render('index', array('userinfo' => $userinfo, 'friends' => $friends, 'friendsNum' => $friendsNum));
+      if (Yii::app()->request->isAjaxRequest) {
+          $this->pageHtml = $this->renderPartial('index', array(
+            'userinfo' => $userinfo,
+            'friends' => $friends,
+            'friendsNum' => $friendsNum,
+            'purchasesNum' => $purchasesNum,
+          ), true);
+      }
+      else $this->render('index', array(
+        'userinfo' => $userinfo,
+        'friends' => $friends,
+        'friendsNum' => $friendsNum,
+        'purchasesNum' => $purchasesNum,
+      ));
     }
 
     public function actionReputation($id, $offset = 0) {

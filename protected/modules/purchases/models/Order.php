@@ -14,6 +14,7 @@
  * @property integer $amount
  * @property string $price
  * @property integer $org_tax
+ * @property string $delivery
  * @property string $total_price
  * @property string $payed
  * @property string $client_comment
@@ -71,11 +72,11 @@ class Order extends CActiveRecord
 
 			array('size, color, client_comment', 'length', 'max' => 200, 'on' => 'create, edit_own, quick'),
       array('anonymous', 'numerical', 'integerOnly' => true, 'on' => 'create, edit_own'),
-      array('price, total_price, status, org_comment, payed, org_tax', 'unsafe', 'on' => 'create, edit_own, quick'),
+      array('price, delivery, total_price, status, org_comment, payed, org_tax', 'unsafe', 'on' => 'create, edit_own, quick'),
 
       array('org_tax', 'numerical', 'integerOnly' => true, 'on' => 'edit_org'),
-      array('price, payed', 'length', 'max' => 10, 'on' => 'edit_org'),
-      array('status', 'length', 'max' => 12, 'on' => 'edit_org'),
+      array('price, payed, status', 'length', 'max' => 12, 'on' => 'edit_org'),
+      array('delivery', 'length', 'max' => 9, 'on' => 'edit_org'),
       array('org_comment', 'length', 'max' => 200, 'on' => 'edit_org'),
 	    );
 	}
@@ -113,6 +114,7 @@ class Order extends CActiveRecord
 			'amount' => 'Количество',
 			'price' => 'Цена',
       'org_tax' => 'Орг. сбор',
+      'delivery' => 'Стоимость доставки',
 			'total_price' => 'Итог. цена',
       'payed' => 'Оплачено',
 			'client_comment' => 'Комментарий для организатора',

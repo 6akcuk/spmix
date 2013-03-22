@@ -48,20 +48,25 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
     'action' => $this->createUrl('/good'. $purchase->purchase_id .'_'. $good->good_id .'/edit'),
 )); ?>
 <div class="purchase_columns clearfix">
-    <div class="left purchase_column">
-        <div class="row">
-            <?php echo $form->inputPlaceholder($good, 'name') ?>
-        </div>
-        <div class="row">
-            <?php echo $form->inputPlaceholder($good, 'artikul') ?>
-        </div>
-        <div class="row">
-            <?php echo $form->inputPlaceholder($good, 'price') ?>
-        </div>
-        <div class="row">
-            <?php echo $form->inputPlaceholder($good, 'url') ?>
-        </div>
+  <div class="left purchase_column">
+    <div class="row">
+      <?php echo $form->inputPlaceholder($good, 'name') ?>
     </div>
+    <div class="row">
+      <?php echo $form->inputPlaceholder($good, 'artikul') ?>
+    </div>
+    <div class="row">
+      <?php echo $form->inputPlaceholder($good, 'price') ?>
+    </div>
+    <?php if (Yii::app()->user->getId() == 1): ?>
+    <div class="row">
+      <?php echo $form->inputPlaceholder($good, 'delivery') ?>
+    </div>
+    <?php endif; ?>
+    <div class="row">
+      <?php echo $form->inputPlaceholder($good, 'url') ?>
+    </div>
+  </div>
     <div class="left purchase_column">
       <?php if ($configs): ?>
       <?php  ?>

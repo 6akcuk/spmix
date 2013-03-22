@@ -39,78 +39,86 @@ $this->pageTitle = $title;
     </span>
 </div>
 <div class="profile-columns clearfix">
-    <div class="left profile-left">
-        <div class="profile-photo">
-            <?php $photo = json_decode($userinfo->profile->photo, true); ?>
-            <?php if (is_array($photo) && sizeof($photo)): ?>
-            <?php echo ActiveHtml::showUploadImage($userinfo->profile->photo, 'a') ?>
-            <?php else: ?>
-            <img src="/images/camera_a.gif" width="250" alt="" />
-            <?php endif; ?>
-        </div>
-        <?php if ($userinfo->id != Yii::app()->user->getId()): ?>
-        <div class="module profile-socials">
-            <?php echo ActiveHtml::link('Отправить сообщение', '/write'. $userinfo->id, array('class' => 'button', 'nav' => array('box' => 1))) ?>
-        <?php $relationship = $userinfo->profile->getProfileRelation(); ?>
-            <?php
-                if ($relationship == null ||
-                    ($relationship->rel_type == ProfileRelationship::TYPE_INCOME && $relationship->from_id == Yii::app()->user->getId()) ||
-                    ($relationship->rel_type == ProfileRelationship::TYPE_OUTCOME && $relationship->from_id != Yii::app()->user->getId())): ?>
-            <a class="button" onclick="return Profile.addFriend(this, <?php echo $userinfo->id ?>)">Добавить в друзья</a>
-            <?php endif; ?>
-            <?php
-            if ($relationship != null) {
-                if ($relationship->rel_type == ProfileRelationship::TYPE_FRIENDS) {
-                    ?>
-            <div class="social-status"><?php echo $userinfo->getDisplayName() ?> у Вас в друзьях</div>
-                    <?php
-                }
-                elseif (Yii::app()->user->model->profile->isProfileRelationIncome($relationship)) {
-                    ?>
-            <div class="social-status"><?php echo $userinfo->getDisplayName() ?> подписан<?php echo ($userinfo->profile->gender == 'Female') ? "а" : "" ?> на Вас</div>
-                    <?php
-                }
-                elseif (Yii::app()->user->model->profile->isProfileRelationOutcome($relationship)) {
-                    ?>
-            <div class="social-status">Вы отправили заявку</div>
-                    <?php
-                }
+  <div class="left profile-left">
+    <div class="profile-photo">
+        <?php $photo = json_decode($userinfo->profile->photo, true); ?>
+        <?php if (is_array($photo) && sizeof($photo)): ?>
+        <?php echo ActiveHtml::showUploadImage($userinfo->profile->photo, 'a') ?>
+        <?php else: ?>
+        <img src="/images/camera_a.gif" width="250" alt="" />
+        <?php endif; ?>
+    </div>
+    <?php if ($userinfo->id != Yii::app()->user->getId()): ?>
+    <div class="module profile-socials">
+        <?php echo ActiveHtml::link('Отправить сообщение', '/write'. $userinfo->id, array('class' => 'button', 'nav' => array('box' => 1))) ?>
+    <?php $relationship = $userinfo->profile->getProfileRelation(); ?>
+        <?php
+            if ($relationship == null ||
+                ($relationship->rel_type == ProfileRelationship::TYPE_INCOME && $relationship->from_id == Yii::app()->user->getId()) ||
+                ($relationship->rel_type == ProfileRelationship::TYPE_OUTCOME && $relationship->from_id != Yii::app()->user->getId())): ?>
+        <a class="button" onclick="return Profile.addFriend(this, <?php echo $userinfo->id ?>)">Добавить в друзья</a>
+        <?php endif; ?>
+        <?php
+        if ($relationship != null) {
+            if ($relationship->rel_type == ProfileRelationship::TYPE_FRIENDS) {
+                ?>
+        <div class="social-status"><?php echo $userinfo->getDisplayName() ?> у Вас в друзьях</div>
+                <?php
             }
-            ?>
-        </div>
-        <?php endif; ?>
-        <div class="module">
-            <a href="/friends?id=<?php echo $userinfo->id ?>" onclick="return nav.go(this, event, {noback: false})" class="module-header">
-                <div class="header-top">
-                    Друзья
-                </div>
-                <div class="header-bottom">
-                    <?php echo Yii::t('user', '{n} друг|{n} друга|{n} друзей', $friendsNum) ?>
-                </div>
-            </a>
-        </div>
-        <div class="module-body">
-        <?php if ($friends): ?>
-        <?php $fcnt = 0; ?>
-        <?php foreach ($friends as $friend): ?>
-        <?php $fcnt++; ?>
-        <?php if ($fcnt > 6) break; ?>
-        <?php if ($fcnt == 1 || $fcnt == 4): ?>
-        <div class="clearfix people_row">
-        <?php endif; ?>
-            <div class="left people_cell">
-                <?php echo ActiveHtml::link(($friend->friend->profile->photo) ? ActiveHtml::showUploadImage($friend->friend->profile->photo, 'c') : '<img src="/images/camera_a.gif" />', '/id'. $friend->friend->id, array('class' => 'ava')) ?>
-                <div class="people_name">
-                <?php echo ActiveHtml::link($friend->friend->login, '/id'. $friend->friend->id) ?>
-                </div>
-            </div>
-        <?php if ($fcnt == 3 || $fcnt == 6): ?>
-        </div>
-        <?php endif; ?>
-        <?php endforeach; ?>
-        <?php if ($fcnt < 3 || ($fcnt > 3 && $fcnt < 6)): ?></div><?php endif; ?>
-        <?php endif; ?>
-        </div>
+            elseif (Yii::app()->user->model->profile->isProfileRelationIncome($relationship)) {
+                ?>
+        <div class="social-status"><?php echo $userinfo->getDisplayName() ?> подписан<?php echo ($userinfo->profile->gender == 'Female') ? "а" : "" ?> на Вас</div>
+                <?php
+            }
+            elseif (Yii::app()->user->model->profile->isProfileRelationOutcome($relationship)) {
+                ?>
+        <div class="social-status">Вы отправили заявку</div>
+                <?php
+            }
+        }
+        ?>
+    </div>
+    <?php endif; ?>
+    <div class="module profile-num-menu">
+      <div>
+        <?php echo ActiveHtml::link(
+          '<span class="right iconify_cart_a"></span><span class="right">'. $purchasesNum .'</span> Закупки '. ActiveHtml::lex(2, $userinfo->profile->firstname),
+          '/purchases'. $userinfo->id
+        ) ?>
+      </div>
+    </div>
+      <div class="module">
+          <a href="/friends?id=<?php echo $userinfo->id ?>" onclick="return nav.go(this, event, {noback: false})" class="module-header">
+              <div class="header-top">
+                  Друзья
+              </div>
+              <div class="header-bottom">
+                  <?php echo Yii::t('user', '{n} друг|{n} друга|{n} друзей', $friendsNum) ?>
+              </div>
+          </a>
+      </div>
+      <div class="module-body">
+      <?php if ($friends): ?>
+      <?php $fcnt = 0; ?>
+      <?php foreach ($friends as $friend): ?>
+      <?php $fcnt++; ?>
+      <?php if ($fcnt > 6) break; ?>
+      <?php if ($fcnt == 1 || $fcnt == 4): ?>
+      <div class="clearfix people_row">
+      <?php endif; ?>
+          <div class="left people_cell">
+              <?php echo ActiveHtml::link(($friend->friend->profile->photo) ? ActiveHtml::showUploadImage($friend->friend->profile->photo, 'c') : '<img src="/images/camera_a.gif" />', '/id'. $friend->friend->id, array('class' => 'ava')) ?>
+              <div class="people_name">
+              <?php echo ActiveHtml::link($friend->friend->login, '/id'. $friend->friend->id) ?>
+              </div>
+          </div>
+      <?php if ($fcnt == 3 || $fcnt == 6): ?>
+      </div>
+      <?php endif; ?>
+      <?php endforeach; ?>
+      <?php if ($fcnt < 3 || ($fcnt > 3 && $fcnt < 6)): ?></div><?php endif; ?>
+      <?php endif; ?>
+      </div>
     </div>
     <div class="left profile-right">
         <div class="profile-info">

@@ -26,8 +26,6 @@ class PurchasesController extends Controller {
             $this->defaultAction = $_GET['action'];
     }
 
-
-
     public function actionAcquire($offset = 0) {
         if (isset($_POST['confirm'])) {
             /** @var $purchase Purchase */
@@ -786,6 +784,56 @@ class PurchasesController extends Controller {
     }
     else
       throw new CHttpException(403, 'В доступе отказано');
+  }
+
+  public function actionUserList($id, $offset = 0) {
+    $user = User::model()->with('profile')->findByPk($id);
+    $section = (isset($_GET['section'])) ? $_GET['section'] : 'active';
+
+    $criteria = new CDbCriteria();
+    $criteria->limit = Yii::app()->controller->module->purchasesPerPage;
+    $criteria->offset = $offset;
+    $criteria->order = 'create_date DESC';
+
+    if ($section == 'active') {
+      $criteria->addNotInCondition('state', array(Purchase::STATE_COMPLETED, Purchase::STATE_DRAFT));
+
+      if (!Yii::app()->user->checkAccess('purchases.purchases.acquire'))
+        $criteria->addCondition("(state NOT IN ('Draft', 'Call Study') AND mod_confirmation = 1)");
+    }
+    elseif ($section == 'finished') $criteria->addInCondition('state', array(Purchase::STATE_COMPLETED));
+
+    $criteria->compare('author_id', $id);
+
+    $purchases = Purchase::model()->with('city', 'author', 'ordersNum', 'ordersSum')->findAll($criteria);
+
+    $criteria->limit = 0;
+    $purchasesNum = Purchase::model()->count($criteria);
+
+    if (Yii::app()->request->isAjaxRequest) {
+      if (isset($_POST['pages'])) {
+        $this->pageHtml = $this->renderPartial('_list', array(
+          'purchases' => $purchases,
+          'offset' => $offset,
+        ), true);
+      }
+      else $this->pageHtml = $this->renderPartial('userlist', array(
+        'id' => $id,
+        'user' => $user,
+        'section' => $section,
+        'purchases' => $purchases,
+        'offset' => $offset,
+        'offsets' => $purchasesNum,
+      ), true);
+    }
+    else $this->render('userlist', array(
+      'id' => $id,
+      'user' => $user,
+      'section' => $section,
+      'purchases' => $purchases,
+      'offset' => $offset,
+      'offsets' => $purchasesNum,
+    ));
   }
 
   /**

@@ -29,7 +29,7 @@ $orderc->amount = 1;
 if ($good->sizes) {
     foreach ($good->sizes as $size) {
       if (!$orderc->size) $orderc->size = $size->size;
-      $dd_sizes[$size->size . (($size->adv_price > 0) ? ' ['. ActiveHtml::price($size->adv_price) .']' : '')] = $size->size;
+      $dd_sizes[$size->size . (($size->adv_price > 0) ? ' ['. ActiveHtml::price($good->getEndPrice($size->adv_price)) .']' : '')] = $size->size;
       $row_sizes[] = $size->size;
     }
 }
@@ -127,7 +127,7 @@ if ($good->oic) {
             <?php if (in_array($good->purchase->state, array(Purchase::STATE_CALL_STUDY, Purchase::STATE_ORDER_COLLECTION, Purchase::STATE_REORDER))): ?>
             <a class="button" onclick="return Purchase.order()">Заказать</a>
             <?php else: ?>
-            <div class="error">
+            <div class="op_error">
                 Заказ товаров приостановлен
             </div>
             <?php endif; ?>

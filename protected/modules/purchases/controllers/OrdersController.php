@@ -465,7 +465,7 @@ class OrdersController extends Controller {
                         $cache[$h] = $order->$h;
                     }
                     $order->attributes = $_POST['Order'];
-                    $price = $order->good->getEndCustomPrice($order->org_tax, $order->price);
+                    $price = $order->good->getEndCustomPrice($order->org_tax, $order->price, $order->delivery);
 
                     $order->total_price = $price * intval($order->amount);
                     $order->status = Order::STATUS_PROCEEDING;

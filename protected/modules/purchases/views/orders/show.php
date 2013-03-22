@@ -109,6 +109,14 @@ if ($good->oic) {
         <?php echo $order->org_tax ?> %
       </div>
     </div>
+    <?php if (Yii::app()->user->getId() == 1): ?>
+    <div class="order_row clearfix">
+      <div class="order_row_labeled">Стоимость доставки</div>
+      <div class="order_row_label">
+        <?php echo ActiveHtml::price($order->delivery) ?>
+      </div>
+    </div>
+    <?php endif; ?>
     <div class="order_row clearfix">
       <div class="order_row_labeled">Цена + орг. сбор</div>
       <div class="order_row_label">

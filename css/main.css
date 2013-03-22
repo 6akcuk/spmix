@@ -619,7 +619,10 @@ form .success, .op_report {
   line-height: 21px;
 }
 
-form .error, .op_error {
+form .error {
+
+}
+.op_error {
   margin: 5px 0;
   padding: 10px;
   background: #ffefe8;

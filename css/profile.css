@@ -30,12 +30,10 @@
 }
 
 .profile-photo {
-    padding-bottom: 10px
 }
 
 .profile-socials {
     padding: 10px;
-    margin-bottom: 10px;
     background: #f2f2f2;
 }
 .profile-socials .button {
@@ -49,6 +47,29 @@
 .profile-socials .social-status {
     padding: 12px 0 0;
     text-align: center;
+}
+
+.profile-num-menu {
+  padding: 10px 0px;
+}
+.profile-num-menu a {
+  display: block;
+  padding: 2px 6px;
+  line-height: 21px;
+}
+.profile-num-menu a:hover {
+  background: #e9edf1;
+}
+.profile-num-menu .right {
+  color: #8495a6;
+  font-size: 10px;
+  margin: 4px 0px 0px;
+  padding-top: 1px;
+  line-height: 13px;
+}
+.profile-num-menu .iconify_cart_a {
+  margin-top: 2px;
+  font-size: 16px;
 }
 
 .profile-info {

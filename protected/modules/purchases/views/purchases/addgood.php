@@ -36,23 +36,28 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
 )); ?>
 <input type="hidden" id="direction" name="direction" value="0" />
 <div class="purchase_columns clearfix">
-    <div class="left purchase_column">
-        <div class="row">
-            <?php echo $form->inputPlaceholder($model, 'name') ?>
-        </div>
-        <div class="row">
-            <?php echo $form->inputPlaceholder($model, 'artikul') ?>
-        </div>
-        <div class="row">
-            <?php echo $form->inputPlaceholder($model, 'price') ?>
-        </div>
-        <div class="row">
-            <?php echo $form->inputPlaceholder($model, 'url') ?>
-        </div>
-        <div class="row">
-            <?php echo ActiveHtml::upload('image', '', 'Прикрепить фотографию', array('data-image' => 'a')) ?>
-        </div>
+  <div class="left purchase_column">
+    <div class="row">
+      <?php echo $form->inputPlaceholder($model, 'name') ?>
     </div>
+    <div class="row">
+      <?php echo $form->inputPlaceholder($model, 'artikul') ?>
+    </div>
+    <div class="row">
+      <?php echo $form->inputPlaceholder($model, 'price') ?>
+    </div>
+    <?php if (Yii::app()->user->getId() == 1): ?>
+    <div class="row">
+      <?php echo $form->inputPlaceholder($model, 'delivery') ?>
+    </div>
+    <?php endif; ?>
+    <div class="row">
+      <?php echo $form->inputPlaceholder($model, 'url') ?>
+    </div>
+    <div class="row">
+      <?php echo ActiveHtml::upload('image', '', 'Прикрепить фотографию', array('data-image' => 'a')) ?>
+    </div>
+  </div>
     <div class="left purchase_column">
     <?php if ($configs): ?>
     <?php  ?>

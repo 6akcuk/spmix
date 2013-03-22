@@ -45,6 +45,7 @@ class GoodsController extends Controller {
                 $order->customer_id = Yii::app()->user->getId();
                 $order->org_tax = $good->purchase->org_tax;
                 $order->price = $good->price;
+                $order->delivery = $good->delivery;
 
                 foreach ($good->sizes as $size) {
                   if ($size->size == $order->size && $size->adv_price > 0) {

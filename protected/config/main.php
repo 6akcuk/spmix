@@ -90,6 +90,7 @@ return array(
         'good<purchase_id:\d+>_<good_id:\d+>' => 'purchases/goods/show',
         'good<purchase_id:\d+>_<good_id:\d+>/<action:\w+>' => 'purchases/goods/<action>',
         'goods<purchase_id:\d+>' => 'purchases/goods/purchase',
+        'purchases<id:\d+>' => 'purchases/purchases/userlist',
         'purchase<id:\d+>/<action:\w+>' => 'purchases/purchases/<action>',
         'purchase<id:\d+>' => 'purchases/purchases/show',
         'order<order_id:\d+>' => 'purchases/orders/show',

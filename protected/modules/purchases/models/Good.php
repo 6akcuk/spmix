@@ -10,6 +10,7 @@
  * @property integer $is_range
  * @property string $name
  * @property string $price
+ * @property string $delivery
  * @property string $currency
  * @property string $description
  * @property string $artikul
@@ -58,11 +59,12 @@ class Good extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('purchase_id, name, price, currency', 'required', 'on' => 'create'),
-            array('purchase_id, name, artikul, price, is_quick', 'required', 'on' => 'quick'),
+      array('purchase_id, name, artikul, price, is_quick', 'required', 'on' => 'quick'),
 			array('purchase_id, is_quick', 'numerical', 'integerOnly'=>true),
       array('is_range, description, range', 'safe'),
 			array('name', 'length', 'max'=>100),
-			array('price', 'length', 'max'=>10),
+			array('price', 'length', 'max'=>12),
+      array('delivery', 'length', 'max' => 9),
 			array('currency', 'length', 'max'=>3),
 			array('artikul', 'length', 'max'=>50),
 			array('url', 'length', 'max'=>200),
@@ -119,6 +121,7 @@ class Good extends CActiveRecord
       'is_range' => 'Использовать ряды',
 			'name' => 'Название',
 			'price' => 'Цена',
+      'delivery' => 'Стоимость доставки',
 			'currency' => 'Валюта',
 			'description' => 'Описание',
 			'artikul' => 'Артикул',
@@ -129,11 +132,11 @@ class Good extends CActiveRecord
 		);
 	}
 
-    public function getEndPrice($new_price = null) {
-        return floatval(($new_price) ?: $this->price) * ($this->purchase->org_tax / 100 + 1);
+    public function getEndPrice($new_price = null, $new_delivery = null) {
+        return floatval(($new_price) ?: $this->price) * ($this->purchase->org_tax / 100 + 1) + (($new_delivery) ?: $this->delivery);
     }
-  public function getEndCustomPrice($org_tax, $new_price = null) {
-    return ceil(floatval(($new_price) ?: $this->price) * ($org_tax / 100 + 1));
+  public function getEndCustomPrice($org_tax, $new_price = null, $new_delivery = null) {
+    return ceil(floatval(($new_price) ?: $this->price) * ($org_tax / 100 + 1)) + (($new_delivery) ?: $this->delivery);
   }
 
     public function countImages()
