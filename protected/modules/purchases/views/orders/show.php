@@ -21,7 +21,7 @@ $good = $order->good;
 
 if ($good->sizes) {
   foreach ($good->sizes as $size) {
-    $dd_sizes[$size->size . (($size->adv_price > 0) ? ' ['. ActiveHtml::price($size->adv_price) .']' : '')] = $size->size;
+    $dd_sizes[$size->size . (($size->adv_price > 0) ? ' ['. ActiveHtml::price($good->getEndPrice($size->adv_price, $order->delivery)) .']' : '')] = $size->size;
   }
 }
 
@@ -109,18 +109,16 @@ if ($good->oic) {
         <?php echo $order->org_tax ?> %
       </div>
     </div>
-    <?php if (Yii::app()->user->getId() == 1): ?>
     <div class="order_row clearfix">
       <div class="order_row_labeled">Стоимость доставки</div>
       <div class="order_row_label">
         <?php echo ActiveHtml::price($order->delivery) ?>
       </div>
     </div>
-    <?php endif; ?>
     <div class="order_row clearfix">
       <div class="order_row_labeled">Цена + орг. сбор</div>
       <div class="order_row_label">
-        <?php echo ActiveHtml::price($order->good->getEndCustomPrice($order->org_tax, $order->price)) ?>
+        <?php echo ActiveHtml::price($order->good->getEndCustomPrice($order->org_tax, $order->price, $order->delivery)) ?>
       </div>
     </div>
     <div class="order_row clearfix">

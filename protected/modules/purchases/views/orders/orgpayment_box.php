@@ -41,6 +41,7 @@ $sum = 0.00;
       <th>Закупка</th>
       <th>Цена</th>
       <th>Кол-во</th>
+      <th>Стоимость доставки</th>
       <th>Цена с орг.сбором (итог)</th>
       <th>Текущий статус заказа</th>
       <th>Оплачено</th>
@@ -68,6 +69,7 @@ $sum = 0.00;
       <td><?php echo ActiveHtml::link($orderlink->order->purchase->name, '/purchase'. $orderlink->order->purchase_id) ?></td>
       <td><?php echo ActiveHtml::price($orderlink->order->price) ?></td>
       <td><?php echo $orderlink->order->amount ?></td>
+      <td><?php echo ActiveHtml::price($orderlink->order->delivery) ?></td>
       <td><?php echo ActiveHtml::price($orderlink->order->total_price) ?></td>
       <td><?php echo Yii::t('purchase', $orderlink->order->status) ?></td>
       <td><?php echo ActiveHtml::textField('Payed['. $orderlink->order_id .']', $orderlink->order->total_price) ?></td>
@@ -79,6 +81,7 @@ $sum = 0.00;
       <?php endforeach; ?>
     <tr>
       <th>Итого:</th>
+      <td>-</td>
       <td>-</td>
       <td>-</td>
       <td>-</td>

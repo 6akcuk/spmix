@@ -456,6 +456,7 @@ class OrdersController extends Controller {
                       'color' => 'Изменен цвет с {from} на {to}',
                       'price' => 'Изменена цена с {from} на {to}',
                       'org_tax' => 'Изменен орг. сбор с {from} на {to}',
+                      'delivery' => 'Изменена стоимость доставки с {from} на {to}',
                       'amount' => 'Изменено количество товара с {from} на {to}',
                       'total_price' => 'Изменена итог. цена с {from} на {to}',
                       'anonymous' => 'Изменен статус анонимности с {from} на {to}',
@@ -487,6 +488,7 @@ class OrdersController extends Controller {
                               $to = Yii::t('purchase', $to);
                               break;
                             case 'price':
+                            case 'delivery':
                             case 'total_price':
                               $from = ActiveHtml::price($from);
                               $to = ActiveHtml::price($to);
@@ -551,6 +553,7 @@ class OrdersController extends Controller {
             'color' => 'Изменен цвет с {from} на {to}',
             'price' => 'Изменена цена с {from} на {to}',
             'org_tax' => 'Изменен орг. сбор с {from} на {to}',
+            'delivery' => 'Изменена стоимость доставки с {from} на {to}',
             'amount' => 'Изменено количество товара с {from} на {to}',
             'total_price' => 'Изменена итог. цена с {from} на {to}',
             'anonymous' => 'Изменен статус анонимности с {from} на {to}',
@@ -581,6 +584,7 @@ class OrdersController extends Controller {
                     $to = Yii::t('purchase', $to);
                     break;
                   case 'price':
+                  case 'delivery':
                   case 'total_price':
                     $from = ActiveHtml::price($from);
                     $to = ActiveHtml::price($to);
@@ -969,7 +973,7 @@ class OrdersController extends Controller {
           'payment' => $payment,
           'oic' => $oic,
         ), true);
-        $this->boxWidth = 660;
+        $this->boxWidth = 720;
       }
       else $this->render('orgpayment', array(
         'payment' => $payment,

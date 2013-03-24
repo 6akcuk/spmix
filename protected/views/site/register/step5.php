@@ -29,8 +29,11 @@
         </p>
         <?php /** @var $form ActiveForm */
         $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
-            'id' => 'regform',
-            'action' => $this->createUrl('/register'),
+          'id' => 'regform',
+          'action' => $this->createUrl('/register'),
+          'htmlOptions' => array(
+            'onsubmit' => 'register.next(); return false',
+          )
         )); ?>
         <input type="hidden" name="step" value="5" />
         <div class="row">

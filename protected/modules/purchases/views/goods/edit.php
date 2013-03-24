@@ -58,11 +58,9 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
     <div class="row">
       <?php echo $form->inputPlaceholder($good, 'price') ?>
     </div>
-    <?php if (Yii::app()->user->getId() == 1): ?>
     <div class="row">
       <?php echo $form->inputPlaceholder($good, 'delivery') ?>
     </div>
-    <?php endif; ?>
     <div class="row">
       <?php echo $form->inputPlaceholder($good, 'url') ?>
     </div>

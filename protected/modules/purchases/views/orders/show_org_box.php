@@ -21,7 +21,7 @@ $good = $order->good;
 
 if ($good->sizes) {
   foreach ($good->sizes as $size) {
-    $dd_sizes[$size->size . (($size->adv_price > 0) ? ' ['. ActiveHtml::price($size->adv_price) .']' : '')] = $size->size;
+    $dd_sizes[$size->size . (($size->adv_price > 0) ? ' ['. ActiveHtml::price($good->getEndPrice($size->adv_price)) .']' : '')] = $size->size;
   }
 }
 
@@ -100,13 +100,19 @@ if ($good->oic) {
       </td>
     </tr>
     <tr>
-      <td class="label">Цена + орг. сбор</td>
+      <td class="label">Стоимость доставки</td>
       <td>
-        <?php echo ActiveHtml::price($order->good->getEndCustomPrice($order->org_tax, $order->price)) ?>
+        <?php echo $form->textField($order, 'delivery') ?>
       </td>
       <td class="label">Оплачено</td>
       <td>
         <?php echo $form->textField($order, 'payed') ?>
+      </td>
+    </tr>
+    <tr>
+      <td class="label">Цена + орг. сбор</td>
+      <td colspan="3">
+        <?php echo ActiveHtml::price($order->good->getEndCustomPrice($order->org_tax, $order->price, $order->delivery)) ?>
       </td>
     </tr>
     <tr>

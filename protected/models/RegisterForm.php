@@ -44,6 +44,7 @@ class RegisterForm extends CFormModel {
             // Step 4 Scenario
             array('city, gender, lastname, firstname, middlename, login, email, password, phone, agreement', 'required', 'on' => 'step4', 'message' => '{attribute} не может быть пустым'),
             array('phone', 'length', 'on' => 'step4', 'min' => 10),
+            array('phone', 'unique', 'on' => 'step4', 'className' => 'Profile'),
             // Step 5 Scenario
             array('city, gender, lastname, firstname, middlename, login, email, password, phone, agreement, confirm', 'required', 'on' => 'step5', 'message' => '{attribute} не может быть пустым'),
             array('confirm', 'checkConfirm', 'on' => 'step5'),

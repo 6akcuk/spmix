@@ -250,14 +250,16 @@ WHERE twin.member_id = 111 AND t.member_id = 1 AND dialog.type = 0");
 
         if (isset($_POST['RegisterForm'])) {
             $model->attributes=$_POST['RegisterForm'];
-            $model->phone = preg_replace('#[^0-9]#', '', $model->phone);
+            $model->phone = '7'. preg_replace('#[^0-9]#', '', $model->phone);
             $result = array();
 
             if($model->validate()) {
-                $user->setState('regform', $model->attributes);
+              $model->phone = substr($model->phone, 1);
+              $user->setState('regform', $model->attributes);
 
                 // Непосредственно регистрируем пользователя
                 if ($step == 5) {
+
                     $user->clearStates();
 
                     $user = new User();
@@ -288,6 +290,13 @@ WHERE twin.member_id = 111 AND t.member_id = 1 AND dialog.type = 0");
                           $loginform->email = $model->email;
                           $loginform->password = $password;
                           $loginform->login();
+
+                          $cookies = Yii::app()->getRequest()->getCookies();
+                          $cookies->remove('cur_city');
+
+                          $city = new CHttpCookie('cur_city', intval($profile->city_id));
+                          $city->expire = time() + (60 * 60 * 24 * 30 * 12 * 20);
+                          $cookies->add('cur_city', $city);
 
                           if ($model->invite_code) {
                             $invite = new UserInvite();
