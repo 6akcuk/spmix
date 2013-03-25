@@ -13,8 +13,12 @@ class DefaultController extends Controller
     );
   }
 
-	public function actionIndex()
-	{
-		$this->render('index');
-	}
+  public function init() {
+    parent::init();
+
+    if (isset($_GET['act']))
+      $this->defaultAction = $_GET['act'];
+  }
+
+
 }

@@ -13,6 +13,7 @@ class MailModule extends CWebModule
 		$this->setImport(array(
 			'mail.models.*',
 			'mail.components.*',
+      'im.models.*',
 		));
 	}
 

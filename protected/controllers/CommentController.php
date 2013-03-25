@@ -230,10 +230,21 @@ class CommentController extends Controller {
     $criteria->addCondition('comment_id > :id');
     $criteria->params[':id'] = $last_id;
 
+    switch  ($hoop_type) {
+      case 'good':
+        /** @var $hoop Good */
+        $h = Good::model()->with('purchase')->findByPk($hoop_id);
+        $hoop = $h->purchase;
+        break;
+      case 'purchase':
+        $hoop = Purchase::model()->findByPk($hoop_id);
+        break;
+    }
+
     $result = array('items' => array(), 'count' => 0, 'last_id' => $last_id);
     $comments = Comment::model()->findAll($criteria);
     foreach ($comments as $comment) {
-      $result['items'][] = $this->renderPartial('_comment', array('comment' => $comment), true);
+      $result['items'][] = $this->renderPartial('_comment', array('comment' => $comment, 'hoop' => $hoop), true);
     }
 
     $result['count'] = sizeof($comments);
