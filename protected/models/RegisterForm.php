@@ -53,7 +53,7 @@ class RegisterForm extends CFormModel {
 
     public function checkConfirm($attribute, $params) {
         if (!$this->hasErrors()) {
-            $pc = PhoneConfirmation::model()->find('phone = :phone', array(':phone' => '7'. $this->phone));
+            $pc = PhoneConfirmation::model()->find('phone = :phone', array(':phone' => $this->phone));
             if ($pc->code != $this->confirm)
                 $this->addError('confirm', 'Код подтверждения не совпадает с указанным');
         }

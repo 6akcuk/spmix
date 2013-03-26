@@ -119,7 +119,7 @@ $delta = Yii::app()->controller->module->goodsPerPage;
   <a target="div.purchase_history">История действий</a>
   <?php endif; ?>
   <a target="div.purchase_goods" class="selected">Альбом</a>
-  <a target="div.purchase_comments">Комментарии</a>
+  <a target="div.purchase_comments">Комментарии (<?php echo $commentsNum ?>)</a>
 </div>
 <div id="tabs_content">
     <div class="purchase_fullstory" style="display: none">

@@ -259,7 +259,6 @@ WHERE twin.member_id = 111 AND t.member_id = 1 AND dialog.type = 0");
 
                 // Непосредственно регистрируем пользователя
                 if ($step == 5) {
-
                     $user->clearStates();
 
                     $user = new User();

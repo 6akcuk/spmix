@@ -284,6 +284,8 @@ class PurchasesController extends Controller {
         $goodsNum = 0;
       }
 
+      $commentsNum = Comment::model()->count('hoop_id = :id AND hoop_type = :type', array(':id' => $id, ':type' => 'purchase'));
+
       if (Yii::app()->request->isAjaxRequest) {
           if (isset($_POST['pages'])) {
               $this->pageHtml = $this->renderPartial('_goodlist', array(
@@ -291,9 +293,21 @@ class PurchasesController extends Controller {
                   'offset' => $offset,
               ), true);
           }
-          else $this->pageHtml = $this->renderPartial('show', array('purchase' => $purchase, 'goods' => $goods, 'offset' => $offset, 'offsets' => $goodsNum), true);
+          else $this->pageHtml = $this->renderPartial('show', array(
+            'purchase' => $purchase,
+            'goods' => $goods,
+            'offset' => $offset,
+            'offsets' => $goodsNum,
+            'commentsNum' => $commentsNum,
+          ), true);
       }
-      else $this->render('show', array('purchase' => $purchase, 'goods' => $goods, 'offset' => $offset, 'offsets' => $goodsNum));
+      else $this->render('show', array(
+        'purchase' => $purchase,
+        'goods' => $goods,
+        'offset' => $offset,
+        'offsets' => $goodsNum,
+        'commentsNum' => $commentsNum,
+      ));
     }
 
     public function actionCreate() {
