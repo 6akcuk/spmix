@@ -53,7 +53,7 @@ class OrdersController extends Controller {
     $pur_criteria = new CDbCriteria();
     $pur_criteria->addInCondition('t.purchase_id', $p_ids);
     $pur_criteria->compare('user_oic.customer_id', Yii::app()->user->getId());
-    $_purchases = Purchase::model()->with('user_oic')->findAll($pur_criteria);
+    $_purchases = Purchase::model()->with(array('user_oic' => array('joinType' => 'LEFT JOIN')))->findAll($pur_criteria);
     foreach ($_purchases as $p) {
       $purchases[$p->purchase_id] = $p;
       $stat[$p->purchase_id]['sum'] += floatval($p->user_oic->oic_price);
@@ -119,7 +119,7 @@ class OrdersController extends Controller {
       $pur_criteria = new CDbCriteria();
       $pur_criteria->addInCondition('t.purchase_id', $p_ids);
       $pur_criteria->compare('user_oic.customer_id', Yii::app()->user->getId());
-      $_purchases = Purchase::model()->with('user_oic')->findAll($pur_criteria);
+      $_purchases = Purchase::model()->with(array('user_oic' => array('joinType' => 'LEFT JOIN')))->findAll($pur_criteria);
       foreach ($_purchases as $p) {
         $purchases[$p->purchase_id] = $p;
         $stat[$p->purchase_id]['sum'] += floatval($p->user_oic->oic_price);
@@ -185,7 +185,7 @@ class OrdersController extends Controller {
     $pur_criteria = new CDbCriteria();
     $pur_criteria->addInCondition('t.purchase_id', $p_ids);
     $pur_criteria->compare('user_oic.customer_id', Yii::app()->user->getId());
-    $_purchases = Purchase::model()->with('user_oic')->findAll($pur_criteria);
+    $_purchases = Purchase::model()->with(array('user_oic' => array('joinType' => 'LEFT JOIN')))->findAll($pur_criteria);
     foreach ($_purchases as $p) {
       $purchases[$p->purchase_id] = $p;
       $stat[$p->purchase_id]['sum'] += floatval($p->user_oic->oic_price);

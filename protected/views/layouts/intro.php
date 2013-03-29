@@ -3,17 +3,20 @@ $app=Yii::app();
 $request = $app->getRequest();
 /** @var $cookies CCookieCollection */
 $cookies = $request->getCookies();
+
+Yii::app()->getClientScript()->registerScriptFile('/js/jquery-1.8.2.min.js');
+Yii::app()->getClientScript()->registerScriptFile('/js/main.js');
+Yii::app()->getClientScript()->registerScriptFile('/js/jquery.nivo.slider.pack.js');
+Yii::app()->getClientScript()->registerCssFile('/css/main.css', '', 'before purchases.css');
+Yii::app()->getClientScript()->registerCssFile('/css/elements.css', '', 'before main.css');
+Yii::app()->getClientScript()->registerCssFile('/css/icons.css');
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/main.css" />
-        <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/elements.css" />
-        <script type="text/javascript" src="<?php  echo Yii::app()->request->baseUrl; ?>/js/jquery-1.8.2.min.js"></script>
-        <script type="text/javascript" src="<?php  echo Yii::app()->request->baseUrl; ?>/js/main.js"></script>
-        <script type="text/javascript" src="<?php  echo Yii::app()->request->baseUrl; ?>/js/jquery-1.7.1.min.js"></script>
-        <script type="text/javascript" src="<?php  echo Yii::app()->request->baseUrl; ?>/js/jquery.nivo.slider.pack.js"></script>
+        <title><?php echo CHtml::encode($this->pageTitle); ?></title>
         <link rel="stylesheet" href="<?php  echo Yii::app()->request->baseUrl; ?>/css/nivo.css" type="text/css" media="screen" />
         <link rel="stylesheet" href="<?php  echo Yii::app()->request->baseUrl; ?>/css/default.css" type="text/css" media="screen" />
         <script type="text/javascript">
@@ -34,7 +37,6 @@ $cookies = $request->getCookies();
                 location.replace(location.protocol + '//' + location.host + '/' + hshtest.replace(/^(\/|!)/, ''));
             }
         </script>
-        <title><?php echo CHtml::encode($this->pageTitle); ?></title>
     </head>
     <body>
     <div class="wrapper">
@@ -43,17 +45,20 @@ $cookies = $request->getCookies();
                 <a href="/" class="logo_a"></a>
             </div>
             <div class="fl_l login">
-                <div class="clearfix">
-                <?php echo ActiveHtml::dropdown('cur_city', 'Город', ($cookies['cur_city']) ? $cookies['cur_city']->value : '', City::getDataArray()) ?>
-                </div>
-                <?php
-                if (Yii::app()->user->getIsGuest()) {
-                    $this->widget('application.modules.users.components.LoginWidget');
-                }
-                ?>
-                <div class="login_reg">
-                    <a href="/register" class="btn green">Зарегистрироваться</a>
-                </div>
+              <div class="clearfix">
+              <?php echo ActiveHtml::dropdown('cur_city', 'Город', ($cookies['cur_city']) ? $cookies['cur_city']->value : '', City::getDataArray()) ?>
+              </div>
+              <?php
+              if (Yii::app()->user->getIsGuest()) {
+                  $this->widget('application.modules.users.components.LoginWidget');
+              }
+              ?>
+              <div class="login_reg">
+                <a href="/site/forgot" class="btn green">Восстановить пароль</a>
+              </div>
+              <div class="login_reg">
+                <a href="/register" class="btn green">Зарегистрироваться</a>
+              </div>
             </div>
             <div class="clear"></div>
         </div>
@@ -111,16 +116,6 @@ $cookies = $request->getCookies();
         Посетители сайта принимающие участие в закупках называются участники. Фактически участнику не нужно знать про тонкости работы с поставщиками, с отгрузками товара, особеностями заказа – эти задачи берет не себя организатор. Главные обязанности участника вовремя оплатить свою заявку и забрать свой заказ.
             </div>
     </div>
-    <div class="main">
-        <div class="wrapper">
-            <?php $this->widget('application.modules.purchases.components.NewPurchases') ?>
-        </div>
-    </div>
-
-    <div class="wrapper">
-        <div class="wrapper_content">
-
-        </div>
-    </div>
+    <?php $this->widget('application.modules.purchases.components.NewPurchases') ?>
 </body>
 </html>

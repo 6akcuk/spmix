@@ -9,20 +9,23 @@
 Yii::import('zii.widgets.CPortlet');
 
 class NewPurchases extends CPortlet {
-    protected function renderContent() {
-        $cookies = Yii::app()->getRequest()->getCookies();
+  protected function renderContent() {
+    $cookies = Yii::app()->getRequest()->getCookies();
 
-        $criteria = new CDbCriteria();
-        $criteria->limit = 4;
-        $criteria->order = 'create_date DESC';
+    $criteria = new CDbCriteria();
+    $criteria->limit = 4;
+    $criteria->order = 'create_date DESC';
 
-        if ($cookies['cur_city']) {
-            $criteria->params[':city_id'] = $cookies['cur_city']->value;
-            $criteria->addCondition('city_id = :city_id');
-        }
-
-        Yii::import('application.modules.purchases.models.*');
-        $purchases = Purchase::model()->with('author', 'city', 'external')->findAll($criteria);
-        $this->render('newpurchases', array('purchases' => $purchases));
+    if ($cookies['cur_city']) {
+        $criteria->params[':city_id'] = $cookies['cur_city']->value;
+        $criteria->addCondition('city_id = :city_id');
     }
+
+    $criteria->addCondition("image != ''");
+    $criteria->addCondition("(state IN ('Draft', 'Call Study') OR (state NOT IN ('Draft', 'Call Study') AND mod_confirmation = 1))");
+
+    Yii::import('application.modules.purchases.models.*');
+    $purchases = Purchase::model()->with('author', 'city', 'external')->findAll($criteria);
+    $this->render('newpurchases', array('purchases' => $purchases));
+  }
 }

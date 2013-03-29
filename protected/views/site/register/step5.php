@@ -38,7 +38,7 @@
         <input type="hidden" name="step" value="5" />
         <div class="row">
             <?php echo $form->inputPlaceholder($model, 'confirm') ?>
-            <a id="sendCodeLink" onclick="register.sendCode(true)" title="Повторно отправить код подтверждения" class="tt iconify_refresh_a"></a>
+            <a id="sendCodeLink" onclick="register.sendCode(true)" title="Повторно отправить код подтверждения" class="tt">Повторно отправить код</a>
         </div>
         <?php $this->endWidget(); ?>
         <div class="buttons clearfix">

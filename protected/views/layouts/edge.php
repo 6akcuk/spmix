@@ -40,7 +40,7 @@ Yii::app()->getClientScript()->registerCssFile('/css/elements.css');
           <div class="wrap">
               <div id="top_intro" class="clearfix">
                   <div class="left">
-                      <h1>SPMix</h1>
+                      <h1><a href="/">SPMix</a></h1>
                   </div>
                   <div class="right">
                       <?php

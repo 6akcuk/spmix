@@ -259,7 +259,7 @@ class ProfilesController extends Controller {
 
     if ($invite->validate()) {
       $sms = new SmsDelivery(Yii::app()->params['smsUsername'], Yii::app()->params['smsPassword']);
-      $sms->SendMessage($invite->phone, Yii::app()->params['smsNumber'], $invite->name .', '. Yii::app()->user->model->profile->firstname .', удобный сайт оптовых закупок SPMIX.ru. Приглашение №'. Yii::app()->user->getId());
+      $sms->SendMessage($invite->phone, Yii::app()->params['smsNumber'], $invite->name .', удобный сайт оптовых закупок SPMIX.ru. Приглашение №'. Yii::app()->user->getId());
 
       $result['success'] = true;
       $result['msg'] = 'Сообщение успешно отправлено';

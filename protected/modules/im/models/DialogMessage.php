@@ -105,6 +105,97 @@ class DialogMessage extends CActiveRecord
         else return false;
     }
 
+  protected static function _messageReader(CDbDataReader $dataReader) {
+    $result = array();
+
+    while (($row = $dataReader->read()) !== false) {
+      $message = new DialogMessage();
+      $message->author_id = $row['author_id'];
+      $message->creation_date = $row['creation_date'];
+      $message->attaches = $row['attaches'];
+      $message->dialog_id = $row['dialog_id'];
+      $message->message = $row['message'];
+      $message->message_id = $row['message_id'];
+      $message->message_delete = $row['message_delete'];
+
+      $user = new User();
+      $user->id = $row['id'];
+      $user->email = $row['email'];
+      $user->login = $row['login'];
+
+      $profile = new Profile();
+      $profile->user_id = $row['user_id'];
+      $profile->photo = $row['photo'];
+      $profile->firstname = $row['firstname'];
+      $profile->lastname = $row['lastname'];
+
+      $user->profile = $profile;
+      $message->author = $user;
+
+      $result[] = $message;
+    }
+
+    return $result;
+  }
+
+  public static function getInboxMessages($recipient_id, $offset, $c = array()) {
+    /** @var $conn CDbConnection */
+    $conn = Yii::app()->db;
+    $command = $conn->createCommand();
+
+    $where = array();
+    $where[] = 'm.member_id = :mid';
+    $where[] = 'msg.author_id != :aid';
+
+    if (isset($c['msg'])) {
+      $keyword = strtr($c['msg'], array('%'=>'\%', '_'=>'\_'));
+      $where[] = "msg.message LIKE '%:msg%'";
+      $command->bindParam(':msg', $keyword);
+    }
+
+    $command->select('*')
+      ->from('dialog_members m')
+      ->join('dialog_messages msg', 'msg.dialog_id = m.dialog_id')
+      ->join('users u', 'u.id = msg.author_id')
+      ->join('profiles p', 'p.user_id = u.id')
+      ->where(implode(' AND ', $where))
+      ->limit(Yii::app()->getModule('mail')->messagesPerPage, $offset);
+
+    $command->bindParam(':mid', $recipient_id);
+    $command->bindParam(':aid', $recipient_id);
+
+    return self::_messageReader($command->query());
+  }
+
+  public static function countInboxMessages($recipient_id, $c = array()) {
+    /** @var $conn CDbConnection */
+    $conn = Yii::app()->db;
+    $command = $conn->createCommand();
+
+    $where = array();
+    $where[] = 'm.member_id = :mid';
+    $where[] = 'msg.author_id != :aid';
+
+    if (isset($c['msg'])) {
+      $keyword = strtr($c['msg'], array('%'=>'\%', '_'=>'\_'));
+      $where[] = "msg.message LIKE '%:msg%'";
+      $command->bindParam(':msg', $keyword);
+    }
+
+    $command->select('COUNT(*) as num')
+            ->from('dialog_members m')
+            ->join('dialog_messages msg', 'msg.dialog_id = m.dialog_id')
+            ->join('users u', 'u.id = msg.author_id')
+            ->join('profiles p', 'p.user_id = u.id')
+            ->where(implode(' AND ', $where));
+
+    $command->bindParam(':mid', $recipient_id);
+    $command->bindParam(':aid', $recipient_id);
+
+    $result = $command->queryRow();
+    return $result['num'];
+  }
+
     /**
      * Отправить сообщение (Instant Message)
      *
