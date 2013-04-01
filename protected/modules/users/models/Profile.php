@@ -104,7 +104,17 @@ class Profile extends CActiveRecord
 	}
 
   public function getProfileImage($size = 'b') {
-    return ($this->photo) ? ActiveHtml::showUploadImage($this->photo, $size) : '<img src="/images/camera_a.gif" />';
+    $width = 'auto';
+    $height = 'auto';
+
+    if ($size == 'b') {
+      $width = 100; $height = 100;
+    }
+    elseif ($size == 'c') {
+      $width = 70; $height = 70;
+    }
+
+    return ($this->photo) ? ActiveHtml::showUploadImage($this->photo, $size) : '<img src="/images/camera_a.gif" width="'. $width .'" height="'. $height .'" />';
   }
 
     public function genderToInt() {

@@ -1,0 +1,40 @@
+<?php
+/**
+ * @var $message DialogMessage
+ */
+
+?>
+<?php foreach ($messages as $message): ?>
+<tr class="<?php if ($message->isNew) echo "new_msg" ?>" read="<?php if (!$message->isNew) echo "1" ?>" id="mess<?php echo $message->message_id ?>">
+  <td class="mail_check" onmousedown="event.cancelBubble = true;">
+    <input type="checkbox" name="checkMsg[]" value="<?php echo $message->message_id ?>" />
+  </td>
+  <td class="mail_photo">
+    <?php echo ActiveHtml::link($message->author->profile->getProfileImage('c'), '/id'. $message->author_id, array('onmousedown' => 'event.cancelBubble = true;')) ?>
+  </td>
+  <td class="mail_from">
+    <div class="name wrapped">
+      <?php echo ActiveHtml::link($message->author->getDisplayName(), '/id'. $message->author_id, array('onmousedown' => 'event.cancelBubble = true;')) ?>
+    </div>
+    <?php if ($message->author->isOnline()): ?>
+    <div class="online">Online</div>
+    <?php endif; ?>
+    <div class="date">
+      <?php echo ActiveHtml::date($message->creation_date, true, true) ?>
+    </div>
+  </td>
+  <td class="mail_contents">
+    <div class="mail_topic">
+      <?php echo ActiveHtml::link(' ... ', '/mail?act=show&id='. $message->message_id) ?>
+    </div>
+    <div class="mail_body">
+      <?php $body = mb_substr($message->message, 0, 100, 'utf-8') ?>
+      <?php if (mb_strlen($message->message, 'utf-8') > 100) $body .= '...'; ?>
+      <?php echo ActiveHtml::link($body, '/mail?act=show&id='. $message->message_id) ?>
+    </div>
+  </td>
+  <td class="mail_actions">
+    <a href="#" onclick="mail.deleteMsg(<?php echo $message->message_id ?>); return false;" onmousedown="event.cancelBubble = true;">Удалить</a>
+  </td>
+</tr>
+<?php endforeach; ?>

@@ -12,9 +12,10 @@
 }
 
 .summary {
-    padding: 12px 10px 0px;
+    padding: 12px 10px 4px;
     font-size: 12px;
     font-weight: bold;
+  border-bottom: 1px solid #dae1e8;
 }
 
 #imform {
@@ -624,4 +625,50 @@ a.im_date_link {
 /* Attaches */
 .im_attaches {
     padding-top: 5px;
+}
+
+/* Messages */
+#messages td {
+  border-bottom: 1px solid #eee;
+  padding: 10px 0px;
+  cursor: pointer;
+  vertical-align: middle;
+}
+#messages tr.new_msg {
+  background: #d4e0c3;
+}
+
+#messages .mail_check {
+  width: 34px;
+  padding: 0px;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+}
+#messages .mail_photo {
+  width: 80px;
+}
+#messages .mail_from {
+  width: 125px;
+}
+#messages .mail_from .name {
+  width: 125px;
+  overflow: hidden;
+}
+#messages .online {
+  color: #aaa;
+  margin: 4px 0px;
+}
+#messages .date {
+  color: #777;
+  font-size: 0.81em;
+}
+#messages .mail_contents {
+  padding: 6px 15px 6px 15px;
+  width: 425px;
+  overflow: hidden;
+  line-height: 150%;
+}
+#messages .mail_actions {
+  text-align: center;
 }

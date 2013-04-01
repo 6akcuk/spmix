@@ -122,6 +122,7 @@ class DialogMessage extends CActiveRecord
       $user->id = $row['id'];
       $user->email = $row['email'];
       $user->login = $row['login'];
+      $user->lastvisit = $row['lastvisit'];
 
       $profile = new Profile();
       $profile->user_id = $row['user_id'];
@@ -129,8 +130,16 @@ class DialogMessage extends CActiveRecord
       $profile->firstname = $row['firstname'];
       $profile->lastname = $row['lastname'];
 
+      $request = new ProfileRequest();
+      $request->req_id = $row['req_id'];
+      $request->req_link_id = $row['req_link_id'];
+      $request->req_type = $row['req_type'];
+      $request->owner_id = $row['owner_id'];
+      $request->viewed = $row['viewed'];
+
       $user->profile = $profile;
       $message->author = $user;
+      $message->isNew = ($request->req_id) ? $request : null;
 
       $result[] = $message;
     }
@@ -158,7 +167,9 @@ class DialogMessage extends CActiveRecord
       ->join('dialog_messages msg', 'msg.dialog_id = m.dialog_id')
       ->join('users u', 'u.id = msg.author_id')
       ->join('profiles p', 'p.user_id = u.id')
+      ->leftJoin('profile_requests req', 'req.req_link_id = msg.message_id')
       ->where(implode(' AND ', $where))
+      ->order('msg.creation_date DESC')
       ->limit(Yii::app()->getModule('mail')->messagesPerPage, $offset);
 
     $command->bindParam(':mid', $recipient_id);
