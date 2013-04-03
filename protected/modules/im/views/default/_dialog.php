@@ -26,6 +26,7 @@
                 <?php endforeach; ?>
             <?php elseif ($dialog->type == Dialog::TYPE_CONFERENCE): ?>
                 <?php foreach ($dialog->members as $idx => $member): ?>
+                  <?php if ($idx > 3) break; ?>
                     <?php echo ActiveHtml::link(
                         '<div class="dialogs_inline_chatter"'. (($idx % 2) ? ' style="margin-right:0"' : '') .'>' .
                         (($member->user->profile->photo != '0')

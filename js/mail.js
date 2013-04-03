@@ -37,7 +37,7 @@ var mail = {
     $('#mail_actions').show();
 
     if (!A.mailSummary) A.mailSummary = $('#mail_summary').text();
-    $('#mail_summary').text('Выделено сообщений: '+ $('#messages input[type="checkbox"]:checked').length);
+    $('#mail_summary').text('Выделено сообщений: '+ mail.getSelected().length);
   },
   hideMailActions: function() {
     $('#mail_search').show();
@@ -49,6 +49,38 @@ var mail = {
 
   _reset: function() {
     A.mailNewChecked = null; A.mailReadedChecked = null; A.mailAllChecked = null; A.mailSummary = null;
+  },
+
+  getSelected: function() {
+    return $('#messages input[type="checkbox"]:checked');
+  },
+  deleteSelected: function() {
+    var $list = mail.getSelected();
+  },
+
+  markAsReaded: function() {
+    var $list = mail.getSelected(), items = [];
+    $.each($list, function(i,item) {
+      items.push(parseInt($(item).val()));
+    });
+
+    ajax.post('/mail?act=mark_readed', {items: items}, function(r) {
+
+    }, function(xhr) {
+
+    });
+  },
+  markAsNew: function() {
+    var $list = mail.getSelected();
+    $.each($list, function(i,item) {
+      items.push(parseInt($(item).val()));
+    });
+
+    ajax.post('/mail?act=mark_new', {items: items}, function(r) {
+
+    }, function(xhr) {
+
+    });
   }
 };
 

@@ -193,7 +193,7 @@ SELECT * FROM `dialogs` AS t
 
                 $member->user->profile = new Profile();
                 $member->user->profile->user_id = $_id;
-                $member->user->profile->photo = $photo[$idx];
+                $member->user->profile->photo = (isset($photo[$idx])) ? $photo[$idx] : null;
                 $member->user->profile->firstname = $firstname[$idx];
                 $member->user->profile->lastname = $lastname[$idx];
 

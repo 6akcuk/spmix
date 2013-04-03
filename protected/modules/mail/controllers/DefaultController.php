@@ -37,12 +37,14 @@ class DefaultController extends Controller
       }
       else $this->pageHtml = $this->renderPartial('inbox', array(
         'messages' => $messages,
+        'c' => $c,
         'offset' => $offset,
         'offsets' => $offsets,
       ), true);
     }
     else $this->render('inbox', array(
       'messages' => $messages,
+      'c' => $c,
       'offset' => $offset,
       'offsets' => $offsets,
     ));

@@ -152,14 +152,17 @@ class DialogMessage extends CActiveRecord
     $conn = Yii::app()->db;
     $command = $conn->createCommand();
 
-    $where = array();
+    $where = $params = array();
+    $where[] = 'and';
     $where[] = 'm.member_id = :mid';
     $where[] = 'msg.author_id != :aid';
 
+    $params[':mid'] = $recipient_id;
+    $params[':aid'] = $recipient_id;
+
     if (isset($c['msg'])) {
       $keyword = strtr($c['msg'], array('%'=>'\%', '_'=>'\_'));
-      $where[] = "msg.message LIKE '%:msg%'";
-      $command->bindParam(':msg', $keyword);
+      $where[] = array('like', 'msg.message', '%'. $keyword .'%');
     }
 
     $command->select('*')
@@ -168,12 +171,9 @@ class DialogMessage extends CActiveRecord
       ->join('users u', 'u.id = msg.author_id')
       ->join('profiles p', 'p.user_id = u.id')
       ->leftJoin('profile_requests req', 'req.req_link_id = msg.message_id')
-      ->where(implode(' AND ', $where))
+      ->where($where, $params)
       ->order('msg.creation_date DESC')
       ->limit(Yii::app()->getModule('mail')->messagesPerPage, $offset);
-
-    $command->bindParam(':mid', $recipient_id);
-    $command->bindParam(':aid', $recipient_id);
 
     return self::_messageReader($command->query());
   }
@@ -183,14 +183,17 @@ class DialogMessage extends CActiveRecord
     $conn = Yii::app()->db;
     $command = $conn->createCommand();
 
-    $where = array();
+    $where = $params = array();
+    $where[] = 'and';
     $where[] = 'm.member_id = :mid';
     $where[] = 'msg.author_id != :aid';
 
+    $params[':mid'] = $recipient_id;
+    $params[':aid'] = $recipient_id;
+
     if (isset($c['msg'])) {
       $keyword = strtr($c['msg'], array('%'=>'\%', '_'=>'\_'));
-      $where[] = "msg.message LIKE '%:msg%'";
-      $command->bindParam(':msg', $keyword);
+      $where[] = array('like', 'msg.message', '%'. $keyword .'%');
     }
 
     $command->select('COUNT(*) as num')
@@ -198,10 +201,7 @@ class DialogMessage extends CActiveRecord
             ->join('dialog_messages msg', 'msg.dialog_id = m.dialog_id')
             ->join('users u', 'u.id = msg.author_id')
             ->join('profiles p', 'p.user_id = u.id')
-            ->where(implode(' AND ', $where));
-
-    $command->bindParam(':mid', $recipient_id);
-    $command->bindParam(':aid', $recipient_id);
+            ->where($where, $params);
 
     $result = $command->queryRow();
     return $result['num'];

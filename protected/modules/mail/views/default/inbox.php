@@ -27,9 +27,9 @@ $delta = Yii::app()->controller->module->messagesPerPage;
     <a onclick="mail.selectNew()">новые</a>
   </div>
   <div id="mail_actions" style="display: none" class="right">
-    <a class="button">Удалить</a>
-    <a class="button">Отметить как прочитанные</a>
-    <a class="button">Отметить как новые</a>
+    <a class="button" onclick="mail.deleteSelected()">Удалить</a>
+    <a class="button" onclick="mail.markAsReaded()">Отметить как прочитанные</a>
+    <a class="button" onclick="mail.markAsNew()">Отметить как новые</a>
   </div>
   <div id="mail_search" rel="filters" class="right">
     <?php echo ActiveHtml::inputPlaceholder('c[msg]', (isset($c['msg'])) ? $c['msg'] : '', array('placeholder' => 'Поиск сообщений')) ?>
