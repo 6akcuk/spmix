@@ -1,8 +1,10 @@
 var mail = {
   selectAll: function() {
     mail.deselectAll();
+    var list = $('#messages input[type="checkbox"]');
+    if (list.length == 0) return;
 
-    $('#messages input[type="checkbox"]').attr('checked', (!A.mailAllChecked));
+    list.attr('checked', (!A.mailAllChecked));
     A.mailAllChecked = !A.mailAllChecked;
     A.mailReadedChecked = false;
     A.mailNewChecked = false;
@@ -11,11 +13,14 @@ var mail = {
   },
   deselectAll: function() {
     $('#messages input[type="checkbox"]').attr('checked', false);
+    mail.hideMailActions();
   },
   selectReaded: function() {
     mail.deselectAll();
+    var list = $('#messages tr[read="1"] input[type="checkbox"]');
+    if (list.length == 0) return;
 
-    $('#messages tr[read="1"] input[type="checkbox"]').attr('checked', (!A.mailReadedChecked));
+    list.attr('checked', (!A.mailReadedChecked));
     A.mailReadedChecked = !A.mailReadedChecked;
     A.mailAllChecked = false;
     A.mailNewChecked = false;
@@ -24,13 +29,18 @@ var mail = {
   },
   selectNew: function() {
     mail.deselectAll();
+    var list = $('#messages tr[read!="1"] input[type="checkbox"]');
+    if (list.length == 0) return;
 
-    $('#messages tr[read!="1"] input[type="checkbox"]').attr('checked', (!A.mailNewChecked));
+    list.attr('checked', (!A.mailNewChecked));
     A.mailNewChecked = !A.mailNewChecked;
     A.mailReadedChecked = false;
     A.mailAllChecked = false;
 
     (A.mailNewChecked) ? mail.showMailActions() : mail.hideMailActions();
+  },
+  select: function() {
+    (mail.getSelected().length) ? mail.showMailActions() : mail.hideMailActions();
   },
   showMailActions: function() {
     $('#mail_search').hide();
@@ -43,7 +53,7 @@ var mail = {
     $('#mail_search').show();
     $('#mail_actions').hide();
 
-    $('#mail_summary').text(A.mailSummary);
+    if (A.mailSummary) $('#mail_summary').text(A.mailSummary);
     A.mailSummary = null;
   },
 
@@ -57,6 +67,9 @@ var mail = {
   deleteSelected: function() {
     var $list = mail.getSelected();
   },
+  deleteMsg: function(msg_id) {
+
+  },
 
   markAsReaded: function() {
     var $list = mail.getSelected(), items = [];
@@ -65,19 +78,29 @@ var mail = {
     });
 
     ajax.post('/mail?act=mark_readed', {items: items}, function(r) {
-
+      if (r.success) {
+        updMessCounter(r.pm);
+        $.each(r.backlist, function(i, item) {
+          $('#mess'+ item).removeClass('new_msg').attr('read', '1');
+        });
+      }
     }, function(xhr) {
 
     });
   },
   markAsNew: function() {
-    var $list = mail.getSelected();
+    var $list = mail.getSelected(), items = [];
     $.each($list, function(i,item) {
       items.push(parseInt($(item).val()));
     });
 
     ajax.post('/mail?act=mark_new', {items: items}, function(r) {
-
+      if (r.success) {
+        updMessCounter(r.pm);
+        $.each(r.backlist, function(i, item) {
+          $('#mess'+ item).addClass('new_msg').attr('read', '');
+        });
+      }
     }, function(xhr) {
 
     });

@@ -6,7 +6,7 @@
 ?>
 <?php foreach ($messages as $message): ?>
 <tr class="<?php if ($message->isNew) echo "new_msg" ?>" read="<?php if (!$message->isNew) echo "1" ?>" id="mess<?php echo $message->message_id ?>">
-  <td class="mail_check" onmousedown="event.cancelBubble = true;">
+  <td class="mail_check" onclick="mail.select()" onmousedown="event.cancelBubble = true;">
     <input type="checkbox" name="checkMsg[]" value="<?php echo $message->message_id ?>" />
   </td>
   <td class="mail_photo">
@@ -25,7 +25,7 @@
   </td>
   <td class="mail_contents">
     <div class="mail_topic">
-      <?php echo ActiveHtml::link(' ... ', '/mail?act=show&id='. $message->message_id) ?>
+      <?php echo ActiveHtml::link(($message->dialog->type == Dialog::TYPE_TET) ? ' ... ' : ''. $message->dialog->title, '/mail?act=show&id='. $message->message_id) ?>
     </div>
     <div class="mail_body">
       <?php $body = mb_substr($message->message, 0, 100, 'utf-8') ?>

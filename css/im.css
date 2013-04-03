@@ -663,6 +663,9 @@ a.im_date_link {
   color: #777;
   font-size: 0.81em;
 }
+#messages .mail_topic a {
+  color: #006600;
+}
 #messages .mail_contents {
   padding: 6px 15px 6px 15px;
   width: 425px;
@@ -671,4 +674,15 @@ a.im_date_link {
 }
 #messages .mail_actions {
   text-align: center;
+}
+
+#messages tr.mail_del_row {
+  background: #FEFAE4;
+}
+#messages tr.mail_del_row td {
+  border-bottom: 1px solid #e2daa6;
+  cursor: default;
+}
+#messages tr.mail_del_row .mail_contents {
+  color: #908851;
 }

@@ -118,6 +118,12 @@ class DialogMessage extends CActiveRecord
       $message->message_id = $row['message_id'];
       $message->message_delete = $row['message_delete'];
 
+      $dialog = new Dialog();
+      $dialog->title = $row['title'];
+      $dialog->dialog_id = $row['dialog_id'];
+      $dialog->leader_id = $row['leader_id'];
+      $dialog->type = $row['type'];
+
       $user = new User();
       $user->id = $row['id'];
       $user->email = $row['email'];
@@ -138,6 +144,7 @@ class DialogMessage extends CActiveRecord
       $request->viewed = $row['viewed'];
 
       $user->profile = $profile;
+      $message->dialog = $dialog;
       $message->author = $user;
       $message->isNew = ($request->req_id) ? $request : null;
 
@@ -156,6 +163,7 @@ class DialogMessage extends CActiveRecord
     $where[] = 'and';
     $where[] = 'm.member_id = :mid';
     $where[] = 'msg.author_id != :aid';
+    $where[] = 'msg.message_delete IS NULL';
 
     $params[':mid'] = $recipient_id;
     $params[':aid'] = $recipient_id;
@@ -167,11 +175,13 @@ class DialogMessage extends CActiveRecord
 
     $command->select('*')
       ->from('dialog_members m')
+      ->join('dialogs d', 'd.dialog_id = m.dialog_id')
       ->join('dialog_messages msg', 'msg.dialog_id = m.dialog_id')
       ->join('users u', 'u.id = msg.author_id')
       ->join('profiles p', 'p.user_id = u.id')
-      ->leftJoin('profile_requests req', 'req.req_link_id = msg.message_id')
+      ->leftJoin('profile_requests req', 'req.req_link_id = msg.message_id AND req.owner_id = '. $recipient_id)
       ->where($where, $params)
+      ->group('msg.message_id')
       ->order('msg.creation_date DESC')
       ->limit(Yii::app()->getModule('mail')->messagesPerPage, $offset);
 
@@ -187,6 +197,7 @@ class DialogMessage extends CActiveRecord
     $where[] = 'and';
     $where[] = 'm.member_id = :mid';
     $where[] = 'msg.author_id != :aid';
+    $where[] = 'msg.message_delete IS NULL';
 
     $params[':mid'] = $recipient_id;
     $params[':aid'] = $recipient_id;
