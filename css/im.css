@@ -686,3 +686,142 @@ a.im_date_link {
 #messages tr.mail_del_row .mail_contents {
   color: #908851;
 }
+
+.mail_message {
+  background: #fafafa;
+  padding: 34px 0px 36px;
+}
+.mail_envelope_wrap {
+  border: 1px solid #447229;
+  padding: 0px;
+  margin: 0px auto;
+  width: 526px;
+}
+.mail_envelope {
+  border: 12px solid #70973f;
+  padding: 18px 20px;
+  background: #fff;
+}
+.mail_envelope td {
+  vertical-align: top;
+}
+.mail_envelope_photo_cell {
+  width: 120px;
+  padding: 0px;
+}
+.mail_envelope_photo {
+  width: 100px;
+  height: 100px;
+  overflow: hidden;
+}
+.mail_envelope h4 {
+  border-bottom: 1px solid #e7eaed;
+  margin: 0px 0px 4px;
+  padding: 0px 0px 4px;
+  font-size: 1.09em;
+  line-height: 1.27em;
+}
+.mail_envelope h4 .right {
+  font-size: 11px;
+  font-weight: normal;
+  padding-left: 5px;
+}
+.mail_envelope_time {
+  color: #999;
+  font-size: 0.81em;
+  margin: 2px 0px 15px;
+  font-weight: normal;
+}
+.mail_envelope_body {
+  padding-bottom: 8px;
+  padding-left: 4px;
+  margin-left: -4px;
+  width: 325px;
+  line-height: 150%;
+}
+.mail_envelope_form {
+  padding: 20px 0px 10px;
+}
+.mail_post_progress {
+  display: none;
+  padding: 7px 10px;
+}
+.mail_post_attaches {
+  padding-bottom: 10px;
+}
+.mail_attach_photo {
+  position: relative;
+  margin-right: 10px;
+}
+.mail_attach_photo .photo_attach_delete {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  padding: 3px;
+  border-radius: 2px;
+  background: rgba(0, 0, 0, .75);
+}
+#mail_message {
+  width: 445px;
+  height: 94px;
+  margin-bottom: 0px;
+}
+
+/* Mail History */
+#mail_history {
+  border-top: 1px solid #dae1e8;
+}
+#mail_history_open {
+  display: block;
+  padding: 18px;
+  height: 13px;
+  text-align: center;
+}
+#mail_history_open:hover {
+  background: #e0efc0;
+}
+
+#mail_history h4 {
+  margin: 0px;
+  padding: 17px 82px 17px 300px;
+  font-size: 1.18em;
+  border-bottom: 0px;
+}
+#mail_history_t {
+  margin: 0px 20px 10px auto;
+}
+#mail_history_t td {
+  border-bottom: 1px solid #fff;
+  padding: 5px;
+  vertical-align: top;
+}
+#mail_history_t .mail_history_author {
+  text-align: right;
+  padding: 5px 10px 5px 0px;
+  padding-left: 5px;
+}
+.mail_history_author a {
+  font-weight: bold;
+}
+.mail_outgoing .mail_history_author a {
+  color: #70973f;
+}
+.mail_history_body {
+  width: 335px;
+  line-height: 130%;
+}
+.mail_history_body > div {
+  overflow: hidden;
+  word-wrap: break-word;
+}
+#mail_history_t .mail_history_date {
+  text-align: right;
+  padding: 5px 5px 5px 10px;
+  width: 50px;
+}
+#mail_history_t .mail_history_act {
+  padding-left: 10px;
+}
+#mail_history_t .mail_history_act a {
+  visibility: hidden;
+}

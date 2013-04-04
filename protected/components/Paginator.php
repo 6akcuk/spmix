@@ -9,11 +9,12 @@
 Yii::import('zii.widgets.CPortlet');
 
 class Paginator extends CPortlet {
-    public $url;
-    public $offsets;
-    public $offset;
-    public $delta;
-    public $nopages = false;
+  public $url;
+  public $offsets;
+  public $offset;
+  public $delta;
+  public $nopages = false;
+  public $forceUrl = false;
 
     protected function renderContent() {
         $this->render('paginator');

@@ -105,6 +105,13 @@ class DialogMessage extends CActiveRecord
         else return false;
     }
 
+  public function isIncome() {
+    return $this->author_id != Yii::app()->user->getId();
+  }
+  public function isOutgoing() {
+    return $this->author_id == Yii::app()->user->getId();
+  }
+
   protected static function _messageReader(CDbDataReader $dataReader) {
     $result = array();
 
@@ -124,17 +131,22 @@ class DialogMessage extends CActiveRecord
       $dialog->leader_id = $row['leader_id'];
       $dialog->type = $row['type'];
 
-      $user = new User();
-      $user->id = $row['id'];
-      $user->email = $row['email'];
-      $user->login = $row['login'];
-      $user->lastvisit = $row['lastvisit'];
+      /* Отправленные сообщения самому себе возвращают NULL */
+      $user = (!$row['id']) ? Yii::app()->user->model : new User();
+      if ($row['id']) {
+        $user->id = $row['id'];
+        $user->email = $row['email'];
+        $user->login = $row['login'];
+        $user->lastvisit = $row['lastvisit'];
+      }
 
-      $profile = new Profile();
-      $profile->user_id = $row['user_id'];
-      $profile->photo = $row['photo'];
-      $profile->firstname = $row['firstname'];
-      $profile->lastname = $row['lastname'];
+      $profile = (!$row['id']) ? $user->profile : new Profile();
+      if ($row['id']) {
+        $profile->user_id = $row['user_id'];
+        $profile->photo = $row['photo'];
+        $profile->firstname = $row['firstname'];
+        $profile->lastname = $row['lastname'];
+      }
 
       $request = new ProfileRequest();
       $request->req_id = $row['req_id'];
@@ -218,6 +230,67 @@ class DialogMessage extends CActiveRecord
     return $result['num'];
   }
 
+  public static function getOutboxMessages($author_id, $offset, $c = array()) {
+    /** @var $conn CDbConnection */
+    $conn = Yii::app()->db;
+    $command = $conn->createCommand();
+
+    $where = $params = array();
+    $where[] = 'and';
+    $where[] = 'msg.author_id = :aid';
+    $where[] = 'msg.message_delete IS NULL';
+
+    $params[':aid'] = $author_id;
+
+    if (isset($c['msg'])) {
+      $keyword = strtr($c['msg'], array('%'=>'\%', '_'=>'\_'));
+      $where[] = array('like', 'msg.message', '%'. $keyword .'%');
+    }
+
+    $command->select('*')
+      ->from('dialog_messages msg')
+      ->join('dialogs d', 'd.dialog_id = msg.dialog_id')
+      ->leftJoin('dialog_members m', 'm.dialog_id = d.dialog_id AND m.member_id != '. Yii::app()->user->getId())
+      ->leftJoin('users u', 'u.id = m.member_id')
+      ->leftJoin('profiles p', 'p.user_id = u.id')
+      ->leftJoin('profile_requests req', 'req.req_link_id = msg.message_id')
+      ->where($where, $params)
+      ->group('msg.message_id')
+      ->order('msg.creation_date DESC')
+      ->limit(Yii::app()->getModule('mail')->messagesPerPage, $offset);
+
+    return self::_messageReader($command->query());
+  }
+
+  public static function countOutboxMessages($author_id, $c = array()) {
+    /** @var $conn CDbConnection */
+    $conn = Yii::app()->db;
+    $command = $conn->createCommand();
+
+    $where = $params = array();
+    $where[] = 'and';
+    $where[] = 'msg.author_id = :aid';
+    $where[] = 'msg.message_delete IS NULL';
+
+    $params[':aid'] = $author_id;
+
+    if (isset($c['msg'])) {
+      $keyword = strtr($c['msg'], array('%'=>'\%', '_'=>'\_'));
+      $where[] = array('like', 'msg.message', '%'. $keyword .'%');
+    }
+
+    $command->select('COUNT(*) as num')
+      ->from('dialog_messages msg')
+      ->join('dialogs d', 'd.dialog_id = msg.dialog_id')
+      ->leftJoin('dialog_members m', 'm.dialog_id = d.dialog_id AND m.member_id != '. Yii::app()->user->getId())
+      ->leftJoin('users u', 'u.id = m.member_id')
+      ->leftJoin('profiles p', 'p.user_id = u.id')
+      ->leftJoin('profile_requests req', 'req.req_link_id = msg.message_id')
+      ->where($where, $params);
+
+    $result = $command->queryRow();
+    return $result['num'];
+  }
     /**
      * Отправить сообщение (Instant Message)
      *

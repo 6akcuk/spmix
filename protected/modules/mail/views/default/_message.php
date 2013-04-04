@@ -10,11 +10,19 @@
     <input type="checkbox" name="checkMsg[]" value="<?php echo $message->message_id ?>" />
   </td>
   <td class="mail_photo">
+  <?php if ($message->dialog->type == Dialog::TYPE_TET || ($message->dialog->type == Dialog::TYPE_CONFERENCE && $message->isIncome())): ?>
     <?php echo ActiveHtml::link($message->author->profile->getProfileImage('c'), '/id'. $message->author_id, array('onmousedown' => 'event.cancelBubble = true;')) ?>
+  <?php elseif ($message->dialog->type == Dialog::TYPE_CONFERENCE && $message->isOutgoing()): ?>
+    <?php echo ActiveHtml::link('<img src="/images/camera_a.gif" width="70" />', '/im?sel='. $message->dialog_id, array('onmousedown' => 'event.cancelBubble = true;')) ?>
+  <?php endif; ?>
   </td>
   <td class="mail_from">
     <div class="name wrapped">
+    <?php if ($message->dialog->type == Dialog::TYPE_TET || ($message->dialog->type == Dialog::TYPE_CONFERENCE && $message->isIncome())): ?>
       <?php echo ActiveHtml::link($message->author->getDisplayName(), '/id'. $message->author_id, array('onmousedown' => 'event.cancelBubble = true;')) ?>
+    <?php elseif ($message->dialog->type == Dialog::TYPE_CONFERENCE && $message->isOutgoing()): ?>
+      <?php echo ActiveHtml::link($message->dialog->title, '/im?sel='. $message->dialog_id, array('onmousedown' => 'event.cancelBubble = true;')) ?>
+    <?php endif; ?>
     </div>
     <?php if ($message->author->isOnline()): ?>
     <div class="online">Online</div>
@@ -34,7 +42,9 @@
     </div>
   </td>
   <td class="mail_actions">
-    <a href="#" onclick="mail.deleteMsg(<?php echo $message->message_id ?>); return false;" onmousedown="event.cancelBubble = true;">Удалить</a>
+  <?php if ($message->dialog->type == Dialog::TYPE_TET): ?>
+    <a id="mess<?php echo $message->message_id ?>_del" href="#" onclick="mail.deleteMsg(<?php echo $message->message_id ?>); return false;" onmousedown="event.cancelBubble = true;">Удалить</a>
+  <?php endif; ?>
   </td>
 </tr>
 <?php endforeach; ?>

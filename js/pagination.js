@@ -16,12 +16,14 @@ var Paginator = {
     onNavGo: function() {
       A.pgTarget = null;
       A.pgUrl = null;
+      A.pgForceUrl = false;
       A.pgDelta = 0;
       A.offset = 0;
       A.pgPage = 1;
       A.pgPages = 0;
       A.pgNoPages = false;
       A.pgFixedNoMore = false;
+      if (A.pgFixedContent) A.pgFixedContent.html('');
     },
 
     init: function(opts) {
@@ -33,6 +35,7 @@ var Paginator = {
 
         A.pgTarget = opts.target;
         A.pgUrl = opts.url;
+        A.pgForceUrl = opts.forceUrl;
         A.pgDelta = opts.delta;
         A.offset = opts.offset;
         A.pgPage = (A.offset + A.pgDelta) / A.pgDelta;
@@ -107,6 +110,8 @@ var Paginator = {
         var $win = $(window), scr = $win.scrollTop(), st = scr + $win.height(),
             $pgMore = $('a.pg_more'), mrt = ($pgMore.offset()) ? $pgMore.offset().top : 0;
 
+      if (A.pgPages <= 1) return;
+
         if (scr > A.pgFixedTop && !A.pgFixedVisible && !A.pgNoPages) {
             A.pgFixed.stop(true, true).fadeIn();
             A.pgFixedVisible = true;
@@ -150,9 +155,10 @@ var Paginator = {
             }
         }
 
-        var loc = nav.query(nav.curLoc + ((nav.curLoc.match(/\?/)) ? '&' : '?') + 'offset='+ nextOffset +'&pages=1', {}), // (nav.curLoc.match(/\?/)) ? nav.curLoc.split('?') : [nav.curLoc, ''],
-            where = loc.split('?'),
-            obj = nav.q2obj(where[1]);
+        var outgo = (A.pgForceUrl) ? A.pgUrl : nav.curLoc,
+          loc = nav.query(outgo + ((outgo.match(/\?/)) ? '&' : '?') + 'offset='+ nextOffset +'&pages=1', {}), // (nav.curLoc.match(/\?/)) ? nav.curLoc.split('?') : [nav.curLoc, ''],
+          where = loc.split('?'),
+          obj = nav.q2obj(where[1]);
 
         loc[1] = nav.obj2q(obj);
         ajax.post(loc, obj, function(r) {

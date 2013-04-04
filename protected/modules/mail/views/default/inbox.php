@@ -13,8 +13,8 @@ $this->pageTitle = Yii::app()->name .' - Полученные сообщения
 $delta = Yii::app()->controller->module->messagesPerPage;
 ?>
 <div class="tabs">
-  <?php echo ActiveHtml::link('Полученные', '/mail?section=inbox', array('class' => 'selected')) ?>
-  <?php echo ActiveHtml::link('Отправленные', '/mail?section=outbox') ?>
+  <?php echo ActiveHtml::link('Полученные', '/mail?act=inbox', array('class' => 'selected')) ?>
+  <?php echo ActiveHtml::link('Отправленные', '/mail?act=outbox') ?>
   <div class="right">
     <?php echo ActiveHtml::link('Написать сообщение', '/mail?act=write') ?>
   </div>
@@ -34,6 +34,15 @@ $delta = Yii::app()->controller->module->messagesPerPage;
   <div id="mail_search" rel="filters" class="right">
     <?php echo ActiveHtml::inputPlaceholder('c[msg]', (isset($c['msg'])) ? $c['msg'] : '', array('placeholder' => 'Поиск сообщений')) ?>
   </div>
+  <div style="display: none">
+    <?php $this->widget('Paginator', array(
+      'url' => '/mail?act=inbox',
+      'offset' => $offset,
+      'offsets' => $offsets,
+      'delta' => $delta,
+      'nopages' => true,
+    )); ?>
+  </div>
 </div>
 <div class="summary">
   <span id="mail_summary"><?php echo Yii::t('user', 'Вы получили {n} сообщение|Вы получили {n} сообщения|Вы получили {n} сообщений', $offsets) ?></span>
@@ -49,4 +58,5 @@ $delta = Yii::app()->controller->module->messagesPerPage;
 </tr>
 <?php endif; ?>
 </table>
+<? if ($offset + $delta < $offsets && $offsets > $delta): ?><a id="pg_more" class="pg_more" onclick="Paginator.showMore()">Еще сообщения</a><? endif; ?>
 <script type="text/javascript">mail._reset()</script>

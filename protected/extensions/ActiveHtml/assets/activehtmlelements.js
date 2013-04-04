@@ -851,6 +851,7 @@ $.fn.autosize = function(options) {
                 .appendTo('#utils');
 
         oldValue = $this.val();
+        if ($this.attr('minheight')) ps.minheight = parseInt($this.attr('minheight'));
         if ($this.attr('maxheight')) ps.maxheight = parseInt($this.attr('maxheight'));
         ps.id = '#'+ $this.attr('id');
 
@@ -1771,7 +1772,7 @@ var nav = {
                 //logger.showAll();
 
                 // Paginator fix
-                if (typeof Paginato !== "undefined")
+                if (typeof Paginator !== "undefined")
                   Paginator.onNavGo();
 
                 if (!opts.box) {

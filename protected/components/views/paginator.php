@@ -31,12 +31,13 @@ $nextoffset = ($page < $maxpage) ? $this->offset + $this->delta : $this->offsets
     <?php endif; ?>
     <script type="text/javascript">
     Paginator.init({
-        target: '[rel="pagination"]',
-        delta: <?php echo $this->delta ?>,
-        offset: <? echo $this->offset; ?>,
-        pages: <? echo $pages; ?>,
-        url: '<?php echo $this->url ?>',
-        nopages: <?php echo ($this->nopages) ? $this->nopages : 'false' ?>
+      target: '[rel="pagination"]',
+      delta: <?php echo $this->delta ?>,
+      offset: <? echo $this->offset; ?>,
+      pages: <? echo $pages; ?>,
+      url: '<?php echo $this->url ?>',
+      forceUrl: <?php echo ($this->forceUrl) ? $this->forceUrl : 'false' ?>,
+      nopages: <?php echo ($this->nopages) ? $this->nopages : 'false' ?>
     });
     </script>
 <?php endif; ?>

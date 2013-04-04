@@ -11,6 +11,7 @@
  *
  * @property User $leader
  * @property array|DialogMember|null $members
+ * @property integer $membersNum
  * @property array|DialogMessage|null $messages
  * @property DialogMessage $lastMessage
  */
@@ -66,6 +67,7 @@ class Dialog extends CActiveRecord
       'leader' => array(self::BELONGS_TO, 'User', 'leader_id'),
       'member' => array(self::HAS_ONE, 'DialogMember', 'dialog_id'),
       'members' => array(self::HAS_MANY, 'DialogMember', 'dialog_id'),
+      'membersNum' => array(self::STAT, 'DialogMember', 'dialog_id'),
       'lastMessage' => array(self::HAS_ONE, 'DialogMessage', 'dialog_id', 'order' => 'creation_date DESC'),
       'messages' => array(self::HAS_MANY, 'DialogMessage', 'dialog_id'),
 		);
