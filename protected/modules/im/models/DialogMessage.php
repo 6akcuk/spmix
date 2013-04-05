@@ -174,7 +174,7 @@ class DialogMessage extends CActiveRecord
     $where = $params = array();
     $where[] = 'and';
     $where[] = 'm.member_id = :mid';
-    $where[] = 'msg.author_id != :aid';
+    $where[] = '(msg.author_id != :aid OR (msg.author_id = :aid AND (SELECT COUNT(member_id) FROM dialog_members WHERE dialog_id = m.dialog_id AND member_id != :aid) = 0))';
     $where[] = 'msg.message_delete IS NULL';
 
     $params[':mid'] = $recipient_id;
@@ -208,7 +208,7 @@ class DialogMessage extends CActiveRecord
     $where = $params = array();
     $where[] = 'and';
     $where[] = 'm.member_id = :mid';
-    $where[] = 'msg.author_id != :aid';
+    $where[] = '(msg.author_id != :aid OR (msg.author_id = :aid AND (SELECT COUNT(member_id) FROM dialog_members WHERE dialog_id = m.dialog_id AND member_id != :aid) = 0))';
     $where[] = 'msg.message_delete IS NULL';
 
     $params[':mid'] = $recipient_id;
@@ -290,6 +290,45 @@ class DialogMessage extends CActiveRecord
 
     $result = $command->queryRow();
     return $result['num'];
+  }
+
+  /**
+   * Отправить сообщение в существующий диалог
+   *
+   * @param $id               Диалог
+   * @param $msg              Сообщение
+   * @param array $attaches   Прикрепления к сообщению
+   * @return bool|integer
+   */
+  public static function mail($id, $msg, $attaches = array()) {
+    $message = new DialogMessage();
+    $message->dialog_id = $id;
+    $message->author_id = Yii::app()->user->getId();
+    $message->message = $msg;
+    $message->attaches = (sizeof($attaches)) ? json_encode($attaches) : '';
+
+    if ($message->save()) {
+      $dialogMembers = DialogMember::model()->findAll('dialog_id = :id', array(':id' => $id));
+
+      /** @var $member DialogMember */
+      $selfRecipient = 0;
+      foreach ($dialogMembers as $member) {
+        // Можно отправлять самому себе сообщения
+        if ($selfRecipient == 0 && $member->member_id == Yii::app()->user->getId()) {
+          $selfRecipient++;
+        }
+        else {
+          $request = new ProfileRequest();
+          $request->owner_id = $member->member_id;
+          $request->req_type = ProfileRequest::TYPE_PM;
+          $request->req_link_id = $message->message_id;
+          $request->save();
+        }
+      }
+
+      return $message->message_id;
+    }
+    else return false;
   }
     /**
      * Отправить сообщение (Instant Message)

@@ -34,6 +34,13 @@ function hideGlobalPrg() {
   $('#global_progress').hide();
 }
 
+function onCtrlEnter(ev, handler) {
+  ev = ev || window.event;
+  if (ev.keyCode == 10 || ev.keyCode == 13 && (ev.ctrlKey || ev.metaKey)) {
+    handler();
+  }
+}
+
 $().ready(function() {
     $('#cur_city').change(function() {
         ajax.post('/setcity', {city_id: $(this).val()}, function(r) {

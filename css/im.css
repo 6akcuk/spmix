@@ -726,6 +726,9 @@ a.im_date_link {
   font-weight: normal;
   padding-left: 5px;
 }
+h4.mail_write_header {
+  border-bottom: 0px;
+}
 .mail_envelope_time {
   color: #999;
   font-size: 0.81em;

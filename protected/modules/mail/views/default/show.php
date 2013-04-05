@@ -9,8 +9,14 @@ Yii::app()->getClientScript()->registerScriptFile('/js/pagination.js');
 
 Yii::app()->getClientScript()->registerScriptFile('/js/mail.js');
 
+Yii::app()->getClientScript()->registerCssFile('/css/photoview.css');
+Yii::app()->getClientScript()->registerScriptFile('/js/photoview.js');
+Yii::app()->getClientScript()->registerScriptFile('/js/jquery.cookie.js', null, 'after jquery-');
+
 $this->pageTitle = Yii::app()->name .' - Сообщение от '. ActiveHtml::lex(2, $message->author->getDisplayName());
 $delta = Yii::app()->controller->module->messagesPerPage;
+
+$attaches = json_decode($message->attaches, true);
 
 /**
  * Нарушение модели MVC
@@ -53,7 +59,7 @@ if ($message->dialog->type == Dialog::TYPE_TET && $message->author_id == Yii::ap
           <td>
             <h4>
               <div id="mail_envelope_actions" class="right">
-                <a onclick="mail.showMsgDelete(<?php echo $message->message_id ?>)">удалить</a>
+                <a id="mess<?php echo $message->message_id ?>_del" onclick="mail.showMsgDelete(<?php echo $message->message_id ?>)">удалить</a>
               </div>
               <?php if ($message->dialog->type == Dialog::TYPE_TET): ?>
               Сообщение <?php echo ($message->isIncome()) ? 'от' : 'для' ?> <?php echo ($message->isIncome()) ? ActiveHtml::link(ActiveHtml::lex(2, $message->author->getDisplayName()), '/id'. $message->author_id) : ActiveHtml::link(ActiveHtml::lex(2, $member->user->getDisplayName()), '/id'. $member->member_id) ?>
@@ -74,18 +80,43 @@ if ($message->dialog->type == Dialog::TYPE_TET && $message->author_id == Yii::ap
             <div class="mail_envelope_body">
               <?php echo nl2br($message->message) ?>
             </div>
+            <?php if($message->attaches): ?>
+            <div class="mail_envelope_attaches clearfix">
+              <?php
+              $length = sizeof($attaches['photo']);
+              $list = array('items' => array(), 'count' => $length);
+              ?>
+              <?php foreach ($attaches['photo'] as $akey => $_photo): ?>
+                <?php $photo = json_decode($_photo, true); ?>
+                <?php $list['items'][] = $photo ?>
+                <?php $use = $photo['a'] ?>
+                <a class="left comment_attached_photo" onclick="Photoview.show('mess<?php echo $message->message_id ?>', <?php echo $akey ?>)">
+                  <img src="http://cs<?php echo $use[2] ?>.<?php echo Yii::app()->params['domain'] ?>/<?php echo $use[0] ?>/<?php echo $use[1] ?>" />
+                </a>
+              <?php endforeach; ?>
+              <script>
+                Photoview.list('mess<?php echo $message->message_id ?>', <?php echo json_encode($list) ?>);
+              </script>
+            </div>
+            <?php endif; ?>
           </td>
         </tr>
       </tbody>
       </table>
-      <form id="mail_form">
+      <form id="mail_form" action="/mail?act=send">
+      <input type="hidden" name="dialog_id" value="<?php echo $message->dialog_id ?>" />
       <div class="mail_envelope_form">
-        <?php echo ActiveHtml::smartTextarea('mail_message', '', array('style' => 'overflow:hidden;resize:none', 'minheight' => 98, 'maxheight' => 300)) ?>
+        <?php echo ActiveHtml::smartTextarea('mail_message', '', array(
+          'style' => 'overflow:hidden;resize:none',
+          'minheight' => 98,
+          'maxheight' => 300,
+          'onkeypress' => 'onCtrlEnter(event, mail.send)',
+        )) ?>
       </div>
       <div id="mail_attaches" class="mail_post_attaches clearfix"></div>
       <div class="mail_envelope_post clearfix">
         <div class="left">
-          <a class="button" onclick="mail.sendMsg()"><?php echo ($message->isIncome()) ? 'Ответить' : 'Отправить' ?></a>
+          <a class="button" onclick="mail.send()"><?php echo ($message->isIncome()) ? 'Ответить' : 'Отправить' ?></a>
         </div>
         <div id="mail_progress" class="left mail_post_progress">
           <img src="/images/upload.gif" />

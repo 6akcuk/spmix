@@ -100,6 +100,9 @@ input.error {
   background: #f2f2f2;
   border-top: 1px solid #DAE1E8;
 }
+.box_controls table {
+  width: auto;
+}
 .box_controls table td {
   padding-left: 10px;
 }
@@ -292,7 +295,9 @@ div.dropdown ul li a:hover {
 .wdd_list {
     border: 1px solid #70973f;
     border-top: 0;
-    overflow: hidden;
+  overflow: hidden;
+  overflow-y: auto;
+  max-height: 230px;
 }
 .wddi_no {
     background: #f1f1f1;

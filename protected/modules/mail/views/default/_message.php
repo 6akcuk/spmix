@@ -38,6 +38,11 @@
     <div class="mail_body">
       <?php $body = mb_substr($message->message, 0, 100, 'utf-8') ?>
       <?php if (mb_strlen($message->message, 'utf-8') > 100) $body .= '...'; ?>
+      <?php
+        if ($message->attaches) {
+          if (isset($message->attaches['photo'])) $body .= '<div class="mail_msg_attach"><span class="icon-camera"></span> Фотография</div>';
+        }
+      ?>
       <?php echo ActiveHtml::link($body, '/mail?act=show&id='. $message->message_id) ?>
     </div>
   </td>

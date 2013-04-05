@@ -181,6 +181,131 @@ var mail = {
     });
   },
 
+  showMsgDelete: function(msg_id) {
+    if (A.mailDeletingMsg && A.mailDeletingMsg[msg_id]) return;
+    if (!A.mailDeletingMsg) A.mailDeletingMsg = {};
+    A.mailDeletingMsg[msg_id] = true;
+
+    $('#mess'+ msg_id +'_del').html('<img src="/images/upload.gif" />');
+    ajax.post('/mail?act=delete_selected', {items: [msg_id]}, function(r) {
+      A.mailDeletingMsg[msg_id] = null;
+
+      if (r.success) {
+        if (!A.mailCache) A.mailCache = {};
+        updMessCounter(r.pm);
+        if (r.backlist && r.backlist[0] == msg_id) {
+          $('div.mail_envelope_body').hide();
+          $('div.mail_envelope_attaches').hide();
+          $('<div id="mess'+ msg_id +'_report" class="op_report">Сообщение удалено. <a onclick="mail.showMsgRestore('+ msg_id +')" onmousedown="event.cancelBubble = true;">Восстановить</a></div>').insertBefore('div.mail_envelope_body');
+          $('#mess'+ msg_id +'_del').html('');
+        }
+      }
+    }, function(xhr) {
+      A.mailDeletingMsg[msg_id] = null;
+      $('#mess'+ msg_id +'_del').html('удалить');
+    });
+  },
+
+  showMsgRestore: function(msg_id) {
+    if (A.mailRestoringMsg && A.mailRestoringMsg[msg_id]) return;
+    if (!A.mailRestoringMsg) A.mailRestoringMsg = {};
+    if (!A.mailCacheRestore) A.mailCacheRestore = {};
+    A.mailRestoringMsg[msg_id] = true;
+
+    $msg = $('#mess'+ msg_id +'_report');
+    A.mailCacheRestore[msg_id] = $msg.html();
+
+    $msg.html('<img src="/images/upload.gif" />');
+    ajax.post('/mail?act=restore&id='+ msg_id, {}, function(r) {
+      if (r.success) {
+        $('div.mail_envelope_body').show();
+        $('div.mail_envelope_attaches').show();
+        $('#mess'+ msg_id +'_del').html('удалить');
+        $msg.remove();
+        A.mailCache[msg_id] = null;
+      }
+      else {
+        $msg.html(A.mailCacheRestore[msg_id]);
+        A.mailCacheRestore[msg_id] = null;
+      }
+      A.mailRestoringMsg[msg_id] = null;
+    }, function(xhr) {
+      $msg.html(A.mailCacheRestore[msg_id]);
+      A.mailCacheRestore[msg_id] = null;
+      A.mailRestoringMsg[msg_id] = null;
+    });
+  },
+
+  send: function() {
+    if ($.trim($('#mail_message').val()) == '') {
+      $('#mail_message').effect('highlight');
+      return;
+    }
+
+    if (A.mailSending) return;
+    A.mailSending = true;
+
+    $('#mail_progress').show();
+    FormMgr.submit('#mail_form', 'left', function(response) {
+      A.mailSending = null;
+      $('#mail_progress').hide();
+
+      if (response.msg) boxPopup(response.msg);
+      if (response.url) nav.go(response.url);
+    }, function(xhr) {
+      A.mailSending = null;
+      $('#mail_progress').hide();
+    });
+  },
+  
+  write: function() {
+    var $mail = $('#mail_form'),
+      recipients = $mail.find('input[name^="im_wdd"]'),
+      rec = [],
+      title = $.trim($mail.find('[name="Mail[title]"]').val()),
+      message = $.trim($mail.find('[name="mail_message"]').val());
+
+    $mail.find('.input_error').remove();
+
+    if (recipients.length == 0) {
+      WideDropdown.show('im_wdd', event);
+      return false;
+    }
+    else if (recipients.length > 1 && !title) {
+      inputError($mail.find('[name="Mail[title]"]'), 'Требуется название для беседы');
+      return false;
+    }
+    else if (recipients.length > 0 && !message) {
+      inputError($mail.find('[name="mail_message"]'), 'Напишите хоть что-нибудь');
+      return false;
+    }
+
+    if (A.mailSending) return;
+    A.mailSending = true;
+
+    $('#mail_progress').show();
+    for(var i=0; i < recipients.length; i++) {
+      rec.push(parseInt(recipients[i].value));
+    }
+
+    ajax.post('/mail?act=write', {recipients: rec, title: title, message: message}, function(r) {
+      A.mailSending = null;
+      $('#mail_progress').hide();
+
+      if (r.success) {
+        if (!is_box) nav.go(r.url, null);
+        else {
+          curBox().hide();
+          boxPopup(r.msg);
+        }
+      }
+      else report_window.create($mail, 'left', r.message);
+    }, function(xhr) {
+      A.mailSending = null;
+      $('#mail_progress').hide();
+    });
+  },
+
   attachPhoto: function(file_id) {
     if (A.mailPhotoAttaches >= 3) {
       boxPopup('Вы не можете прикрепить более 3-х фотографий');

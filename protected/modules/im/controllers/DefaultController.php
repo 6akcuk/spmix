@@ -112,16 +112,16 @@ class DefaultController extends Controller
     }
 
     public function actionSend($id) {
-        $criteria = new CDbCriteria();
-        $criteria->addCondition('dialog_id = :id');
-        $criteria->addCondition('member_id = :mid');
+      $criteria = new CDbCriteria();
+      $criteria->addCondition('dialog_id = :id');
+      $criteria->addCondition('member_id = :mid');
 
-        $criteria->params = array(
-            ':id' => $id,
-            ':mid' => Yii::app()->user->getId(),
-        );
+      $criteria->params = array(
+        ':id' => $id,
+        ':mid' => Yii::app()->user->getId(),
+      );
 
-        $member = DialogMember::model()->find($criteria);
+      $member = DialogMember::model()->find($criteria);
         if ($member) {
             $message = new DialogMessage();
             $message->dialog_id = $id;

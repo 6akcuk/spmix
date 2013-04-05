@@ -80,7 +80,7 @@ class DefaultController extends Controller
 
   public function actionShow($id) {
     /** @var $message DialogMessage */
-    $message = DialogMessage::model()->with('dialog', 'dialog.membersNum', 'author', 'author.profile')->findByPk($id);
+    $message = DialogMessage::model()->with('dialog', 'dialog.membersNum', 'author', 'author.profile', array('isNewIn' => array('joinType' => 'LEFT JOIN')))->findByPk($id);
 
     $found = false;
     foreach ($message->dialog->members as $member) {
@@ -91,6 +91,11 @@ class DefaultController extends Controller
     }
 
     if ($found) {
+      if ($message->isNewIn) {
+        $message->isNewIn->delete();
+        $this->pageCounters['pm']--;
+      }
+
       if (Yii::app()->request->isAjaxRequest) $this->pageHtml = $this->renderPartial('show', array(
         'message' => $message,
       ), true);
@@ -99,6 +104,17 @@ class DefaultController extends Controller
       ));
     }
     else throw new CHttpException(403, 'В доступе отказано');
+  }
+
+  public function actionWrite() {
+    $friends = Yii::app()->user->model->profile->getAllFriends(null);
+
+    if (Yii::app()->request->isAjaxRequest) $this->pageHtml = $this->renderPartial('write', array(
+      'friends' => $friends,
+    ), true);
+    else $this->render('write', array(
+      'friends' => $friends,
+    ));
   }
 
   public function actionHistory($id, $offset = 0) {
@@ -134,6 +150,45 @@ class DefaultController extends Controller
       'offset' => $offset,
       'offsets' => $offsets,
     ));
+  }
+
+  public function actionSend() {
+    $id = intval($_POST['dialog_id']);
+    $result = array();
+
+    $criteria = new CDbCriteria();
+    $criteria->addCondition('dialog_id = :id');
+    $criteria->addCondition('member_id = :mid');
+
+    $criteria->params = array(
+      ':id' => $id,
+      ':mid' => Yii::app()->user->getId(),
+    );
+
+    $member = DialogMember::model()->find($criteria);
+    if ($member) {
+      $attaches = array();
+      if (isset($_POST['Mail']['attach']))
+        $attaches['photo'] = $_POST['Mail']['attach'];
+
+      $data = DialogMessage::mail($id, $_POST['mail_message'], $attaches);
+      if ($result > 0) {
+        $result['success'] = true;
+        $result['msg'] = 'Сообщение успешно отправлено';
+        $result['url'] = '/mail?act=inbox';
+      }
+      else {
+        $result['success'] = false;
+        $result['msg'] = 'Не удалось отправить сообщение';
+      }
+    }
+    else {
+      $result['success'] = false;
+      $result['msg'] = 'Вы не состоите в этом диалоге';
+    }
+
+    echo json_encode($result);
+    exit;
   }
 
   public function actionDelete_selected() {
