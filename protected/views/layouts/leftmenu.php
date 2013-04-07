@@ -11,10 +11,10 @@
     ?>
   </li>
   <li id="pm_link">
-    <?php echo ActiveHtml::link('Мои сообщения', '/im') ?>
+    <?php echo ActiveHtml::link('Мои сообщения', '/mail') ?>
     <?php
     if ($this->pageCounters['pm'])
-      echo ActiveHtml::link('+'. $this->pageCounters['pm'], '/im', array('class' => 'right lm-counter'))
+      echo ActiveHtml::link('+'. $this->pageCounters['pm'], '/mail', array('class' => 'right lm-counter'))
     ?>
   </li>
   <li id="orders_link">

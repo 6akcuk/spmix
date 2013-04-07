@@ -261,7 +261,7 @@ var mail = {
   write: function() {
     var $mail = $('#mail_form'),
       recipients = $mail.find('input[name^="im_wdd"]'),
-      rec = [],
+      rec = [], attaches = [],
       title = $.trim($mail.find('[name="Mail[title]"]').val()),
       message = $.trim($mail.find('[name="mail_message"]').val());
 
@@ -288,16 +288,17 @@ var mail = {
       rec.push(parseInt(recipients[i].value));
     }
 
-    ajax.post('/mail?act=write', {recipients: rec, title: title, message: message}, function(r) {
+    $('input[type="hidden"][name*=attach]').each(function(i, item) {
+      attaches.push($(item).val());
+    });
+
+    ajax.post('/mail?act=write', {recipients: rec, title: title, message: message, attaches: attaches}, function(r) {
       A.mailSending = null;
       $('#mail_progress').hide();
 
       if (r.success) {
-        if (!is_box) nav.go(r.url, null);
-        else {
-          curBox().hide();
-          boxPopup(r.msg);
-        }
+        boxPopup(r.msg);
+        nav.go('/mail?act=inbox');
       }
       else report_window.create($mail, 'left', r.message);
     }, function(xhr) {

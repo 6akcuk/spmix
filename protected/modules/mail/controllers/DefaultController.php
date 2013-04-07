@@ -107,6 +107,20 @@ class DefaultController extends Controller
   }
 
   public function actionWrite() {
+    if (isset($_POST['recipients'])) {
+      $recipients = $_POST['recipients'];
+      $title = $_POST['title'];
+      $message = $_POST['message'];
+
+      $attaches = array();
+      if (isset($_POST['attaches'])) $attaches['photo'] = $_POST['attaches'];
+
+      $result = DialogMessage::send($recipients, $message, $title, $attaches);
+
+      echo json_encode($result);
+      exit;
+    }
+
     $friends = Yii::app()->user->model->profile->getAllFriends(null);
 
     if (Yii::app()->request->isAjaxRequest) $this->pageHtml = $this->renderPartial('write', array(

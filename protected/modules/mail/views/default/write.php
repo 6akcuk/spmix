@@ -79,7 +79,7 @@ $friendsJS[] = "'". Yii::app()->user->getId() ."': {private: true, img: '". ((Yi
             </div>
             <div id="im_theme" class="row" style="display:none">
               <h4 class="mail_write_header">Тема</h4>
-              <?php echo ActiveHtml::inputPlaceholder('Mail[title]', '') ?>
+              <?php echo ActiveHtml::inputPlaceholder('Mail[title]', '', array('style' => 'width:324px')) ?>
             </div>
           </td>
         </tr>
@@ -119,4 +119,6 @@ $friendsJS[] = "'". Yii::app()->user->getId() ."': {private: true, img: '". ((Yi
   A.wddOnDeselect['im_wdd'] = function() {
     if (WideDropdown.countBubbleSize('im_wdd') <= 1) $('#im_theme').hide();
   };
+
+  A.mailPhotoAttaches = 0;
 </script>

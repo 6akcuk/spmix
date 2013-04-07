@@ -36,7 +36,7 @@
             </div>
             <?php echo nl2br($message->message) ?>
             <div class="im_attaches">
-            <?php if (sizeof($attaches)): ?>
+            <?php if (sizeof($attaches) == 999): ?>
             <?php foreach ($attaches as $attache): ?>
                 <?php if ($attache['type'] == 'purchase_edit'): ?>
                 <a href="/purchase<?php echo $attache['purchase_id'] ?>/edit" target="_blank" onclick="return nav.go(this, null)">
