@@ -222,7 +222,7 @@ class CommentController extends Controller {
   }
 
   public function actionPeer($hoop_id, $hoop_type) {
-    $last_id = intval($_POST['last_id']);
+    $last_id = intval((isset($_POST['last_id'])) ? $_POST['last_id'] : 0);
 
     $criteria = new CDbCriteria();
     $criteria->compare('hoop_id', $hoop_id);

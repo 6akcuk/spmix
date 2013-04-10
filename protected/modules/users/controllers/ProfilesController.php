@@ -497,13 +497,22 @@ class ProfilesController extends Controller {
   }
 
   public function actionNotify() {
+    $emailnotifymdl = new EmailNotifyForm();
+
+    $err = '';
+    $report = '';
+
     if (Yii::app()->request->isAjaxRequest) {
       $this->pageHtml = $this->renderPartial('notify', array(
-
+        'emailnotifymdl' => $emailnotifymdl,
+        'error' => $err,
+        'report' => $report,
       ), true);
     }
     else $this->render('notify', array(
-
+      'emailnotifymdl' => $emailnotifymdl,
+      'error' => $err,
+      'report' => $report,
     ));
   }
 }

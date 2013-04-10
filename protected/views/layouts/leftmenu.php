@@ -32,8 +32,12 @@
 <ul>
 <?php endif; ?>
 <?php if(Yii::app()->user->checkAccess('users.users.index')): ?>
-  <li>
+  <li id="users_link">
     <?php echo ActiveHtml::link('Пользователи', '/users') ?>
+    <?php
+    if ($this->pageCounters['users'])
+      echo ActiveHtml::link($this->pageCounters['users'], '/users', array('class' => 'right lm-counter'))
+    ?>
   </li>
 <?php endif; ?>
 <?php if (Yii::app()->user->checkAccess('purchases.purchases.sitelist')): ?>

@@ -21,6 +21,9 @@ function updPurchaseCounter(num) {
 function updOrdersCounter(num) {
   updMenuCounter('#orders_link', '/orders', num);
 }
+function updUsersCounter(num) {
+  updMenuCounter('#users_link', '/users', num);
+}
 
 function showGlobalPrg() {
   var $gp = $('#global_progress');

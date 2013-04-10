@@ -140,6 +140,11 @@
   padding-bottom: 5px;
   border-bottom: 1px solid #ededf0;
 }
+.settings .row label {
+  display: block;
+  float: left;
+  width: 150px;
+}
 
 .module-header {
     background: #f2f2f2;

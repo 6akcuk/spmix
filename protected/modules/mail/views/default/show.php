@@ -83,20 +83,22 @@ if ($message->dialog->type == Dialog::TYPE_TET && $message->author_id == Yii::ap
             <?php if($message->attaches): ?>
             <div class="mail_envelope_attaches clearfix">
               <?php
-              $length = sizeof($attaches['photo']);
-              $list = array('items' => array(), 'count' => $length);
-              ?>
-              <?php foreach ($attaches['photo'] as $akey => $_photo): ?>
-                <?php $photo = json_decode($_photo, true); ?>
-                <?php $list['items'][] = $photo ?>
-                <?php $use = $photo['a'] ?>
-                <a class="left comment_attached_photo" onclick="Photoview.show('mess<?php echo $message->message_id ?>', <?php echo $akey ?>)">
-                  <img src="http://cs<?php echo $use[2] ?>.<?php echo Yii::app()->params['domain'] ?>/<?php echo $use[0] ?>/<?php echo $use[1] ?>" />
-                </a>
-              <?php endforeach; ?>
-              <script>
-                Photoview.list('mess<?php echo $message->message_id ?>', <?php echo json_encode($list) ?>);
-              </script>
+              if (isset($attaches['photo'])):
+                $length = sizeof($attaches['photo']);
+                $list = array('items' => array(), 'count' => $length);
+                ?>
+                <?php foreach ($attaches['photo'] as $akey => $_photo): ?>
+                  <?php $photo = json_decode($_photo, true); ?>
+                  <?php $list['items'][] = $photo ?>
+                  <?php $use = $photo['a'] ?>
+                  <a class="left comment_attached_photo" onclick="Photoview.show('mess<?php echo $message->message_id ?>', <?php echo $akey ?>)">
+                    <img src="http://cs<?php echo $use[2] ?>.<?php echo Yii::app()->params['domain'] ?>/<?php echo $use[0] ?>/<?php echo $use[1] ?>" />
+                  </a>
+                <?php endforeach; ?>
+                <script>
+                  Photoview.list('mess<?php echo $message->message_id ?>', <?php echo json_encode($list) ?>);
+                </script>
+              <?php endif; ?>
             </div>
             <?php endif; ?>
           </td>

@@ -1768,6 +1768,7 @@ var nav = {
                 if (response.counters['pm']) updMessCounter(parseInt(response.counters['pm']));
                 if (response.counters['purchases']) updPurchaseCounter(parseInt(response.counters['purchases']));
                 if (response.counters['orders']) updOrdersCounter(parseInt(response.counters['orders']));
+                if (response.counters['users']) updUsersCounter(parseInt(response.counters['users']));
 
                 //logger.showAll();
 

@@ -290,6 +290,10 @@ WHERE twin.member_id = 111 AND t.member_id = 1 AND dialog.type = 0");
                           $loginform->password = $password;
                           $loginform->login();
 
+                          $notify = new ProfileNotify();
+                          $notify->user_id = $user->id;
+                          $notify->save();
+
                           $cookies = Yii::app()->getRequest()->getCookies();
                           $cookies->remove('cur_city');
 

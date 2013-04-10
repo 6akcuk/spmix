@@ -21,6 +21,7 @@
  *
  * @property City $city
  * @property ProfilePaydetail $paydetails
+ * @property ProfileNotify $notifies
  */
 class Profile extends CActiveRecord
 {
@@ -77,6 +78,7 @@ class Profile extends CActiveRecord
 		return array(
       'city' => array(self::HAS_ONE, 'City', array('id' => 'city_id')),
       'paydetails' => array(self::HAS_MANY, 'ProfilePaydetail', array('user_id' => 'user_id')),
+      'notifies' => array(self::HAS_ONE, 'ProfileNotify', 'user_id'),
 		);
 	}
 
