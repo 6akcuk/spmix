@@ -256,6 +256,14 @@ var Profile = {
     }, function(r) {
 
     });
+  },
+
+  emailNotify: function() {
+    FormMgr.submit('#emailnotifyform', 'left', function(r) {
+      if (r.msg) boxPopup(r.msg);
+    }, function(r) {
+
+    });
   }
 };
 

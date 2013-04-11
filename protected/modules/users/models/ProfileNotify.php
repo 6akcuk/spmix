@@ -65,11 +65,11 @@ class ProfileNotify extends CActiveRecord
 	{
 		return array(
 			'user_id' => 'User',
-			'notify_im' => 'Notify Im',
-			'notify_orders' => 'Notify Orders',
-			'notify_purchases' => 'Notify Purchases',
-			'notify_comments' => 'Notify Comments',
-			'notify_payments' => 'Notify Payments',
+			'notify_im' => 'Личные сообещния',
+			'notify_orders' => 'Полученные заказы',
+			'notify_purchases' => 'Новые закупки',
+			'notify_comments' => 'Комментарии к товару',
+			'notify_payments' => 'Полученные платежи',
 		);
 	}
 

@@ -497,20 +497,45 @@ class ProfilesController extends Controller {
   }
 
   public function actionNotify() {
-    $emailnotifymdl = new EmailNotifyForm();
+    /** @var $notify ProfileNotify */
+    $notify = ProfileNotify::model()->findByPk(Yii::app()->user->getId());
 
     $err = '';
     $report = '';
 
+    /** Прямые действия */
+    if (isset($_POST['act'])) {
+      $result = array();
+
+      switch ($_POST['act']) {
+        case 'emailnotify':
+          $notify->attributes = $_POST['ProfileNotify'];
+
+          if ($notify->save()) {
+            $result['success'] = true;
+            $result['msg'] = 'Изменения успешно сохранены';
+          }
+          else {
+            foreach ($emailnotifymdl->getErrors() as $attr => $error) {
+              $result[ActiveHtml::activeId($emailnotifymdl, $attr)] = $error;
+            }
+          }
+          break;
+      }
+
+      echo json_encode($result);
+      exit;
+    }
+
     if (Yii::app()->request->isAjaxRequest) {
       $this->pageHtml = $this->renderPartial('notify', array(
-        'emailnotifymdl' => $emailnotifymdl,
+        'notify' => $notify,
         'error' => $err,
         'report' => $report,
       ), true);
     }
     else $this->render('notify', array(
-      'emailnotifymdl' => $emailnotifymdl,
+      'notify' => $notify,
       'error' => $err,
       'report' => $report,
     ));

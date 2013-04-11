@@ -34,25 +34,25 @@ $this->pageTitle = Yii::app()->name .' - Оповещения';
     )); ?>
     <input type="hidden" name="act" value="emailnotify" />
     <div class="row">
-      <?php echo $emailnotifyform->label($emailnotifymdl, 'im') ?>
-      <?php echo $emailnotifyform->dropdownList($emailnotifymdl, 'im', array('Не получать', 'Получать')) ?>
+      <?php echo $emailnotifyform->label($notify, 'notify_im') ?>
+      <?php echo $emailnotifyform->dropdownList($notify, 'notify_im', array('Не получать', 'Получать')) ?>
     </div>
     <div class="row">
-      <?php echo $emailnotifyform->label($emailnotifymdl, 'purchases') ?>
-      <?php echo $emailnotifyform->dropdownList($emailnotifymdl, 'purchases', array('Не получать', 'Получать')) ?>
+      <?php echo $emailnotifyform->label($notify, 'notify_purchases') ?>
+      <?php echo $emailnotifyform->dropdownList($notify, 'notify_purchases', array('Не получать', 'Получать')) ?>
     </div>
     <div class="row">
-      <?php echo $emailnotifyform->label($emailnotifymdl, 'comments') ?>
-      <?php echo $emailnotifyform->dropdownList($emailnotifymdl, 'purchases', array('Не получать', 'Получать')) ?>
+      <?php echo $emailnotifyform->label($notify, 'notify_comments') ?>
+      <?php echo $emailnotifyform->dropdownList($notify, 'notify_comments', array('Не получать', 'Получать')) ?>
     </div>
     <?php if (Yii::app()->user->checkAccess('purchases.purchases.create')): ?>
     <div class="row">
-      <?php echo $emailnotifyform->label($emailnotifymdl, 'orders') ?>
-      <?php echo $emailnotifyform->dropdownList($emailnotifymdl, 'orders', array('Не получать', 'Получать')) ?>
+      <?php echo $emailnotifyform->label($notify, 'notify_orders') ?>
+      <?php echo $emailnotifyform->dropdownList($notify, 'notify_orders', array('Не получать', 'Получать')) ?>
     </div>
     <div class="row">
-      <?php echo $emailnotifyform->label($emailnotifymdl, 'payments') ?>
-      <?php echo $emailnotifyform->dropdownList($emailnotifymdl, 'payments', array('Не получать', 'Получать')) ?>
+      <?php echo $emailnotifyform->label($notify, 'notify_payments') ?>
+      <?php echo $emailnotifyform->dropdownList($notify, 'notify_payments', array('Не получать', 'Получать')) ?>
     </div>
     <?php endif; ?>
     <div class="row">

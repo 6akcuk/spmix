@@ -8,6 +8,7 @@ $this->pageTitle = Yii::app()->name .' - Общие настройки';
 
 <div class="tabs">
   <?php echo ActiveHtml::link('Общие', '/settings', array('class' => 'selected')) ?>
+  <?php echo ActiveHtml::link('Оповещения', '/notify') ?>
 </div>
 
 <div class="profile-settings">

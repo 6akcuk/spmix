@@ -31,7 +31,7 @@ class SiteController extends Controller
     exit;
   }
 
-  public function actionPreviewDialog() {
+  public function _actionPreviewDialog() {
     Yii::import('application.modules.im.models.*');
 
     $criteria = new CDbCriteria();
@@ -52,8 +52,28 @@ WHERE twin.member_id = 111 AND t.member_id = 1 AND dialog.type = 0");
     var_dump($row);
   }
 
+  /**
+   * Создает записи настроек оповещений пользователей (11.04.2013)
+   */
+  public function _actionPatch6() {
+    $counter = 0;
+    $users = Profile::model()->with(array('notifies' => array('joinType' => 'LEFT JOIN')))->findAll();
+    /** @var $user Profile */
+    foreach ($users as $user) {
+      if (!$user->notifies) {
+        $user->notifies = new ProfileNotify();
+        $user->notifies->user_id = $user->user_id;
+        $user->notifies->save();
+        $counter++;
+      }
+    }
+
+    echo "Обработано ". $counter ." пользователей";
+    exit;
+  }
+
   // Тест почтовых систем
-  public function actionPatch5() {
+  public function _actionPatch5() {
     Yii::import('application.vendors.*');
     require_once 'Mail/Mail.php';
 
@@ -72,7 +92,7 @@ WHERE twin.member_id = 111 AND t.member_id = 1 AND dialog.type = 0");
    *
    * Не актуален
    */
-  public function actionPatch4() {
+  public function _actionPatch4() {
     $user = new User();
     echo $user->hashPassword('79273413817', 'oh9p-epx4bb');
   }
@@ -112,7 +132,7 @@ WHERE twin.member_id = 111 AND t.member_id = 1 AND dialog.type = 0");
   }
 
   /* Исправляет старые записи с синтаксисом size[price] */
-  public function actionPatch2() {
+  public function _actionPatch2() {
     Yii::import('application.modules.purchases.models.*');
     $sizes = GoodSize::model()->findAll("adv_price = 0 AND size LIKE '%[%'");
 
@@ -128,7 +148,7 @@ WHERE twin.member_id = 111 AND t.member_id = 1 AND dialog.type = 0");
   }
 
   /* */
-  public function actionPatch1() {
+  public function _actionPatch1() {
     Yii::import('application.modules.purchases.models.*');
     $grids = GoodGrid::model()->with(array('good' => array('joinType' => 'INNER JOIN')))->findAll();
 
