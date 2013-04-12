@@ -186,11 +186,11 @@ WHERE twin.member_id = 111 AND t.member_id = 1 AND dialog.type = 0");
 
 	public function actionIndex()
 	{
-        if (!Yii::app()->user->getIsGuest()) {
-            $this->redirect('http://spmix.ru/id'. Yii::app()->user->getId());
-        }
+    if (!Yii::app()->user->getIsGuest()) {
+      $this->redirect('http://spmix.ru/id'. Yii::app()->user->getId());
+    }
 
-        $this->render('index');
+    $this->render('index');
 	}
 
     public function actionSetCity() {
@@ -229,7 +229,13 @@ WHERE twin.member_id = 111 AND t.member_id = 1 AND dialog.type = 0");
                     $result['success'] = true;
                     $result['id'] = Yii::app()->user->getId();
                 }
-                else $this->redirect('/id'. Yii::app()->user->getId());
+                else {
+                  if (!isset($_SESSION['global.jumper'])) $this->redirect('/id'. Yii::app()->user->getId());
+                  else {
+                    $this->redirect($_SESSION['global.jumper']);
+                    unset($_SESSION['global.jumper']);
+                  }
+                }
             }
             else {
                 foreach ($model->getErrors() as $attr => $error) {
@@ -344,6 +350,12 @@ WHERE twin.member_id = 111 AND t.member_id = 1 AND dialog.type = 0");
                           $result['success'] = true;
                           $result['step'] = 5;
                           $result['id'] = $user->id;
+
+                          if (isset($_SESSION['global.jumper'])) {
+                            $this->redirect($_SESSION['global.jumper']);
+                            unset($_SESSION['global.jumper']);
+                            Yii::app()->end();
+                          }
                         }
                         else {
                             $user->delete();

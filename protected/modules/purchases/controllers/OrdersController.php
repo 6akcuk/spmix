@@ -292,10 +292,7 @@ class OrdersController extends Controller {
 
             $criteria->order = 'creation_date DESC';
 
-            $orders = Order::model()->with('good', 'customer', array('oic' => array(
-              'on' => 'oic.customer_id = t.customer_id AND oic.purchase_id = '. $purchase_id,
-            )
-            ))->findAll($criteria);
+            $orders = Order::model()->with('good', 'customer', 'custom_oic')->findAll($criteria);
 
             header('Content-Disposition: attachment; filename="zakazi.xls"');
             header("Content-Type: application/vnd.ms-excel");
@@ -319,7 +316,7 @@ class OrdersController extends Controller {
                     $order->customer->profile->city->name, $order->good->price, $purchase->org_tax,
                     $purchase->getPriceWithTax($order->good->price), $order->amount, ($order->good->price * $order->amount),
                     $purchase->getPriceWithTax($order->good->price * $order->amount),
-                    $order->payed, $order->oic->oic_name .' '. $order->oic->oic_price,
+                    $order->payed, $order->custom_oic->oic_name .' '. $order->custom_oic->oic_price,
                     $order->org_comment, $order->client_comment, $order->customer->profile->phone, 0, '',
                     $order->good->url, $order->customer->profile->phone, Yii::t('purchase', $order->status)
                 ));

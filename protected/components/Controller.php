@@ -19,8 +19,27 @@ class Controller extends CController
   public $boxWidth = 0;
 
   public function init() {
+    // Ticket authorization
+    if (isset($_GET['ticket_id']) && isset($_GET['token'])) {
+      $ticket = UserTicket::model()->findByPk($_GET['ticket_id']);
+      if ($ticket->token == $_GET['token']) {
+        $identity = new UserIdentity('', '');
+        $identity->id = $ticket->user_id;
+        Yii::app()->user->login($identity);
+
+        $ticket->delete();
+
+        if (isset($_GET['url'])) $this->redirect($_GET['url']);
+      }
+    }
+
     if (Yii::app()->controller->id == "site" && Yii::app()->user->getIsGuest()) {
       $this->layout = '//layouts/intro';
+
+      if (preg_match("/(id|purchase)/ui", Yii::app()->request->url) &&
+          !isset($_SESSION['global.jumper'])) {
+        $_SESSION['global.jumper'] = Yii::app()->request->url;
+      }
     }
     else {
       if (!Yii::app()->user->getIsGuest()) {

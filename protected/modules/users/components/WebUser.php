@@ -25,8 +25,8 @@ class WebUser extends CApplicationComponent implements IWebUser {
         if($this->getIsGuest() && $this->allowAutoLogin)
             $this->restoreFromCookie();
         if(!$this->getIsGuest()) {
-            $this->model = User::model()->findByPk($this->getId());
-            $this->updateLastVisit();
+          $this->model = User::model()->findByPk($this->getId());
+          $this->updateLastVisit();
         }
     }
 

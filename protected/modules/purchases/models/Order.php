@@ -95,6 +95,7 @@ class Order extends CActiveRecord
       'payment' => array(self::HAS_ONE, 'OrderPayment', 'order_id'),
       'history' => array(self::HAS_MANY, 'OrderHistory', 'order_id', 'with' => 'author'),
       'oic' => array(self::BELONGS_TO, 'OrderOic', 'purchase_id', 'condition' => 'oic.customer_id = '. Yii::app()->user->getId()),
+      'custom_oic' => array(self::BELONGS_TO, 'OrderOic', 'purchase_id', 'condition' => 'custom_oic.customer_id = t.customer_id'),
 		);
 	}
 
