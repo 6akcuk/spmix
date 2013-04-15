@@ -98,6 +98,15 @@
               </div>
             </td>
           </tr>
+          <tr>
+            <td bgcolor="#f5f5f5" align="center" style="padding: 13px 0px 0px 0px; font-size: 12px;">
+              <a href="http://<?php echo Yii::app()->params['domain'] ?>/id" style="color:#005b01;font-weight:bold">Кто-то</a>,
+              Вы можете отменить уведомления на E-Mail в
+              <a href="http://<?php echo Yii::app()->params['domain'] ?>/notify" style="color:#005b01">
+                Настройках оповещений
+              </a>
+            </td>
+          </tr>
         </table>
       </td>
       <td width="5%">
