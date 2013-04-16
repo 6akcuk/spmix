@@ -52,6 +52,10 @@ WHERE twin.member_id = 111 AND t.member_id = 1 AND dialog.type = 0");
     var_dump($row);
   }
 
+  public function actionBstn() {
+    echo CConsoleApplication::commandPath;
+  }
+
   public function actionViewMailTpl($template) {
     $this->renderPartial('//mail/'. $template);
     Yii::app()->end();

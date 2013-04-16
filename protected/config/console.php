@@ -5,6 +5,7 @@
 return array(
 	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
 	'name'=>'SPmix Console',
+  'language' => 'ru',
 
 	// preloading 'log' component
 	'preload'=>array('log'),
@@ -54,4 +55,17 @@ return array(
 			),
 		),
 	),
+
+  // application-level parameters that can be accessed
+  // using Yii::app()->params['paramName']
+  'params'=>array(
+    // this is used in contact page
+    'adminEmail'=>'webmaster@example.com',
+    'noreplymail' => 'noreply@spmix.ru',
+    'noreplyname' => 'SPMIX.ru',
+    'domain' => 'spmix.ru',
+    'smsUsername' => '24314_spmix',
+    'smsPassword' => 'jbS!D?z',
+    'smsNumber' => 'SPMIX',
+  ),
 );

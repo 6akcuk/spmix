@@ -369,6 +369,7 @@ class ActiveHtml extends CHtml {
         elseif( $prelast == 'ое' || $prelast == 'ый' ) return substr($word, 0, -4) .'ом';
         elseif( $prelast == 'ий' ) return substr($word, 0, -4) .'е';
         elseif( $prelast == 'ай' ) return substr($word, 0, -4) .'ае';
+        elseif( $prelast == 'ия' ) return substr($word, 0, -4) .'ии';
         elseif( $last == 'о' || $last == 'ы' ) return $word; // анопово
         else return $word .'е';
 
