@@ -40,7 +40,10 @@
       <?php if (mb_strlen($message->message, 'utf-8') > 100) $body .= '...'; ?>
       <?php
         if ($message->attaches) {
-          if (isset($message->attaches['photo'])) $body .= '<div class="mail_msg_attach"><span class="icon-camera"></span> Фотография</div>';
+          $attaches = json_decode($message->attaches, true);
+
+          if (isset($attaches['photo'])) $body .= '<div class="mail_msg_attach"><span class="icon-camera"></span> Фотография</div>';
+          elseif (isset($attaches[0]['type']) && $attaches[0]['type'] == 'purchase_edit') $body .= '<div class="mail_msg_attach"><span class="icon-share"></span> Закупка</div>';
         }
       ?>
       <?php echo ActiveHtml::link($body, '/mail?act=show&id='. $message->message_id) ?>

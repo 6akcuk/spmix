@@ -185,6 +185,13 @@ class DialogMessage extends CActiveRecord
       $where[] = array('like', 'msg.message', '%'. $keyword .'%');
     }
 
+    if ($c['filter'] == 'new') {
+      $where[] = 'req.owner_id = :oid';
+      $where[] = 'req.req_type = '. ProfileRequest::TYPE_PM;
+
+      $params[':oid'] = $recipient_id;
+    }
+
     $command->select('*')
       ->from('dialog_members m')
       ->join('dialogs d', 'd.dialog_id = m.dialog_id')
@@ -219,12 +226,18 @@ class DialogMessage extends CActiveRecord
       $where[] = array('like', 'msg.message', '%'. $keyword .'%');
     }
 
-    $command->select('COUNT(*) as num')
-            ->from('dialog_members m')
-            ->join('dialog_messages msg', 'msg.dialog_id = m.dialog_id')
-            ->join('users u', 'u.id = msg.author_id')
-            ->join('profiles p', 'p.user_id = u.id')
-            ->where($where, $params);
+    if ($c['filter'] == 'new') {
+      $where[] = 'req.owner_id = :oid';
+      $where[] = 'req.req_type = '. ProfileRequest::TYPE_PM;
+
+      $params[':oid'] = $recipient_id;
+    }
+
+    $command->select('COUNT(DISTINCT msg.message_id) as num')
+      ->from('dialog_members m')
+      ->join('dialog_messages msg', 'msg.dialog_id = m.dialog_id')
+      ->leftJoin('profile_requests req', 'req.req_link_id = msg.message_id AND req.owner_id = '. $recipient_id)
+      ->where($where, $params);
 
     $result = $command->queryRow();
     return $result['num'];

@@ -91,13 +91,15 @@ if ($message->dialog->type == Dialog::TYPE_TET && $message->author_id == Yii::ap
                   <?php $photo = json_decode($_photo, true); ?>
                   <?php $list['items'][] = $photo ?>
                   <?php $use = $photo['a'] ?>
-                  <a class="left comment_attached_photo" onclick="Photoview.show('mess<?php echo $message->message_id ?>', <?php echo $akey ?>)">
+                  <a class="left" onclick="Photoview.show('mess<?php echo $message->message_id ?>', <?php echo $akey ?>)">
                     <img src="http://cs<?php echo $use[2] ?>.<?php echo Yii::app()->params['domain'] ?>/<?php echo $use[0] ?>/<?php echo $use[1] ?>" />
                   </a>
                 <?php endforeach; ?>
                 <script>
                   Photoview.list('mess<?php echo $message->message_id ?>', <?php echo json_encode($list) ?>);
                 </script>
+              <?php elseif (isset($attaches[0]['type']) && $attaches[0]['type'] == 'purchase_edit'): ?>
+                <?php echo ActiveHtml::link('<span class="icon-share"></span> Закупка '. $attaches[0]['name'], '/purchase'. $attaches[0]['purchase_id'] .'/edit', array('target' => '_blank')) ?>
               <?php endif; ?>
             </div>
             <?php endif; ?>

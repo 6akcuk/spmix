@@ -65,7 +65,7 @@ class ProfileNotify extends CActiveRecord
 	{
 		return array(
 			'user_id' => 'User',
-			'notify_im' => 'Личные сообещния',
+			'notify_im' => 'Личные сообщения',
 			'notify_orders' => 'Полученные заказы',
 			'notify_purchases' => 'Новые закупки',
 			'notify_comments' => 'Комментарии к товару',

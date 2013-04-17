@@ -22,8 +22,10 @@ class DefaultController extends Controller
       $this->defaultAction = $_GET['act'];
   }
 
-  public function actionInbox($offset = 0) {
+  public function actionInbox($filter = 'all', $offset = 0) {
     $c = (isset($_REQUEST['c'])) ? $_REQUEST['c'] : array();
+
+    $c['filter'] = $filter;
 
     $messages = DialogMessage::getInboxMessages(Yii::app()->user->getId(), $offset, $c);
     $offsets = DialogMessage::countInboxMessages(Yii::app()->user->getId(), $c);
