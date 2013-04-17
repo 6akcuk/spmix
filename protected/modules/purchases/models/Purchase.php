@@ -10,6 +10,7 @@
  * @property integer $category_id
  * @property integer $city_id
  * @property string $create_date
+ * @property string $confirm_date
  * @property string $stop_date
  * @property string $status
  * @property string $state
@@ -140,6 +141,7 @@ class Purchase extends CActiveRecord
         'category_id' => 'Категория',
         'city_id' => 'Город',
         'create_date' => 'Дата создания',
+        'confirm_date' => 'Дата одобрения',
         'stop_date' => 'Дата окончания (стопа)',
         'status' => 'Видимость по репутации',
         'state' => 'Статус закупки',

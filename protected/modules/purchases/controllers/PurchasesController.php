@@ -35,9 +35,10 @@ class PurchasesController extends Controller {
                 if ($_POST['confirm'] == 1) {
                     $mod_request_id = $purchase->mod_request_id;
 
+                    $purchase->confirm_date = date("Y-m-d H:i:s");
                     $purchase->mod_confirmation = 1;
                     $purchase->mod_request_id = null;
-                    $purchase->save(true, array('mod_confirmation', 'mod_request_id'));
+                    $purchase->save(true, array('confirm_date', 'mod_confirmation', 'mod_request_id'));
 
                     $purchase->mod_request->status = PurchaseModRequest::STATUS_CLOSED;
                     $purchase->mod_request->moderator_id= Yii::app()->user->getId();

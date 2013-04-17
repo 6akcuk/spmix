@@ -56,6 +56,7 @@ class Comment extends CActiveRecord
 			array('hoop_id, hoop_type', 'length', 'max'=>10),
 			array('answer_to', 'length', 'max'=>20),
       array('text', 'length', 'min' => 2, 'max' => 4096),
+      array('text', 'filter', 'filter' => array($obj = new CHtmlPurifier(),'purify')),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('comment_id, author_id, hoop_id, hoop_type, creation_date, answer_to, text, attaches', 'safe', 'on'=>'search'),
