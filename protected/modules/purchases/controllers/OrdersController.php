@@ -424,7 +424,8 @@ class OrdersController extends Controller {
 
     public function actionShow($order_id) {
       /** @var $order Order */
-        $order = Order::model()->with('good', 'good.sizes', 'good.colors', 'purchase', 'oic')->findByPk($order_id);
+      $order = Order::model()->with('good', 'good.sizes', 'good.colors', 'purchase', 'oic')->findByPk($order_id);
+
 
         if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
             Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('order' => $order)) ||

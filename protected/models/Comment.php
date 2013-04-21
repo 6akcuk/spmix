@@ -18,6 +18,8 @@
  */
 class Comment extends CActiveRecord
 {
+  const FEED_NEW_COMMENT = 'new comment';
+
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
@@ -99,5 +101,16 @@ class Comment extends CActiveRecord
       return true;
     }
     else return false;
+  }
+
+  public function afterSave() {
+    if ($this->getIsNewRecord()) {
+      $feed = new Feed();
+      $feed->event_type = self::FEED_NEW_COMMENT;
+      $feed->event_link_id = $this->comment_id;
+      $feed->owner_type = $this->hoop_type;
+      $feed->owner_id = $this->hoop_id;
+      $feed->save();
+    }
   }
 }

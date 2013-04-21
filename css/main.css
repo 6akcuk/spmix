@@ -481,6 +481,16 @@ h2.empty {
     height: 50px;
 }
 
+div.post_progress {
+  display: none;
+  padding: 7px 10px;
+}
+
+.divide {
+  color: gray;
+  padding: 0px 4px;
+  font-weight: normal;
+}
 /* End of useful declaration */
 
 #header {

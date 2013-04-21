@@ -86,6 +86,33 @@ var Profile = {
         });
     },
 
+  showStatusEditor: function(cont) {
+    var $w = $('#profile-status-editor'), st = $.trim($('#profile-status').text());
+    $w.show().css({
+      top: $(cont).offset().top - $('#content').offset().top - 12 - 8,
+      left: $(cont).offset().left - $('#content').offset().left - 12 - 8
+    });
+    $w.click(function(event) {
+      event.stopPropagation();
+    });
+    $w.find('input').focus().val((st != 'Изменить статус') ? st : '');
+
+    setTimeout(function() {
+      $('body').one('click', function() {
+        $w.hide();
+      });
+    }, 1);
+  },
+
+  saveStatus: function() {
+    var status = $.trim($('#profile-status-editor input[type="text"]').val());
+    ajax.post('/users/profiles/status', {status: status}, function(r) {
+      $('body').click();
+      if (status == '') status = 'Изменить статус';
+      $('#profile-status').text(status);
+    });
+  },
+
     incReputation: function(cont, user_id) {
         var $w = $('#rep_pos_box');
         $w.show().css({

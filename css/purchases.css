@@ -72,6 +72,11 @@
     text-decoration: underline;
 }
 
+.purchase_author_status {
+  background: #E6EFC2;
+  padding: 5px !important;
+}
+
 .purchase_table {
     padding: 5px 0 20px;
 }

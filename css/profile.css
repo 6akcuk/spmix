@@ -73,7 +73,7 @@
 }
 
 .profile-info {
-    padding-bottom: 10px;
+  padding-bottom: 10px;
 }
 .profile-info .label {
     width: 135px;
@@ -88,6 +88,19 @@
 }
 .profile-info .miniblock {
     padding-top: 5px;
+}
+
+.profile-status-container {
+  font-size: 12px;
+  border-bottom: 1px solid #e8ebee;
+  margin-bottom: 10px;
+}
+#profile-status-editor {
+  position: absolute;
+  display: none;
+  padding: 12px;
+  background: #f7f7f7;
+  border: 1px solid #ccc;
 }
 
 .profile-positive-rep {
@@ -151,20 +164,21 @@
     display: block;
 }
 .module-header .header-top {
-    background: #dee5eb;
-    overflow: hidden;
-    color: #45688e;
-    padding: 5px 10px
+  background: #dee5eb;
+  overflow: hidden;
+  color: #45688e;
+  padding: 5px 10px;
+  font-weight: bold;
 }
 .module-header .header-bottom {
-    color: #667788;
-    font-weight: normal;
-    padding: 4px 10px;
-    border-bottom: 1px solid #f2f2f2;
+  color: #667788;
+  font-weight: normal;
+  padding: 4px 10px;
+  border-bottom: 1px solid #f2f2f2;
 }
 .module-body {
-    overflow: hidden;
-    padding: 6px 0px 14px 0px
+  overflow: hidden;
+  padding: 6px 0px 14px 0px
 }
 
 .people {

@@ -8,6 +8,9 @@ $title = Yii::app()->name;
 Yii::app()->getClientScript()->registerCssFile('/css/profile.css');
 Yii::app()->getClientScript()->registerScriptFile('/js/profile.js');
 
+Yii::app()->getClientScript()->registerCssFile('/css/photoview.css');
+Yii::app()->getClientScript()->registerScriptFile('/js/photoview.js');
+
 if ($userinfo)
     $title .= ' - ' .
         ((Yii::app()->user->checkAccess('global.fullnameView'))
@@ -107,7 +110,7 @@ $this->pageTitle = $title;
       <div class="clearfix people_row">
       <?php endif; ?>
           <div class="left people_cell">
-              <?php echo ActiveHtml::link(($friend->friend->profile->photo) ? ActiveHtml::showUploadImage($friend->friend->profile->photo, 'c') : '<img src="/images/camera_a.gif" />', '/id'. $friend->friend->id, array('class' => 'ava')) ?>
+              <?php echo ActiveHtml::link($friend->friend->profile->getProfileImage('c'), '/id'. $friend->friend->id, array('class' => 'ava')) ?>
               <div class="people_name">
               <?php echo ActiveHtml::link($friend->friend->login, '/id'. $friend->friend->id) ?>
               </div>
@@ -121,6 +124,23 @@ $this->pageTitle = $title;
       </div>
     </div>
     <div class="left profile-right">
+      <?php if (Yii::app()->user->getId() == 1): ?>
+        <?php if (($userinfo->id != Yii::app()->user->getId() && $userinfo->profile->status) || (Yii::app()->user->getId() == $userinfo->id)): ?>
+      <div class="profile-info profile-status-container">
+        <?php if (Yii::app()->user->getId() == $userinfo->id): ?>
+        <a id="profile-status" class="profile-status-change" onclick="Profile.showStatusEditor(this)">
+        <?php endif; ?>
+          <?php echo ($userinfo->profile->status) ?: 'Изменить статус' ?>
+        <?php if (Yii::app()->user->getId() == $userinfo->id): ?>
+        </a>
+        <div id="profile-status-editor">
+          <input type="text" name="profile_status" value="" style="width:340px" />
+          <a class="button" onclick="Profile.saveStatus()">Сохранить</a>
+        </div>
+        <?php endif; ?>
+      </div>
+        <?php endif; ?>
+      <?php endif; ?>
         <div class="profile-info">
             <div class="clearfix">
                 <div class="label left">
@@ -270,5 +290,56 @@ $this->pageTitle = $title;
                 <?php echo nl2br($userinfo->profile->about) ?>
             </div>
         </div>
+      <?php if (Yii::app()->user->getId() == 1): ?>
+      <?php
+        Yii::app()->getClientScript()->registerCssFile('/css/wall.css');
+        Yii::app()->getClientScript()->registerScriptFile('/js/wall.js');
+        ?>
+      <div class="module">
+        <div class="module-header">
+          <div id="wall_header" class="header-top">
+            <?php echo Yii::t('app', '{n} запись|{n} записи|{n} записей', $postsNum); ?>
+          </div>
+          <div class="header-bottom wall-post" onclick="event.cancelBubble=true;">
+            <?php echo ActiveHtml::smartTextarea(
+              'wall_post', '',
+              array(
+                'placeholder' => (Yii::app()->user->getId() == $userinfo->id) ? 'Что у Вас нового?' : 'Написать сообщение..',
+                'onfocus' => 'Wall.showEditor()',
+              )) ?>
+            <div id="wall_post_btn" class="clearfix" style="display: none">
+              <div id="wall_attaches" class="wall_post_attaches clearfix"></div>
+              <a class="left button" onclick="Wall.doPost(<?php echo $userinfo->id ?>)">Отправить</a>
+              <div id="wall_post_progress" class="left post_progress">
+                <img src="/images/upload.gif" />
+              </div>
+              <div class="right">
+                <?php echo ActiveHtml::upload('photo', '', 'Прикрепить фотографию', array('onchange' => 'Wall.attachPhoto({id})')) ?>
+              </div>
+            </div>
+            <script type="text/javascript">
+              A.wallLastID = <?php echo (isset($posts[0])) ? $posts[0]->post_id : 0 ?>;
+            </script>
+          </div>
+        </div>
+        <div class="module-body">
+          <div style="display: none">
+            <?php $this->widget('Paginator', array(
+              'url' => '/wall?id='. $userinfo->id,
+              'offset' => 0,
+              'offsets' => $postsNum,
+              'delta' => Yii::app()->getModule('users')->wallPostsPerPage,
+              'nopages' => true,
+            )); ?>
+          </div>
+
+          <div id="wall<?php echo $userinfo->id ?>" rel="pagination">
+            <?php echo $this->renderPartial('_wall', array('posts' => $posts, 'offset' => 0)) ?>
+          </div>
+          <? if (0 + Yii::app()->getModule('users')->wallPostsPerPage < $postsNum && $postsNum > Yii::app()->getModule('users')->wallPostsPerPage): ?><a id="pg_more" class="pg_more" onclick="Paginator.showMore()">Еще записи</a><? endif; ?>
+        </div>
+      </div>
+
+      <?php endif; ?>
     </div>
 </div>

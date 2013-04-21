@@ -25,12 +25,24 @@ class ProfilesController extends Controller {
       $friendsNum = $userinfo->profile->countFriends();
       $purchasesNum = Purchase::model()->count('author_id = :id', array(':id' => $id));
 
+      $criteria = new CDbCriteria();
+      $criteria->limit = Yii::app()->getModule('users')->wallPostsPerPage;
+      $criteria->order = 'add_date DESC';
+      $criteria->compare('wall_id', $id);
+
+      $posts = ProfileWallPost::model()->with('author', 'author.profile')->findAll($criteria);
+
+      $criteria->limit = 0;
+      $postsNum = ProfileWallPost::model()->count($criteria);
+
       if (Yii::app()->request->isAjaxRequest) {
           $this->pageHtml = $this->renderPartial('index', array(
             'userinfo' => $userinfo,
             'friends' => $friends,
             'friendsNum' => $friendsNum,
             'purchasesNum' => $purchasesNum,
+            'posts' => $posts,
+            'postsNum' => $postsNum,
           ), true);
       }
       else $this->render('index', array(
@@ -38,10 +50,89 @@ class ProfilesController extends Controller {
         'friends' => $friends,
         'friendsNum' => $friendsNum,
         'purchasesNum' => $purchasesNum,
+        'posts' => $posts,
+        'postsNum' => $postsNum,
       ));
     }
 
-    public function actionReputation($id, $offset = 0) {
+  public function actionStatus() {
+    /** @var $profile Profile */
+    $profile = Yii::app()->user->model->profile;
+    $profile->status = htmlspecialchars($_POST['status']);
+    if ($profile->save(true, array('status'))) {
+      $feed = new Feed();
+      $feed->owner_type = 'user';
+      $feed->owner_id = Yii::app()->user->getId();
+      $feed->event_type = 'new status';
+      $feed->event_link_id = Yii::app()->user->getId();
+      $feed->event_text = htmlspecialchars($_POST['status']);
+      $feed->save();
+    }
+
+    echo json_encode(array('status' => true));
+    exit;
+  }
+
+  public function actionWallPost($id) {
+    $wall = new ProfileWallPost();
+    $wall->author_id = Yii::app()->user->getId();
+    $wall->wall_id = $id;
+    $wall->post = htmlspecialchars($_POST['wall']['post']);
+    $wall->attaches = json_encode(isset($_POST['wall']['attach']) ? $_POST['wall']['attach'] : array());
+    $wall->save();
+
+    $criteria = new CDbCriteria();
+    $criteria->compare('wall_id', $id);
+
+    $postsNum = ProfileWallPost::model()->count($criteria);
+
+    $criteria->addCondition('post_id > :id');
+    $criteria->params[':id'] = intval($_POST['last_id']);
+    $criteria->order = 'add_date DESC';
+
+    $posts = ProfileWallPost::model()->findAll($criteria);
+
+    echo json_encode(array(
+      'num' => Yii::t('app', '{n} запись|{n} записи|{n} записей', $postsNum),
+      'posts' => $this->renderPartial('_wall', array('posts' => $posts, 'offset' => 0), true),
+    ));
+    exit;
+  }
+
+  public function actionDeleteWallPost($id) {
+    /** @var $post ProfileWallPost */
+    $post = ProfileWallPost::model()->findByPk($id);
+
+    if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
+      Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('post' => $post)) ||
+      Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Owner', array('post' => $post))) {
+      $post->markAsDeleted();
+
+      echo json_encode(array());
+      exit;
+    }
+    else
+      throw new CHttpException(403, 'В доступе отказано');
+  }
+
+  public function actionRestoreWallPost($id) {
+    /** @var $post ProfileWallPost */
+    $post = ProfileWallPost::model()->resetScope()->findByPk($id);
+
+    if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
+      Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('post' => $post)) ||
+      Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Owner', array('post' => $post))) {
+      $post->restore();
+
+      echo json_encode(array());
+      exit;
+    }
+    else
+      throw new CHttpException(403, 'В доступе отказано');
+  }
+
+
+  public function actionReputation($id, $offset = 0) {
         $act = (isset($_GET['act']))  ? $_GET['act'] : 'show';
         $value = (isset($_POST['value'])) ? intval($_POST['value']) : 0;
         $comment = (isset($_POST['comment'])) ? trim($_POST['comment']) : '';

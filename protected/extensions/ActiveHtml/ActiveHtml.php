@@ -210,8 +210,8 @@ class ActiveHtml extends CHtml {
     }
 
     public static function showUploadImage($data, $size = 'b', $htmlOptions = array()) {
-        $images = json_decode($data, true);
-        return self::image('http://cs'. $images[$size][2] .'.'. Yii::app()->params['domain'] .'/'. $images[$size][0] .'/'. $images[$size][1], '', $htmlOptions);
+      $images = json_decode($data, true);
+      if (isset($images[$size])) return self::image('http://cs'. $images[$size][2] .'.'. Yii::app()->params['domain'] .'/'. $images[$size][0] .'/'. $images[$size][1], '', $htmlOptions);
     }
     public static function getImageUrl($data, $size = 'b') {
         $images = json_decode($data, true);

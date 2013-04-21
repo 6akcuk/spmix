@@ -57,8 +57,13 @@ $delta = Yii::app()->controller->module->goodsPerPage;
             </div>
             <div class="clearfix">
                 <div class="left label">Организатор:</div>
-                <div class="left labeled"><?php echo ActiveHtml::link((Yii::app()->user->checkAccess('global.fullnameView')) ? $purchase->author->profile->firstname .' '. $purchase->author->profile->lastname : $purchase->author->login, '/id'. $purchase->author_id) ?></div>
+                <div class="left labeled"><?php echo ActiveHtml::link($purchase->author->getDisplayName(), '/id'. $purchase->author_id) ?></div>
             </div>
+          <?php if ($purchase->author->profile->status): ?>
+          <div class="clearfix purchase_author_status">
+            <?php echo $purchase->author->profile->status ?>
+          </div>
+          <?php endif; ?>
         </div>
         <div class="left td">
             <div class="clearfix">

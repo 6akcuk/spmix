@@ -32,6 +32,8 @@
  */
 class Good extends CActiveRecord
 {
+  const FEED_NEW_GOOD = 'new good';
+
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
@@ -131,6 +133,17 @@ class Good extends CActiveRecord
 			'colors' => 'Цвет',
 		);
 	}
+
+  public function afterSave() {
+    if ($this->getIsNewRecord()) {
+      $feed = new Feed();
+      $feed->event_type = self::FEED_NEW_GOOD;
+      $feed->event_link_id = $this->good_id;
+      $feed->owner_type = 'purchase';
+      $feed->owner_id = $this->purchase_id;
+      $feed->save();
+    }
+  }
 
     public function getEndPrice($new_price = null, $new_delivery = null) {
         return floatval(($new_price) ?: $this->price) * ($this->purchase->org_tax / 100 + 1) + (($new_delivery) ?: $this->delivery);

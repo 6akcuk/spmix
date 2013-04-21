@@ -6,6 +6,7 @@ class UsersModule extends CWebModule
   public $onlineInterval = 10;
   public $friendsPerPage = 10;
   public $reputationPerPage = 10;
+  public $wallPostsPerPage = 10;
 
   public $inviteReputationBonus = 1;
 
