@@ -144,12 +144,11 @@ class PurchasesController extends Controller {
             $criteria->params[':city_id'] = Yii::app()->user->model->profile->city_id;
         }
 
-        if (!isset($c['state'])) {
-            $criteria->params[':state'] = Purchase::STATE_ORDER_COLLECTION;
-            $criteria->addCondition('state = :state');
+        if (!isset($c['state']) || $c['state'] == Purchase::STATE_ORDER_COLLECTION) {
+          $criteria->addInCondition('state', array(Purchase::STATE_ORDER_COLLECTION, Purchase::STATE_REORDER));
         }
         else {
-            if ($c['state'] == 'Progress') $criteria->addInCondition('state', array(Purchase::STATE_STOP, Purchase::STATE_REORDER, Purchase::STATE_PAY, Purchase::STATE_CARGO_FORWARD, Purchase::STATE_DISTRIBUTION));
+            if ($c['state'] == 'Progress') $criteria->addInCondition('state', array(Purchase::STATE_STOP, Purchase::STATE_PAY, Purchase::STATE_CARGO_FORWARD, Purchase::STATE_DISTRIBUTION));
             else {
                 $criteria->params[':state'] = $c['state'];
                 $criteria->addCondition('state = :state');
@@ -310,6 +309,15 @@ class PurchasesController extends Controller {
         'commentsNum' => $commentsNum,
       ));
     }
+
+  public function actionShareToFriends($id) {
+    $result = array();
+
+
+
+    echo json_encode($result);
+    exit;
+  }
 
     public function actionCreate() {
         $model = new Purchase('create');

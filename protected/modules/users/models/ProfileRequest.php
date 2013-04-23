@@ -12,8 +12,9 @@
  */
 class ProfileRequest extends CActiveRecord
 {
-    const TYPE_FRIEND = 0;
-    const TYPE_PM = 1;
+  const TYPE_FRIEND = 0;
+  const TYPE_PM = 1;
+  const TYPE_WALL_ANSWER = 2;
 
 	/**
 	 * Returns the static model of the specified AR class.

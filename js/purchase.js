@@ -246,7 +246,23 @@ var Purchase = {
         }, function(xhr) {
             A.acqPurchase = false;
         });
-    }
+    },
+
+  shareToFriends: function(id) {
+    showGlobalPrg();
+
+    ajax.post('/purchases/purchases/sharetofriends?id='+ id, {}, function(r) {
+      hideGlobalPrg();
+
+      var box = new Box({
+        hideButtons: true,
+        bodyStyle: 'padding: 0px',
+        width: 500
+      });
+      box.content(r.html);
+      box.show();
+    });
+  }
 };
 
 try {stmgr.loaded('purchase.js');}catch(e){}

@@ -28,6 +28,7 @@
  * @property integer $vip
  * @property integer $mod_request_id
  * @property integer $mod_confirmation
+ * @property string $shortstory
  * @property string $purchase_delete
  *
  * @property City $city
@@ -97,7 +98,7 @@ class Purchase extends CActiveRecord
 
       array('image, hide_supplier, stop_date', 'safe'),
 			array('author_id, category_id, city_id, accept_add, min_num, vip, mod_confirmation', 'numerical', 'integerOnly'=>true),
-			array('price_url, message', 'length', 'max'=>255),
+			array('price_url, message, shortstory', 'length', 'max' => 255),
       array('name, supplier_url', 'length', 'max' => 255, 'on' => 'edit_own_notconfirmed, edit_super_admin, edit_super_moderator'),
 			array('status', 'length', 'max'=>8),
 			array('state', 'length', 'max'=>16),
@@ -161,6 +162,7 @@ class Purchase extends CActiveRecord
         'vip' => 'VIP',
         'mod_confirmation' => 'Подтверждение модератора',
         'mod_reason' => 'Сообщение организатору',
+        'shortstory' => 'Краткое описание',
         'sizes' => 'Размеры',
       );
 	}

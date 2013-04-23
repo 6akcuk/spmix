@@ -78,6 +78,7 @@ return array(
         'invite<id:\d+>' => 'site/invite',
         'inviteBySMS' => 'users/profiles/inviteBySMS',
         'id<id:\d+>' => 'users/profiles',
+        'wall' => 'users/profiles/wall',
         'edit' => 'users/profiles/edit',
         'settings' => 'users/profiles/settings',
         'notify' => 'users/profiles/notify',

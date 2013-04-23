@@ -32,7 +32,7 @@ class ProfilesController extends Controller {
       $criteria->addCondition('t.post_delete IS NULL');
       $criteria->compare('t.wall_id', $id);
 
-      $posts = ProfileWallPost::model()->with('author', 'author.profile', 'last_replies', 'repliesNum')->findAll($criteria);
+      $posts = ProfileWallPost::model()->with('author', 'author.profile', array('last_replies.replyTo' => array('limit' => 3)), 'repliesNum')->findAll($criteria);
 
       $criteria->limit = 0;
       $postsNum = ProfileWallPost::model()->count($criteria);
@@ -75,29 +75,102 @@ class ProfilesController extends Controller {
     exit;
   }
 
+  public function actionWall($id, $offset = 0) {
+    $criteria = new CDbCriteria();
+    $criteria->limit = Yii::app()->getModule('users')->wallPostsPerPage;
+    $criteria->offset = $offset;
+    $criteria->order = 't.add_date DESC';
+    $criteria->addCondition('t.reply_to IS NULL');
+    $criteria->addCondition('t.post_delete IS NULL');
+    $criteria->compare('t.wall_id', $id);
+
+    $posts = ProfileWallPost::model()->with('author', 'author.profile', array('last_replies.replyTo' => array('limit' => 3)), 'repliesNum')->findAll($criteria);
+
+    $criteria->limit = 0;
+    $postsNum = ProfileWallPost::model()->count($criteria);
+
+    if (Yii::app()->request->isAjaxRequest) {
+      if (isset($_POST['pages'])) {
+        $this->pageHtml = $this->renderPartial('_wall', array(
+          'posts' => $posts,
+          'offset' => $offset,
+        ), true);
+      }
+      else $this->pageHtml = $this->renderPartial('wall', array(
+        'id' => $id,
+        'posts' => $posts,
+        'offset' => $offset,
+        'offsets' => $postsNum,
+      ), true);
+    }
+    else $this->render('wall', array(
+      'id' => $id,
+      'posts' => $posts,
+      'offset' => $offset,
+      'offsets' => $postsNum,
+    ));
+  }
+
   public function actionWallPost($id) {
     $wall = new ProfileWallPost();
     $wall->author_id = Yii::app()->user->getId();
     $wall->wall_id = $id;
     $wall->post = htmlspecialchars($_POST['wall']['post']);
+    if (isset($_POST['wall']['reply_to'])) $wall->reply_to = $_POST['wall']['reply_to'];
+    if (isset($_POST['wall']['reply_to_title'])) $wall->reply_to_id = $_POST['wall']['reply_to_title'];
     $wall->attaches = json_encode(isset($_POST['wall']['attach']) ? $_POST['wall']['attach'] : array());
     $wall->save();
 
+    if ($wall->reply_to > 0) {
+      $criteria = new CDbCriteria();
+      $criteria->compare('wall_id', $id);
+      $criteria->compare('reply_to', $wall->reply_to);
+      $criteria->addCondition('post_delete IS NULL');
+
+      $repliesNum = ProfileWallPost::model()->count($criteria);
+
+      $criteria->addCondition('post_id > :id');
+      $criteria->params[':id'] = intval($_POST['last_id']);
+
+      $replies = ProfileWallPost::model()->findAll($criteria);
+
+      echo json_encode(array(
+        'num' => 'Показать все '. Yii::t('app', '{n} комментарий|{n} комментария|{n} комментариев', $repliesNum),
+        'replies' => $this->renderPartial('_reply', array('replies' => $replies), true),
+        'last_id' => ($replies) ? $replies[sizeof($replies) - 1]->post_id : intval($_POST['last_id']),
+      ));
+    }
+    else {
+      $criteria = new CDbCriteria();
+      $criteria->compare('wall_id', $id);
+      $criteria->addCondition('post_delete IS NULL');
+
+      $postsNum = ProfileWallPost::model()->count($criteria);
+
+      $criteria->addCondition('post_id > :id');
+      $criteria->params[':id'] = intval($_POST['last_id']);
+
+      $posts = ProfileWallPost::model()->findAll($criteria);
+
+      echo json_encode(array(
+        'num' => Yii::t('app', '{n} запись|{n} записи|{n} записей', $postsNum),
+        'posts' => $this->renderPartial('_wall', array('posts' => $posts, 'offset' => 0), true),
+        'last_id' => ($posts) ? $posts[sizeof($posts) - 1]->post_id : intval($_POST['last_id']),
+      ));
+    }
+    exit;
+  }
+
+  public function actionPostReplies($post_id) {
     $criteria = new CDbCriteria();
-    $criteria->compare('wall_id', $id);
+    $criteria->compare('reply_to', $post_id);
+    $criteria->addCondition('post_delete IS NULL');
+    $criteria->addCondition('post_id < :id');
+    $criteria->params[':id'] = intval($_POST['first_id']);
 
-    $postsNum = ProfileWallPost::model()->count($criteria);
+    $replies = ProfileWallPost::model()->with('author', 'author.profile', 'replyTo')->findAll($criteria);
 
-    $criteria->addCondition('post_id > :id');
-    $criteria->params[':id'] = intval($_POST['last_id']);
-    $criteria->order = 'add_date DESC';
-
-    $posts = ProfileWallPost::model()->findAll($criteria);
-
-    echo json_encode(array(
-      'num' => Yii::t('app', '{n} запись|{n} записи|{n} записей', $postsNum),
-      'posts' => $this->renderPartial('_wall', array('posts' => $posts, 'offset' => 0), true),
-    ));
+    echo json_encode(array('html' => $this->renderPartial('_reply', array('replies' => $replies), true)));
     exit;
   }
 

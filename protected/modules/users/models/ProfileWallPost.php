@@ -9,14 +9,23 @@
  * @property integer $author_id
  * @property string $add_date
  * @property string $reply_to
+ * @property integer $reply_to_id
  * @property string $post
  * @property string $attaches
+ * @property integer $reference_id
+ * @property string $reference_type
  * @property string $post_delete
  *
  * @property User $author
+ * @property array|ProfileWallPost $last_replies
+ * @property array|ProfileWallPost $replies
+ * @property Profile $replyTo
+ * @property integer $repliesNum
  */
 class ProfileWallPost extends CActiveRecord
 {
+  const REF_TYPE_PURCHASE = 'purchase';
+
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
@@ -44,7 +53,7 @@ class ProfileWallPost extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('wall_id, author_id, post', 'required'),
-			array('wall_id, author_id', 'numerical', 'integerOnly'=>true),
+			array('wall_id, author_id, reply_to, reference_id', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('post_id, wall_id, author_id, add_date, post, attaches', 'safe', 'on'=>'search'),
@@ -62,7 +71,8 @@ class ProfileWallPost extends CActiveRecord
       'author' => array(self::BELONGS_TO, 'User', 'author_id'),
       'last_replies' => array(self::HAS_MANY, 'ProfileWallPost', 'reply_to', 'condition' => 'last_replies.post_delete IS NULL', 'order' => 'last_replies.add_date DESC', 'limit' => 3),
       'replies' => array(self::HAS_MANY, 'ProfileWallPost', 'reply_to', 'condition' => 'replies.post_delete IS NULL'),
-      'repliesNum' => array(self::STAT, 'ProfileWallPost', 'reply_to'),
+      'replyTo' => array(self::BELONGS_TO, 'Profile', 'reply_to_id', 'joinType' => 'LEFT JOIN'),
+      'repliesNum' => array(self::STAT, 'ProfileWallPost', 'reply_to', 'condition' => 'post_delete IS NULL'),
 		);
 	}
 
@@ -116,6 +126,14 @@ class ProfileWallPost extends CActiveRecord
 
   public function afterSave() {
     if ($this->isNewRecord) {
+      if ($this->reply_to_id) {
+        $req = new ProfileRequest();
+        $req->req_type = ProfileRequest::TYPE_WALL_ANSWER;
+        $req->owner_id = $this->reply_to_id;
+        $req->req_link_id = $this->post_id;
+        $req->save();
+      }
+
       $feed = new Feed();
       $feed->owner_type = 'user';
       $feed->owner_id = $this->wall_id;

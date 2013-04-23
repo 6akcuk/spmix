@@ -70,14 +70,14 @@ var Paginator = {
     initPages: function() {
         if (typeof A.pgFixedContent == 'undefined' || A.pgNoPages) return;
 
-        var page = (A.offset + A.pgDelta) / A.pgDelta,
+        var page = parseInt(A.pgPage);// (A.offset + A.pgDelta) / A.pgDelta,
             html = [],
             minPage = 1, maxPage = 1;
 
-        if (page > 3) minPage = page - 2;
+        if (page > 3 && Paginator.opts.pages > 5) minPage = page - 2;
         maxPage = (page < Paginator.opts.pages - 2) ? page + 2 : Paginator.opts.pages;
 
-        if (page > 3) html.push('<a class="pg_fixed_arr" href="'+ Paginator.opts.url +'?offset=0" onclick="return nav.go(this, event, {paginator: true})">&laquo;</a>');
+        if (page > 3 && Paginator.opts.pages > 5) html.push('<a class="pg_fixed_arr" href="'+ Paginator.opts.url +'?offset=0" onclick="return nav.go(this, event, {paginator: true})">&laquo;</a>');
         for(var i=minPage; i<=maxPage; i++) {
             var offset = i * A.pgDelta - A.pgDelta,
                 cls = (i == A.pgPage) ? 'pg_fixed_lnk_sel' : 'pg_fixed_lnk';

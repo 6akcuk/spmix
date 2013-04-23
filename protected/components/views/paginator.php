@@ -1,7 +1,7 @@
 <?php
 $page = ($this->offset + $this->delta) / $this->delta;
 $pages = ceil($this->offsets / $this->delta);
-$minpage = ($page > 3) ? $page - 2 : 1;
+$minpage = ($page > 3 && $pages > 5) ? $page - 2 : 1;
 $maxpage = ($page < $pages - 2) ? $page + 2 : $pages;
 $prevoffset = ($page > 1) ? $this->offset - $this->delta : 0;
 $nextoffset = ($page < $maxpage) ? $this->offset + $this->delta : $this->offsets - $this->delta;
@@ -10,10 +10,10 @@ $nextoffset = ($page < $maxpage) ? $this->offset + $this->delta : $this->offsets
 <?php if ($pages > 1): ?>
     <?php if (!$this->nopages): ?>
     <ul>
-        <? if ($page > 4) :?>
+        <? if ($page > 3 && $pages > 5) :?>
         <li class="disabled">
             <? //$this->url['offset'] = $prevoffset; ?>
-            <? echo ActiveHtml::link('&laquo;', $this->url .'?offset='. $prevoffset, array('nav' => array('search' => true, 'paginator' => true))); ?>
+            <? echo ActiveHtml::link('&laquo;', $this->url .'?offset=0', array('nav' => array('search' => true, 'paginator' => true))); ?>
         </li>
         <? endif; ?>
         <? for ($i=$minpage; $i<=$maxpage; $i++): ?>
@@ -24,7 +24,7 @@ $nextoffset = ($page < $maxpage) ? $this->offset + $this->delta : $this->offsets
         <? endfor; ?>
         <? if ($pages > $maxpage): ?>
         <li>
-            <? echo ActiveHtml::link('&raquo;', $this->url .'?offset='. $nextoffset, array('nav' => array('search' => true, 'paginator' => true))); ?>
+            <? echo ActiveHtml::link('&raquo;', $this->url .'?offset='. (($pages * $this->delta) - $this->delta), array('nav' => array('search' => true, 'paginator' => true))); ?>
         </li>
         <? endif; ?>
     </ul>

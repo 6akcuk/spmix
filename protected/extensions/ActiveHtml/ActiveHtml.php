@@ -287,6 +287,10 @@ class ActiveHtml extends CHtml {
 
         $sec = $now - $ext;
 
+      if ($sec <= 5) {
+        return Yii::t('app', 'только что');
+      }
+
         if($sec <= 59) {
             return Yii::t('app', '{n} секунду|{n} секунды|{n} секунд', $sec) .' '. Yii::t('app', 'назад');
         }
@@ -371,6 +375,7 @@ class ActiveHtml extends CHtml {
         elseif( $prelast == 'ай' ) return substr($word, 0, -4) .'ае';
         elseif( $prelast == 'ия' ) return substr($word, 0, -4) .'ии';
         elseif( $last == 'о' || $last == 'ы' ) return $word; // анопово
+        elseif( $last == 'с') return $word .'у';
         else return $word .'е';
 
         break;

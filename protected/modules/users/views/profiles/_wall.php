@@ -80,33 +80,29 @@
             <small>
               <span class="rel_date"><?php echo ActiveHtml::date($post->add_date, true, true) ?></span>
             </small>
+            <?php if ($post->repliesNum == 0): ?>
             <span id="reply_link<?php echo $post->wall_id ?>_<?php echo $post->post_id ?>" class="reply_link">
               <span class="divide">|</span>
-              <a class="reply_link" onclick="Wall.showReplyEditor('<?php echo $post->wall_id ?>_<?php echo $post->post_id ?>')">Комментировать</a>
+              <a class="reply_link" onclick="Wall.showReplyEditor(event, '<?php echo $post->wall_id ?>_<?php echo $post->post_id ?>')">Комментировать</a>
             </span>
+            <?php endif; ?>
           </div>
           <div class="replies_wrap" id="replies_wrap<?php echo $post->wall_id ?>_<?php echo $post->post_id ?>">
             <div id="replies<?php echo $post->wall_id ?>_<?php echo $post->post_id ?>">
-
+              <input type="hidden" name="last_id" value="<?php echo ($post->last_replies) ? $post->last_replies[0]->post_id : '' ?>" />
+            <?php if ($post->last_replies): ?>
+              <?php $post->last_replies = array_reverse($post->last_replies) ?>
+              <?php if ($post->repliesNum > 3): ?>
+                <a class="wr_header" onclick="Wall.showReplies('<?php echo $post->wall_id ?>_<?php echo $post->post_id ?>', <?php echo $post->last_replies[0]->post_id ?>)">
+                  <div class="wrh_text" id="wrh_text<?php echo $post->wall_id ?>_<?php echo $post->post_id ?>">Показать все <?php echo Yii::t('app', '{n} комментарий|{n} комментария|{n} комментариев', $post->repliesNum) ?></div>
+                  <div class="wrh_prg" id="wrh_prg<?php echo $post->wall_id ?>_<?php echo $post->post_id ?>"><img src="/images/upload.gif" /></div>
+                </a>
+              <?php endif; ?>
+              <?php echo $this->renderPartial('_reply', array('replies' => $post->last_replies)) ?>
+            <?php endif; ?>
             </div>
-            <div style="display:none" class="reply_fakebox_wrap" id="reply_fakebox<?php echo $post->wall_id ?>_<?php echo $post->post_id ?>" onclick="Wall.showReplyEditor('<?php echo $post->wall_id ?>_<?php echo $post->post_id ?>')">
+            <div style="<?php if ($post->repliesNum == 0): ?>display:none<?php endif; ?>" class="reply_fakebox_wrap" id="reply_fakebox<?php echo $post->wall_id ?>_<?php echo $post->post_id ?>" onclick="Wall.showReplyEditor(event, '<?php echo $post->wall_id ?>_<?php echo $post->post_id ?>')">
               <div class="reply_fakebox">Комментировать..</div>
-            </div>
-            <div class="reply_box clearfix" onclick="">
-              <?php echo ActiveHtml::link(Yii::app()->user->model->profile->getProfileImage('c'), '/id'. Yii::app()->user->getId(), array('class' => 'reply_form_image')) ?>
-              <div class="reply_form">
-                <div class="reply_field_wrap clearfix">
-                  <?php echo ActiveHtml::smartTextarea('reply_text', '', array('placeholder' => 'Комментировать..')) ?>
-                </div>
-                <div class="reply_attaches clearfix"></div>
-                <div class="submit_reply clear">
-                  <a class="button left">Отправить</a>
-                  <div class="left reply_to_title"></div>
-                  <div class="right reply_attach_btn">
-                    <?php echo ActiveHtml::upload('photo', '', 'Прикрепить фото', array('onchange' => 'Wall.replyAttachPhoto({id})')) ?>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>

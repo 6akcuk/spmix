@@ -848,6 +848,31 @@ div.ls_columns div.column.options div {
   color: #fff;
 }
 
+.wr_header {
+  display: block;
+  cursor: pointer;
+  color: #6a7989;
+  background: #e9edf1;
+  height: 13px;
+  padding: 9px 0px 8px;
+}
+.wrh_all {
+  background: #fff;
+  color: #777;
+}
+.wrh_all:hover {
+  color: #6a7989;
+  background: #e9edf1;
+}
+.wrh_text {
+  text-align: center;
+}
+.wrh_prg {
+  display: none;
+  margin: 0px auto;
+  width: 32px;
+}
+
 /* Box */
 .box_header {
   background: #f2f2f2;

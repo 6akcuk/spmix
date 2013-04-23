@@ -21,7 +21,7 @@
   top: 4px !important;
   color: #aaa;
 }
-div.wall_post_attaches {
+div.wall_post_attaches, div.reply_attaches {
   padding-bottom: 5px;
 }
 #wall_post_btn {
@@ -206,6 +206,48 @@ div.wall_post_attaches {
 }
 .wall_post .reply_attach_btn {
   margin-top: 5px;
+}
+
+.wall_post .reply {
+  background: #fff;
+  border-top: 1px solid #e9edf1;
+  padding: 6px 0px;
+  position: relative;
+}
+.wall_post .reply_table {
+  cursor: pointer;
+}
+
+.wall_post a.reply_image {
+  width: 50px;
+  height: 50px;
+  margin: 8px 0px 2px;
+  display: block;
+  overflow: hidden;
+  position: absolute;
+  top: 0px;
+}
+.wall_post a.reply_image img {
+  width: 50px;
+  height: 50px;
+}
+.wall_post .reply_info {
+  margin-left: 59px;
+  width: 338px;
+  min-height: 53px;
+}
+.wall_post .reply .author {
+  padding-right: 3px;
+  font-weight: normal;
+}
+
+.wall_post .info_footer {
+  font-size: 10px;
+  color: #999;
+  padding: 4px 0px 0px;
+}
+.wall_post .info_footer a {
+  color: #999;
 }
 
 /* Static Manager */

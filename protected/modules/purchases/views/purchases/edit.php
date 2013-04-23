@@ -45,6 +45,10 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
             <?php echo $form->label($model, 'image') ?>
             <?php echo $form->upload($model, 'image', 'Прикрепить аватар', array('data-image' => 'a')) ?>
         </div>
+      <div class="row clearfix">
+        <?php echo $form->label($model, 'shortstory') ?>
+        <?php echo $form->smartTextarea($model, 'shortstory') ?>
+      </div>
         <div class="row">
             <?php echo $form->label($model, 'stop_date') ?>
             <?php echo $form->inputCalendar($model, 'stop_date') ?>
@@ -136,3 +140,6 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
 </div>
 <?php $this->endWidget(); ?>
 </div>
+<script type="text/javascript">
+$('#Purchase_shortstory').popupHelp('Краткое описание закупки должно содержать не более 255 символов. Оно отображается в общем списке всех закупок города, в рекламных объявлениях на главной странице и в левой колонке сайта.');
+</script>
