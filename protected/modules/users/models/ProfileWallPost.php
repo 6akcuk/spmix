@@ -35,12 +35,6 @@ class ProfileWallPost extends CActiveRecord
 		return 'profile_wall_posts';
 	}
 
-  public function defaultScope() {
-    return array(
-      'condition' => 'post_delete IS NULL',
-    );
-  }
-
 	/**
 	 * @return array validation rules for model attributes.
 	 */
@@ -66,6 +60,9 @@ class ProfileWallPost extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
       'author' => array(self::BELONGS_TO, 'User', 'author_id'),
+      'last_replies' => array(self::HAS_MANY, 'ProfileWallPost', 'reply_to', 'condition' => 'last_replies.post_delete IS NULL', 'order' => 'last_replies.add_date DESC', 'limit' => 3),
+      'replies' => array(self::HAS_MANY, 'ProfileWallPost', 'reply_to', 'condition' => 'replies.post_delete IS NULL'),
+      'repliesNum' => array(self::STAT, 'ProfileWallPost', 'reply_to'),
 		);
 	}
 

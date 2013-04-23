@@ -27,10 +27,12 @@ class ProfilesController extends Controller {
 
       $criteria = new CDbCriteria();
       $criteria->limit = Yii::app()->getModule('users')->wallPostsPerPage;
-      $criteria->order = 'add_date DESC';
-      $criteria->compare('wall_id', $id);
+      $criteria->order = 't.add_date DESC';
+      $criteria->addCondition('t.reply_to IS NULL');
+      $criteria->addCondition('t.post_delete IS NULL');
+      $criteria->compare('t.wall_id', $id);
 
-      $posts = ProfileWallPost::model()->with('author', 'author.profile')->findAll($criteria);
+      $posts = ProfileWallPost::model()->with('author', 'author.profile', 'last_replies', 'repliesNum')->findAll($criteria);
 
       $criteria->limit = 0;
       $postsNum = ProfileWallPost::model()->count($criteria);
