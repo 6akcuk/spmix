@@ -227,7 +227,7 @@ class Profile extends CActiveRecord
         }
 
         $where[] = 't.rel_type = '. ProfileRelationship::TYPE_FRIENDS;
-        $where[] = 'friend.lastvisit >= NOW() - INTERVAL '. Yii::app()->getModule('users')->onlineInterval .' SECOND';
+        $where[] = 'friend.lastvisit >= NOW() - INTERVAL '. Yii::app()->getModule('users')->onlineInterval .' MINUTE';
 
         $command = $conn->createCommand('
         SELECT (
@@ -267,7 +267,7 @@ class Profile extends CActiveRecord
         }
 
         $where[] = 't.rel_type = '. ProfileRelationship::TYPE_FRIENDS;
-        $where[] = 'friend.lastvisit >= NOW() - INTERVAL '. Yii::app()->getModule('users')->onlineInterval .' SECOND';
+        $where[] = 'friend.lastvisit >= NOW() - INTERVAL '. Yii::app()->getModule('users')->onlineInterval .' MINUTE';
 
         $command = $conn->createCommand('SELECT t.*, friend.*, profile.*, city.id AS city_id, city.name AS city_name, rbac.* FROM `profile_relationships` AS t
             INNER JOIN `users` AS friend ON friend.id = t.to_id

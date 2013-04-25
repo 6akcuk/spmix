@@ -30,9 +30,11 @@ Yii::app()->getClientScript()->registerScriptFile('/js/jquery.cookie.js', null, 
   <div id="hoop<?php echo $this->hoop_id ?>_attaches" class="comment_post_attaches clearfix">
   </div>
   <div class="comment_post clearfix">
+    <input type="hidden" id="reply_to_title" name="reply_to_title" />
     <div class="left">
       <a class="button" onclick="Comment.add(<?php echo $this->hoop_id ?>)">Отправить</a>
     </div>
+    <div class="left reply_to_title"></div>
     <div id="comment<?php echo $this->hoop_id ?>_progress" class="left comment_post_progress">
       <img src="/images/upload.gif" />
     </div>

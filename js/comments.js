@@ -21,6 +21,19 @@ var Comment = {
     });
   },
 
+  replyTo: function(event, comment_id) {
+    var $a = $('#comment_'+ comment_id +' div.comment_header a');
+    $('#Comment_text').val($a.attr('data-name') + ', ').focus();
+    $('div.comment_post div.reply_to_title').html('<a href="'+ $a.attr('href') +'">'+ $a.attr('data-lex-name') +'</a>&nbsp;<a class="icon-remove" onclick="Comment.removeReply()"></a>');
+    $('#reply_to_title').val(parseInt($a.attr('data-id')));
+  },
+
+  removeReply: function() {
+    $('#Comment_text').val('');
+    $('div.comment_post div.reply_to_title').html('');
+    $('#reply_to_title').val('');
+  },
+
   edit: function(comment_id) {
     if (A.commentEditing) {
       $('#comment_'+ comment_id +'_editing textarea').focus();

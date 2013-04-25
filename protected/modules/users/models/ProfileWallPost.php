@@ -25,6 +25,7 @@
 class ProfileWallPost extends CActiveRecord
 {
   const REF_TYPE_PURCHASE = 'purchase';
+  const REF_TYPE_GOOD = 'good';
 
 	/**
 	 * Returns the static model of the specified AR class.
@@ -52,7 +53,8 @@ class ProfileWallPost extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('wall_id, author_id, post', 'required'),
+      array('wall_id, author_id', 'required'),
+			array('post', 'required', 'on' => 'secure'),
 			array('wall_id, author_id, reply_to, reference_id', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
@@ -135,21 +137,57 @@ class ProfileWallPost extends CActiveRecord
       }
 
       $feed = new Feed();
-      $feed->owner_type = 'user';
-      $feed->owner_id = $this->wall_id;
+      $feed->owner_type = ($this->reply_to) ? 'post' : 'user';
+      $feed->owner_id = ($this->reply_to) ? $this->reply_to : $this->wall_id;
       $feed->event_type = ($this->reply_to) ? 'new reply' : 'new post';
       $feed->event_link_id = $this->post_id;
       $feed->save();
+
+      $c = new CDbCriteria();
+      $c->compare('user_id', Yii::app()->user->getId());
+      $c->compare('sub_type', Subscription::TYPE_WALL_POST);
+      $c->compare('sub_link_id', ($this->reply_to) ? $this->reply_to : $this->post_id);
+
+      $sub = Subscription::model()->find($c);
+      if (!$sub) {
+        $sub = new Subscription();
+        $sub->user_id = Yii::app()->user->getId();
+        $sub->sub_type = Subscription::TYPE_WALL_POST;
+        $sub->sub_link_id = ($this->reply_to) ? $this->reply_to : $this->post_id;
+        $sub->save();
+      }
     }
   }
 
   public function markAsDeleted() {
     $this->post_delete = date("Y-m-d H:i:s");
-    $this->save(true, array('post_delete'));
+    $result = $this->save(true, array('post_delete'));
+
+    $cr = new CDbCriteria();
+    $cr->compare('owner_type', 'user');
+    $cr->compare('owner_id', $this->wall_id);
+    $cr->compare('event_type', ($this->reply_to) ? 'new reply' : 'new post');
+    $cr->compare('event_link_id', $this->post_id);
+
+    $feed = Feed::model()->find($cr);
+    if ($feed) $feed->markAsDeleted();
+
+    return $result;
   }
 
   public function restore() {
     $this->post_delete = null;
-    $this->save(true, array('post_delete'));
+    $result = $this->save(true, array('post_delete'));
+
+    $cr = new CDbCriteria();
+    $cr->compare('owner_type', 'user');
+    $cr->compare('owner_id', $this->wall_id);
+    $cr->compare('event_type', ($this->reply_to) ? 'new reply' : 'new post');
+    $cr->compare('event_link_id', $this->post_id);
+
+    $feed = Feed::model()->find($cr);
+    if ($feed) $feed->restore();
+
+    return $result;
   }
 }

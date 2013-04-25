@@ -55,6 +55,14 @@ class Controller extends CController
         $criteria->params[':type'] = ProfileRequest::TYPE_PM;
         $this->pageCounters['pm'] = ProfileRequest::model()->count($criteria);
 
+        // Подсчет ответов
+        $criteria = new CDbCriteria();
+        $criteria->addCondition('owner_id = :id');
+        $criteria->addCondition('viewed = 0');
+        $criteria->params[':id'] = Yii::app()->user->getId();
+        $criteria->addInCondition('req_type', array(ProfileRequest::TYPE_WALL_ANSWER, ProfileRequest::TYPE_COMMENT_ANSWER));
+        $this->pageCounters['news'] = ProfileRequest::model()->count($criteria);
+
         Yii::import('application.modules.purchases.models.*');
         $order_criteria = new CDbCriteria();
         $order_criteria->compare('customer_id', Yii::app()->user->getId());

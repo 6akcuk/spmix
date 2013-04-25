@@ -62,6 +62,161 @@ WHERE twin.member_id = 111 AND t.member_id = 1 AND dialog.type = 0");
   }
 
   /**
+   * Подписать всех на их города, закупки и друзей/подписчиков
+   */
+  public function actionPatch7() {
+    $c = 0;
+
+    /*$profiles = Profile::model()->findAll();
+    /** @var Profile $profile */
+    /*foreach ($profiles as $profile) {
+      $criteria = new CDbCriteria();
+      $criteria->compare('user_id', $profile->user_id);
+      $criteria->compare('sub_type', Subscription::TYPE_USER);
+      $criteria->compare('sub_link_id', $profile->user_id);
+
+      $sub = Subscription::model()->find($criteria);
+      if (!$sub) {
+        $sub = new Subscription();
+        $sub->user_id = $profile->user_id;
+        $sub->sub_type = Subscription::TYPE_USER;
+        $sub->sub_link_id = $profile->user_id;
+        if ($sub->save()) $c++;
+      }
+    }
+
+    echo 'Ready for '. $c .' peoples';*/
+    /*$profiles = Profile::model()->findAll();
+    /** @var Profile $profile */
+    /*foreach ($profiles as $profile) {
+      $criteria = new CDbCriteria();
+      $criteria->compare('user_id', $profile->user_id);
+      $criteria->compare('sub_type', Subscription::TYPE_CITY);
+      $criteria->compare('sub_link_id', $profile->city_id);
+
+      $sub = Subscription::model()->find($criteria);
+      if (!$sub) {
+        $sub = new Subscription();
+        $sub->user_id = $profile->user_id;
+        $sub->sub_type = Subscription::TYPE_CITY;
+        $sub->sub_link_id = $profile->city_id;
+        if ($sub->save()) $c++;
+      }
+    }
+
+    echo 'Ready cities for '. $c .' peoples';*/
+    /*
+    $relations = ProfileRelationship::model()->findAll();
+    /** @var ProfileRelationship $rel */
+    /*foreach ($relations as $rel) {
+      switch ($rel->rel_type) {
+        case ProfileRelationship::TYPE_OUTCOME:
+          $criteria = new CDbCriteria();
+          $criteria->compare('user_id', $rel->from_id);
+          $criteria->compare('sub_type', Subscription::TYPE_USER);
+          $criteria->compare('sub_link_id', $rel->to_id);
+
+          $sub = Subscription::model()->find($criteria);
+          if (!$sub) {
+            $sub = new Subscription();
+            $sub->user_id = $rel->from_id;
+            $sub->sub_type = Subscription::TYPE_USER;
+            $sub->sub_link_id = $rel->to_id;
+            if ($sub->save()) $c++;
+          }
+          break;
+        case ProfileRelationship::TYPE_FRIENDS:
+          $criteria = new CDbCriteria();
+          $criteria->compare('user_id', $rel->from_id);
+          $criteria->compare('sub_type', Subscription::TYPE_USER);
+          $criteria->compare('sub_link_id', $rel->to_id);
+
+          $sub = Subscription::model()->find($criteria);
+          if (!$sub) {
+            $sub = new Subscription();
+            $sub->user_id = $rel->from_id;
+            $sub->sub_type = Subscription::TYPE_USER;
+            $sub->sub_link_id = $rel->to_id;
+            if ($sub->save()) $c++;
+          }
+
+          $criteria = new CDbCriteria();
+          $criteria->compare('user_id', $rel->to_id);
+          $criteria->compare('sub_type', Subscription::TYPE_USER);
+          $criteria->compare('sub_link_id', $rel->from_id);
+
+          $sub = Subscription::model()->find($criteria);
+          if (!$sub) {
+            $sub = new Subscription();
+            $sub->user_id = $rel->to_id;
+            $sub->sub_type = Subscription::TYPE_USER;
+            $sub->sub_link_id = $rel->from_id;
+            if ($sub->save()) $c++;
+          }
+          break;
+        case ProfileRelationship::TYPE_INCOME:
+          $criteria = new CDbCriteria();
+          $criteria->compare('user_id', $rel->to_id);
+          $criteria->compare('sub_type', Subscription::TYPE_USER);
+          $criteria->compare('sub_link_id', $rel->from_id);
+
+          $sub = Subscription::model()->find($criteria);
+          if (!$sub) {
+            $sub = new Subscription();
+            $sub->user_id = $rel->to_id;
+            $sub->sub_type = Subscription::TYPE_USER;
+            $sub->sub_link_id = $rel->from_id;
+            if ($sub->save()) $c++;
+          }
+          break;
+      }
+    }
+
+    echo 'Ready sub for '. $c .' relations';*/
+    /*
+    $comments = Comment::model()->findAll();
+    /** @var Comment $comment */
+    /*foreach ($comments as $comment) {
+      $criteria = new CDbCriteria();
+      $criteria->compare('user_id', $comment->author_id);
+      $criteria->compare('sub_type', $comment->hoop_type);
+      $criteria->compare('sub_link_id', $comment->hoop_id);
+
+      $sub = Subscription::model()->find($criteria);
+      if (!$sub) {
+        $sub = new Subscription();
+        $sub->user_id = $comment->author_id;
+        $sub->sub_type = $comment->hoop_type;
+        $sub->sub_link_id = $comment->hoop_id;
+        if ($sub->save()) $c++;
+      }
+    }
+
+    echo 'PG Comments for '. $c;*/
+
+    /*$orders = Order::model()->findAll();
+    /** @var Order $order */
+    /*foreach ($orders as $order) {
+      $criteria = new CDbCriteria();
+      $criteria->compare('user_id', $order->customer_id);
+      $criteria->compare('sub_type', Subscription::TYPE_GOOD);
+      $criteria->compare('sub_link_id', $order->good_id);
+
+      $sub = Subscription::model()->find($criteria);
+      if (!$sub) {
+        $sub = new Subscription();
+        $sub->user_id = $order->customer_id;
+        $sub->sub_type = Subscription::TYPE_GOOD;
+        $sub->sub_link_id = $order->good_id;
+        if ($sub->save()) $c++;
+      }
+    }
+
+    echo 'Orders for '. $c;*/
+    exit;
+  }
+
+  /**
    * Создает записи настроек оповещений пользователей (11.04.2013)
    */
   public function _actionPatch6() {
@@ -336,6 +491,20 @@ WHERE twin.member_id = 111 AND t.member_id = 1 AND dialog.type = 0");
                           $city->expire = time() + (60 * 60 * 24 * 30 * 12 * 20);
                           $cookies->add('cur_city', $city);
 
+                          // Подписка на обновления в городе
+                          $sub = new Subscription();
+                          $sub->sub_type = Subscription::TYPE_CITY;
+                          $sub->sub_link_id = $profile->city_id;
+                          $sub->user_id = $user->id;
+                          $sub->save();
+
+                          // Подписка на самого себя
+                          $sub = new Subscription();
+                          $sub->sub_type = Subscription::TYPE_USER;
+                          $sub->sub_link_id = $user->id;
+                          $sub->user_id = $user->id;
+                          $sub->save();
+
                           if ($model->invite_code) {
                             $invite = new UserInvite();
                             $invite->master_id = $model->invite_code;
@@ -353,6 +522,8 @@ WHERE twin.member_id = 111 AND t.member_id = 1 AND dialog.type = 0");
                               $conn = $reputation->getDbConnection();
                               $command = $conn->createCommand("UPDATE `profiles` SET positive_rep = positive_rep + ". $reputation->value ." WHERE `user_id` = ". $reputation->owner_id);
                               $command->execute();
+
+                              ProfileRelationship::addToFriend($user, $reputation->owner_id);
                             }
                           }
 

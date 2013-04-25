@@ -99,6 +99,11 @@ div.wall_post_attaches, div.reply_attaches {
   line-height: 140%;
   font-weight: bold;
 }
+.wall_text .desc {
+  color: #777;
+  padding: 5px 0px 0px;
+  line-height: 140%;
+}
 .wall_post_text {
   width: 388px;
   overflow: hidden;
@@ -107,6 +112,13 @@ div.wall_post_attaches, div.reply_attaches {
 .wall_post_text, .wall_reply_text {
   line-height: 130%;
   padding-top: 2px;
+}
+.wall_post .wall_post_more {
+  position: relative;
+  top: 2px;
+  font-weight: bold;
+  color: #5d783c;
+  transition: color 200ms linear;
 }
 .wall_post .reply_link_wrap {
   padding-top: 4px;
@@ -248,6 +260,58 @@ div.wall_post_attaches, div.reply_attaches {
 }
 .wall_post .info_footer a {
   color: #999;
+}
+
+/* Publishing */
+.wall_post .published_by_wrap {
+  margin: 5px 0px 5px;
+}
+.wall_post a.published_by_photo {
+  display: block;
+  width: 32px;
+  height: 32px;
+  margin-right: 8px;
+}
+.wall_post a.published_by_photo img {
+  width: 32px;
+  height: 32px;
+}
+.wall_post .published_by_title {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 338px;
+  overflow: hidden;
+}
+.wall_post a.published_by {
+  font-weight: bold;
+}
+.wall_post div.published_by_date {
+  padding-top: 5px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  width: 340px;
+}
+.wall_post a.published_by_date {
+  color: #777;
+}
+
+/* Wide wall and feeds */
+.wide_wall {
+  background: #fff;
+  padding: 5px 15px 15px;
+}
+.wide_wall .post_info {
+  width: 640px;
+}
+.wide_wall .wall_text, .wide_wall .wall_post_text {
+  width: 640px;
+}
+.wide_wall .published_by_title {
+  max-width: 600px;
+}
+.wide_wall div.published_by_date {
+  width: 610px;
 }
 
 /* Static Manager */

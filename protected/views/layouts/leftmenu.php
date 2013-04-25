@@ -24,6 +24,15 @@
       echo ActiveHtml::link('+'. $this->pageCounters['orders'], '/orders', array('class' => 'right lm-counter'))
     ?>
   </li>
+<?php if (Yii::app()->user->getId() == 1): ?>
+  <li id="news_link">
+    <?php echo ActiveHtml::link('Мои новости', '/feed') ?>
+    <?php
+    if ($this->pageCounters['news'])
+      echo ActiveHtml::link('+'. $this->pageCounters['news'], '/feed?section=notifications', array('class' => 'right lm-counter'))
+    ?>
+  </li>
+<?php endif; ?>
   <li>
     <?php echo ActiveHtml::link('Мои настройки', '/settings') ?>
   </li>

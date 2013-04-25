@@ -31,10 +31,10 @@ class Comments extends CPortlet {
     $criteria->compare('hoop_id', $this->hoop_id);
     $criteria->compare('hoop_type', $this->hoop_type);
 
-    $commentsNum = Comment::model()->count($criteria);
+    $commentsNum = Comment::model()->with('reply')->count($criteria);
 
     if ($commentsNum > 10) $criteria->limit = 3;
-    $comments = array_reverse(Comment::model()->with('author', 'author.profile')->findAll($criteria));
+    $comments = array_reverse(Comment::model()->with('author', 'author.profile', 'reply')->findAll($criteria));
 
     $this->render('comments', array('comments' => $comments, 'offsets' => $commentsNum));
   }

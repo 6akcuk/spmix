@@ -24,6 +24,9 @@ function updOrdersCounter(num) {
 function updUsersCounter(num) {
   updMenuCounter('#users_link', '/users', num);
 }
+function updNewsCounter(num) {
+  updMenuCounter('#news_link', '/feed?section=notifications', num);
+}
 
 function showGlobalPrg() {
   var $gp = $('#global_progress');

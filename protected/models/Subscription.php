@@ -11,6 +11,12 @@
  */
 class Subscription extends CActiveRecord
 {
+  const TYPE_USER = 'user';
+  const TYPE_PURCHASE = 'purchase';
+  const TYPE_GOOD = 'good';
+  const TYPE_CITY = 'city';
+  const TYPE_WALL_POST = 'post';
+
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.

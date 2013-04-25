@@ -44,6 +44,13 @@ class PurchasesController extends Controller {
                     $purchase->mod_request->moderator_id= Yii::app()->user->getId();
                     $purchase->mod_request->save(true, array('status', 'moderator_id'));
 
+                    $feed = new Feed();
+                    $feed->event_type = self::FEED_NEW_PURCHASE;
+                    $feed->event_link_id = $purchase->purchase_id;
+                    $feed->owner_type = 'city';
+                    $feed->owner_id = $purchase->city_id;
+                    $feed->save();
+
                     $_SESSION['purchase.acquire.'. intval($_POST['id'])] = $hash = substr(md5('hh'. time() . $_POST['id']), 0, 8);
 
                     echo json_encode(array('html' => 'Закупка одобрена. <a onclick="return Purchase.cancelAcquire('. $_POST['id'] .', '. $mod_request_id .', \''. $hash .'\')">Отменить</a>'));
@@ -285,6 +292,11 @@ class PurchasesController extends Controller {
       }
 
       $commentsNum = Comment::model()->count('hoop_id = :id AND hoop_type = :type', array(':id' => $id, ':type' => 'purchase'));
+      $subscription = Subscription::model()->find('user_id = :id AND sub_type = :type AND sub_link_id = :lid', array(
+        ':id' => Yii::app()->user->getId(),
+        ':type' => Subscription::TYPE_PURCHASE,
+        ':lid' => $id,
+      ));
 
       if (Yii::app()->request->isAjaxRequest) {
           if (isset($_POST['pages'])) {
@@ -299,6 +311,7 @@ class PurchasesController extends Controller {
             'offset' => $offset,
             'offsets' => $goodsNum,
             'commentsNum' => $commentsNum,
+            'subscription' => $subscription,
           ), true);
       }
       else $this->render('show', array(
@@ -307,13 +320,50 @@ class PurchasesController extends Controller {
         'offset' => $offset,
         'offsets' => $goodsNum,
         'commentsNum' => $commentsNum,
+        'subscription' => $subscription,
       ));
     }
 
+  public function actionSubscribe($id) {
+    $result = array();
+    $purchase = Purchase::model()->findByPk($id);
+    $subscription = Subscription::model()->find('user_id = :id AND sub_type = :type AND sub_link_id = :lid', array(
+      ':id' => Yii::app()->user->getId(),
+      ':type' => Subscription::TYPE_PURCHASE,
+      ':lid' => $id,
+    ));
+    if ($subscription) {
+      $subscription->delete();
+      $result['step'] = 1;
+    }
+    else {
+      $subscription = new Subscription();
+      $subscription->user_id = Yii::app()->user->getId();
+      $subscription->sub_type = Subscription::TYPE_PURCHASE;
+      $subscription->sub_link_id = $id;
+      $subscription->save();
+      $result['step'] = 0;
+    }
+
+    echo json_encode($result);
+    exit;
+  }
+
   public function actionShareToFriends($id) {
     $result = array();
+    $purchase = Purchase::model()->findByPk($id);
 
-
+    if (isset($_POST['msg'])) {
+      $post = new ProfileWallPost();
+      $post->wall_id = Yii::app()->user->getId();
+      $post->author_id = Yii::app()->user->getId();
+      $post->reference_type = ProfileWallPost::REF_TYPE_PURCHASE;
+      $post->reference_id = $id;
+      $post->post = $_POST['msg'];
+      if ($post->save()) $result['success'] = true;
+      else $result['success'] = false;
+    }
+    else $result['html'] = $this->renderPartial('sharetofriends_box', array('purchase' => $purchase), true);
 
     echo json_encode($result);
     exit;

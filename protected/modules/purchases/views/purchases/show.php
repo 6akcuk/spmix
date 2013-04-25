@@ -107,14 +107,15 @@ $delta = Yii::app()->controller->module->goodsPerPage;
         </div>
         <?php endif; ?>
     </div>
-    <div class="right">
+    <div class="right purchase_links">
     <?php if (Yii::app()->user->getId() == 1): ?>
-      <a class="button" onclick="Purchase.shareToFriends(<?php echo $purchase->purchase_id ?>)">Рассказать друзьям <span class="icon-comment icon-white"></span></a>
+      <a id="subscribe<?php echo $purchase->purchase_id ?>" onclick="Purchase.subscribe(<?php echo $purchase->purchase_id ?>)"><span class="icon-check"></span> <?php echo ($subscription) ? "Отписаться от новостей" : "Подписаться на новости" ?></a>
+      <a onclick="Purchase.shareToFriends(<?php echo $purchase->purchase_id ?>)"><span class="icon-comment"></span> Рассказать друзьям</a>
     <?php endif; ?>
     <?php if (Yii::app()->user->checkAccess('purchases.purchases.edit') &&
               (Yii::app()->user->checkAccess('purchases.purchases.editSuper') ||
                Yii::app()->user->checkAccess('purchases.purchases.editOwn', array('purchase' => $purchase)))): ?>
-        <?php echo ActiveHtml::link('Список заказов', '/orders'. $purchase->purchase_id, array('class' => 'button')) ?>
+        <?php echo ActiveHtml::link('<span class="icon-tasks"></span> Список заказов', '/orders'. $purchase->purchase_id) ?>
         <?php //echo ActiveHtml::link('Удалить', '/purchase'. $purchase->purchase_id .'/delete', array('class' => 'button')) ?>
     <?php endif; ?>
     </div>

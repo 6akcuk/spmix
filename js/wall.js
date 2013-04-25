@@ -234,6 +234,10 @@ var Wall = {
     if (A.wallReplySending) return;
     A.wallReplySending = true;
 
+    if (!wall_id) {
+      var _id = A.wallReplyOpened.split('_'), post_id = _id.pop(), wall_id = _id.pop();
+    }
+
     ajax.post('/users/profiles/wallpost?id='+ wall_id, {last_id: parseInt($('#replies'+ wall_id +'_'+ wall.reply_to +' input[name="last_id"]').val()), wall: wall}, function(r) {
       A.wallReplySending = false;
 

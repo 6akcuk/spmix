@@ -1,0 +1,12 @@
+#feed_empty {
+  color: #777;
+  line-height: 170%;
+  padding: 100px 30px;
+  text-align: center;
+  font-size: 1.09em;
+}
+
+/* Static Manager */
+#feed_css {
+  display: none;
+}

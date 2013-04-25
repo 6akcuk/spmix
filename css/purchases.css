@@ -133,8 +133,31 @@
     padding: 2px 0px 10px;
 }
 
+.purchase_table .share_image {
+  width: 130px;
+  padding-right: 10px;
+}
+.purchase_table .share_text {
+  overflow: hidden;
+  width: 300px;
+  height: 130px;
+}
+
 .purchase_fullstory {
     border-bottom: 1px solid #ddd;
+}
+
+.purchase_links {
+
+}
+.purchase_links a {
+  display: inline-block;
+  padding: 7px 10px;
+  height: 14px;
+  margin-left: 3px;
+}
+.purchase_links a:hover {
+  background: #e9edf1;
 }
 
 .purchase_quick_link {

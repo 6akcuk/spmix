@@ -164,6 +164,11 @@ class GoodsController extends Controller {
       $struct = $good->getRangeStructure();
 
       $oic = OrderOic::model()->find('purchase_id = :pid AND customer_id = :cid', array(':pid' => $purchase_id, ':cid' => Yii::app()->user->getId()));
+      $subscription = Subscription::model()->find('user_id = :id AND sub_type = :type AND sub_link_id = :lid', array(
+        ':id' => Yii::app()->user->getId(),
+        ':type' => Subscription::TYPE_GOOD,
+        ':lid' => $good_id,
+      ));
 
       if (Yii::app()->request->isAjaxRequest) {
           $this->pageHtml = $this->renderPartial('show', array(
@@ -172,6 +177,7 @@ class GoodsController extends Controller {
             'struct' => $struct,
             'ranges' => $ranges,
             'oic' => $oic,
+            'subscription' => $subscription,
           ), true);
       }
       else $this->render('show', array(
@@ -180,8 +186,54 @@ class GoodsController extends Controller {
         'struct' => $struct,
         'ranges' => $ranges,
         'oic' => $oic,
+        'subscription' => $subscription,
       ));
     }
+
+  public function actionSubscribe($id) {
+    $result = array();
+    $good = Good::model()->findByPk($id);
+    $subscription = Subscription::model()->find('user_id = :id AND sub_type = :type AND sub_link_id = :lid', array(
+      ':id' => Yii::app()->user->getId(),
+      ':type' => Subscription::TYPE_GOOD,
+      ':lid' => $id,
+    ));
+    if ($subscription) {
+      $subscription->delete();
+      $result['step'] = 1;
+    }
+    else {
+      $subscription = new Subscription();
+      $subscription->user_id = Yii::app()->user->getId();
+      $subscription->sub_type = Subscription::TYPE_GOOD;
+      $subscription->sub_link_id = $id;
+      $subscription->save();
+      $result['step'] = 0;
+    }
+
+    echo json_encode($result);
+    exit;
+  }
+
+  public function actionShareToFriends($id) {
+    $result = array();
+    $good = Good::model()->with('image')->findByPk($id);
+
+    if (isset($_POST['msg'])) {
+      $post = new ProfileWallPost();
+      $post->wall_id = Yii::app()->user->getId();
+      $post->author_id = Yii::app()->user->getId();
+      $post->reference_type = ProfileWallPost::REF_TYPE_GOOD;
+      $post->reference_id = $id;
+      $post->post = $_POST['msg'];
+      if ($post->save()) $result['success'] = true;
+      else $result['success'] = false;
+    }
+    else $result['html'] = $this->renderPartial('sharetofriends_box', array('good' => $good), true);
+
+    echo json_encode($result);
+    exit;
+  }
 
     public function actionEdit($purchase_id, $good_id) {
         $purchase = Purchase::model()->findByPk($purchase_id);

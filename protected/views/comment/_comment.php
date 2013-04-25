@@ -11,12 +11,14 @@
 $attaches = json_decode($comment->attaches, true);
 $length = sizeof($attaches);
 ?>
-<div id="comment_<?php echo $comment->comment_id ?>" class="comment_block clearfix">
+<div id="comment_<?php echo $comment->comment_id ?>" class="comment_block clearfix" onclick="Comment.replyTo(event, <?php echo $comment->comment_id ?>)">
   <div class="left photo">
     <?php echo ActiveHtml::link($comment->author->profile->getProfileImage('c'), '/id'. $comment->author_id) ?>
   </div>
   <div class="left comment_data">
-    <div class="comment_header"><?php echo ActiveHtml::link($comment->author->getDisplayName(), '/id'. $comment->author_id, array('class' => 'comment_author')) ?></div>
+    <div class="comment_header">
+      <?php echo ActiveHtml::link($comment->author->getDisplayName(), '/id'. $comment->author_id, array('class' => 'comment_author',  'data-id' => $comment->author_id, 'data-name' => trim($comment->author->profile->firstname), 'data-lex-name' => ActiveHtml::lex(3, trim($comment->author->profile->firstname)))) ?>
+    </div>
     <div class="comment_text">
       <?php echo nl2br($comment->text) ?>
     </div>
@@ -65,8 +67,12 @@ $length = sizeof($attaches);
       </script>
     </div>
     <?php endif; ?>
-    <div class="comment_control">
+    <div class="comment_control" onclick="event.cancelBubble = true;">
       <span class="comment_date"><?php echo ActiveHtml::timeback($comment->creation_date) ?></span>
+      <?php if ($comment->reply_to): ?>
+      <?php echo ActiveHtml::link(ActiveHtml::lex(3, $comment->reply->firstname), '/id'. $comment->reply_to, array('class' => 'comment_reply_to')) ?>
+      <?php endif; ?>
+      | <a onclick="Comment.replyTo(event, <?php echo $comment->comment_id ?>)">Ответить</a>
       <?php if (Yii::app()->user->checkAccess('comment.editSuper') ||
         Yii::app()->user->checkAccess('comment.editOwn', array('comment' => $comment))): ?>
       | <a id="comment_<?php echo $comment->comment_id ?>_edit" onclick="Comment.edit(<?php echo $comment->comment_id ?>)">Редактировать</a>

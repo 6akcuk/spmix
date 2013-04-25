@@ -20,9 +20,12 @@ class ProfilesController extends Controller {
     }
 
     public function actionIndex($id) {
+      /** @var User $userinfo */
       $userinfo = User::model()->with('profile')->findByPk($id);
       $friends = $userinfo->profile->getFriends();
       $friendsNum = $userinfo->profile->countFriends();
+      $friendsOnline = $userinfo->profile->getOnlineFriends();
+      $friendsOnlineNum = $userinfo->profile->countOnlineFriends();
       $purchasesNum = Purchase::model()->count('author_id = :id', array(':id' => $id));
 
       $criteria = new CDbCriteria();
@@ -42,6 +45,8 @@ class ProfilesController extends Controller {
             'userinfo' => $userinfo,
             'friends' => $friends,
             'friendsNum' => $friendsNum,
+            'friendsOnline' => $friendsOnline,
+            'friendsOnlineNum' => $friendsOnlineNum,
             'purchasesNum' => $purchasesNum,
             'posts' => $posts,
             'postsNum' => $postsNum,
@@ -51,6 +56,8 @@ class ProfilesController extends Controller {
         'userinfo' => $userinfo,
         'friends' => $friends,
         'friendsNum' => $friendsNum,
+        'friendsOnline' => $friendsOnline,
+        'friendsOnlineNum' => $friendsOnlineNum,
         'purchasesNum' => $purchasesNum,
         'posts' => $posts,
         'postsNum' => $postsNum,
@@ -112,7 +119,7 @@ class ProfilesController extends Controller {
   }
 
   public function actionWallPost($id) {
-    $wall = new ProfileWallPost();
+    $wall = new ProfileWallPost('secure');
     $wall->author_id = Yii::app()->user->getId();
     $wall->wall_id = $id;
     $wall->post = htmlspecialchars($_POST['wall']['post']);

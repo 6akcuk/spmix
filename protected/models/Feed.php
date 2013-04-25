@@ -5,15 +5,20 @@
  *
  * The followings are the available columns in table 'feed':
  * @property string $feed_id
+ * @property string $feed_ondelete
  * @property string $add_date
  * @property string $owner_type
  * @property string $owner_id
  * @property string $event_type
  * @property string $event_link_id
  * @property string $event_text
+ *
+ * @property mixed $content
  */
 class Feed extends CActiveRecord
 {
+  public $content;
+
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
@@ -98,6 +103,73 @@ class Feed extends CActiveRecord
 		));
 	}
 
+  public static function countFeeds($user_id, $c = array()) {
+    /** @var CDbConnection $db */
+    $db = Yii::app()->db;
+
+    $command = $db->createCommand("
+    SELECT COUNT(f.feed_id) AS num FROM `subscriptions` s
+      INNER JOIN `feed` f ON f.owner_type = s.sub_type AND f.owner_id = s.sub_link_id
+      WHERE s.user_id = ". $user_id ." AND f.feed_ondelete IS NULL
+        AND f.event_type NOT IN ('new reply', 'new comment')
+      ORDER BY f.add_date DESC");
+
+    $result = $command->queryRow();
+    return $result['num'];
+  }
+
+  public static function getFeeds($user_id, $offset = 0, $c = array()) {
+    $result = array();
+    /** @var CDbConnection $db */
+    $db = Yii::app()->db;
+
+    $command = $db->createCommand("
+    SELECT f.* FROM `subscriptions` s
+      INNER JOIN `feed` f ON f.owner_type = s.sub_type AND f.owner_id = s.sub_link_id
+      WHERE s.user_id = ". $user_id ." AND f.feed_ondelete IS NULL
+        AND s.sub_type NOT IN ('post')
+        AND f.event_type NOT IN ('new comment')
+      ORDER BY f.add_date DESC
+      LIMIT ". $offset .", ". Yii::app()->getModule('feed')->newsPerPage);
+
+    /** @var CDbDataReader $reader */
+    $reader = $command->query();
+    while (($row = $reader->read()) !== false) {
+      $feed = new Feed();
+      $feed->feed_id = $row['feed_id'];
+      $feed->add_date = $row['add_date'];
+      $feed->feed_ondelete = $row['feed_ondelete'];
+      $feed->event_text = $row['event_text'];
+      $feed->event_type = $row['event_type'];
+      $feed->event_link_id = $row['event_link_id'];
+      $feed->owner_id = $row['owner_id'];
+      $feed->owner_type = $row['owner_type'];
+
+      switch ($feed->event_type) {
+        case 'new post':
+          $post = ProfileWallPost::model()->with('author', 'author.profile', array('last_replies.replyTo' => array('limit' => 3)), 'repliesNum')->findByPk($feed->event_link_id);
+          $feed->content = $post;
+          break;
+        case 'new purchase':
+          $purchase = Purchase::model()->with('author.profile')->findByPk($feed->event_link_id);
+          $feed->content = $purchase;
+          break;
+        case 'new status':
+          $user = User::model()->with('profile')->findByPk($feed->event_link_id);
+          $feed->content = $user;
+          break;
+      }
+
+      $result[] = $feed;
+    }
+
+    return $result;
+  }
+
+  public static function countAnswerFeeds($user_id, $c = array()) {
+
+  }
+
   public function beforeSave() {
     if (parent::beforeSave()) {
       if ($this->getIsNewRecord())
@@ -106,5 +178,15 @@ class Feed extends CActiveRecord
       return true;
     }
     else return false;
+  }
+
+  public function markAsDeleted() {
+    $this->feed_ondelete = date("Y-m-d H:i:s");
+    $this->save(true, array('feed_ondelete'));
+  }
+
+  public function restore() {
+    $this->feed_ondelete = null;
+    $this->save(true, array('feed_ondelete'));
   }
 }

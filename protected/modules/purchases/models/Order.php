@@ -188,4 +188,22 @@ class Order extends CActiveRecord
     else
       return false;
   }
+
+  public function afterSave() {
+    if ($this->isNewRecord) {
+      $c = new CDbCriteria();
+      $c->compare('user_id', Yii::app()->user->getId());
+      $c->compare('sub_type', Subscription::TYPE_PURCHASE);
+      $c->compare('sub_link_id', $this->purchase_id);
+
+      $sub = Subscription::model()->find($c);
+      if (!$sub) {
+        $sub = new Subscription();
+        $sub->user_id = Yii::app()->user->getId();
+        $sub->sub_type = Subscription::TYPE_PURCHASE;
+        $sub->sub_link_id = $this->purchase_id;
+        $sub->save();
+      }
+    }
+  }
 }

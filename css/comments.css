@@ -17,6 +17,7 @@ a.comment_show_more {
 .comment_block {
   border-top: 1px solid #dae1e8;
   padding: 10px 0px;
+  cursor: pointer;
 }
 .comment_new {
   display: none;
@@ -42,8 +43,8 @@ a.comment_show_more {
   padding-top: 10px;
   font-size: 11px;
 }
-.comment_date, .comment_editing {
-  color: #999;
+.comment_date, .comment_editing, .comment_reply_to {
+  color: #777;
 }
 .comment_editing {
   margin-left: 2px;
@@ -72,6 +73,9 @@ div.comment_block textarea {
 }
 div.comment_post {
   padding-top: 10px
+}
+div.comment_post .reply_to_title {
+  padding: 6px 0px 0px 8px;
 }
 div.comment_post_progress {
   display: none;

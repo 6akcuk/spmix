@@ -11,6 +11,9 @@ Yii::app()->getClientScript()->registerScriptFile('/js/profile.js');
 Yii::app()->getClientScript()->registerCssFile('/css/photoview.css');
 Yii::app()->getClientScript()->registerScriptFile('/js/photoview.js');
 
+Yii::app()->getClientScript()->registerCssFile('/css/pagination.css');
+Yii::app()->getClientScript()->registerScriptFile('/js/pagination.js');
+
 if ($userinfo)
     $title .= ' - ' .
         ((Yii::app()->user->checkAccess('global.fullnameView'))
@@ -122,6 +125,40 @@ $this->pageTitle = $title;
       <?php if ($fcnt < 3 || ($fcnt > 3 && $fcnt < 6)): ?></div><?php endif; ?>
       <?php endif; ?>
       </div>
+    <?php if ($friendsOnlineNum > 0): ?>
+      <div class="module">
+        <a href="/friends?id=<?php echo $userinfo->id ?>&section=online" onclick="return nav.go(this, event, {noback: false})" class="module-header">
+          <div class="header-top">
+            Друзья онлайн
+          </div>
+          <div class="header-bottom">
+            <?php echo Yii::t('user', '{n} друг|{n} друга|{n} друзей', $friendsOnlineNum) ?>
+          </div>
+        </a>
+      </div>
+      <div class="module-body">
+        <?php if ($friendsOnline): ?>
+        <?php $fcnt = 0; ?>
+        <?php foreach ($friendsOnline as $friend): ?>
+          <?php $fcnt++; ?>
+          <?php if ($fcnt > 6) break; ?>
+          <?php if ($fcnt == 1 || $fcnt == 4): ?>
+            <div class="clearfix people_row">
+          <?php endif; ?>
+          <div class="left people_cell">
+            <?php echo ActiveHtml::link($friend->friend->profile->getProfileImage('c'), '/id'. $friend->friend->id, array('class' => 'ava')) ?>
+            <div class="people_name">
+              <?php echo ActiveHtml::link($friend->friend->login, '/id'. $friend->friend->id) ?>
+            </div>
+          </div>
+          <?php if ($fcnt == 3 || $fcnt == 6): ?>
+            </div>
+          <?php endif; ?>
+        <?php endforeach; ?>
+        <?php if ($fcnt < 3 || ($fcnt > 3 && $fcnt < 6)): ?></div><?php endif; ?>
+      <?php endif; ?>
+      </div>
+    <?php endif; ?>
     </div>
     <div class="left profile-right">
       <?php if (Yii::app()->user->getId() == 1): ?>
@@ -292,8 +329,7 @@ $this->pageTitle = $title;
         </div>
       <?php if (Yii::app()->user->getId() == 1): ?>
       <?php
-        Yii::app()->getClientScript()->registerCssFile('/css/wall.css');
-        Yii::app()->getClientScript()->registerScriptFile('/js/wall.js');
+
         ?>
       <div class="module">
         <div class="module-header">

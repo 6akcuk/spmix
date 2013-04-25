@@ -235,15 +235,4 @@ class Purchase extends CActiveRecord
         }
         else return false;
     }
-
-  public function afterSave() {
-    if ($this->getIsNewRecord()) {
-      $feed = new Feed();
-      $feed->event_type = self::FEED_NEW_PURCHASE;
-      $feed->event_link_id = $this->purchase_id;
-      $feed->owner_type = 'city';
-      $feed->owner_id = $this->city_id;
-      $feed->save();
-    }
-  }
 }

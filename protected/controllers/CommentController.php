@@ -35,6 +35,7 @@ class CommentController extends Controller {
     $comment->hoop_id = $hoop_id;
     $comment->hoop_type = $hoop_type;
     $comment->attributes = $_POST['Comment'];
+    if (isset($_POST['reply_to_title']) && intval($_POST['reply_to_title']) > 0) $comment->reply_to = $_POST['reply_to_title'];
 
     $attaches = array();
     if (isset($_POST['Comment']['attach'])) {
@@ -131,8 +132,8 @@ class CommentController extends Controller {
       Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('comment' => $comment)) ||
       Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Owner', array('hoop' => $hoop)))
     {
-      $comment->comment_delete = date("Y-m-d H:i:s");
-      if (!$comment->save(true, array('comment_delete')))
+      //$comment->comment_delete = date("Y-m-d H:i:s");
+      if (!$comment->markAsDeleted())
         throw new CHttpException(500, 'Удаление комментария невозможно');
 
       if (!isset($_SESSION['comment.delete'])) $_SESSION['comment.delete'] = array();
@@ -213,8 +214,8 @@ class CommentController extends Controller {
     if ($hash != $_SESSION['comment.delete'][$comment->author_id]['items'][$comment->comment_id])
       throw new CHttpException(500, 'Неверный код восстановления');
 
-    $comment->comment_delete = null;
-    if (!$comment->save(true, array('comment_delete')))
+    //$comment->comment_delete = null;
+    if (!$comment->restore())
       throw new CHttpException(500, 'Ошибка при восстановлении');
 
     unset($_SESSION['comment.delete'][$comment->author_id]['items'][$comment->comment_id]);
@@ -242,7 +243,7 @@ class CommentController extends Controller {
     }
 
     $result = array('items' => array(), 'count' => 0, 'last_id' => $last_id);
-    $comments = Comment::model()->findAll($criteria);
+    $comments = Comment::model()->with('reply')->findAll($criteria);
     foreach ($comments as $comment) {
       $result['items'][] = $this->renderPartial('_comment', array('comment' => $comment, 'hoop' => $hoop), true);
     }
@@ -274,7 +275,7 @@ class CommentController extends Controller {
     $criteria->params[':id'] = $first_id;
 
     $result = array('items' => array());
-    $comments = array_reverse(Comment::model()->findAll($criteria));
+    $comments = array_reverse(Comment::model()->with('reply')->findAll($criteria));
     foreach ($comments as $comment) {
       $result['items'][] = $this->renderPartial('_comment', array('comment' => $comment, 'hoop' => $hoop), true);
     }

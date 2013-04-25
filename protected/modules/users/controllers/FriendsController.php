@@ -145,70 +145,19 @@ class FriendsController extends Controller {
     }
 
     public function actionAdd() {
-        /** @var $friend User  */
-        $friend_id = intval($_POST['friend_id']);
-        $friend = User::model()->findByPk($friend_id);
+      $result = ProfileRelationship::addToFriend(Yii::app()->user->model, $_POST['friend_id']);
+      $messages = array(
+        0 => 'Пользователь не найден',
+        1 => 'Заявка успешно отправлена',
+        2 => 'Пользователь успешно добавлен в друзья',
+        -1 => 'Не удалось подтвердить заявку',
+        -2 => 'Заявка уже подана',
+        -3 => 'Не удалось отправить заявку',
+      );
+      $success = ($result > 0) ? true : false;
 
-        if (!$friend) {
-            echo json_encode(array('success' => false, 'message' => 'Пользователь не найден'));
-            exit;
-        }
-
-        $relation = $friend->profile->getProfileRelation();
-
-        if ($relation) {
-            if (Yii::app()->user->model->profile->isProfileRelationIncome($relation)) {
-                $relation->rel_type = ProfileRelationship::TYPE_FRIENDS;
-                $request = ProfileRequest::model()->find('owner_id = :id AND req_type = :type AND req_link_id = :link_id', array(
-                    ':id' => Yii::app()->user->getId(),
-                    ':type' => ProfileRequest::TYPE_FRIEND,
-                    ':link_id' => $relation->rel_id,
-                ));
-                if ($request) $request->delete();
-
-                if (!$relation->save(true, array('rel_type'))) {
-                    echo json_encode(array('success' => false, 'message' => 'Не удалось подтвердить заявку'));
-                    exit;
-                }
-
-                echo json_encode(array(
-                    'success' => true, 'message' => $friend->login .' у Вас в друзьях',
-                ));
-                exit;
-            }
-            else {
-                echo json_encode(array('success' => false, 'message' => 'Скорее всего Вы уже подали заявку'));
-                exit;
-            }
-        }
-        else {
-            $relation = new ProfileRelationship();
-            $relation->from_id = Yii::app()->user->getId();
-            $relation->to_id = $friend_id;
-            $relation->rel_type = ProfileRelationship::TYPE_OUTCOME;
-
-            if ($relation->validate()) {
-                $relation->save();
-
-                $request = new ProfileRequest();
-                $request->owner_id = $friend_id;
-                $request->req_type = ProfileRequest::TYPE_FRIEND;
-                $request->req_link_id = $relation->rel_id;
-                if (!$request->save()) {
-                    $relation->delete();
-
-                    echo json_encode(array('success' => false, 'message' => 'Не удалось отправить заявку'));
-                    exit;
-                }
-
-                echo json_encode(array(
-                    'success' => true, 'message' => 'Вы отправили заявку',
-                ));
-                exit;
-            }
-        }
-
-        exit;
+      echo json_encode(array('success' => $success, 'message' => $messages[$result]));
+      exit;
     }
 
     public function actionDelete() {
