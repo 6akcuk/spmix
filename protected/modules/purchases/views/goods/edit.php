@@ -103,7 +103,7 @@ $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
 <?php $this->endWidget(); ?>
 
 <h1>Галерея изображений товара</h1>
-<?php echo ActiveHtml::upload('photo', '', 'Выберите изображение', array('onchange' => 'Purchase.uploadGoodImage('. $good->purchase_id .', '. $good->good_id .', {id})')) ?>
+<?php echo ActiveHtml::upload('photo', '', 'Добавить фотографию', array('onchange' => 'Purchase.uploadGoodImage('. $good->purchase_id .', '. $good->good_id .', {id})')) ?>
 <div id="images_list" class="images clearfix">
 <?php foreach ($good->images as $image): ?>
     <div class="left good_image">
