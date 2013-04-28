@@ -76,13 +76,13 @@ class ProfileRequest extends CActiveRecord
 		);
 	}
 
-    public function beforeSave() {
-        if (parent::beforeSave()) {
-            if ($this->getIsNewRecord())
-                $this->viewed = 0;
+  public function beforeSave() {
+      if (parent::beforeSave()) {
+          if ($this->getIsNewRecord())
+              $this->viewed = 0;
 
-            return true;
-        }
-        else return false;
-    }
+          return true;
+      }
+      else return false;
+  }
 }

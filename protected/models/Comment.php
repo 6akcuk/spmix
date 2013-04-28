@@ -150,6 +150,16 @@ class Comment extends CActiveRecord
     $feed = Feed::model()->find($cr);
     if ($feed) $feed->markAsDeleted();
 
+    if ($this->reply_to) {
+      $cr = new CDbCriteria();
+      $cr->compare('req_type', ProfileRequest::TYPE_COMMENT_ANSWER);
+      $cr->compare('owner_id', $this->reply_to);
+      $cr->compare('req_link_id', $this->comment_id);
+
+      $req = ProfileRequest::model()->find($cr);
+      if ($req) $req->delete();
+    }
+
     return $result;
   }
 
@@ -165,6 +175,14 @@ class Comment extends CActiveRecord
 
     $feed = Feed::model()->find($cr);
     if ($feed) $feed->restore();
+
+    if ($this->reply_to) {
+      $req = new ProfileRequest();
+      $req->req_type = ProfileRequest::TYPE_COMMENT_ANSWER;
+      $req->owner_id = $this->reply_to;
+      $req->req_link_id = $this->comment_id;
+      $req->save();
+    }
 
     return $result;
   }

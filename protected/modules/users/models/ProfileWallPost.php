@@ -172,6 +172,16 @@ class ProfileWallPost extends CActiveRecord
     $feed = Feed::model()->find($cr);
     if ($feed) $feed->markAsDeleted();
 
+    if ($this->reply_to_id) {
+      $cr = new CDbCriteria();
+      $cr->compare('req_type', ProfileRequest::TYPE_WALL_ANSWER);
+      $cr->compare('owner_id', $this->reply_to_id);
+      $cr->compare('req_link_id', $this->post_id);
+
+      $req = ProfileRequest::model()->find($cr);
+      if ($req) $req->delete();
+    }
+
     return $result;
   }
 
@@ -187,6 +197,14 @@ class ProfileWallPost extends CActiveRecord
 
     $feed = Feed::model()->find($cr);
     if ($feed) $feed->restore();
+
+    if ($this->reply_to_id) {
+      $req = new ProfileRequest();
+      $req->req_type = ProfileRequest::TYPE_WALL_ANSWER;
+      $req->owner_id = $this->reply_to_id;
+      $req->req_link_id = $this->post_id;
+      $req->save();
+    }
 
     return $result;
   }

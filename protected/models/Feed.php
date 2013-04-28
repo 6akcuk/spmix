@@ -167,7 +167,64 @@ class Feed extends CActiveRecord
   }
 
   public static function countAnswerFeeds($user_id, $c = array()) {
+    /** @var CDbConnection $db */
+    $db = Yii::app()->db;
 
+    $command = $db->createCommand("
+    SELECT (
+    (SELECT COUNT(f.feed_id) AS num FROM `profile_requests` r
+      INNER JOIN `feed` f ON f.event_type = 'new reply' AND f.event_link_id = r.req_link_id
+      WHERE r.req_type = ". ProfileRequest::TYPE_WALL_ANSWER ." AND r.owner_id = ". $user_id .")
+    +
+    (SELECT COUNT(f.feed_id) AS num FROM `profile_requests` r
+      INNER JOIN `feed` f ON f.event_type = 'new comment' AND f.event_link_id = r.req_link_id
+      WHERE r.req_type = ". ProfileRequest::TYPE_COMMENT_ANSWER ." AND r.owner_id = ". $user_id .")
+    ) AS num");
+
+    $result = $command->queryRow();
+    return $result['num'];
+  }
+
+  public static function getAnswerFeeds($user_id, $offset = 0, $c = array()) {
+    $result = array();
+    /** @var CDbConnection $db */
+    $db = Yii::app()->db;
+
+    $command = $db->createCommand("
+    SELECT * FROM
+    (
+      SELECT f.* FROM `profile_requests` r
+        INNER JOIN `feed` f ON f.event_type = 'new reply' AND f.event_link_id = r.req_link_id
+        WHERE r.req_type = ". ProfileRequest::TYPE_WALL_ANSWER ." AND r.owner_id = ". $user_id ."
+      UNION ALL
+      SELECT f.* FROM `profile_requests` r
+        INNER JOIN `feed` f ON f.event_type = 'new comment' AND f.event_link_id = r.req_link_id
+        WHERE r.req_type = ". ProfileRequest::TYPE_COMMENT_ANSWER ." AND r.owner_id = ". $user_id ."
+    ) t
+    ORDER BY add_date DESC
+    LIMIT ". $offset .", ". Yii::app()->getModule('feed')->newsPerPage);
+
+    /** @var CDbDataReader $reader */
+    $reader = $command->query();
+    while (($row = $reader->read()) !== false) {
+      $feed = new Feed();
+      $feed->feed_id = $row['feed_id'];
+      $feed->add_date = $row['add_date'];
+      $feed->feed_ondelete = $row['feed_ondelete'];
+      $feed->event_text = $row['event_text'];
+      $feed->event_type = $row['event_type'];
+      $feed->event_link_id = $row['event_link_id'];
+      $feed->owner_id = $row['owner_id'];
+      $feed->owner_type = $row['owner_type'];
+
+      switch ($feed->event_type) {
+
+      }
+
+      $result[] = $feed;
+    }
+
+    return $result;
   }
 
   public function beforeSave() {

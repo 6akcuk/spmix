@@ -46,8 +46,8 @@ class DefaultController extends Controller
 	}
 
   public function actionNotifications($offset = 0) {
-    $feeds = Feed::getFeeds(Yii::app()->user->getId(), $offset);
-    $feedsNum = Feed::countFeeds(Yii::app()->user->getId());
+    $feeds = Feed::getAnswerFeeds(Yii::app()->user->getId(), $offset);
+    $feedsNum = Feed::countAnswerFeeds(Yii::app()->user->getId());
 
     if (Yii::app()->request->isAjaxRequest) {
       if (isset($_POST['pages'])) {

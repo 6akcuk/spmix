@@ -45,7 +45,7 @@ class PurchasesController extends Controller {
                     $purchase->mod_request->save(true, array('status', 'moderator_id'));
 
                     $feed = new Feed();
-                    $feed->event_type = self::FEED_NEW_PURCHASE;
+                    $feed->event_type = 'new purchase';
                     $feed->event_link_id = $purchase->purchase_id;
                     $feed->owner_type = 'city';
                     $feed->owner_id = $purchase->city_id;
