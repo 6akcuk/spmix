@@ -51,7 +51,7 @@ class DefaultController extends Controller
 
     if (Yii::app()->request->isAjaxRequest) {
       if (isset($_POST['pages'])) {
-        $this->pageHtml = $this->renderPartial('_news', array(
+        $this->pageHtml = $this->renderPartial('_notification', array(
           'feeds' => $feeds,
           'offset' => $offset,
         ), true);

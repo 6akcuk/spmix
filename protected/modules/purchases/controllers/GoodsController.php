@@ -160,6 +160,9 @@ class GoodsController extends Controller {
       $good = Good::model()->with('image', 'sizes', 'colors', 'purchase', 'oic', 'orders', 'orders.customer', 'ordersNum')->findByPk($good_id);
       $orderc = new Order('create');
 
+      if (!$good)
+        throw new CHttpException(404, 'Товар не найден');
+
       $ranges = $good->buildRanges();
       $struct = $good->getRangeStructure();
 

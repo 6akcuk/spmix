@@ -46,6 +46,6 @@ $delta = Yii::app()->controller->module->newsPerPage;
 </div>
 <?php if ($feedsNum == 0): ?><div id="feed_empty">Здесь Вы будете видеть новостную ленту своих друзей и своего города.</div><?php endif; ?>
 <div id="feeds" class="wide_wall" rel="pagination">
-  <?php $this->renderPartial('_news', array('feeds' => $feeds, 'offset' => 0)) ?>
+  <?php $this->renderPartial('_notification', array('feeds' => $feeds, 'offset' => 0)) ?>
 </div>
 <?php if ($feedsNum > $delta): ?><a id="pg_more" class="pg_more" onclick="Paginator.showMore()">Еще новости</a><?php endif; ?>

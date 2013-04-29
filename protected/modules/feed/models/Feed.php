@@ -14,10 +14,12 @@
  * @property string $event_text
  *
  * @property mixed $content
+ * @property integer $viewed
  */
 class Feed extends CActiveRecord
 {
   public $content;
+  public $viewed;
 
 	/**
 	 * Returns the static model of the specified AR class.
@@ -187,17 +189,18 @@ class Feed extends CActiveRecord
 
   public static function getAnswerFeeds($user_id, $offset = 0, $c = array()) {
     $result = array();
+    $ids = array();
     /** @var CDbConnection $db */
     $db = Yii::app()->db;
 
     $command = $db->createCommand("
     SELECT * FROM
     (
-      SELECT f.* FROM `profile_requests` r
+      SELECT f.*, r.viewed FROM `profile_requests` r
         INNER JOIN `feed` f ON f.event_type = 'new reply' AND f.event_link_id = r.req_link_id
         WHERE r.req_type = ". ProfileRequest::TYPE_WALL_ANSWER ." AND r.owner_id = ". $user_id ."
       UNION ALL
-      SELECT f.* FROM `profile_requests` r
+      SELECT f.*, r.viewed FROM `profile_requests` r
         INNER JOIN `feed` f ON f.event_type = 'new comment' AND f.event_link_id = r.req_link_id
         WHERE r.req_type = ". ProfileRequest::TYPE_COMMENT_ANSWER ." AND r.owner_id = ". $user_id ."
     ) t
@@ -217,8 +220,17 @@ class Feed extends CActiveRecord
       $feed->owner_id = $row['owner_id'];
       $feed->owner_type = $row['owner_type'];
 
-      switch ($feed->event_type) {
+      $feed->viewed = $row['viewed'];
 
+      switch ($feed->event_type) {
+        case 'new reply':
+          $reply = ProfileWallPost::model()->with('author.profile', 'post')->findByPk($feed->event_link_id);
+          $feed->content = $reply;
+          break;
+        case 'new comment':
+          $comment = Comment::model()->with('author.profile')->findByPk($feed->event_link_id);
+          $feed->content = $comment;
+          break;
       }
 
       $result[] = $feed;
