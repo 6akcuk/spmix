@@ -75,6 +75,8 @@ class Comment extends CActiveRecord
 		return array(
       'author' => array(self::BELONGS_TO, 'User', 'author_id'),
       'reply' => array(self::BELONGS_TO, 'Profile', 'reply_to', 'joinType' => 'LEFT JOIN'),
+      'purchase' => array(self::BELONGS_TO, 'Purchase', 'hoop_id'),
+      'good' => array(self::BELONGS_TO, 'Good', 'hoop_id'),
 		);
 	}
 
@@ -131,7 +133,7 @@ class Comment extends CActiveRecord
         $sub = new Subscription();
         $sub->user_id = Yii::app()->user->getId();
         $sub->sub_type = Subscription::TYPE_PURCHASE;
-        $sub->sub_link_id = $this->purchase_id;
+        $sub->sub_link_id = $this->hoop_id;
         $sub->save();
       }
     }

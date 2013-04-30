@@ -75,7 +75,7 @@ class ProfileWallPost extends CActiveRecord
       'replies' => array(self::HAS_MANY, 'ProfileWallPost', 'reply_to', 'condition' => 'replies.post_delete IS NULL'),
       'replyTo' => array(self::BELONGS_TO, 'Profile', 'reply_to_id', 'joinType' => 'LEFT JOIN'),
       'repliesNum' => array(self::STAT, 'ProfileWallPost', 'reply_to', 'condition' => 'post_delete IS NULL'),
-      'post' => array(self::BELONGS_TO, 'ProfileWallPost', 'reply_to'),
+      'replyPost' => array(self::BELONGS_TO, 'ProfileWallPost', 'reply_to', 'condition' => 'replyPost.post_delete IS NULL'),
 		);
 	}
 

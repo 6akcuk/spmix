@@ -224,7 +224,7 @@ class Feed extends CActiveRecord
 
       switch ($feed->event_type) {
         case 'new reply':
-          $reply = ProfileWallPost::model()->with('author.profile', 'post')->findByPk($feed->event_link_id);
+          $reply = ProfileWallPost::model()->with('author.profile', 'replyPost')->findByPk($feed->event_link_id);
           $feed->content = $reply;
           break;
         case 'new comment':

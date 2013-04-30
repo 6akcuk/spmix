@@ -241,7 +241,7 @@ class ActiveHtml extends CHtml {
         return number_format($price, 0, ',', ' ') . ' '. Yii::t('app', $currency);
     }
 
-    public static function date($date, $showTime = true, $shortMonth = false, $showYear = true, $useTimezone = false) {
+    public static function date($date, $showTime = true, $shortMonth = false, $showYear = false, $useTimezone = false) {
         // включение часового пояса
         if($useTimezone) {
             if(!Yii::app()->user->getIsGuest()) $timezone = new DateTimeZone('');
