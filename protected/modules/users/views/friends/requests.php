@@ -33,8 +33,8 @@ $delta = Yii::app()->controller->module->friendsPerPage;
     )); ?>
     </div>
 </div>
-<div class="summary">
-    <?php echo Yii::t('user', '{n} человек подал|{n} человека подали|{n} человек подали', $offsets) ?> заявку на добавление Вас в свой список друзей
+<div class="summary_wrap">
+    <div class="summary"><?php echo Yii::t('user', '{n} человек подал|{n} человека подали|{n} человек подали', $offsets) ?> заявку на добавление Вас в свой список друзей</div>
 </div>
 <div rel="pagination" class="searchresults">
     <?php echo $this->renderPartial('_request', array('peoples' => $peoples, 'offset' => $offset, 'current' => true)) ?>

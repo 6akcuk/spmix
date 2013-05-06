@@ -32,10 +32,12 @@ $delta = Yii::app()->controller->module->dialogsPerPage;
     )); ?>
     </div>
 </div>
-<div class="summary">
-  <?php echo Yii::t('user', '{n} диалог|{n} диалога|{n} диалогов', $offsets) ?>
-  |
-  <?php echo ActiveHtml::link('Показать в виде сообщений', array('/mail')) ?>
+<div class="summary_wrap">
+  <div class="summary">
+    <?php echo Yii::t('user', '{n} диалог|{n} диалога|{n} диалогов', $offsets) ?>
+    <span class="divide">|</span>
+    <span><?php echo ActiveHtml::link('Показать в виде сообщений', array('/mail')) ?></span>
+  </div>
 </div>
 <div id="im_dialogs" rel="pagination">
     <div class="im_none" id="im_rows_none" style="display:<?php echo ($offsets) ? 'none' : 'block' ?>">Здесь будет выводиться список Ваших сообщений</div>

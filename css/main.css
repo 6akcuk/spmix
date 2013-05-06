@@ -486,6 +486,13 @@ div.post_progress {
   padding: 7px 10px;
 }
 
+div.progress {
+  display: none;
+  width: 32px;
+  height: 13px;
+  background: url(/images/upload.gif) no-repeat 50% 50%;
+}
+
 .divide {
   color: gray;
   padding: 0px 4px;
@@ -904,11 +911,17 @@ div.ls_columns div.column.options div {
 }
 
 /* Summary */
-.summary {
-  padding: 12px 10px 4px;
+.summary_wrap {
+  padding: 13px 10px 0px;
   font-size: 11px;
-  font-weight: bold;
   border-bottom: 1px solid #dae1e8;
+}
+.summary_wrap .summary {
+  font-weight: bold;
+  padding: 3px 0px 4px;
+}
+.summary_wrap .summary span a, .summary_wrap .summary span.divide {
+  font-weight: normal;
 }
 
 /* BNT */

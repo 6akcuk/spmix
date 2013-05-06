@@ -28,14 +28,17 @@ $delta = Yii::app()->controller->module->usersPerPage;
   <div rel="filters" class="left">
     <?php echo ActiveHtml::dropdown('c[role]', 'Роль', (isset($c['role'])) ? $c['role'] : '', RbacItem::getSearchRoleArray()) ?>
   </div>
+</div>
+<div class="summary_wrap">
   <div class="right">
     <?php $this->widget('Paginator', array(
-    'url' => '/users',
-    'offset' => $offset,
-    'offsets' => $offsets,
-    'delta' => $delta,
-  )); ?>
+      'url' => '/users',
+      'offset' => $offset,
+      'offsets' => $offsets,
+      'delta' => $delta,
+    )); ?>
   </div>
+  <div class="summary"><?php echo Yii::t('app', '{n} пользователь|{n} пользователя|{n} пользователей', $offsets) ?></div>
 </div>
 
 <table class="users_table" style="width: 100%">

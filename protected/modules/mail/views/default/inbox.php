@@ -44,10 +44,12 @@ $delta = Yii::app()->controller->module->messagesPerPage;
     )); ?>
   </div>
 </div>
-<div class="summary">
-  <span id="mail_summary"><?php echo Yii::t('user', 'Вы получили {n} сообщение|Вы получили {n} сообщения|Вы получили {n} сообщений', $offsets) ?></span>
-  |
-  <?php echo ActiveHtml::link('Показать в виде диалогов', array('/im')) ?>
+<div class="summary_wrap">
+  <div class="summary">
+    <span id="mail_summary"><?php echo Yii::t('user', 'Вы получили {n} сообщение|Вы получили {n} сообщения|Вы получили {n} сообщений', $offsets) ?></span>
+    <span class="divide">|</span>
+    <span><?php echo ActiveHtml::link('Показать в виде диалогов', array('/im')) ?></span>
+  </div>
 </div>
 <table id="messages" rel="pagination">
 <?php if ($messages): ?>

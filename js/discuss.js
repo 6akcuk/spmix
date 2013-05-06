@@ -109,6 +109,75 @@ var Discuss = {
     });
   },
 
+  replyPost: function(post_id) {
+    A.discussPostFixed = true;
+    Discuss.scroll();
+    $('#discuss_text').focus().val($('#discuss_text').val() + '[post'+ post_id +'|'+ $('#discuss_post'+ post_id + ' a.discuss_post_author').attr('data-name') +'], ').keyup();
+  },
+
+  fixPost: function() {
+    A.discussPostTmHeight = setInterval(Discuss.ctrlPost, 100);
+    $(window).bind('scroll', Discuss.scroll);
+  },
+  ctrlPost: function() {
+    $('#discuss_post_wrap').css({height: $('#discuss_post').outerHeight()});
+  },
+
+  scroll: function() {
+    if (A.discussPostFixed) {
+      var $win = $(window), $post = $('#discuss_post'), wY = $win.height() + $win.scrollTop(), fY = $('#discuss_fixer').offset().top;
+      if (wY < (fY + $post.outerHeight())) {
+        $post.addClass('fixed');
+        $('#discuss_cancel').show();
+      }
+      else $post.removeClass('fixed');
+    }
+    else {
+      $('#discuss_post').removeClass('fixed');
+      $('#discuss_cancel').hide();
+      $(window).unbind('scroll', Discuss.scroll);
+      clearInterval(A.discussPostTmHeight);
+    }
+  },
+
+  onKeyUp: function() {
+    var post = $.trim($('#discuss_text').val());
+    A.discussPostFixed = (post.length > 0) ? true : false;
+    if (!A.discussPostFixed) Discuss.scroll();
+    else Discuss.fixPost();
+  },
+
+  cancelPost: function() {
+    $('#discuss_text').val('').keyup();
+  },
+
+  sendPost: function(fid) {
+    var post = $.trim($('#discuss_text').val()), attaches = [];
+
+    if (!post) {
+      $('#discuss_text').focus();
+      return false;
+    }
+
+    if (A.discussPostCreate) return;
+    A.discussPostCreate = true;
+
+    $('input[type="hidden"][name*=attach]').each(function(i, item) {
+      attaches.push($(item).val());
+    });
+
+    $('#bnt_progress').show();
+    ajax.post('/discuss'+ fid +'?act=create', {post: post, attaches: attaches, last_id: A.discussPostLastId}, function(r) {
+      $('#bnt_progress').hide();
+      A.discussPostCreate = false;
+
+      nav.go('/discuss'+ fid +'?offset=last&scroll=1');
+    }, function(xhr) {
+      $('#bnt_progress').hide();
+      A.discussPostCreate = false;
+    });
+  },
+
   attachPhoto: function(file_id) {
     if (A.discussPostPhotoAttaches >= 3) {
       boxPopup('Вы не можете прикрепить более 3-х фотографий');
@@ -143,6 +212,10 @@ var Discuss = {
       cont.remove();
       $('#'+ file_id +'_attach').remove();
     });
+  },
+
+  editPost: function(post_id) {
+
   }
 };
 

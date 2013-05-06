@@ -16,8 +16,17 @@ $delta = Yii::app()->getModule('discuss')->themesPerPage;
     <?php echo ActiveHtml::link('Создать тему', '/discuss'. $forum->forum_id .'?act=create') ?>
   </div>
 </div>
-<div class="summary">
-  <span><?php echo $forum->title ?> - <?php echo Yii::t('app', '{n} тема|{n} темы|{n} тем', $themesNum) ?></span>
+<div class="summary_wrap">
+  <div class="right">
+    <?php $this->widget('Paginator', array(
+      'url' => '/discuss'. $forum->forum_id,
+      'offset' => $offset,
+      'offsets' => $themesNum,
+      'delta' => $delta,
+      'nopages' => true,
+    )); ?>
+  </div>
+  <div class="summary"><?php echo $forum->title ?> - <?php echo Yii::t('app', '{n} тема|{n} темы|{n} тем', $themesNum) ?></div>
 </div>
 <div id="themes" rel="pagination">
   <?php $this->renderPartial('_themes', array('themes' => $themes, 'offset' => $offset)) ?>

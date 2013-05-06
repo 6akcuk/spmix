@@ -8,37 +8,30 @@ $nextoffset = ($page < $maxpage) ? $this->offset + $this->delta : $this->offsets
 ?>
 <div class="pagination clearfix">
 <?php if ($pages > 1): ?>
-    <?php if (!$this->nopages): ?>
-    <ul>
-        <? if ($page > 3 && $pages > 5) :?>
-        <li class="disabled">
-            <? //$this->url['offset'] = $prevoffset; ?>
-            <? echo ActiveHtml::link('&laquo;', $this->url .'?offset=0', array('nav' => array('search' => true, 'paginator' => true))); ?>
-        </li>
-        <? endif; ?>
-        <? for ($i=$minpage; $i<=$maxpage; $i++): ?>
-        <li<? if ($page == $i): ?> class="active"<? endif; ?>>
-            <? $offset = ($i * $this->delta) - $this->delta; ?>
-            <? echo ($page == $i) ? '<a>'. $i .'</a>' : ActiveHtml::link($i, $this->url .'?offset='. $offset, array('nav' => array('search' => true, 'paginator' => true))); ?>
-        </li>
-        <? endfor; ?>
-        <? if ($pages > $maxpage): ?>
-        <li>
-            <? echo ActiveHtml::link('&raquo;', $this->url .'?offset='. (($pages * $this->delta) - $this->delta), array('nav' => array('search' => true, 'paginator' => true))); ?>
-        </li>
-        <? endif; ?>
-    </ul>
-    <?php endif; ?>
-    <script type="text/javascript">
-    Paginator.init({
-      target: '[rel="pagination"]',
-      delta: <?php echo $this->delta ?>,
-      offset: <? echo $this->offset; ?>,
-      pages: <? echo $pages; ?>,
-      url: '<?php echo $this->url ?>',
-      forceUrl: <?php echo ($this->forceUrl) ? $this->forceUrl : 'false' ?>,
-      nopages: <?php echo ($this->nopages) ? $this->nopages : 'false' ?>
-    });
-    </script>
+  <?php if (!$this->nopages): ?>
+    <? if ($page > 3 && $pages > 5) :?>
+    <? //$this->url['offset'] = $prevoffset; ?>
+      <? echo ActiveHtml::link('<div class="pg_in">&laquo;</div>', $this->url .'?offset=0', array('class' => 'pg_lnk left', 'nav' => array('search' => true, 'paginator' => true))); ?>
+    <? endif; ?>
+    <? for ($i=$minpage; $i<=$maxpage; $i++): ?>
+    <? $offset = ($i * $this->delta) - $this->delta; ?>
+      <? echo  ActiveHtml::link('<div class="pg_in">'. $i .'</div>', $this->url .'?offset='. $offset, array('class' => ($page == $i) ? 'pg_lnk_sel left' : 'pg_lnk left', 'nav' => array('search' => true, 'paginator' => true))); ?>
+    <? endfor; ?>
+    <? if ($pages > $maxpage): ?>
+      <? echo ActiveHtml::link('<div class="pg_in">&raquo;</div>', $this->url .'?offset='. (($pages * $this->delta) - $this->delta), array('class' => 'pg_lnk left', 'nav' => array('search' => true, 'paginator' => true))); ?>
+    <? endif; ?>
+  </ul>
+  <?php endif; ?>
+  <script type="text/javascript">
+  Paginator.init({
+    target: '[rel="pagination"]',
+    delta: <?php echo $this->delta ?>,
+    offset: <? echo $this->offset; ?>,
+    pages: <? echo $pages; ?>,
+    url: '<?php echo $this->url ?>',
+    forceUrl: <?php echo ($this->forceUrl) ? $this->forceUrl : 'false' ?>,
+    nopages: <?php echo ($this->nopages) ? $this->nopages : 'false' ?>
+  });
+  </script>
 <?php endif; ?>
 </div>

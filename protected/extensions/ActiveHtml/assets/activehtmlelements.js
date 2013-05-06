@@ -846,7 +846,7 @@ $.fn.autosize = function(options) {
                     width: $this.width(),
                     fontSize: $this.css('fontSize'),
                     padding: (ps.padding*2),
-                    lineHeight: ps.lineHeight
+                    lineHeight: $this.css('lineHeight')
                 })
                 .appendTo('#utils');
 
@@ -2099,7 +2099,10 @@ $().ready(function() {
 
         $(window).resize();
         if (!$('body').hasClass('im_fixed')) {
-          if (!opts || !opts.noscroll) $(window).scrollTop(0);
+          if (A.pageScroll) {
+            A.pageScroll = false;
+          }
+          else if (!opts || !opts.noscroll) $(window).scrollTop(0);
         }
 
         cur = {};

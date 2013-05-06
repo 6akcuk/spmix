@@ -14,10 +14,9 @@ $delta = Yii::app()->getModule('users')->wallPostsPerPage;
   <?php echo ActiveHtml::link('Запись на стене', '/wall'. $id .'_'. $post->post_id, array('class' => 'selected')) ?>
   <?php endif; ?>
 </div>
-<div rel="reply_parking_lot" class="summary"<?php if ($post): ?> style="display:none"<?php endif; ?>>
+<div rel="reply_parking_lot" class="summary_wrap"<?php if ($post): ?> style="display:none"<?php endif; ?>>
   <?php if (!$post): ?>
-  <span>Всего <?php echo Yii::t('app', '{n} запись|{n} записи|{n} записей', $offsets) ?></span>
-
+  <div class="summary">Всего <?php echo Yii::t('app', '{n} запись|{n} записи|{n} записей', $offsets) ?></div>
   <div class="right">
     <?php $this->widget('Paginator', array(
       'url' => '/wall'. $id,
