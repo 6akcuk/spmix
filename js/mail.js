@@ -341,7 +341,7 @@ var mail = {
       cont.remove();
       $('#mail_'+ file_id +'_attach').remove();
     });
-  },
+  }
 };
 
 try {stmgr.loaded('mail.js');}catch(e){}

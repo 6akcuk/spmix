@@ -51,6 +51,7 @@ class DialogMessage extends CActiveRecord
 			array('message_id', 'length', 'max'=>20),
 			array('dialog_id', 'length', 'max'=>10),
 			array('creation_date, attaches, message_delete', 'safe'),
+      array('message', 'filter', 'filter' => array($obj = new CHtmlPurifier(),'purify')),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('message_id, dialog_id, creation_date, author_id, message, attaches, message_delete', 'safe', 'on'=>'search'),

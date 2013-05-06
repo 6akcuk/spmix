@@ -214,5 +214,5 @@ if ($good->oic) {
     </div>
 </div>
 <div style="margin-top: 10px">
-  <?php $this->widget('Comments', array('hoop' => $good->purchase, 'hoop_id' => $good->good_id, 'hoop_type' => 'good')) ?>
+  <?php $this->widget('Comments', array('hoop' => $good->purchase, 'hoop_id' => $good->good_id, 'hoop_type' => 'good', 'reply' => $reply)) ?>
 </div>

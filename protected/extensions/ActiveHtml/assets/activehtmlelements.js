@@ -1580,6 +1580,27 @@ $.fn.filters = function() {
     });
 }
 
+/* Focuser */
+$.fn.focuser = function(opts) {
+  this.each(function() {
+    var settings = {
+      startBackgroundColor: '#dae1e8',
+      endBackgroundColor: '#ffffff',
+      duration: 5000,
+      scroll: true,
+      focus: true
+    };
+    var ps = $.extend(settings, opts),
+      $win = $(window), scr = $win.scrollTop(),
+      st = scr + ($win.height() / 2);
+
+    if (ps.startBackgroundColor) $(this).css({backgroundColor: ps.startBackgroundColor});
+    if (ps.endBackgroundColor) $(this).animate({backgroundColor: ps.endBackgroundColor}, ps.duration);
+    if (ps.scroll) $win.scrollTop($(this).offset().top - $win.height() / 2);
+    if (ps.focus) $(this).find('input[type="text"], textarea')[0].focus();
+  });
+}
+
 /* Navigation Object */
 /* Great respect for VK.com developers */
 var nav = {

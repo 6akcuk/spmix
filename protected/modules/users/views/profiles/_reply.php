@@ -78,5 +78,10 @@
     </div>
   </div>
 </div>
+<?php if ($_reply == $reply->post_id): ?>
+<script type="text/javascript">
+$('#post<?php echo $reply->wall_id ?>_<?php echo $reply->post_id ?>').focuser();
+</script>
+<?php endif; ?>
 <?php endforeach; ?>
               

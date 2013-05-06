@@ -10,6 +10,9 @@
 /** @var $comment Comment */
 $attaches = json_decode($comment->attaches, true);
 $length = sizeof($attaches);
+
+if (!isset($reply)) $reply = null;
+
 ?>
 <div id="comment_<?php echo $comment->comment_id ?>" class="comment_block clearfix" onclick="Comment.replyTo(event, <?php echo $comment->comment_id ?>)">
   <div class="left photo">
@@ -85,3 +88,8 @@ $length = sizeof($attaches);
     </div>
   </div>
 </div>
+<?php if ($reply == $comment->comment_id): ?>
+<script type="text/javascript">
+$('#comment_<?php echo $comment->comment_id ?>').focuser();
+</script>
+<?php endif; ?>

@@ -77,6 +77,10 @@
   padding: 5px !important;
 }
 
+.purchase_comments {
+  padding-top: 10px;
+}
+
 .purchase_table {
     padding: 5px 0 20px;
 }

@@ -16,6 +16,8 @@
  *
  * @property User $author
  * @property Profile $reply
+ * @property Purchase $purchase
+ * @property Good $good
  */
 class Comment extends CActiveRecord
 {
@@ -116,6 +118,23 @@ class Comment extends CActiveRecord
         $req->save();
       }
 
+      if (!$this->reply_to || $this->reply_to == 0) {
+        switch ($this->hoop_type) {
+          case 'purchase':
+            $owner_id = $this->purchase->author_id;
+            break;
+          case 'good':
+            $owner_id = $this->good->purchase->author_id;
+            break;
+        }
+
+        $req = new ProfileRequest();
+        $req->req_type = ProfileRequest::TYPE_COMMENT;
+        $req->owner_id = $owner_id;
+        $req->req_link_id = $this->comment_id;
+        $req->save();
+      }
+
       $feed = new Feed();
       $feed->event_type = self::FEED_NEW_COMMENT;
       $feed->event_link_id = $this->comment_id;
@@ -152,6 +171,25 @@ class Comment extends CActiveRecord
     $feed = Feed::model()->find($cr);
     if ($feed) $feed->markAsDeleted();
 
+    if (!$this->reply_to || $this->reply_to == 0) {
+      switch ($this->hoop_type) {
+        case 'purchase':
+          $owner_id = $this->purchase->author_id;
+          break;
+        case 'good':
+          $owner_id = $this->good->purchase->author_id;
+          break;
+      }
+
+      $cr = new CDbCriteria();
+      $cr->compare('req_type', ProfileRequest::TYPE_COMMENT);
+      $cr->compare('owner_id', $owner_id);
+      $cr->compare('req_link_id', $this->comment_id);
+
+      $req = ProfileRequest::model()->find($cr);
+      if ($req) $req->delete();
+    }
+
     if ($this->reply_to) {
       $cr = new CDbCriteria();
       $cr->compare('req_type', ProfileRequest::TYPE_COMMENT_ANSWER);
@@ -177,6 +215,23 @@ class Comment extends CActiveRecord
 
     $feed = Feed::model()->find($cr);
     if ($feed) $feed->restore();
+
+    if (!$this->reply_to || $this->reply_to == 0) {
+      switch ($this->hoop_type) {
+        case 'purchase':
+          $owner_id = $this->purchase->author_id;
+          break;
+        case 'good':
+          $owner_id = $this->good->purchase->author_id;
+          break;
+      }
+
+      $req = new ProfileRequest();
+      $req->req_type = ProfileRequest::TYPE_COMMENT;
+      $req->owner_id = $owner_id;
+      $req->req_link_id = $this->comment_id;
+      $req->save();
+    }
 
     if ($this->reply_to) {
       $req = new ProfileRequest();

@@ -267,7 +267,7 @@ class PurchasesController extends Controller {
       ));
     }
 
-    public function actionShow($id, $offset = 0) {
+    public function actionShow($id, $offset = 0, $reply = null) {
       $purchase = Purchase::model()->with('city', 'author', 'category', 'ordersNum', 'ordersSum')->findByPk($id);
       if (isset($_POST['offset'])) $offset = $_POST['offset'];
 
@@ -312,6 +312,7 @@ class PurchasesController extends Controller {
             'offsets' => $goodsNum,
             'commentsNum' => $commentsNum,
             'subscription' => $subscription,
+            'reply' => $reply,
           ), true);
       }
       else $this->render('show', array(
@@ -321,6 +322,7 @@ class PurchasesController extends Controller {
         'offsets' => $goodsNum,
         'commentsNum' => $commentsNum,
         'subscription' => $subscription,
+        'reply' => $reply,
       ));
     }
 

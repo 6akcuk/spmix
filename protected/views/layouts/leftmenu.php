@@ -49,6 +49,11 @@
     ?>
   </li>
 <?php endif; ?>
+<?php if (Yii::app()->user->checkAccess('discuss.forum.manage')): ?>
+  <li>
+    <?php echo ActiveHtml::link('Обсуждения', '/discuss?act=manage') ?>
+  </li>
+<?php endif; ?>
 <?php if (Yii::app()->user->checkAccess('purchases.purchases.sitelist')): ?>
   <li>
     <?php echo ActiveHtml::link('Список сайтов', '/purchases/sitelist') ?>

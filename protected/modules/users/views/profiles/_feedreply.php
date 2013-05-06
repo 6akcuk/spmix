@@ -34,6 +34,11 @@
               </div>
             </div>
           </td>
+          <td class="feedback_row_photo">
+            <div class="feedback_row_photo">
+
+            </div>
+          </td>
         </tr>
       </table>
     </div>

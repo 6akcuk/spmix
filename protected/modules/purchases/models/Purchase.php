@@ -127,7 +127,7 @@ class Purchase extends CActiveRecord
       'oic' => array(self::HAS_MANY, 'PurchaseOic', 'purchase_id'),
       'user_oic' => array(self::HAS_ONE, 'OrderOic', 'purchase_id'),
       'orders' => array(self::HAS_MANY, 'Order', 'purchase_id'),
-      'ordersNum' => array(self::STAT, 'Order', 'purchase_id'),
+      'ordersNum' => array(self::STAT, 'Order', 'purchase_id', 'select' => 'SUM(amount)'),
       'ordersSum' => array(self::STAT, 'Order', 'purchase_id', 'select' => 'SUM(price * amount)'),
       'goodsNum' => array(self::STAT, 'Good', 'purchase_id', 'condition' => 'is_quick = 0'),
 		);

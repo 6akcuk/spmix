@@ -6,7 +6,7 @@ var Paginator = {
         var $pg = $('div.pagination'),
             ofs = $pg.offset();
 
-        if (A.pgFixed)
+        if (A.pgFixed && ofs)
             A.pgFixed.css({
                 left: ofs.left
             });

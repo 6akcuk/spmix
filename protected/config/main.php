@@ -33,7 +33,7 @@ return array(
 			'class'=>'system.gii.GiiModule',
 			'password'=>'s1a55j7',
 			// If removed, Gii defaults to localhost only. Edit carefully to taste.
-			'ipFilters'=>array('127.0.0.1','::1','94.41.239.224','92.50.166.78'),
+			'ipFilters'=>array('127.0.0.1','::1','46.191.173.128','92.50.166.78'),
 		),
     'users' => array(
         'onlineInterval' => 10, // сколько минут считать пользователя онлайн
@@ -43,6 +43,7 @@ return array(
     'im',
     'mail',
     'feed',
+    'discuss',
   ),
 
 	// application components
@@ -68,7 +69,7 @@ return array(
 
 		'urlManager'=>array(
 			'urlFormat'=>'path',
-        'showScriptName' => false,
+      'showScriptName' => false,
 			'rules'=>array(
         'nullForm' => 'site/nullForm',
         'setcity' => 'site/setcity',
@@ -80,6 +81,8 @@ return array(
         'invite<id:\d+>' => 'site/invite',
         'inviteBySMS' => 'users/profiles/inviteBySMS',
         'id<id:\d+>' => 'users/profiles',
+        'wall<id:\d+>_<post_id:\d+>' => 'users/profiles/wall',
+        'wall<id:\d+>' => 'users/profiles/wall',
         'wall' => 'users/profiles/wall',
         'edit' => 'users/profiles/edit',
         'settings' => 'users/profiles/settings',
@@ -108,6 +111,9 @@ return array(
         '<controller:(purchases)>' => 'purchases/purchases',
         '<controller:(purchases)>/<action:\w+>' => 'purchases/purchases/<action>',
         '<controller:(purchases)>/<action:\w+>/<id:\d+>' => 'purchases/purchases/<action>',
+        'discuss' => 'discuss/forum',
+        'discuss<forum_id:\d+>' => 'discuss/theme',
+        'discuss<forum_id:\d+>_<theme_id:\d+>' => 'discuss/post',
         '<controller:\w+>/<id:\d+>'=>'<controller>/view',
 				'<controller:\w+>/<action:\w+>/<id:\d+>'=>'<controller>/<action>',
 				'<controller:\w+>/<action:\w+>'=>'<controller>/<action>',

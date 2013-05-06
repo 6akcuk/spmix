@@ -164,11 +164,15 @@
     display: block;
 }
 .module-header .header-top {
+  display: block;
   background: #dee5eb;
   overflow: hidden;
   color: #45688e;
   padding: 5px 10px;
   font-weight: bold;
+}
+.module-header .header-link:hover {
+  text-decoration: underline;
 }
 .module-header .header-bottom {
   color: #667788;

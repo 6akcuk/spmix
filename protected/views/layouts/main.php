@@ -94,12 +94,17 @@ $cookies = $request->getCookies();
                   <li>
                     <?php echo ActiveHtml::link('Моя страница', '/id'. Yii::app()->user->getId()) ?>
                   </li>
-                    <li>
-                        <?php echo ActiveHtml::link('Закупки', '/purchases') ?>
-                    </li>
-                    <li>
-                        <a href="/logout">Выйти</a>
-                    </li>
+                  <li>
+                    <?php echo ActiveHtml::link('Закупки', '/purchases') ?>
+                  </li>
+                  <?php if (Yii::app()->user->getId() == 1): ?>
+                  <li>
+                    <?php echo ActiveHtml::link('Обсуждения', '/discuss') ?>
+                  </li>
+                  <?php endif; ?>
+                  <li>
+                    <a href="/logout">Выйти</a>
+                  </li>
                 </ul>
                 <?php else: ?>
                 <?php $this->widget('application.modules.users.components.LoginWidget'); ?>

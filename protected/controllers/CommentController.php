@@ -144,7 +144,7 @@ class CommentController extends Controller {
       if ($_SESSION['comment.delete'][$comment->author_id]['count'] >= 3) $hash = $_SESSION['comment.delete'][$comment->author_id]['hash'] = substr(md5(time() . $comment->author_id), 0, 8);
 
       $html = array();
-      $html[] = 'Комментарий удален. <a onclick="Comment.restore(this, '. $comment->comment_id .', \''. $restore .'\')">Восстановить</a>';
+      $html[] = 'Комментарий удален. <a onclick="Comment.restore'. ((isset($_POST['feed'])) ? 'Feed' : '') .'(this, '. $comment->comment_id .', \''. $restore .'\')">Восстановить</a>';
       if (isset($hash)) $html[] = '<br><a onclick="Comment.massDelete('. $comment->hoop_id .', \''. $comment->hoop_type .'\', '. $comment->author_id .', \''. $hash .'\')">Удалить все комментарии пользователя за последний день</a>';
 
       echo json_encode(array('html' => implode('', $html)));
@@ -178,6 +178,7 @@ class CommentController extends Controller {
       $criteria->compare('hoop_id', $hoop_id);
       $criteria->compare('hoop_type', $hoop_type);
       $criteria->compare('author_id', $author_id);
+      $criteria->addCondition('creation_date >= NOW() - INTERVAL 1 DAY');
       $criteria->select = 'comment_id';
 
       $comments = Comment::model()->findAll($criteria);
@@ -245,7 +246,8 @@ class CommentController extends Controller {
     $result = array('items' => array(), 'count' => 0, 'last_id' => $last_id);
     $comments = Comment::model()->with('reply')->findAll($criteria);
     foreach ($comments as $comment) {
-      $result['items'][] = $this->renderPartial('_comment', array('comment' => $comment, 'hoop' => $hoop), true);
+      if ($_POST['feed'] === true) $result['items'][] = $this->renderPartial('_feedlikereplies', array('comments' => array($comment), 'hoop' => $hoop), true);
+      else $result['items'][] = $this->renderPartial('_comment', array('comment' => $comment, 'hoop' => $hoop), true);
     }
 
     $result['count'] = sizeof($comments);
@@ -277,7 +279,8 @@ class CommentController extends Controller {
     $result = array('items' => array());
     $comments = array_reverse(Comment::model()->with('reply')->findAll($criteria));
     foreach ($comments as $comment) {
-      $result['items'][] = $this->renderPartial('_comment', array('comment' => $comment, 'hoop' => $hoop), true);
+      if (isset($_POST['feed'])) $result['items'][] = $this->renderPartial('_feedlikereplies', array('comments' => array($comment), 'hoop' => $hoop), true);
+      else $result['items'][] = $this->renderPartial('_comment', array('comment' => $comment, 'hoop' => $hoop), true);
     }
 
     echo json_encode($result);

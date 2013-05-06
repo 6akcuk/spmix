@@ -17,10 +17,15 @@ Yii::app()->getClientScript()->registerScriptFile('/js/photoview.js');
 Yii::app()->getClientScript()->registerScriptFile('/js/jquery.cookie.js', null, 'after jquery-');
 
 ?>
-<?php if ($offsets > 10): ?><a class="comment_show_more" onclick="Comment.showMore(<?php echo $this->hoop_id ?>, '<?php echo $this->hoop_type ?>', <?php echo $comments[0]->comment_id ?>)">Показать <?php echo Yii::t('app', 'предыдущий {n} комментарий|предыдущие {n} комментария|предыдущие {n} комментариев', ($offsets - 3)) ?></a><?php endif; ?>
+<?php if ($offsets > 10): ?>
+<a class="comment_show_more" onclick="Comment.showMore(<?php echo $this->hoop_id ?>, '<?php echo $this->hoop_type ?>', <?php echo $comments[0]->comment_id ?>)">
+  <div class="wrh_text" id="wrh_text<?php echo $this->hoop_type ?>_<?php echo $this->hoop_id ?>">Показать все <?php echo Yii::t('app', '{n} комментарий|{n} комментария|{n} комментариев', $offsets) ?></div>
+  <div class="wrh_prg" id="wrh_prg<?php echo $this->hoop_type ?>_<?php echo $this->hoop_id ?>"><img src="/images/upload.gif" /></div>
+</a>
+<?php endif; ?>
 <div id="hoop<?php echo $this->hoop_id ?>_comments" class="comments_list">
   <?php foreach ($comments as $comment): ?>
-  <?php $this->controller->renderPartial('//comment/_comment', array('comment' => $comment, 'hoop' => $this->hoop)) ?>
+  <?php $this->controller->renderPartial('//comment/_comment', array('comment' => $comment, 'hoop' => $this->hoop, 'reply' => $reply)) ?>
   <?php endforeach; ?>
 </div>
 <div class="comment_reply">

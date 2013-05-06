@@ -14,6 +14,9 @@ Yii::app()->getClientScript()->registerScriptFile('/js/photoview.js');
 Yii::app()->getClientScript()->registerCssFile('/css/pagination.css');
 Yii::app()->getClientScript()->registerScriptFile('/js/pagination.js');
 
+Yii::app()->getClientScript()->registerCssFile('/css/wall.css');
+Yii::app()->getClientScript()->registerScriptFile('/js/wall.js');
+
 if ($userinfo)
     $title .= ' - ' .
         ((Yii::app()->user->checkAccess('global.fullnameView'))
@@ -333,10 +336,11 @@ $this->pageTitle = $title;
         ?>
       <div class="module">
         <div class="module-header">
-          <div id="wall_header" class="header-top">
+          <a id="wall_header" href="/wall<?php echo $userinfo->id ?>" onclick="return nav.go(this, event, null)" class="header-top clearfix">
             <?php echo Yii::t('app', '{n} запись|{n} записи|{n} записей', $postsNum); ?>
-          </div>
-          <div class="header-bottom wall-post" onclick="event.cancelBubble=true;">
+            <span class="header-link right">к записям <?php echo ActiveHtml::lex(2, $userinfo->profile->firstname) ?></span>
+          </a>
+          <div rel="reply_parking_lot" class="header-bottom wall-post" onclick="event.cancelBubble=true;">
             <?php echo ActiveHtml::smartTextarea(
               'wall_post', '',
               array(

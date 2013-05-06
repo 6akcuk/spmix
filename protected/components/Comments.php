@@ -12,6 +12,7 @@ class Comments extends CPortlet {
   public $hoop;
   public $hoop_id;
   public $hoop_type;
+  public $reply;
 
   protected function renderContent() {
     if (!$this->hoop) {
@@ -33,9 +34,17 @@ class Comments extends CPortlet {
 
     $commentsNum = Comment::model()->with('reply')->count($criteria);
 
-    if ($commentsNum > 10) $criteria->limit = 3;
-    $comments = array_reverse(Comment::model()->with('author', 'author.profile', 'reply')->findAll($criteria));
+    if (!$this->reply) {
+      if ($commentsNum > 10) $criteria->limit = 3;
+      $comments = array_reverse(Comment::model()->with('author', 'author.profile', 'reply')->findAll($criteria));
+    }
+    else {
+      $criteria->addCondition('comment_id >= :id');
+      $criteria->params[':id'] = $this->reply;
 
-    $this->render('comments', array('comments' => $comments, 'offsets' => $commentsNum));
+      $comments = array_reverse(Comment::model()->with('author', 'author.profile', 'reply')->findAll($criteria));
+    }
+
+    $this->render('comments', array('comments' => $comments, 'offsets' => $commentsNum, 'reply' => $this->reply));
   }
 }

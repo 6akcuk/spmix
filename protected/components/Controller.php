@@ -60,7 +60,7 @@ class Controller extends CController
         $criteria->addCondition('owner_id = :id');
         $criteria->addCondition('viewed = 0');
         $criteria->params[':id'] = Yii::app()->user->getId();
-        $criteria->addInCondition('req_type', array(ProfileRequest::TYPE_WALL_ANSWER, ProfileRequest::TYPE_COMMENT_ANSWER));
+        $criteria->addInCondition('req_type', array(ProfileRequest::TYPE_WALL_ANSWER, ProfileRequest::TYPE_COMMENT_ANSWER, ProfileRequest::TYPE_COMMENT, ProfileRequest::TYPE_POST_ON_WALL));
         $this->pageCounters['news'] = ProfileRequest::model()->count($criteria);
 
         Yii::import('application.modules.purchases.models.*');

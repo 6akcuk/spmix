@@ -82,7 +82,7 @@ class ProfilesController extends Controller {
     exit;
   }
 
-  public function actionWall($id, $offset = 0) {
+  public function actionWall($id, $offset = 0, $post_id = 0, $reply = 0) {
     $criteria = new CDbCriteria();
     $criteria->limit = Yii::app()->getModule('users')->wallPostsPerPage;
     $criteria->offset = $offset;
@@ -91,10 +91,21 @@ class ProfilesController extends Controller {
     $criteria->addCondition('t.post_delete IS NULL');
     $criteria->compare('t.wall_id', $id);
 
-    $posts = ProfileWallPost::model()->with('author', 'author.profile', array('last_replies.replyTo' => array('limit' => 3)), 'repliesNum')->findAll($criteria);
+    if ($post_id == 0) {
+      $post = null;
+      $posts = ProfileWallPost::model()->with('author.profile', array('last_replies.replyTo' => array('limit' => 3)), 'repliesNum')->findAll($criteria);
 
-    $criteria->limit = 0;
-    $postsNum = ProfileWallPost::model()->count($criteria);
+      $criteria->limit = 0;
+      $postsNum = ProfileWallPost::model()->count($criteria);
+    }
+    else {
+      $posts = array();
+
+      $post = ($reply)
+        ? ProfileWallPost::model()->with('author.profile', array('last_replies.replyTo' => array('condition' => 'last_replies.post_id >= :id', 'params' => array(':id' => $reply))), 'repliesNum')->findByPk($post_id)
+        : ProfileWallPost::model()->with('author.profile', array('last_replies.replyTo' => array('limit' => 3)), 'repliesNum')->findByPk($post_id);
+      $postsNum = 1;
+    }
 
     if (Yii::app()->request->isAjaxRequest) {
       if (isset($_POST['pages'])) {
@@ -105,6 +116,8 @@ class ProfilesController extends Controller {
       }
       else $this->pageHtml = $this->renderPartial('wall', array(
         'id' => $id,
+        'post' => $post,
+        'reply' => $reply,
         'posts' => $posts,
         'offset' => $offset,
         'offsets' => $postsNum,
@@ -112,6 +125,8 @@ class ProfilesController extends Controller {
     }
     else $this->render('wall', array(
       'id' => $id,
+      'post' => $post,
+      'reply' => $reply,
       'posts' => $posts,
       'offset' => $offset,
       'offsets' => $postsNum,
@@ -150,6 +165,7 @@ class ProfilesController extends Controller {
     else {
       $criteria = new CDbCriteria();
       $criteria->compare('wall_id', $id);
+      $criteria->addCondition('reply_to IS NULL');
       $criteria->addCondition('post_delete IS NULL');
 
       $postsNum = ProfileWallPost::model()->count($criteria);

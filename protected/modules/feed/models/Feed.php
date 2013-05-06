@@ -20,6 +20,8 @@ class Feed extends CActiveRecord
 {
   public $content;
   public $viewed;
+  public $goods_num;
+  public $goods;
 
 	/**
 	 * Returns the static model of the specified AR class.
@@ -110,11 +112,26 @@ class Feed extends CActiveRecord
     $db = Yii::app()->db;
 
     $command = $db->createCommand("
-    SELECT COUNT(f.feed_id) AS num FROM `subscriptions` s
-      INNER JOIN `feed` f ON f.owner_type = s.sub_type AND f.owner_id = s.sub_link_id
-      WHERE s.user_id = ". $user_id ." AND f.feed_ondelete IS NULL
-        AND f.event_type NOT IN ('new reply', 'new comment')
-      ORDER BY f.add_date DESC");
+    SELECT
+    (
+      (
+        SELECT COUNT(f.feed_id) AS num FROM `subscriptions` s
+          INNER JOIN `feed` f ON f.owner_type = s.sub_type AND f.owner_id = s.sub_link_id
+          WHERE s.user_id = ". $user_id ." AND f.feed_ondelete IS NULL
+            AND s.sub_type NOT IN ('post')
+            AND f.event_type NOT IN ('new comment', 'new good')
+      )
+      +
+      (
+        SELECT COUNT(DISTINCT HOUR(f.add_date)) AS num FROM `subscriptions` s
+          INNER JOIN `feed` f ON f.owner_type = s.sub_type AND f.owner_id = s.sub_link_id
+          INNER JOIN `goods` g ON g.good_id = f.event_link_id
+          WHERE s.user_id = ". $user_id ." AND f.feed_ondelete IS NULL
+            AND s.sub_type NOT IN ('post')
+            AND f.event_type = 'new good'
+          GROUP BY f.owner_id
+      )
+    ) AS num");
 
     $result = $command->queryRow();
     return $result['num'];
@@ -126,13 +143,28 @@ class Feed extends CActiveRecord
     $db = Yii::app()->db;
 
     $command = $db->createCommand("
-    SELECT f.* FROM `subscriptions` s
-      INNER JOIN `feed` f ON f.owner_type = s.sub_type AND f.owner_id = s.sub_link_id
-      WHERE s.user_id = ". $user_id ." AND f.feed_ondelete IS NULL
-        AND s.sub_type NOT IN ('post')
-        AND f.event_type NOT IN ('new comment')
-      ORDER BY f.add_date DESC
-      LIMIT ". $offset .", ". Yii::app()->getModule('feed')->newsPerPage);
+    SELECT * FROM
+    (
+      (
+        SELECT f.*, 0 AS goods_num, '' AS goods_ids FROM `subscriptions` s
+          INNER JOIN `feed` f ON f.owner_type = s.sub_type AND f.owner_id = s.sub_link_id
+          WHERE s.user_id = ". $user_id ." AND f.feed_ondelete IS NULL
+            AND s.sub_type NOT IN ('post')
+            AND f.event_type NOT IN ('new comment', 'new good')
+      )
+      UNION
+      (
+        SELECT f.*, COUNT(g.good_id) AS goods_num, GROUP_CONCAT(DISTINCT g.good_id SEPARATOR ';') AS goods_ids FROM `subscriptions` s
+          INNER JOIN `feed` f ON f.owner_type = s.sub_type AND f.owner_id = s.sub_link_id
+          INNER JOIN `goods` g ON g.good_id = f.event_link_id
+          WHERE s.user_id = ". $user_id ." AND f.feed_ondelete IS NULL
+            AND s.sub_type NOT IN ('post')
+            AND f.event_type = 'new good'
+          GROUP BY f.owner_id, HOUR(f.add_date)
+      )
+    ) t
+    ORDER BY add_date DESC
+    LIMIT ". $offset .", ". Yii::app()->getModule('feed')->newsPerPage);
 
     /** @var CDbDataReader $reader */
     $reader = $command->query();
@@ -155,6 +187,18 @@ class Feed extends CActiveRecord
         case 'new purchase':
           $purchase = Purchase::model()->with('author.profile')->findByPk($feed->event_link_id);
           $feed->content = $purchase;
+          break;
+        case 'new good':
+          $purchase = Purchase::model()->with('author.profile')->findByPk($feed->owner_id);
+          $ids = explode(';', $row['goods_ids']);
+
+          $criteria = new CDbCriteria();
+          $criteria->addInCondition('t.good_id', $ids);
+          $criteria->limit = 8;
+
+          $feed->content = $purchase;
+          $feed->goods_num = $row['goods_num'];
+          $feed->goods = Good::model()->with('image')->findAll($criteria);
           break;
         case 'new status':
           $user = User::model()->with('profile')->findByPk($feed->event_link_id);
@@ -179,8 +223,12 @@ class Feed extends CActiveRecord
       WHERE r.req_type = ". ProfileRequest::TYPE_WALL_ANSWER ." AND r.owner_id = ". $user_id .")
     +
     (SELECT COUNT(f.feed_id) AS num FROM `profile_requests` r
+      INNER JOIN `feed` f ON f.event_type = 'new post' AND f.event_link_id = r.req_link_id
+      WHERE r.req_type = ". ProfileRequest::TYPE_POST_ON_WALL ." AND r.owner_id = ". $user_id .")
+    +
+    (SELECT COUNT(f.feed_id) AS num FROM `profile_requests` r
       INNER JOIN `feed` f ON f.event_type = 'new comment' AND f.event_link_id = r.req_link_id
-      WHERE r.req_type = ". ProfileRequest::TYPE_COMMENT_ANSWER ." AND r.owner_id = ". $user_id .")
+      WHERE r.req_type IN (". ProfileRequest::TYPE_COMMENT_ANSWER .", ". ProfileRequest::TYPE_COMMENT .") AND r.owner_id = ". $user_id .")
     ) AS num");
 
     $result = $command->queryRow();
@@ -196,13 +244,17 @@ class Feed extends CActiveRecord
     $command = $db->createCommand("
     SELECT * FROM
     (
-      SELECT f.*, r.viewed FROM `profile_requests` r
+      SELECT f.*, r.req_id, r.viewed FROM `profile_requests` r
         INNER JOIN `feed` f ON f.event_type = 'new reply' AND f.event_link_id = r.req_link_id
         WHERE r.req_type = ". ProfileRequest::TYPE_WALL_ANSWER ." AND r.owner_id = ". $user_id ."
       UNION ALL
-      SELECT f.*, r.viewed FROM `profile_requests` r
+      SELECT f.*, r.req_id, r.viewed FROM `profile_requests` r
+        INNER JOIN `feed` f ON f.event_type = 'new post' AND f.event_link_id = r.req_link_id
+        WHERE r.req_type = ". ProfileRequest::TYPE_POST_ON_WALL ." AND r.owner_id = ". $user_id ."
+      UNION ALL
+      SELECT f.*, r.req_id, r.viewed FROM `profile_requests` r
         INNER JOIN `feed` f ON f.event_type = 'new comment' AND f.event_link_id = r.req_link_id
-        WHERE r.req_type = ". ProfileRequest::TYPE_COMMENT_ANSWER ." AND r.owner_id = ". $user_id ."
+        WHERE r.req_type IN (". ProfileRequest::TYPE_COMMENT_ANSWER .", ". ProfileRequest::TYPE_COMMENT .") AND r.owner_id = ". $user_id ."
     ) t
     ORDER BY add_date DESC
     LIMIT ". $offset .", ". Yii::app()->getModule('feed')->newsPerPage);
@@ -221,15 +273,100 @@ class Feed extends CActiveRecord
       $feed->owner_type = $row['owner_type'];
 
       $feed->viewed = $row['viewed'];
+      if ($feed->viewed == 0) $ids[] = $row['req_id'];
 
       switch ($feed->event_type) {
+        case 'new post':
+          $post = ProfileWallPost::model()->with('author.profile')->findByPk($feed->event_link_id);
+          if (!$post) continue 2;
+          $feed->content = $post;
+          break;
         case 'new reply':
           $reply = ProfileWallPost::model()->with('author.profile', 'replyPost')->findByPk($feed->event_link_id);
+          if (!$reply) continue 2;
           $feed->content = $reply;
           break;
         case 'new comment':
           $comment = Comment::model()->with('author.profile')->findByPk($feed->event_link_id);
+          if (!$comment) continue 2;
           $feed->content = $comment;
+          break;
+      }
+
+      $result[] = $feed;
+    }
+
+    $criteria = new CDbCriteria();
+    $criteria->addInCondition('req_id', $ids);
+
+    ProfileRequest::model()->updateAll(array('viewed' => 1), $criteria);
+
+    return $result;
+  }
+
+  public static function countCommentFeeds($user_id, $c = array()) {
+    /** @var CDbConnection $db */
+    $db = Yii::app()->db;
+
+    $command = $db->createCommand("
+    SELECT COUNT(*) AS num FROM `subscriptions` s
+      INNER JOIN `feed` f ON f.owner_type = s.sub_type AND f.owner_id = s.sub_link_id
+      WHERE s.user_id = ". $user_id ." AND f.event_type IN ('new comment', 'new reply')
+      GROUP BY f.owner_id
+      ORDER BY f.add_date DESC");
+
+    $result = $command->queryRow();
+    return $result['num'];
+  }
+
+  public static function getCommentFeeds($user_id, $offset = 0, $c = array()) {
+    $result = array();
+    $ids = array();
+    /** @var CDbConnection $db */
+    $db = Yii::app()->db;
+
+    $command = $db->createCommand("
+    SELECT * FROM `subscriptions` s
+      INNER JOIN `feed` f ON f.owner_type = s.sub_type AND f.owner_id = s.sub_link_id
+      WHERE s.user_id = ". $user_id ." AND f.event_type IN ('new comment', 'new reply')
+      GROUP BY f.owner_id
+      ORDER BY f.add_date DESC
+      LIMIT ". $offset .", ". Yii::app()->getModule('feed')->newsPerPage);
+
+    /** @var CDbDataReader $reader */
+    $reader = $command->query();
+    while (($row = $reader->read()) !== false) {
+      $feed = new Feed();
+      $feed->feed_id = $row['feed_id'];
+      $feed->add_date = $row['add_date'];
+      $feed->feed_ondelete = $row['feed_ondelete'];
+      $feed->event_text = $row['event_text'];
+      $feed->event_type = $row['event_type'];
+      $feed->event_link_id = $row['event_link_id'];
+      $feed->owner_id = $row['owner_id'];
+      $feed->owner_type = $row['owner_type'];
+
+      switch ($feed->event_type) {
+        case 'new reply':
+          $reply = ProfileWallPost::model()->with('replyPost.last_replies', 'replyPost.author.profile')->findByPk($feed->event_link_id);
+          if (!$reply) continue 2;
+          $feed->content = $reply->replyPost;
+          break;
+        case 'new comment':
+          $nullcomment = Comment::model()->findByPk($feed->event_link_id);
+          if (!$nullcomment) continue 2;
+
+          $criteria = new CDbCriteria();
+          $criteria->order = 'creation_date DESC';
+          $criteria->compare('hoop_id', $nullcomment->hoop_id);
+          $criteria->compare('hoop_type', $nullcomment->hoop_type);
+
+          $commentsNum = Comment::model()->with('reply')->count($criteria);
+          $criteria->limit = 3;
+
+          $comments = array_reverse(Comment::model()->with('author', 'author.profile', 'reply')->findAll($criteria));
+
+          $feed->content = array('hoop_id' => $nullcomment->hoop_id, 'hoop_type' => $nullcomment->hoop_type, 'offsets' => $commentsNum, 'comments' => $comments);
           break;
       }
 

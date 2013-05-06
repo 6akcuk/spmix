@@ -66,4 +66,26 @@ class DefaultController extends Controller
       'feedsNum' => $feedsNum,
     ));
   }
+
+  public function actionComments($offset = 0) {
+    $feeds = Feed::getCommentFeeds(Yii::app()->user->getId(), $offset);
+    $feedsNum = Feed::countCommentFeeds(Yii::app()->user->getId());
+
+    if (Yii::app()->request->isAjaxRequest) {
+      if (isset($_POST['pages'])) {
+        $this->pageHtml = $this->renderPartial('_comments', array(
+          'feeds' => $feeds,
+          'offset' => $offset,
+        ), true);
+      }
+      else $this->pageHtml = $this->renderPartial('comments', array(
+        'feeds' => $feeds,
+        'feedsNum' => $feedsNum,
+      ), true);
+    }
+    else $this->render('comments', array(
+      'feeds' => $feeds,
+      'feedsNum' => $feedsNum,
+    ));
+  }
 }

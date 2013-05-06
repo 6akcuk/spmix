@@ -155,7 +155,7 @@ class GoodsController extends Controller {
             throw new CHttpException(403, 'В доступе отказано');
     }
 
-    public function actionShow($purchase_id, $good_id) {
+    public function actionShow($purchase_id, $good_id, $reply = null) {
       /** @var $good Good */
       $good = Good::model()->with('image', 'sizes', 'colors', 'purchase', 'oic', 'orders', 'orders.customer', 'ordersNum')->findByPk($good_id);
       $orderc = new Order('create');
@@ -181,6 +181,7 @@ class GoodsController extends Controller {
             'ranges' => $ranges,
             'oic' => $oic,
             'subscription' => $subscription,
+            'reply' => $reply,
           ), true);
       }
       else $this->render('show', array(
@@ -190,6 +191,7 @@ class GoodsController extends Controller {
         'ranges' => $ranges,
         'oic' => $oic,
         'subscription' => $subscription,
+        'reply' => $reply,
       ));
     }
 

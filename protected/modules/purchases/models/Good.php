@@ -107,7 +107,7 @@ class Good extends CActiveRecord
       'images' => array(self::HAS_MANY, 'GoodImages', array('good_id' => 'good_id')),
       'oic' => array(self::HAS_MANY, 'PurchaseOic', array('purchase_id' => 'purchase_id')),
       'orders' => array(self::HAS_MANY, 'Order', 'good_id'),
-      'ordersNum' => array(self::STAT, 'Order', 'good_id'),
+      'ordersNum' => array(self::STAT, 'Order', 'good_id', 'select' => 'SUM(amount)'),
       'ordersSum' => array(self::STAT, 'Order', 'good_id', 'select' => 'SUM(total_price)'),
 		);
 	}

@@ -137,6 +137,14 @@ class ProfileWallPost extends CActiveRecord
         $req->save();
       }
 
+      if (!$this->reply_to > 0) {
+        $req = new ProfileRequest();
+        $req->req_type = ProfileRequest::TYPE_POST_ON_WALL;
+        $req->owner_id = $this->wall_id;
+        $req->req_link_id = $this->post_id;
+        $req->save();
+      }
+
       $feed = new Feed();
       $feed->owner_type = ($this->reply_to) ? 'post' : 'user';
       $feed->owner_id = ($this->reply_to) ? $this->reply_to : $this->wall_id;
@@ -173,6 +181,16 @@ class ProfileWallPost extends CActiveRecord
     $feed = Feed::model()->find($cr);
     if ($feed) $feed->markAsDeleted();
 
+    if (!$this->reply_to) {
+      $cr = new CDbCriteria();
+      $cr->compare('req_type', ProfileRequest::TYPE_POST_ON_WALL);
+      $cr->compare('owner_id', $this->wall_id);
+      $cr->compare('req_link_id', $this->post_id);
+
+      $req = ProfileRequest::model()->find($cr);
+      if ($req) $req->delete();
+    }
+
     if ($this->reply_to_id) {
       $cr = new CDbCriteria();
       $cr->compare('req_type', ProfileRequest::TYPE_WALL_ANSWER);
@@ -198,6 +216,14 @@ class ProfileWallPost extends CActiveRecord
 
     $feed = Feed::model()->find($cr);
     if ($feed) $feed->restore();
+
+    if (!$this->reply_to) {
+      $req = new ProfileRequest();
+      $req->req_type = ProfileRequest::TYPE_POST_ON_WALL;
+      $req->owner_id = $this->wall_id;
+      $req->req_link_id = $this->post_id;
+      $req->save();
+    }
 
     if ($this->reply_to_id) {
       $req = new ProfileRequest();

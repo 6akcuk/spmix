@@ -2,6 +2,8 @@
 Yii::app()->getClientScript()->registerCssFile('/css/wall.css');
 Yii::app()->getClientScript()->registerScriptFile('/js/wall.js');
 
+if (!isset($reply)) $reply = null;
+
 /** @var ProfileWallPost $post */
 ?>
 <div id="wall<?php echo $post->wall_id ?>_<?php echo $post->post_id ?>" onmouseover="Wall.postOver('<?php echo $post->wall_id ?>_<?php echo $post->post_id ?>', event)" onmouseout="Wall.postOut('<?php echo $post->wall_id ?>_<?php echo $post->post_id ?>')" class="wall_post <?php if ($post->author->isOnline()): ?>wall_post_online <?php endif; ?>clearfix">
@@ -155,7 +157,7 @@ Yii::app()->getClientScript()->registerScriptFile('/js/wall.js');
                   <div class="wrh_prg" id="wrh_prg<?php echo $post->wall_id ?>_<?php echo $post->post_id ?>"><img src="/images/upload.gif" /></div>
                 </a>
               <?php endif; ?>
-              <?php echo $this->renderPartial('application.modules.users.views.profiles._reply', array('replies' => $post->last_replies)) ?>
+              <?php echo $this->renderPartial('application.modules.users.views.profiles._reply', array('replies' => $post->last_replies, '_reply' => $reply)) ?>
             <?php endif; ?>
           </div>
           <div style="<?php if ($post->repliesNum == 0): ?>display:none<?php endif; ?>" class="reply_fakebox_wrap" id="reply_fakebox<?php echo $post->wall_id ?>_<?php echo $post->post_id ?>" onclick="Wall.showReplyEditor(event, '<?php echo $post->wall_id ?>_<?php echo $post->post_id ?>')">

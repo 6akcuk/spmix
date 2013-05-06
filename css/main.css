@@ -848,6 +848,11 @@ div.ls_columns div.column.options div {
   color: #fff;
 }
 
+.upload {
+  display: none;
+  padding: 7px 10px 0px;
+}
+
 .wr_header {
   display: block;
   cursor: pointer;
@@ -896,4 +901,61 @@ div.ls_columns div.column.options div {
 }
 .box_buttons {
   padding: 10px 20px;
+}
+
+/* Summary */
+.summary {
+  padding: 12px 10px 4px;
+  font-size: 11px;
+  font-weight: bold;
+  border-bottom: 1px solid #dae1e8;
+}
+
+/* BNT */
+.bnt_wrap {
+  padding: 20px 40px;
+  background: #f7f7f7;
+}
+.bnt_wrap input[type="text"], .bnt_wrap textarea, .bnt_wrap select {
+  width: 658px;
+  margin-bottom: 20px;
+  padding: 5px;
+  font-size: 11px;
+  font-family: Tahoma;
+  height: auto;
+}
+.bnt_wrap select {
+  width: 670px;
+}
+.bnt_two_columns td:first-child {
+  padding-right: 10px;
+}
+.bnt_two_columns select {
+  width: 330px;
+}
+
+.bnt_header {
+  font-size: 1.09em;
+  margin-bottom: 7px;
+  font-weight: bold;
+  color: #557132;
+}
+.bnt_attaches {
+  padding-top: 20px;
+}
+.bnt_buttons {
+  padding-top: 20px;
+}
+
+.post_attach_photo {
+  position: relative;
+  margin-right: 10px;
+}
+.post_attach_photo .photo_attach_delete {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  padding: 3px;
+  border-radius: 2px;
+  background: rgba(0, 0, 0, .75);
 }

@@ -6,6 +6,31 @@
   font-size: 1.09em;
 }
 
+.feed_good {
+  width: 70px;
+  padding: 10px;
+  margin-left: -10px;
+  overflow: hidden;
+  text-align: center;
+}
+.feed_good_photo {
+  display: block;
+  width: 70px;
+  height: 70px;
+  overflow: hidden;
+}
+.feed_good_name {
+  display: block;
+  padding-top: 5px;
+  max-width: 70px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.feed_row_new {
+  background: #f5f7f6;
+}
+
 .feedback_answered_row_wrap {
   border-bottom: 1px solid #dae1e8;
   padding: 0px;
@@ -43,7 +68,7 @@ div.feedback_row_content {
 .feedback_row_text {
   line-height: 160%;
   padding: 2px 0px 4px;
-  max-width: 500px;
+  max-width: 580px;
   overflow: hidden;
   word-wrap: break-word;
   padding-left: 4px;
@@ -51,7 +76,7 @@ div.feedback_row_content {
 }
 .feedback_row_date {
   color: #999;
-  max-width: 500px;
+  max-width: 580px;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;

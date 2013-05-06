@@ -85,22 +85,35 @@ class City extends CActiveRecord
 		));
 	}
 
-    public static function getDataArray()
-    {
-        if (!self::$_cities) {
-            $arr = array();
+  public static function getListArray()
+  {
+    $arr = array(0 => 'Нет города');
+    $criteria = new CDbCriteria();
+    $criteria->order = 'name';
 
-          $criteria = new CDbCriteria();
-          $criteria->order = 'name';
-
-            $data = self::model()->findAll($criteria);
-            foreach ($data as $dt) {
-                $arr[$dt->name] = $dt->id;
-            }
-
-            self::$_cities = $arr;
-        }
-
-        return self::$_cities;
+    $data = self::model()->findAll($criteria);
+    foreach ($data as $dt) {
+      $arr[$dt->id] = $dt->name;
     }
+
+    return $arr;
+  }
+
+  public static function getDataArray()
+  {
+    if (!self::$_cities) {
+      $arr = array();
+      $criteria = new CDbCriteria();
+      $criteria->order = 'name';
+
+      $data = self::model()->findAll($criteria);
+      foreach ($data as $dt) {
+        $arr[$dt->name] = $dt->id;
+      }
+
+      self::$_cities = $arr;
+    }
+
+    return self::$_cities;
+  }
 }

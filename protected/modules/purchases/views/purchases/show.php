@@ -127,8 +127,8 @@ $delta = Yii::app()->controller->module->goodsPerPage;
   Yii::app()->user->checkAccess('purchases.purchases.editOwn', array('purchase' => $purchase))): ?>
   <a target="div.purchase_history">История действий</a>
   <?php endif; ?>
-  <a target="div.purchase_goods" class="selected">Альбом</a>
-  <a target="div.purchase_comments">Комментарии (<?php echo $commentsNum ?>)</a>
+  <a target="div.purchase_goods"<?php if (!$reply): ?> class="selected"<?php endif; ?>>Альбом</a>
+  <a target="div.purchase_comments"<?php if ($reply): ?> class="selected"<?php endif; ?>>Комментарии (<?php echo $commentsNum ?>)</a>
 </div>
 <div id="tabs_content">
     <div class="purchase_fullstory" style="display: none">
@@ -156,7 +156,7 @@ $delta = Yii::app()->controller->module->goodsPerPage;
         <?php endif; ?>
     </div>
   <?php endif; ?>
-    <div class="purchase_goods">
+    <div class="purchase_goods"<?php if ($reply): ?> style="display:none" <?php endif; ?>>
       <?php echo ActiveHtml::link('Быстрый заказ товара', '/purchase'. $purchase->purchase_id .'/quick', array('class' => 'purchase_quick_link')) ?>
         <div class="clearfix">
             <h2 class="left"><?php echo Yii::t('purchase', '{n} товар|{n} товара|{n} товаров', $offsets) ?></h2>
@@ -175,7 +175,7 @@ $delta = Yii::app()->controller->module->goodsPerPage;
         </div>
         <? if ($offset + $delta < $offsets && $offsets > $delta): ?><a id="pg_more" class="pg_more" onclick="Paginator.showMore()">Еще товары</a><? endif; ?>
     </div>
-  <div class="purchase_comments" style="display: none">
-    <?php $this->widget('Comments', array('hoop' => $purchase, 'hoop_id' => $purchase->purchase_id, 'hoop_type' => 'purchase')) ?>
+  <div class="purchase_comments"<?php if (!$reply): ?> style="display:none" <?php endif; ?>>
+    <?php $this->widget('Comments', array('hoop' => $purchase, 'hoop_id' => $purchase->purchase_id, 'hoop_type' => 'purchase', 'reply' => $reply)) ?>
   </div>
 </div>

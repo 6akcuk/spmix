@@ -104,6 +104,11 @@ div.wall_post_attaches, div.reply_attaches {
   padding: 5px 0px 0px;
   line-height: 140%;
 }
+.wall_text .explain {
+  color: #777;
+  line-height: 150%;
+  padding-left: 1px;
+}
 .wall_post_text {
   width: 388px;
   overflow: hidden;

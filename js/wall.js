@@ -173,7 +173,7 @@ var Wall = {
     setTimeout(function() {
       $('body').one('click', function() {
         Wall._replyBoxes(fid);
-        $reply.hide();
+        $reply.hide().appendTo('div[rel="reply_parking_lot"]');
         A.wallReplyOpened = false;
       });
     }, 100);
