@@ -109,6 +109,16 @@ div.wall_post_attaches, div.reply_attaches {
   line-height: 150%;
   padding-left: 1px;
 }
+.wall_lnk a.author {
+  color: #777;
+  font-weight: normal;
+}
+.wall_lnk span.a {
+  color: #005b01;
+}
+.wall_lnk a.author:hover span.a {
+  text-decoration: underline;
+}
 .wall_post_text {
   width: 388px;
   overflow: hidden;

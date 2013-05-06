@@ -218,14 +218,6 @@
   top: 0px;
 }
 
-#discuss_cancel {
-  margin: 0px 10px;
-  padding: 6px 15px;
-  text-align: center;
-}
-#discuss_cancel:hover {
-  background: #dae1e8;
-}
 #discuss_post {
   width: 720px;
   border-top: 1px solid #dae1e8;
@@ -245,6 +237,39 @@
 
 .discuss_attaches {
   margin-bottom: 8px;
+}
+
+/* Editing */
+.discuss_post_edit_wrap {
+  margin-top: 10px;
+}
+
+#discuss_post_editing {
+  outline: none;
+  vertical-align: top;
+  line-height: 1.54em;
+  padding-bottom: 0px;
+  background: #fff;
+  font-size: 11px;
+  padding: 3px;
+  width: 647px;
+}
+
+.discuss_post_edit_wrap .discuss_buttons {
+  padding-bottom: 10px;
+}
+.discuss_post_edit_wrap .discuss_attaches {
+  padding-top: 10px;
+}
+
+/* Deleting */
+.discuss_deleted {
+  padding: 0px 65px 8px;
+  color: #777;
+  line-height: 1.54em;
+}
+.discuss_deleted_td {
+  height: 68px;
 }
 
 /* Static Manager */

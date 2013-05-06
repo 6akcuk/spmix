@@ -50,6 +50,7 @@ Yii::app()->getClientScript()->registerScriptFile('/js/jquery.cookie.js', null, 
   </form>
   <script>
   $.extend(A, {
+    commentEditing: false,
     commentPhotoAttaches: 0,
     commentHoop: {
       <?php echo $this->hoop_id ?>: {

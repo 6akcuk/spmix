@@ -243,4 +243,28 @@ class Comment extends CActiveRecord
 
     return $result;
   }
+
+  static public function massDeleteByAuthor($hoop_type, $hoop_id, $author_id) {
+    /** @var CDbConnection $db */
+    $db = Yii::app()->db;
+
+    // Удалить все ответы в ветке комментариев
+    $command1 = $db->createCommand('
+      DELETE FROM `profile_requests`
+        WHERE req_type IN ('. ProfileRequest::TYPE_COMMENT .', '. ProfileRequest::TYPE_COMMENT_ANSWER .')
+        AND req_link_id IN (SELECT comment_id FROM `comments` WHERE creation_date >= (NOW() - INTERVAL 1 DAY) AND hoop_type = \''. $hoop_type .'\' AND hoop_id = '. $hoop_id .' AND author_id = '. $author_id .')');
+    $command1->query();
+
+    // Удалить фиды в ленте новостей
+    $command2 = $db->createCommand("
+      DELETE FROM `feed`
+        WHERE event_type = 'new comment'
+        AND event_link_id IN (SELECT comment_id FROM `comments` WHERE creation_date >= (NOW() - INTERVAL 1 DAY) AND hoop_type = '". $hoop_type ."' AND hoop_id = ". $hoop_id ." AND author_id = ". $author_id .")");
+    $command2->query();
+
+    // Удалить все комментарии
+    $command3 = $db->createCommand("
+      DELETE FROM `comments` WHERE creation_date >= (NOW() - INTERVAL 1 DAY) AND hoop_type = '". $hoop_type ."' AND hoop_id = ". $hoop_id ." AND author_id = ". $author_id ."");
+    $command3->query();
+  }
 }

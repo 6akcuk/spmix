@@ -17,7 +17,7 @@ switch ($hoop_type) {
 
     $ref_image = $good->image->image;
     $ref_url = '/good'. $good->purchase_id .'_'. $good->good_id;
-    $ref_title = $good->name;
+    $ref_title = '<span class="icon-briefcase"></span> Товар <span class="a">'. $good->name .'</span>';
     $ref_text = $good->description;
 
     $hoop = $good->purchase;
@@ -28,7 +28,7 @@ switch ($hoop_type) {
 
     $ref_image = $purchase->image;
     $ref_url = '/purchase'. $purchase->purchase_id;
-    $ref_title = $purchase->name;
+    $ref_title = '<span class="icon-shopping-cart"></span> Закупка <span class="a">'. $purchase->name .'</span>';
     $ref_text = $purchase->shortstory;
 
     $hoop = $purchase;
@@ -42,7 +42,7 @@ switch ($hoop_type) {
       <?php echo ActiveHtml::link(ActiveHtml::showUploadImage($ref_image, 'c'), $ref_url, array('class' => 'post_image')) ?>
     </div>
     <div class="post_info">
-      <div class="wall_text">
+      <div class="wall_text wall_lnk">
         <?php echo ActiveHtml::link($ref_title, $ref_url, array('class' => 'author')) ?>
       </div>
       <div class="wall_post_text">

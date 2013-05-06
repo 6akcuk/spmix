@@ -22,6 +22,7 @@ return array(
     'application.modules.users.components.views.*',
     'application.modules.purchases.models.*',
     'application.modules.feed.models.*',
+    'application.modules.discuss.models.*',
     'ext.ActiveHtml.*',
     'ext.SmsDelivery.*',
     'ext.Excel.*',

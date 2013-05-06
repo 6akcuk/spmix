@@ -61,6 +61,7 @@ class DiscussTheme extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+      'forum' => array(self::BELONGS_TO, 'DiscussForum', 'forum_id'),
       'author' => array(self::BELONGS_TO, 'User', 'author_id'),
       'lastPost' => array(self::HAS_ONE, 'DiscussPost', 'theme_id', 'order' => 'add_date DESC'),
       'postsNum' => array(self::STAT, 'DiscussPost', 'theme_id'),

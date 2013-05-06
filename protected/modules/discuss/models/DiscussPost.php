@@ -15,6 +15,8 @@
  * @property string $post_ondelete
  *
  * @property User $author
+ * @property DiscussTheme $theme
+ * @property DiscussPost $reply
  */
 class DiscussPost extends CActiveRecord
 {
@@ -63,6 +65,8 @@ class DiscussPost extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
       'author' => array(self::BELONGS_TO, 'User', 'author_id'),
+      'theme' => array(self::BELONGS_TO, 'DiscussTheme', 'theme_id'),
+      'reply' => array(self::BELONGS_TO, 'DiscussPost', 'reply_to'),
 		);
 	}
 
@@ -127,13 +131,15 @@ class DiscussPost extends CActiveRecord
 
   public function afterSave() {
     if ($this->isNewRecord) {
+      /* Лучше не захламлять ответами форума
       if ($this->reply_to) {
         $req = new ProfileRequest();
         $req->req_type = ProfileRequest::TYPE_DISCUSS_POST_ANSWER;
-        $req->owner_id = $this->reply_to;
+        $req->owner_id = $this->reply->author_id;
         $req->req_link_id = $this->post_id;
         $req->save();
       }
+      */
 
       $feed = new Feed();
       $feed->owner_type = 'theme';
@@ -156,5 +162,83 @@ class DiscussPost extends CActiveRecord
         $sub->save();
       }
     }
+  }
+
+  public function markAsDeleted() {
+    $this->post_ondelete = date("Y-m-d H:i:s");
+    $result = $this->save(true, array('post_ondelete'));
+
+    $cr = new CDbCriteria();
+    $cr->compare('owner_type', 'theme');
+    $cr->compare('owner_id', $this->theme_id);
+    $cr->compare('event_type', 'new theme post');
+    $cr->compare('event_link_id', $this->post_id);
+
+    $feed = Feed::model()->find($cr);
+    if ($feed) $feed->markAsDeleted();
+    /*
+    if ($this->reply_to) {
+      $cr = new CDbCriteria();
+      $cr->compare('req_type', ProfileRequest::TYPE_DISCUSS_POST_ANSWER);
+      $cr->compare('owner_id', $this->reply->author_id);
+      $cr->compare('req_link_id', $this->post_id);
+
+      $req = ProfileRequest::model()->find($cr);
+      if ($req) $req->delete();
+    }
+    */
+
+    return $result;
+  }
+
+  public function restore() {
+    $this->post_ondelete = null;
+    $result = $this->save(true, array('post_ondelete'));
+
+    $cr = new CDbCriteria();
+    $cr->compare('owner_type', 'theme');
+    $cr->compare('owner_id', $this->theme_id);
+    $cr->compare('event_type', 'new theme post');
+    $cr->compare('event_link_id', $this->post_id);
+
+    $feed = Feed::model()->find($cr);
+    if ($feed) $feed->restore();
+
+    /*
+    if ($this->reply_to) {
+      $req = new ProfileRequest();
+      $req->req_type = ProfileRequest::TYPE_DISCUSS_POST_ANSWER;
+      $req->owner_id = $this->reply->author_id;
+      $req->req_link_id = $this->post_id;
+      $req->save();
+    }
+    */
+
+    return $result;
+  }
+
+  public function massDeletePostsByAuthor() {
+    /** @var CDbConnection $db */
+    $db = Yii::app()->db;
+
+    // Удалить все ответы на форуме
+    /*$command1 = $db->createCommand('
+      DELETE FROM `profile_requests`
+        WHERE req_type = '. ProfileRequest::TYPE_DISCUSS_POST_ANSWER .'
+        AND req_link_id IN (SELECT post_id FROM `discuss_posts` WHERE add_date >= (NOW() - INTERVAL 1 DAY) AND theme_id = '. $this->theme_id .' AND author_id = '. $this->author_id .')');
+    $command1->query();
+    */
+
+    // Удалить фиды в ленте новостей
+    $command2 = $db->createCommand("
+      DELETE FROM `feed`
+        WHERE event_type = 'new theme post'
+        AND event_link_id IN (SELECT post_id FROM `discuss_posts` WHERE add_date >= (NOW() - INTERVAL 1 DAY) AND theme_id = ". $this->theme_id ." AND author_id = ". $this->author_id .")");
+    $command2->query();
+
+    // Удалить все посты на форуме
+    $command3 = $db->createCommand("
+      DELETE FROM `discuss_posts` WHERE add_date >= (NOW() - INTERVAL 1 DAY) AND theme_id = ". $this->theme_id ." AND author_id = ". $this->author_id ."");
+    $command3->query();
   }
 }

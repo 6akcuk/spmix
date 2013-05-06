@@ -39,7 +39,9 @@ $delta = Yii::app()->getModule('discuss')->postsPerPage;
 <? if ($offset + $delta < $postsNum && $postsNum > $delta): ?><a id="pg_more" class="pg_more" onclick="Paginator.showMore()">Еще сообщения</a><? endif; ?>
 <script type="text/javascript">
   A.discussPostFixed = false;
-  A.discussPostLastId = <?php echo (isset($posts[sizeof($posts) - 1]->post_id) ? $posts[sizeof($posts) - 1]->post_id : 0) ?>;
+  A.postEditing = false;
+  A.postEditingProgress = false;
+  A.postDeleting = false;
   <?php if($scroll == 1): ?>A.pageScroll = true; $(window).scrollTop(65500);<?php endif; ?>
 </script>
 <div id="discuss_fixer"></div>
@@ -56,10 +58,10 @@ $delta = Yii::app()->getModule('discuss')->postsPerPage;
           <div id="bnt_attaches" class="discuss_attaches clearfix"></div>
           <div class="discuss_buttons clearfix">
             <a class="button left" onclick="Discuss.sendPost('<?php echo $forum->forum_id ?>_<?php echo $theme->theme_id ?>')">Отправить</a>
-            <a id="discuss_cancel" class="left" onclick="Discuss.cancelPost()" style="display: none">Отмена</a>
+            <a id="discuss_cancel" class="left button_cancel" onclick="Discuss.cancelPost()" style="display: none">Отмена</a>
             <div id="bnt_progress" class="upload left"><img src="/images/upload.gif" /></div>
             <div class="right">
-              <?php echo ActiveHtml::upload('photo', '', 'Прикрепить фотографию', array('onchange' => 'Discuss.attachPhoto({id})')) ?>
+              <?php echo ActiveHtml::upload('photo', '', 'Прикрепить фотографию', array('onchange' => 'Discuss.attachPhoto(\'#bnt_attaches\', {id})')) ?>
             </div>
           </div>
         </td>

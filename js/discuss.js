@@ -167,7 +167,7 @@ var Discuss = {
     });
 
     $('#bnt_progress').show();
-    ajax.post('/discuss'+ fid +'?act=create', {post: post, attaches: attaches, last_id: A.discussPostLastId}, function(r) {
+    ajax.post('/discuss'+ fid +'?act=create', {post: post, attaches: attaches}, function(r) {
       $('#bnt_progress').hide();
       A.discussPostCreate = false;
 
@@ -178,44 +178,134 @@ var Discuss = {
     });
   },
 
-  attachPhoto: function(file_id) {
+  attachPhoto: function(cont_id, file_id) {
     if (A.discussPostPhotoAttaches >= 3) {
       boxPopup('Вы не можете прикрепить более 3-х фотографий');
       return;
     }
 
-    cur['fileDoneCustom'+ file_id] = Discuss.onUploadDone.pbind(file_id);
+    cur['fileDoneCustom'+ file_id] = Discuss.onUploadDone.pbind(cont_id, file_id);
     Upload.onStart(file_id);
   },
 
-  onUploadDone: function(file_id, filedata) {
-    var json = $.parseJSON(filedata);
+  onUploadDone: function(cont_id, file_id, filedata) {
+    var json = $.parseJSON(filedata), uid = cont_id.replace(/#/, '');
     Upload.showInput(file_id);
     Upload.initFile(file_id, function() {
       Discuss.attachPhoto(file_id);
     });
 
-    $('<input/>').attr({type: 'hidden', id: file_id +'_attach', name: 'DiscussPost[attach][]'}).val(filedata).prependTo('#bnt_attaches');
-    var cont = $('<div/>').attr({class: 'left post_attach_photo'}).appendTo('#bnt_attaches');
+    $('<input/>').attr({type: 'hidden', id: uid + file_id +'_attach', name: 'DiscussPost[attach][]'}).val(filedata).prependTo(cont_id);
+    var cont = $('<div/>').attr({class: 'left post_attach_photo'}).appendTo(cont_id);
     cont.html('<img src="http://cs'+ json['b'][2] +'.'+ A.host +'/'+ json['b'][0] +'/'+ json['b'][1] +'" alt=""/><a class="tt photo_attach_delete" title="Удалить фотографию"><span class="icon-remove icon-white"></span></a>');
-    if (A.discussPostPhotoAttaches == null) A.discussPostPhotoAttaches = 0;
-    A.discussPostPhotoAttaches++;
+    var att_length = $(cont_id).find('.post_attach_photo').length;
 
-    if (A.discussPostPhotoAttaches >= 3) {
+    if (att_length >= 3) {
       $('#file_button_'+ file_id).hide();
     }
 
     cont.children('a').click(function() {
       $('#file_button_'+ file_id).show();
-      A.discussPostPhotoAttaches--;
-      if (A.discussPostPhotoAttaches < 0) A.discussPostPhotoAttaches = 0;
       cont.remove();
-      $('#'+ file_id +'_attach').remove();
+      $('#'+ uid + file_id +'_attach').remove();
     });
   },
 
-  editPost: function(post_id) {
+  onEditDelete: function(cont) {
+    $(cont).parent().remove();
+  },
 
+  editPost: function(post_id) {
+    if (A.postEditing) {
+      $('#discuss_post_editing').focus();
+      return;
+    }
+    A.postEditing = post_id;
+    $('#discuss_post'+ post_id + ' div.dc_progress').show();
+
+    ajax.post('/discuss/post/edit?post_id='+ post_id, null, function(r) {
+      $('#discuss_post'+ post_id + ' div.dc_progress').hide();
+      $('#discuss_post'+ post_id + ' div.discuss_post_bottom').hide();
+      $('#discuss_post_data'+ post_id).hide();
+
+      $(r.html).insertBefore('#discuss_post_data'+ post_id);
+      $('#content').trigger('contentChanged', [{noscroll: true}]);
+
+      var att_length = $('#dce_attaches').find('.post_attach_photo').length;
+      if (att_length >= 3) $('div.discuss_post_edit_wrap div.fileupload').hide();
+    }, function(xhr) {
+      $('#discuss_post'+ post_id + ' div.dc_progress').hide();
+      A.postEditing = false;
+    });
+  },
+
+  cancelEdit: function() {
+    var $obj = $('#discuss_post'+ A.postEditing);
+    $obj.find('div.discuss_post_edit_wrap').remove();
+    $obj.find('div.discuss_post_bottom').show();
+    $('#discuss_post_data'+ A.postEditing).show();
+
+    A.postEditing = false;
+  },
+
+  doEditPost: function() {
+    var post = $.trim($('#discuss_post_editing').val()), attaches = [];
+
+    if (!post) {
+      $('#discuss_post_editing').focus();
+      return false;
+    }
+
+    if (A.postEditingProgress) return;
+    A.postEditingProgress = true;
+
+    $('#dce_attaches input[type="hidden"][name*=attach]').each(function(i, item) {
+      attaches.push($(item).val());
+    });
+
+    $('#dce_progress').show();
+    ajax.post('/discuss/post/edit?post_id='+ A.postEditing, {post: post, attaches: attaches}, function(r) {
+      $('#dce_progress').hide();
+      A.postEditingProgress = false;
+      Discuss.cancelEdit();
+
+      var h = $(r.html);
+
+      $('#discuss_post_data'+ r.post_id).html(h.find('#discuss_post_data'+ r.post_id));
+      $('#discuss_post_data'+ r.post_id).effect('highlight');
+    }, function(xhr) {
+      $('#dce_progress').hide();
+      A.postEditingProgress = false;
+    });
+  },
+
+  deletePost: function(post_id) {
+    if (A.postDeleting) return;
+    A.postDeleting = true;
+
+    $('#discuss_post'+ post_id + ' div.dc_progress').show();
+    ajax.post('/discuss/post/delete?post_id='+ post_id, null,function(r) {
+      A.postDeleting = false;
+      $('#discuss_post'+ post_id + ' div.dc_progress').hide();
+      $('#discuss_post'+ post_id + ' > table').hide().after(r.html);
+    }, function(xhr) {
+      A.postDeleting = false;
+      $('#discuss_post'+ post_id + ' div.dc_progress').hide();
+    });
+  },
+
+  massDelete: function(post_id, author_id, hash) {
+    ajax.post('/discuss/post/massdelete', {post_id: post_id, author_id: author_id, hash: hash}, function(r) {
+      boxPopup(r.html);
+    }, function(xhr) {
+    });
+  },
+
+  restorePost: function(post_id, hash) {
+    ajax.post('/discuss/post/restore?post_id='+ post_id, {hash: hash}, function(r) {
+      $('#discuss_post'+ post_id + ' > table').show().next().remove();
+    }, function(xhr) {
+    });
   }
 };
 

@@ -23,7 +23,7 @@ var Comment = {
 
   replyTo: function(event, comment_id) {
     var $a = $('#comment_'+ comment_id +' div.comment_header a');
-    $('#Comment_text').val($a.attr('data-name') + ', ').focus();
+    $('#Comment_text').focus().val($a.attr('data-name') + ', ');
     $('div.comment_post div.reply_to_title').html('<a href="'+ $a.attr('href') +'">'+ $a.attr('data-lex-name') +'</a>&nbsp;<a class="icon-remove" onclick="Comment.removeReply()"></a>');
     $('#reply_to_title').val(parseInt($a.attr('data-id')));
   },
@@ -140,10 +140,7 @@ var Comment = {
 
     ajax.post('/comment/massdelete', {hoop_id: hoop_id, hoop_type: hoop_type, author_id: author_id, hash: hash}, function(r) {
       A.commentDeleting = false;
-
-      $.each(r, function(i, id) {
-        $('#comment_'+ id).hide();
-      });
+      boxPopup(r.html);
     }, function(xhr) {
       A.commentDeleting = false;
     });

@@ -21,6 +21,9 @@ $added = false;
         </div>
         <div id="discuss_post_data<?php echo $post->post_id ?>">
           <div class="discuss_post_text">
+          <?php
+            $post->post = preg_replace("/\[post(\d+)\|(.*)\]/ui", "$2", $post->post);
+          ?>
             <?php echo nl2br($post->post) ?>
           </div>
           <?php if($length): ?>

@@ -174,22 +174,9 @@ class CommentController extends Controller {
     if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
       Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Owner', array('hoop' => $hoop)))
     {
-      $criteria = new CDbCriteria();
-      $criteria->compare('hoop_id', $hoop_id);
-      $criteria->compare('hoop_type', $hoop_type);
-      $criteria->compare('author_id', $author_id);
-      $criteria->addCondition('creation_date >= NOW() - INTERVAL 1 DAY');
-      $criteria->select = 'comment_id';
+      Comment::massDeleteByAuthor($hoop_type, $hoop_id, $author_id);
 
-      $comments = Comment::model()->findAll($criteria);
-      Comment::model()->updateAll(array('comment_delete' => date("Y-m-d H:i:s")), $criteria);
-
-      $ids = array();
-      foreach ($comments as $comment) {
-        $ids[] = $comment->comment_id;
-      }
-
-      echo json_encode($ids);
+      echo json_encode(array('html' => 'Все комментарии пользователя удалены. Результаты будут видны после перезагрузки'));
       exit;
     }
     else

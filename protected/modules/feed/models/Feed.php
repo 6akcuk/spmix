@@ -311,7 +311,7 @@ class Feed extends CActiveRecord
     $command = $db->createCommand("
     SELECT COUNT(*) AS num FROM `subscriptions` s
       INNER JOIN `feed` f ON f.owner_type = s.sub_type AND f.owner_id = s.sub_link_id
-      WHERE s.user_id = ". $user_id ." AND f.event_type IN ('new comment', 'new reply')
+      WHERE s.user_id = ". $user_id ." AND f.event_type IN ('new comment', 'new reply', 'new theme post')
       GROUP BY f.owner_id
       ORDER BY f.add_date DESC");
 
@@ -328,7 +328,7 @@ class Feed extends CActiveRecord
     $command = $db->createCommand("
     SELECT * FROM `subscriptions` s
       INNER JOIN `feed` f ON f.owner_type = s.sub_type AND f.owner_id = s.sub_link_id
-      WHERE s.user_id = ". $user_id ." AND f.event_type IN ('new comment', 'new reply')
+      WHERE s.user_id = ". $user_id ." AND f.event_type IN ('new comment', 'new reply', 'new theme post')
       GROUP BY f.owner_id
       ORDER BY f.add_date DESC
       LIMIT ". $offset .", ". Yii::app()->getModule('feed')->newsPerPage);
@@ -347,6 +347,26 @@ class Feed extends CActiveRecord
       $feed->owner_type = $row['owner_type'];
 
       switch ($feed->event_type) {
+        case 'new theme post':
+          $criteria = new CDbCriteria();
+          $criteria->compare('post_id', $feed->event_link_id);
+          $criteria->select = 'forum_id, theme_id';
+
+          $nullpost = DiscussPost::model()->with('theme', 'theme.forum')->findByPk($feed->event_link_id);
+          if (!$nullpost) continue 2;
+
+          $criteria = new CDbCriteria();
+          $criteria->order = 'add_date DESC';
+          $criteria->compare('forum_id', $nullpost->forum_id);
+          $criteria->compare('theme_id', $nullpost->theme_id);
+
+          $offsets = DiscussPost::model()->count($criteria);
+          $criteria->limit = 3;
+
+          $posts = array_reverse(DiscussPost::model()->with('author.profile')->findAll($criteria));
+
+          $feed->content = array('nullpost' => $nullpost, 'offsets' => $offsets, 'posts' => $posts);
+          break;
         case 'new reply':
           $reply = ProfileWallPost::model()->with('replyPost.last_replies', 'replyPost.author.profile')->findByPk($feed->event_link_id);
           if (!$reply) continue 2;
