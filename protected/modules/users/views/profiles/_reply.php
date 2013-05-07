@@ -1,6 +1,6 @@
 <?php /** @var $reply ProfileWallPost */ ?>
 <?php foreach ($replies as $reply): ?>
-<div id="post<?php echo $reply->wall_id ?>_<?php echo $reply->post_id ?>" class="reply" onclick="Wall.replyClick(event, '<?php echo $reply->wall_id ?>_<?php echo $reply->reply_to ?>', <?php echo $reply->post_id ?>)" onmouseover="Wall.postOver('<?php echo $reply->wall_id ?>_<?php echo $reply->post_id ?>', event)" onmouseout="Wall.postOut('<?php echo $reply->wall_id ?>_<?php echo $reply->post_id ?>')">
+<div id="post<?php echo $reply->wall_id ?>_<?php echo $reply->post_id ?>" class="reply" onclick="Wall.replyClick(event, '<?php echo $reply->wall_id ?>_<?php echo $reply->reply_to ?>', <?php echo $reply->post_id ?>)" onmouseover="Wall.postOver('post<?php echo $reply->wall_id ?>_<?php echo $reply->post_id ?>', event)" onmouseout="Wall.postOut('post<?php echo $reply->wall_id ?>_<?php echo $reply->post_id ?>')">
   <div class="reply_table">
     <div class="reply_image">
       <?php echo ActiveHtml::link($reply->author->profile->getProfileImage('c'), '/id'. $reply->author_id, array('class' => 'reply_image')) ?>
@@ -9,7 +9,7 @@
       <?php if (Yii::app()->user->getId() == $reply->author_id || Yii::app()->user->getId() == $reply->wall_id): ?>
         <div class="right delete_reply_wrap">
           <div class="delete_post">
-            <div title="Удалить" id="delete_post<?php echo $reply->wall_id ?>_<?php echo $reply->post_id ?>" onmouseover="Wall.postDeleteOver('<?php echo $reply->wall_id ?>_<?php echo $reply->post_id ?>')" onmouseout="Wall.postDeleteOut('<?php echo $reply->wall_id ?>_<?php echo $reply->post_id ?>')" onclick="Wall.deleteReply('<?php echo $reply->wall_id ?>_<?php echo $reply->post_id ?>')" class="icon-remove" style="opacity:0"></div>
+            <div title="Удалить" id="delete_post<?php echo $reply->wall_id ?>_<?php echo $reply->post_id ?>" onmouseover="Wall.postDeleteOver('post<?php echo $reply->wall_id ?>_<?php echo $reply->post_id ?>')" onmouseout="Wall.postDeleteOut('post<?php echo $reply->wall_id ?>_<?php echo $reply->post_id ?>')" onclick="Wall.deleteReply('<?php echo $reply->wall_id ?>_<?php echo $reply->post_id ?>')" class="icon-remove" style="opacity:0"></div>
           </div>
         </div>
       <?php endif; ?>

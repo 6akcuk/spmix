@@ -87,18 +87,18 @@ var Wall = {
   },
 
   postOver: function(id, event) {
-    if (event.target.id == 'delete_post'+ id) return;
-    $('#delete_post'+ id).css({opacity: 0.3})
+    if (event.target.id == 'delete_'+ id) return;
+    $('#delete_'+ id).css({opacity: 0.3})
   },
   postOut: function(id, event) {
-    $('#delete_post'+ id).css({opacity: 0});
+    $('#delete_'+ id).css({opacity: 0});
   },
   postDeleteOver: function(id) {
-    $('#delete_post'+ id).css({opacity: 1});
-    Tooltip.show('#delete_post'+ id);
+    $('#delete_'+ id).css({opacity: 1});
+    Tooltip.show('#delete_'+ id);
   },
   postDeleteOut: function(id) {
-    $('#delete_post'+ id).css({opacity: 0.3});
+    $('#delete_'+ id).css({opacity: 0.3});
     Tooltip.hide();
   },
   deletePost: function(id) {

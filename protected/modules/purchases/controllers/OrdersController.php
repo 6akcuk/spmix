@@ -601,7 +601,7 @@ class OrdersController extends Controller {
             $result['msg'] = 'Изменения сохранены';
             $result['success'] = true;
             $result['status'] = Yii::t('purchase', $order->status);
-            $result['total_price'] = ActiveHtml::price($order->total_price);
+            $result['total_price'] = ActiveHtml::price($order->price * $order->amount);
           }
           else {
             foreach ($order->getErrors() as $attr => $error) {

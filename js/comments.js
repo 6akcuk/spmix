@@ -277,7 +277,7 @@ var Comment = {
 
       Comment.peer(hoop_id, true, {hoop_type: hoop_type, feed: true});
     }, function(xhr) {
-      A.wallReplySending = false;
+      A.commentReplySending = false;
     });
   },
 

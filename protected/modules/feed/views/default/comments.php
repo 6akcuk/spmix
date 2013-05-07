@@ -14,6 +14,8 @@ $delta = Yii::app()->controller->module->newsPerPage;
 ?>
 <script type="text/javascript">
   A.commentHoopFeed = {};
+  A.commentReplyOpened = false;
+  A.discussPostReplyOpened = false;
 </script>
   <div class="tabs">
     <?php echo ActiveHtml::link('Новости', '/feed') ?>
@@ -34,7 +36,7 @@ $delta = Yii::app()->controller->module->newsPerPage;
         <div class="reply_field_wrap clearfix">
           <input type="hidden" id="reply_to" name="reply_to" />
           <input type="hidden" id="reply_to_title" name="reply_to_title" />
-          <?php echo ActiveHtml::smartTextarea('reply_text', '', array('placeholder' => 'Комментировать..')) ?>
+          <?php echo ActiveHtml::smartTextarea('reply_text', '', array('placeholder' => 'Комментировать..', 'onkeypress' => 'onCtrlEnter(event, Wall.doReply)')) ?>
         </div>
         <div class="reply_attaches clearfix"></div>
         <div class="submit_reply clear">
@@ -51,7 +53,7 @@ $delta = Yii::app()->controller->module->newsPerPage;
       <div class="reply_form">
         <div class="reply_field_wrap clearfix">
           <input type="hidden" id="com_reply_to_title" name="reply_to_title" />
-          <?php echo ActiveHtml::smartTextarea('Comment[text]', '', array('placeholder' => 'Комментировать..')) ?>
+          <?php echo ActiveHtml::smartTextarea('Comment[text]', '', array('placeholder' => 'Комментировать..', 'onkeypress' => 'onCtrlEnter(event, Comment.doReply)')) ?>
         </div>
         <div class="reply_attaches clearfix"></div>
         <div class="submit_reply clear">
@@ -59,6 +61,22 @@ $delta = Yii::app()->controller->module->newsPerPage;
           <div class="left reply_to_title"></div>
           <div class="right reply_attach_btn">
             <?php echo ActiveHtml::upload('photo', '', 'Прикрепить фото', array('onchange' => 'Comment.replyAttachPhoto({id})')) ?>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="discuss_post_box" class="reply_box clearfix" onclick="event.cancelBubble=true;" style="display:none">
+      <?php echo ActiveHtml::link(Yii::app()->user->model->profile->getProfileImage('c'), '/id'. Yii::app()->user->getId(), array('class' => 'reply_form_image')) ?>
+      <div class="reply_form">
+        <div class="reply_field_wrap clearfix">
+          <?php echo ActiveHtml::smartTextarea('dcp_text', '', array('placeholder' => 'Комментировать..', 'onkeypress' => 'onCtrlEnter(event, Discuss.doReply)')) ?>
+        </div>
+        <div id="dcp_attaches" class="reply_attaches clearfix"></div>
+        <div class="submit_reply clear">
+          <a class="button left" onclick="Discuss.doReply()">Отправить</a>
+          <div id="bnt_progress" class="upload left"><img src="/images/upload.gif" /></div>
+          <div class="right reply_attach_btn">
+            <?php echo ActiveHtml::upload('photo', '', 'Прикрепить фото', array('onchange' => 'Discuss.attachPhoto(\'#dcp_attaches\', {id})')) ?>
           </div>
         </div>
       </div>

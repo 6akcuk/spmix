@@ -1,6 +1,6 @@
 <?php /** @var $comment Comment */ ?>
 <?php foreach ($comments as $comment): ?>
-  <div id="comment<?php echo $comment->comment_id ?>" class="reply" onmouseover="Wall.postOver('<?php echo $comment->comment_id ?>', event)" onmouseout="Wall.postOut('<?php echo $comment->comment_id ?>')" onclick="Comment.feedReplyTo(event, <?php echo $comment->comment_id ?>)">
+  <div id="comment<?php echo $comment->comment_id ?>" class="reply" onmouseover="Wall.postOver('post<?php echo $comment->comment_id ?>', event)" onmouseout="Wall.postOut('post<?php echo $comment->comment_id ?>')" onclick="Comment.feedReplyTo(event, <?php echo $comment->comment_id ?>)">
     <div class="reply_table">
       <div class="reply_image">
         <?php echo ActiveHtml::link($comment->author->profile->getProfileImage('c'), '/id'. $comment->author_id, array('class' => 'reply_image')) ?>
@@ -11,7 +11,7 @@
           Yii::app()->user->checkAccess('comment.deleteOwner', array('hoop' => $hoop))): ?>
           <div class="right delete_reply_wrap">
             <div class="delete_post">
-              <div title="Удалить" id="delete_post<?php echo $comment->comment_id ?>" onmouseover="Wall.postDeleteOver('<?php echo $comment->comment_id ?>')" onmouseout="Wall.postDeleteOut('<?php echo $comment->comment_id ?>')" onclick="event.cancelBubble = true; Comment.deleteFeed(<?php echo $comment->comment_id ?>);" class="icon-remove" style="opacity:0"></div>
+              <div title="Удалить" id="delete_post<?php echo $comment->comment_id ?>" onmouseover="Wall.postDeleteOver('post<?php echo $comment->comment_id ?>')" onmouseout="Wall.postDeleteOut('post<?php echo $comment->comment_id ?>')" onclick="event.cancelBubble = true; Comment.deleteFeed(<?php echo $comment->comment_id ?>);" class="icon-remove" style="opacity:0"></div>
             </div>
           </div>
         <?php endif; ?>

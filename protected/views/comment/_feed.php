@@ -15,7 +15,7 @@ switch ($hoop_type) {
     /** @var Good $good */
     $good = Good::model()->with('image', 'purchase')->findByPk($hoop_id);
 
-    $ref_image = $good->image->image;
+    $ref_image = ($good->image) ? $good->image->image : '';
     $ref_url = '/good'. $good->purchase_id .'_'. $good->good_id;
     $ref_title = '<span class="icon-briefcase"></span> Товар <span class="a">'. $good->name .'</span>';
     $ref_text = $good->description;

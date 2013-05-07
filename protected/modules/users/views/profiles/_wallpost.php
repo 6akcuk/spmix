@@ -6,7 +6,7 @@ if (!isset($reply)) $reply = null;
 
 /** @var ProfileWallPost $post */
 ?>
-<div id="wall<?php echo $post->wall_id ?>_<?php echo $post->post_id ?>" onmouseover="Wall.postOver('<?php echo $post->wall_id ?>_<?php echo $post->post_id ?>', event)" onmouseout="Wall.postOut('<?php echo $post->wall_id ?>_<?php echo $post->post_id ?>')" class="wall_post <?php if ($post->author->isOnline()): ?>wall_post_online <?php endif; ?>clearfix">
+<div id="wall<?php echo $post->wall_id ?>_<?php echo $post->post_id ?>" onmouseover="Wall.postOver('post<?php echo $post->wall_id ?>_<?php echo $post->post_id ?>', event)" onmouseout="Wall.postOut('post<?php echo $post->wall_id ?>_<?php echo $post->post_id ?>')" class="wall_post <?php if ($post->author->isOnline()): ?>wall_post_online <?php endif; ?>clearfix">
   <div class="post_table">
     <div class="post_image">
       <?php echo ActiveHtml::link($post->author->profile->getProfileImage('c'), '/id'. $post->author_id, array('class' => 'post_image')) ?>
@@ -16,7 +16,7 @@ if (!isset($reply)) $reply = null;
       <?php if (Yii::app()->user->getId() == $post->author_id || Yii::app()->user->getId() == $post->wall_id): ?>
         <div class="right delete_post_wrap">
           <div class="delete_post">
-            <div title="Удалить запись" id="delete_post<?php echo $post->wall_id ?>_<?php echo $post->post_id ?>" onmouseover="Wall.postDeleteOver('<?php echo $post->wall_id ?>_<?php echo $post->post_id ?>')" onmouseout="Wall.postDeleteOut('<?php echo $post->wall_id ?>_<?php echo $post->post_id ?>')" onclick="Wall.deletePost('<?php echo $post->wall_id ?>_<?php echo $post->post_id ?>')" class="icon-remove" style="opacity:0"></div>
+            <div title="Удалить запись" id="delete_post<?php echo $post->wall_id ?>_<?php echo $post->post_id ?>" onmouseover="Wall.postDeleteOver('post<?php echo $post->wall_id ?>_<?php echo $post->post_id ?>')" onmouseout="Wall.postDeleteOut('post<?php echo $post->wall_id ?>_<?php echo $post->post_id ?>')" onclick="Wall.deletePost('<?php echo $post->wall_id ?>_<?php echo $post->post_id ?>')" class="icon-remove" style="opacity:0"></div>
           </div>
         </div>
       <?php endif; ?>
@@ -85,7 +85,7 @@ if (!isset($reply)) $reply = null;
               /** @var Good $good */
               $good = Good::model()->with('image')->findByPk($post->reference_id);
 
-              $ref_image = $good->image->image;
+              $ref_image = ($good->image) ? $good->image->image : '';
               $ref_url = '/good'. $good->purchase_id .'_'. $good->good_id;
               $ref_title = $good->name;
               $ref_date = $post->add_date;

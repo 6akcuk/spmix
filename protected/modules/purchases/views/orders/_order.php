@@ -29,7 +29,7 @@
   </td>
   <td id="order<?php echo $order->order_id ?>_status"><?php echo Yii::t('purchase', $order->status) ?></td>
   <td><?php echo $order->amount ?></td>
-  <td id="order<?php echo $order->order_id ?>_total_price"><?php echo ActiveHtml::price($order->total_price) ?></td>
+  <td id="order<?php echo $order->order_id ?>_total_price"><?php echo ActiveHtml::price($order->price * $order->amount) ?></td>
 </tr>
 <?php endforeach; ?>
 <?php endif; ?>

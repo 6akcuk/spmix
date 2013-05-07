@@ -39,8 +39,10 @@ class Comments extends CPortlet {
       $comments = array_reverse(Comment::model()->with('author', 'author.profile', 'reply')->findAll($criteria));
     }
     else {
-      $criteria->addCondition('comment_id >= :id');
-      $criteria->params[':id'] = $this->reply;
+      if ($commentsNum > 10) {
+        $criteria->addCondition('comment_id >= :id');
+        $criteria->params[':id'] = $this->reply;
+      }
 
       $comments = array_reverse(Comment::model()->with('author', 'author.profile', 'reply')->findAll($criteria));
     }

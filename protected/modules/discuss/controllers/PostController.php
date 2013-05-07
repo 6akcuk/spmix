@@ -115,6 +115,26 @@ class PostController extends Controller
       $post->attaches = json_encode(isset($_POST['attaches']) ? $_POST['attaches'] : array());
       $post->save();
 
+      if (isset($_POST['feed'])) {
+        $criteria = new CDbCriteria();
+        $criteria->compare('forum_id', $forum_id);
+        $criteria->compare('theme_id', $theme_id);
+
+        $postsNum = DiscussPost::model()->count($criteria);
+
+        $criteria->addCondition('post_id > :id');
+        $criteria->params[':id'] = $_POST['last_id'];
+
+        $posts = DiscussPost::model()->findAll($criteria);
+
+        echo json_encode(array(
+          'html' => $this->renderPartial('application.modules.discuss.views.post._feedlikereplies', array('posts' => $posts), true),
+          'num' => 'Показать все '. Yii::t('app', '{n} комментарий|{n} комментария|{n} комментариев', $postsNum),
+          'last_id' => $posts[sizeof($posts) - 1]->post_id,
+        ));
+        exit;
+      }
+
       echo json_encode(array(
         'success' => true,
       ));
@@ -164,10 +184,10 @@ class PostController extends Controller
       if ($_SESSION['dc_post.delete'][$post->author_id]['count'] >= 3) $hash = $_SESSION['dc_post.delete'][$post->author_id]['hash'] = substr(md5(time() . $post->author_id), 0, 8);
 
       $html = array();
-      $html[] = 'Комментарий удален. <a onclick="Discuss.restorePost('. $post->post_id .', \''. $restore .'\')">Восстановить</a>.';
+      $html[] = 'Комментарий удален. <a onclick="Discuss.restore'. (isset($_POST['feed']) ? 'Feed' : '') .'Post('. $post->post_id .', \''. $restore .'\')">Восстановить</a>.';
       if (isset($hash)) $html[] = '<br><a onclick="Discuss.massDelete('. $post->post_id .', '. $post->author_id .', \''. $hash .'\')">Удалить все комментарии пользователя за последний день</a>';
 
-      echo json_encode(array('html' => '<div class="discuss_deleted"><table><tr><td class="discuss_deleted_td">'. implode('', $html) .'</td></tr></table>'));
+      echo json_encode(array('html' => (isset($_POST['feed'])) ? '<div class="dld">'. implode('', $html) .'</div>' : '<div class="discuss_deleted"><table><tr><td class="discuss_deleted_td">'. implode('', $html) .'</td></tr></table>'));
       exit;
     }
     else

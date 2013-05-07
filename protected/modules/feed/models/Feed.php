@@ -123,13 +123,15 @@ class Feed extends CActiveRecord
       )
       +
       (
-        SELECT COUNT(DISTINCT HOUR(f.add_date)) AS num FROM `subscriptions` s
-          INNER JOIN `feed` f ON f.owner_type = s.sub_type AND f.owner_id = s.sub_link_id
-          INNER JOIN `goods` g ON g.good_id = f.event_link_id
-          WHERE s.user_id = ". $user_id ." AND f.feed_ondelete IS NULL
-            AND s.sub_type NOT IN ('post')
-            AND f.event_type = 'new good'
-          GROUP BY f.owner_id
+        SELECT SUM(num) FROM (
+          SELECT COUNT(DISTINCT HOUR(f.add_date)) AS num FROM `subscriptions` s
+            INNER JOIN `feed` f ON f.owner_type = s.sub_type AND f.owner_id = s.sub_link_id
+            INNER JOIN `goods` g ON g.good_id = f.event_link_id
+            WHERE s.user_id = ". $user_id ." AND f.feed_ondelete IS NULL
+              AND s.sub_type NOT IN ('post')
+              AND f.event_type = 'new good'
+            GROUP BY f.owner_id
+        ) AS num
       )
     ) AS num");
 

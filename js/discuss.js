@@ -178,6 +178,41 @@ var Discuss = {
     });
   },
 
+
+  doReply: function() {
+    var post = $.trim($('#dcp_text').val()), attaches = [];
+    if (!post) {
+      $('#dcp_text').focus();
+      return;
+    }
+
+    $('#discuss_post_box input[type="hidden"][name*=attach]').each(function(i, item) {
+      attaches.push($(item).val());
+    });
+
+    if (A.discussPostReplySending) return;
+    A.discussPostReplySending = true;
+
+    var fid = A.discussPostReplyOpened;
+    $('#bnt_progress').show();
+
+    ajax.post('/discuss'+ fid +'?act=create', {post: post, attaches: attaches, last_id: $('#discuss'+ fid).attr('last_id'), feed: true}, function(r) {
+      $('#bnt_progress').hide();
+      A.discussPostReplySending = false;
+
+      $('#dcp_text').val('').blur();
+      $('body').click();
+      $('#dcp_attaches').html('');
+
+      $(r.html).insertBefore('#reply_fakebox_discuss'+ fid);
+      $('#discuss'+ fid).attr('last_id', r.last_id);
+      $('#dch_text'+ fid).html(r.num);
+    }, function(xhr) {
+      $('#bnt_progress').hide();
+      A.discussPostReplySending = false;
+    });
+  },
+
   attachPhoto: function(cont_id, file_id) {
     if (A.discussPostPhotoAttaches >= 3) {
       boxPopup('Вы не можете прикрепить более 3-х фотографий');
@@ -294,6 +329,13 @@ var Discuss = {
     });
   },
 
+  deleteFeedPost: function(post_id) {
+    ajax.post('/discuss/post/delete?post_id='+ post_id, {feed: true},function(r) {
+      $('#discuss_post'+ post_id + ' div.reply_table').hide().after(r.html);
+    }, function(xhr) {
+    });
+  },
+
   massDelete: function(post_id, author_id, hash) {
     ajax.post('/discuss/post/massdelete', {post_id: post_id, author_id: author_id, hash: hash}, function(r) {
       boxPopup(r.html);
@@ -306,6 +348,42 @@ var Discuss = {
       $('#discuss_post'+ post_id + ' > table').show().next().remove();
     }, function(xhr) {
     });
+  },
+
+  restoreFeedPost: function(post_id, hash) {
+    ajax.post('/discuss/post/restore?post_id='+ post_id, {hash: hash, feed: true}, function(r) {
+      $('#discuss_post'+ post_id + ' div.reply_table').show().next().remove();
+    }, function(xhr) {
+    });
+  },
+
+  showReplyEditor: function(event, fid) {
+    if (A.discussPostReplyOpened == fid) return;
+    if (A.discussPostReplyOpened != fid) $('#reply_fakebox_discuss'+ fid).show();
+
+    A.discussPostReplyOpened = fid;
+
+    var id = fid.split('_'), hoop_id = id.pop(), hoop_type = id.pop();
+    var $reply = $('#discuss_post_box');
+    $reply.appendTo('#discuss'+ fid +' div.replies').show();
+    $('#reply_fakebox_discuss'+ fid).hide();
+    $reply.find('textarea').focus();
+    $('#dcp_text').val('');
+
+    event.stopPropagation();
+
+    setTimeout(function() {
+      $('body').one('click', function() {
+        $('#reply_fakebox_discuss'+ fid).show()
+        $reply.hide().appendTo('div[rel="reply_parking_lot"]');
+        A.discussPostReplyOpened = false;
+      });
+    }, 100);
+  },
+
+  replyFeedPost: function(post_id, event) {
+    Discuss.showReplyEditor(event, $('#discuss_post'+ post_id).attr('data-fid'));
+    $('#dcp_text').focus().val($('#dcp_text').val() + '[post'+ post_id +'|'+ $('#discuss_post'+ post_id + ' a.author').attr('data-name') +'], ');
   }
 };
 

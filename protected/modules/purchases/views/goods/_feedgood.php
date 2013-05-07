@@ -16,7 +16,7 @@
         <div class="feed_goods clearfix">
         <?php foreach ($feed->goods as $good): ?>
           <div class="feed_good left">
-            <?php echo ActiveHtml::link(ActiveHtml::showUploadImage($good->image->image, 'c'), '/good'. $good->purchase_id .'_'. $good->good_id, array('class' => 'feed_good_photo')) ?>
+            <?php echo ActiveHtml::link(ActiveHtml::showUploadImage(($good->image) ? $good->image->image : '', 'c'), '/good'. $good->purchase_id .'_'. $good->good_id, array('class' => 'feed_good_photo')) ?>
             <?php echo ActiveHtml::link((mb_strlen($good->name) > 40) ? mb_substr($good->name, 0, 40, 'utf-8') .'..' : $good->name, '/good'. $good->purchase_id .'_'. $good->good_id, array('class' => 'feed_good_name')) ?>
           </div>
         <?php endforeach; ?>

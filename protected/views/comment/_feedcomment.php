@@ -59,7 +59,7 @@ $el_id = $feed->content->comment_id;
             <?php if ($feed->content->hoop_type == 'purchase'): ?>
               <?php echo ActiveHtml::link(ActiveHtml::showUploadImage($feed->content->purchase->image, 'c'), '/purchase'. $feed->content->hoop_id) ?>
             <?php elseif ($feed->content->hoop_type == 'good'): ?>
-              <?php echo ActiveHtml::link(ActiveHtml::showUploadImage($feed->content->good->image->image, 'c'), '/good'. $feed->content->good->purchase_id .'_'. $feed->content->good->good_id) ?>
+              <?php echo ActiveHtml::link(ActiveHtml::showUploadImage(($feed->content->good->image) ? $feed->content->good->image->image : '', 'c'), '/good'. $feed->content->good->purchase_id .'_'. $feed->content->good->good_id) ?>
             <?php endif; ?>
             </div>
           </td>

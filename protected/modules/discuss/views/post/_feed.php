@@ -8,7 +8,7 @@ $posts = $post['posts'];
 $offsets = $post['offsets'];
 
 ?>
-<div id="discuss<?php echo $nullpost->forum_id ?>_<?php echo $nullpost->theme_id ?>" class="wall_post clearfix">
+<div id="discuss<?php echo $nullpost->forum_id ?>_<?php echo $nullpost->theme_id ?>" last_id="<?php echo $posts[sizeof($posts) - 1]->post_id ?>" class="wall_post clearfix">
   <div class="post_table">
     <div class="post_image">
       <?php echo ActiveHtml::link(ActiveHtml::showUploadImage($nullpost->theme->forum->icon, 'c'), '/discuss'. $nullpost->forum_id .'_'. $nullpost->theme_id, array('class' => 'post_image')) ?>
@@ -19,7 +19,14 @@ $offsets = $post['offsets'];
       </div>
       <div class="replies">
         <div class="replies_wrap" id="replies_wrap<?php echo $nullpost->forum_id ?>_<?php echo $nullpost->theme_id ?>">
-          <div class="reply_fakebox_wrap" id="reply_fakebox" onclick="Comment.showReplyEditor(event, '')">
+          <?php if ($offsets > 3): ?>
+            <a class="wr_header" onclick="Discuss.showMore('<?php echo $nullpost->forum_id ?>_<?php echo $nullpost->theme_id ?>')">
+              <div class="wrh_text" id="dch_text<?php echo $nullpost->forum_id ?>_<?php echo $nullpost->theme_id ?>">Показать все <?php echo Yii::t('app', '{n} комментарий|{n} комментария|{n} комментариев', $offsets) ?></div>
+              <div class="wrh_prg" id="dch_prg<?php echo $nullpost->forum_id ?>_<?php echo $nullpost->theme_id ?>"><img src="/images/upload.gif" /></div>
+            </a>
+          <?php endif; ?>
+          <?php $this->renderPartial('application.modules.discuss.views.post._feedlikereplies', array('posts' => $posts)) ?>
+          <div class="reply_fakebox_wrap" id="reply_fakebox_discuss<?php echo $nullpost->forum_id ?>_<?php echo $nullpost->theme_id ?>" onclick="Discuss.showReplyEditor(event, '<?php echo $nullpost->forum_id ?>_<?php echo $nullpost->theme_id ?>')">
             <div class="reply_fakebox">Комментировать..</div>
           </div>
         </div>
