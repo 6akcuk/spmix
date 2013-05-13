@@ -86,8 +86,10 @@ $added = false;
               <span class="divide">|</span>
               <a onclick="Discuss.deletePost(<?php echo $post->post_id ?>)">Удалить</a>
             <?php endif; ?>
+            <?php if ($theme->closed == 0): ?>
             <span class="divide">|</span>
             <a onclick="Discuss.replyPost(<?php echo $post->post_id ?>)">Ответить</a>
+            <?php endif; ?>
           </div>
           <div class="left progress dc_progress"></div>
         </div>

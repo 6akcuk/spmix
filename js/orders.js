@@ -113,6 +113,73 @@ var Order = {
     });
     $('#_box_hidden_im').appendTo(box.bodyNode).show();
     box.show();
+  },
+
+  massSendSMS: function(purchase_id) {
+    var orders = $('input[type="checkbox"][name*="select"]:checked'), ids = [];
+
+    if (orders.length === 0) {
+      ajex.show('Не выбраны заказы');
+      return;
+    }
+
+    $.each(orders, function(i, v) {
+      ids.push($(v).attr('name').match(/(\d+)/i)[1]);
+    });
+
+    showGlobalPrg();
+    ajax.post('/purchases/orders/massSendSMS?purchase_id='+ purchase_id, {ids: ids}, function(r) {
+      hideGlobalPrg();
+
+      var box = new Box({
+        hideButtons: true,
+        bodyStyle: 'padding: 0px',
+        width: 500
+      });
+      box.content(r.html);
+      box.show();
+
+      $('#sms_message').autosize();
+    }, function() { hideGlobalPrg(); });
+  },
+
+  countSMS: function() {
+    var msg = $.trim($('#sms_message').val()), u = parseInt($('#users_num').text());
+
+    $('#letters_num').text(msg.length);
+    $('#sms_num').text(Math.ceil(msg.length / 70));
+    $('#total_sms_num').text(Math.ceil(msg.length / 70) * u);
+  },
+
+  sendSMS: function(purchase_id, order_ids) {
+    var msg = $.trim($('#sms_message').val());
+
+    if (!msg || msg.length === 0) {
+      $('#sms_message').focus();
+      return;
+    }
+
+    $('#sms_progress').show();
+    ajax.post('/purchases/orders/massSendSMS?purchase_id='+ purchase_id, {ids: order_ids, message: msg}, function(r) {
+      $('#sms_progress').hide();
+
+      nav.go('/smsdeliveries?purchase_id='+ purchase_id +'&delivery_id='+ r.delivery_id, null, {box: 1});
+    }, function() { $('#sms_progress').hide(); })
+  },
+
+  smsDeliveries: function(purchase_id) {
+    showGlobalPrg();
+    ajax.post('/purchases/orders/smsdeliveries?purchase_id='+ purchase_id, {}, function(r) {
+      hideGlobalPrg();
+
+      var box = new Box({
+        hideButtons: true,
+        bodyStyle: 'padding: 0px',
+        width: 500
+      });
+      box.content(r.html);
+      box.show();
+    }, function() { hideGlobalPrg(); });
   }
 }
 

@@ -107,4 +107,109 @@ class ThemeController extends Controller
       'forum' => $forum,
     ));
   }
+
+  public function actionSave($theme_id) {
+    /** @var DiscussTheme $theme */
+    $theme = DiscussTheme::model()->findByPk($theme_id);
+
+    if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
+      Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('theme' => $theme))) {
+      $theme->title = $_POST['title'];
+      $theme->save(true, array('title'));
+
+      echo json_encode(array('title' => $theme->title));
+      exit;
+    }
+    else
+      throw new CHttpException(403, 'У Вас нет прав на редактирование темы');
+  }
+
+  public function actionFix($theme_id) {
+    /** @var DiscussTheme $theme */
+    $theme = DiscussTheme::model()->findByPk($theme_id);
+
+    if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
+      Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('theme' => $theme))) {
+      $theme->fixed = 1;
+      $theme->save(true, array('fixed'));
+
+      $_SESSION['discuss.message.title'] = 'Тема закреплена.';
+      $_SESSION['discuss.message.body'] = 'Теперь эта тема всегда будет выводиться над остальными в списке обсуждений.';
+
+      echo json_encode(array('url' => '/discuss'. $theme->forum_id .'_'. $theme->theme_id));
+      exit;
+    }
+    else
+      throw new CHttpException(403, 'У Вас нет прав на редактирование темы');
+  }
+  public function actionUnfix($theme_id) {
+    /** @var DiscussTheme $theme */
+    $theme = DiscussTheme::model()->findByPk($theme_id);
+
+    if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
+      Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('theme' => $theme))) {
+      $theme->fixed = 0;
+      $theme->save(true, array('fixed'));
+
+      $_SESSION['discuss.message.title'] = 'Тема больше не закреплена.';
+      $_SESSION['discuss.message.body'] = 'Эта тема будет выводиться на своем месте в списке обсуждений.';
+
+      echo json_encode(array('url' => '/discuss'. $theme->forum_id .'_'. $theme->theme_id));
+      exit;
+    }
+    else
+      throw new CHttpException(403, 'У Вас нет прав на редактирование темы');
+  }
+
+  public function actionClose($theme_id) {
+    /** @var DiscussTheme $theme */
+    $theme = DiscussTheme::model()->findByPk($theme_id);
+
+    if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
+      Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('theme' => $theme))) {
+      $theme->closed = 1;
+      $theme->save(true, array('closed'));
+
+      $_SESSION['discuss.message.title'] = 'Тема закрыта.';
+      $_SESSION['discuss.message.body'] = 'Участники сообщества больше не смогут оставлять сообщения в этой теме.';
+
+      echo json_encode(array('url' => '/discuss'. $theme->forum_id .'_'. $theme->theme_id));
+      exit;
+    }
+    else
+      throw new CHttpException(403, 'У Вас нет прав на редактирование темы');
+  }
+  public function actionOpen($theme_id) {
+    /** @var DiscussTheme $theme */
+    $theme = DiscussTheme::model()->findByPk($theme_id);
+
+    if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
+      Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('theme' => $theme))) {
+      $theme->closed = 0;
+      $theme->save(true, array('closed'));
+
+      $_SESSION['discuss.message.title'] = 'Тема открыта.';
+      $_SESSION['discuss.message.body'] = 'Все участники сообщества смогут оставлять сообщения в этой теме.';
+
+      echo json_encode(array('url' => '/discuss'. $theme->forum_id .'_'. $theme->theme_id));
+      exit;
+    }
+    else
+      throw new CHttpException(403, 'У Вас нет прав на редактирование темы');
+  }
+
+  public function actionDelete($theme_id) {
+    /** @var DiscussTheme $theme */
+    $theme = DiscussTheme::model()->findByPk($theme_id);
+
+    if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
+      Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('theme' => $theme))) {
+      $theme->destroyTheme();
+
+      echo json_encode(array('url' => '/discuss'. $theme->forum_id, 'msg' => 'Тема успешно удалена.'));
+      exit;
+    }
+    else
+      throw new CHttpException(403, 'У Вас нет прав на удаление темы');
+  }
 }

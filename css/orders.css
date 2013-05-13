@@ -160,6 +160,58 @@ table.order_org td.label {
   padding: 5px 10px 5px 0px;
 }
 
+/* SMS */
+#sms_message {
+  width: 440px;
+  margin-bottom: 10px;
+}
+
+#sms_deliveries_empty {
+  color: #777;
+  line-height: 170%;
+  padding: 100px 30px;
+  text-align: center;
+  font-size: 1.09em;
+}
+
+.order_sms_delivery_lnk {
+  display: block;
+  height: 34px;
+  padding: 8px 20px;
+  margin: 0px -20px;
+  border-bottom: 1px solid #eee;
+  font-size: 11px;
+}
+.order_sms_delivery_date {
+  color: #999;
+  margin-top: 2px;
+}
+.order_sms_delivery_view {
+  display: none;
+  color: #93a2b3;
+  margin: 3px 0px;
+  padding: 6px 0px 4px;
+}
+.order_sms_delivery_lnk:hover {
+  background: #edf1f5;
+}
+.order_sms_delivery_lnk:hover .order_sms_delivery_view {
+  display: block;
+}
+.order_sms_delivery_message {
+  margin-bottom: 10px;
+}
+/* Queue */
+.order_sms_delivery_status_0 {
+  color: #999;
+}
+.order_sms_delivery_status_3 {
+  color: #508033;
+}
+.order_sms_delivery_status_4 {
+  color: #8a1f11;
+}
+
 .org_payments_orders input[type="text"] {
     width: 50px;
 }

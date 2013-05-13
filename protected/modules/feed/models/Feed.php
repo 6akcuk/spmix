@@ -110,8 +110,8 @@ class Feed extends CActiveRecord
   public static function countFeeds($user_id, $c = array()) {
     /** @var CDbConnection $db */
     $db = Yii::app()->db;
-
-    $command = $db->createCommand("
+    /*
+    $command1 = $db->createCommand("
     SELECT
     (
       (
@@ -119,7 +119,7 @@ class Feed extends CActiveRecord
           INNER JOIN `feed` f ON f.owner_type = s.sub_type AND f.owner_id = s.sub_link_id
           WHERE s.user_id = ". $user_id ." AND f.feed_ondelete IS NULL
             AND s.sub_type NOT IN ('post')
-            AND f.event_type NOT IN ('new comment', 'new good')
+            AND f.event_type NOT IN ('new theme post', 'new comment', 'new good')
       )
       +
       (
@@ -134,9 +134,29 @@ class Feed extends CActiveRecord
         ) AS num
       )
     ) AS num");
+    */
+    $command1 = $db->createCommand("
+      SELECT COUNT(f.feed_id) AS num FROM `subscriptions` s
+          INNER JOIN `feed` f ON f.owner_type = s.sub_type AND f.owner_id = s.sub_link_id
+          WHERE s.user_id = ". $user_id ." AND f.feed_ondelete IS NULL
+            AND s.sub_type NOT IN ('post')
+            AND f.event_type NOT IN ('new theme post', 'new comment', 'new good')
+      ");
 
-    $result = $command->queryRow();
-    return $result['num'];
+    $command2 = $db->createCommand("
+        SELECT COALESCE(SUM(num), 0) AS num FROM (
+          SELECT COUNT(DISTINCT HOUR(f.add_date)) AS num FROM `subscriptions` s
+            INNER JOIN `feed` f ON f.owner_type = s.sub_type AND f.owner_id = s.sub_link_id
+            INNER JOIN `goods` g ON g.good_id = f.event_link_id
+            WHERE s.user_id = ". $user_id ." AND f.feed_ondelete IS NULL
+              AND s.sub_type NOT IN ('post')
+              AND f.event_type = 'new good'
+            GROUP BY f.owner_id
+        ) AS t");
+
+    $result1 = $command1->queryRow();
+    $result2 = $command2->queryRow();
+    return $result1['num'] + $result2['num'];
   }
 
   public static function getFeeds($user_id, $offset = 0, $c = array()) {
@@ -152,7 +172,7 @@ class Feed extends CActiveRecord
           INNER JOIN `feed` f ON f.owner_type = s.sub_type AND f.owner_id = s.sub_link_id
           WHERE s.user_id = ". $user_id ." AND f.feed_ondelete IS NULL
             AND s.sub_type NOT IN ('post')
-            AND f.event_type NOT IN ('new comment', 'new good')
+            AND f.event_type NOT IN ('new theme post', 'new comment', 'new good')
       )
       UNION
       (
@@ -370,7 +390,7 @@ class Feed extends CActiveRecord
           $feed->content = array('nullpost' => $nullpost, 'offsets' => $offsets, 'posts' => $posts);
           break;
         case 'new reply':
-          $reply = ProfileWallPost::model()->with('replyPost.last_replies', 'replyPost.author.profile')->findByPk($feed->event_link_id);
+          $reply = ProfileWallPost::model()->with('replyPost', array('replyPost.last_replies' => array('limit' => 3)), 'replyPost.author.profile')->findByPk($feed->event_link_id);
           if (!$reply) continue 2;
           $feed->content = $reply->replyPost;
           break;

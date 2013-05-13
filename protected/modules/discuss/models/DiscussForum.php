@@ -124,7 +124,7 @@ class DiscussForum extends CActiveRecord
   public static function getUserCity()
   {
     $cookies = Yii::app()->getRequest()->getCookies();
-    return ($cookies['cur_city']) ? $cookies['cur_city']->value : Yii::app()->user->model->profile->city;
+    return ($cookies['cur_city']) ? $cookies['cur_city']->value : Yii::app()->user->model->profile->city_id;
   }
 
   public static function getNumericRight()
@@ -165,14 +165,14 @@ class DiscussForum extends CActiveRecord
     $command1 = $db->createCommand('
       DELETE FROM `profile_requests`
         WHERE req_type = '. ProfileRequest::TYPE_DISCUSS_POST_ANSWER .'
-        AND req_link_id = (SELECT post_id FROM `discuss_posts` WHERE forum_id = '. $this->forum_id .')');
+        AND req_link_id IN (SELECT post_id FROM `discuss_posts` WHERE forum_id = '. $this->forum_id .')');
     $command1->query();
 
     // Удалить фиды в ленте новостей
     $command2 = $db->createCommand("
       DELETE FROM `feed`
         WHERE event_type = 'new theme post'
-        AND event_link_id = (SELECT post_id FROM `discuss_posts` WHERE forum_id = ". $this->forum_id .")");
+        AND event_link_id IN (SELECT post_id FROM `discuss_posts` WHERE forum_id = ". $this->forum_id .")");
     $command2->query();
 
     // Удалить все посты на форуме

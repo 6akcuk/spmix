@@ -229,7 +229,9 @@ class ActiveHtml extends CHtml {
     }
     public static function getImageUrl($data, $size = 'b') {
         $images = json_decode($data, true);
-        return 'http://cs'. $images[$size][2] .'.'. Yii::app()->params['domain'] .'/'. $images[$size][0] .'/'. $images[$size][1];
+        return (isset($images[$size]))
+          ? 'http://cs'. $images[$size][2] .'.'. Yii::app()->params['domain'] .'/'. $images[$size][0] .'/'. $images[$size][1]
+          : '/images/camera_a.gif';
     }
 
     public static function link($text, $url = '#', $htmlOptions = array()) {
@@ -254,6 +256,39 @@ class ActiveHtml extends CHtml {
     public static function price($price, $currency = 'RUR') {
         return number_format($price, 0, ',', ' ') . ' '. Yii::t('app', $currency);
     }
+
+  public static function qVKMenu($selected, $items, $htmlOptions = array()) {
+    $htmlOptions['rel'] = 'menu';
+
+    return
+      self::openTag('a', $htmlOptions) . $selected . self::closeTag('a') .
+      self::openTag('div', array('class' => 'qmenu')) .
+        self::openTag('table') .
+          self::openTag('tr') .
+            self::openTag('td', array('class' => 'side')) .
+              self::openTag('div') . self::closeTag('div') .
+            self::closeTag('td') .
+            self::openTag('td') .
+              self::openTag('div', array('class' => 'header')) .
+                '<div>'. $selected .'</div>' .
+              self::closeTag('div') .
+              self::openTag('div', array('class' => 'body')) .
+                $items .
+              self::closeTag('div') .
+            self::closeTag('td') .
+            self::openTag('td', array('class' => 'side')) .
+              self::openTag('div') . self::closeTag('div') .
+            self::closeTag('td') .
+          self::closeTag('tr') .
+          self::openTag('tr') .
+            self::openTag('td', array('colspan' => 3)) .
+              '<div class="bottom"></div>' .
+              '<div class="bottom2"></div>' .
+            self::closeTag('td') .
+          self::closeTag('tr') .
+        self::closeTag('table') .
+      self::closeTag('div');
+  }
 
     public static function date($date, $showTime = true, $shortMonth = false, $showYear = false, $useTimezone = false) {
         // включение часового пояса

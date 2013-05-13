@@ -36,6 +36,7 @@ class Order extends CActiveRecord
   const STATUS_REFUSED = 'Refused';
   const STATUS_ACCEPTED = 'Accepted';
   const STATUS_RANGE_ACCEPTED = 'Range Accepted';
+  const STATUS_OUT_OF_STOCK = 'Out of Stock';
   const STATUS_DELIVERED = 'Delivered';
   const STATUS_AWAITING = 'Awaiting';
   const STATUS_PAID = 'Paid';
@@ -144,6 +145,7 @@ class Order extends CActiveRecord
           'Отказ' => self::STATUS_REFUSED,
           'Принят орг-ом' => self::STATUS_ACCEPTED,
           'Принят орг-ом в ряд' => self::STATUS_RANGE_ACCEPTED,
+          'Нет в наличии' => self::STATUS_OUT_OF_STOCK,
           'Ожидание оплаты' => self::STATUS_AWAITING,
           'Оплачен' => self::STATUS_PAID,
           'Ожидание выдачи' => self::STATUS_WAIT_FOR_DELIVER,

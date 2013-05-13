@@ -105,4 +105,24 @@ class DiscussTheme extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+
+  public function destroyTheme()
+  {
+    /** @var CDbConnection $db */
+    $db = Yii::app()->db;
+
+    // Удалить фиды в ленте новостей
+    $command2 = $db->createCommand("
+      DELETE FROM `feed`
+        WHERE event_type = 'new theme post'
+        AND event_link_id IN (SELECT post_id FROM `discuss_posts` WHERE theme_id = ". $this->theme_id .")");
+    $command2->query();
+
+    // Удалить все посты в теме
+    $command3 = $db->createCommand("
+      DELETE FROM `discuss_posts` WHERE theme_id = ". $this->theme_id ."");
+    $command3->query();
+
+    $this->delete();
+  }
 }

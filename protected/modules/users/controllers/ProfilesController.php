@@ -158,7 +158,7 @@ class ProfilesController extends Controller {
 
       echo json_encode(array(
         'num' => 'Показать все '. Yii::t('app', '{n} комментарий|{n} комментария|{n} комментариев', $repliesNum),
-        'replies' => $this->renderPartial('_reply', array('replies' => $replies), true),
+        'replies' => $this->renderPartial('_reply', array('_reply' => 0, 'replies' => $replies), true),
         'last_id' => ($replies) ? $replies[sizeof($replies) - 1]->post_id : intval($_POST['last_id']),
       ));
     }
@@ -193,7 +193,7 @@ class ProfilesController extends Controller {
 
     $replies = ProfileWallPost::model()->with('author', 'author.profile', 'replyTo')->findAll($criteria);
 
-    echo json_encode(array('html' => $this->renderPartial('_reply', array('replies' => $replies), true)));
+    echo json_encode(array('html' => $this->renderPartial('_reply', array('_reply' => 0, 'replies' => $replies), true)));
     exit;
   }
 

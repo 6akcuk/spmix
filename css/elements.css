@@ -45,6 +45,10 @@ div.tabs a.selected {
     background: #508033;
     color: #fff;
 }
+div.tabs div.right a:hover, div.tabs a.right:hover {
+  background: #fff;
+  text-decoration: underline;
+}
 
 div.minitabs a {
     display: inline-block;
@@ -130,9 +134,37 @@ a.input_calendar span {
     background: #508033;
 }
 
+.button_submit {
+  display: inline-block;
+  cursor: pointer;
+  text-align: center;
+  border-radius: 2px;
+  border: 1px solid #508033;
+  border-top-color: #70973f;
+}
+.button_submit button {
+  margin: 0px;
+  border: 1px solid;
+  padding: 4px 15px;
+  outline: none;
+  white-space: nowrap;
+  overflow: visible;
+  vertical-align: top;
+  line-height: 13px;
+}
+.button_submit button {
+  color: #fff;
+  background: #6e953e;
+  border-color: #5f8f42;
+  border-top-color: #7ab058;
+}
+.button_submit:hover button {
+  background: #7ea64b;
+}
+
 .button_cancel {
   margin: 0px 10px;
-  padding: 7px 15px;
+  padding: 6px 15px;
   text-align: center;
 }
 .button_cancel:hover {

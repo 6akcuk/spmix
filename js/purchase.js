@@ -326,6 +326,65 @@ var Purchase = {
     }, function(r) {
 
     });
+  },
+
+  showGoodsFrom: function(purchase_id) {
+    nav.go('/purchase'+ purchase_id +'/addfromanother?from_id='+ $('#from_id').val());
+  },
+
+  addPurchaseGood: function(purchase_id, good_id) {
+    var $form = $('#good'+ good_id + '_form');
+    $('#good'+ good_id +'_progress').show();
+
+    ajax.post('/purchase'+ purchase_id +'/addfromanother?good_id='+ good_id, $form.serialize(), function(r) {
+      $('#good'+ good_id +'_progress').hide();
+
+      $('#good'+ good_id +' .photo img').hide();
+      $('#good'+ good_id +' .info form').hide();
+
+      $('<div class="dld">Товар добавлен в закупку</div>').insertAfter('#good' + good_id + ' .info form');
+    }, function() {
+      $('#good'+ good_id +'_progress').hide();
+    })
+
+    return false;
+  },
+
+  hidePurchaseGood: function(good_id) {
+    $('#good'+ good_id +' .photo img').hide();
+    $('#good'+ good_id +' .info form').hide();
+
+    $('<div class="dld">Товар скрыт. <a onclick="Purchase.showPurchaseGood('+ good_id +')">Открыть</a>.</div>').insertAfter('#good' + good_id + ' .info form');
+  },
+  showPurchaseGood: function(good_id) {
+    $('#good'+ good_id +' .photo img').show();
+    $('#good'+ good_id +' .info form').show().next().remove();
+  },
+
+  setAACopy: function(type_id) {
+    switch (type_id) {
+      case 0:
+        $('#aa_copy_menu').text('все товары');
+        $('#aa_copy_menu').next().find('div.header div').text('все товары');
+        A.aaCopyType = 0;
+        break;
+      case 1:
+        $('#aa_copy_menu').text('только видимые');
+        $('#aa_copy_menu').next().find('div.header div').text('только видимые');
+        A.aaCopyType = 1;
+        break;
+    }
+  },
+  copyAA: function(target_id, from_id) {
+    $('#purchase_aa_copy_progress').show();
+    $('#purchase_aa_copy_btn').hide();
+
+    ajax.post('/purchase'+ target_id +'/copyaa?from_id='+ from_id, {type: (A.aaCopyType) ? 1 : 0}, function(r) {
+
+    }, function() {
+      $('#purchase_aa_copy_progress').hide();
+      $('#purchase_aa_copy_btn').show();
+    });
   }
 };
 

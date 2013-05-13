@@ -44,6 +44,7 @@ $delta = $c['limit'];
   <a class="button" onclick="Order.massChangeStatus(<?php echo $purchase->purchase_id ?>)">Изменение статуса заказов</a>
   <a class="button" onclick="Order.massSendMessage(<?php echo $purchase->purchase_id ?>)">Отправка ЛС</a>
   <a class="button" onclick="Order.massSendSMS(<?php echo $purchase->purchase_id ?>)">Отправка СМС</a>
+  <a class="button" href="/smsdeliveries?purchase_id=<?php echo $purchase->purchase_id ?>" onclick="return nav.go(this, event, {box: 1})">Рассылки СМС</a>
   <?php echo CHtml::link('Сохранить в Excel', '/orders'. $purchase->purchase_id .'/excel', array('class' => 'button')) ?>
 </div>
 

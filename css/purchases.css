@@ -610,3 +610,55 @@ table.ordertable td {
 .orders_controlbar {
   padding-bottom: 20px;
 }
+
+/* Add From Another */
+.purchase_name {
+  background: #f2f2f2;
+  margin-top: 10px;
+  padding: 5px 10px;
+  color: #123;
+  font-weight: bold;
+  line-height: 140%;
+}
+
+.good_many {
+  padding: 5px 0px 3px;
+  border-bottom: 1px solid #f1f1f1;
+  position: relative;
+}
+.good_many .dld {
+  padding: 4px 0px;
+}
+.good_many .photo {
+  position: absolute;
+  top: 0px;
+  width: 100px;
+}
+.good_many .info {
+  margin-left: 110px;
+  padding: 0px 0px 2px;
+}
+.good_many_row {
+  padding-bottom: 4px;
+}
+.good_many_label {
+  width: 100px;
+  color: #777;
+  padding-top: 5px;
+}
+.good_many_buttons {
+  padding-top: 5px;
+}
+.good_many_buttons .progress {
+  margin-top: 6px;
+}
+
+.purchase_aa_copy_wrap {
+  padding: 10px 10px 0px;
+}
+.purchase_aa_copy_wrap .progress {
+  margin-top: 6px;
+}
+.purchase_aa_copy {
+  padding: 5px 10px 0px 0px;
+}

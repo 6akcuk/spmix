@@ -109,6 +109,79 @@ var Discuss = {
     });
   },
 
+  editTheme: function(theme_id) {
+    cur.editedTheme = theme_id;
+
+    var box = new Box({
+      title: 'Редактирование темы',
+      buttons: [{title: 'Сохранить', onclick: Discuss.saveTheme}]
+    });
+    box.content('<div class="dce_label left">Новое название темы:</div><div class="left"><input type="text" id="dce_title" onkeyup="if (event.keyCode == 10 || event.keyCode == 13) Discuss.saveTheme()" /></div><div class="clear"></div>');
+    box.show();
+
+    $('#dce_title').focus().val($('#discuss_title').text());
+  },
+
+  saveTheme: function() {
+    curBox().showProgress();
+
+    ajax.post('/discuss/theme/save?theme_id='+ cur.editedTheme, {title: $('#dce_title').val()}, function(r) {
+      curBox().hide();
+      $('#discuss_title').text(r.title);
+    }, function() {
+      curBox().hideProgress();
+    });
+  },
+
+  fixTheme: function(theme_id) {
+    $('#edit_theme_progress').show().next().hide();
+    ajax.post('/discuss/theme/fix?theme_id='+ theme_id, {}, function(r) {
+      nav.go(r.url);
+    });
+  },
+  unfixTheme: function(theme_id) {
+    $('#edit_theme_progress').show().next().hide();
+    ajax.post('/discuss/theme/unfix?theme_id='+ theme_id, {}, function(r) {
+      nav.go(r.url);
+    });
+  },
+
+  closeTheme: function(theme_id) {
+    $('#edit_theme_progress').show().next().hide();
+    ajax.post('/discuss/theme/close?theme_id='+ theme_id, {}, function(r) {
+      nav.go(r.url);
+    });
+  },
+  openTheme: function(theme_id) {
+    $('#edit_theme_progress').show().next().hide();
+    ajax.post('/discuss/theme/open?theme_id='+ theme_id, {}, function(r) {
+      nav.go(r.url);
+    });
+  },
+
+  deleteTheme: function(theme_id) {
+    cur.deletingTheme = theme_id;
+
+    var box = new Box({
+      title: 'Редактирование темы',
+      buttons: [{title: 'Удалить', onclick: Discuss.doDeleteTheme}]
+    });
+    box.content('Вы уверены, что хотите удалить эту тему?');
+    box.show();
+  },
+  doDeleteTheme: function() {
+    curBox().showProgress();
+
+    ajax.post('/discuss/theme/delete?theme_id='+ cur.deletingTheme, {}, function(r) {
+      curBox().hide();
+
+      boxPopup(r.msg);
+      nav.go(r.url);
+    }, function() {
+      curBox().hideProgress();
+    });
+  },
+
   replyPost: function(post_id) {
     A.discussPostFixed = true;
     Discuss.scroll();
@@ -384,6 +457,34 @@ var Discuss = {
   replyFeedPost: function(post_id, event) {
     Discuss.showReplyEditor(event, $('#discuss_post'+ post_id).attr('data-fid'));
     $('#dcp_text').focus().val($('#dcp_text').val() + '[post'+ post_id +'|'+ $('#discuss_post'+ post_id + ' a.author').attr('data-name') +'], ');
+  },
+
+  showMore: function(fid, first_id) {
+    if (!A.postHeader) A.postHeader = {};
+
+    var $txt = $('#dch_text'+ fid), $prg = $('#dch_prg'+ fid);
+    if ($txt.parent().hasClass('wrh_all')) {
+      $txt.text(A.postHeader[fid]).parent().removeClass('wrh_all');
+      $('#discuss_replies'+ fid +' .reply').each(function(i, item) {
+        if (parseInt($(item).attr('id').match(/discuss_post(\d+)/i)[1]) < first_id) $(item).remove();
+      });
+      return;
+    }
+
+    A.postHeader[fid] = $txt.text();
+    $txt.hide();
+    $prg.show();
+
+    ajax.post('/discuss'+ fid +'?act=more', {first_id: first_id}, function(r) {
+      $txt.text('Скрыть комментарии').show();
+      $prg.hide();
+      $txt.parent().addClass('wrh_all');
+
+      $(r.html).insertAfter('#discuss_replies'+ fid + ' a.wr_header');
+    }, function(xhr) {
+      $txt.show();
+      $prg.hide();
+    });
   }
 };
 

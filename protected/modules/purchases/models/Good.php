@@ -157,6 +157,35 @@ class Good extends CActiveRecord
         return GoodImages::model()->count('good_id = :good_id', array(':good_id' => $this->good_id));
     }
 
+  public function copyFromAnother($good_id) {
+    $sizes = GoodSize::model()->findAll('good_id = :gid', array(':gid' => $good_id));
+
+    foreach ($sizes as $size) {
+      $newsize = new GoodSize();
+      $newsize->good_id = $this->good_id;
+      $newsize->adv_price = $size->adv_price;
+      $newsize->size = $size->size;
+      $newsize->save();
+    }
+
+    $colors = GoodColor::model()->findAll('good_id = :gid', array(':gid' => $good_id));
+    foreach ($colors as $color) {
+      $newcolor = new GoodColor();
+      $newcolor->good_id = $this->good_id;
+      $newcolor->color = $color->color;
+      $newcolor->save();
+    }
+
+    $images = GoodImages::model()->findAll('good_id = :gid', array(':gid' => $good_id));
+    foreach ($images as $image) {
+      $newimage = new GoodImages();
+      $newimage->image = $image->image;
+      $newimage->good_id = $this->good_id;
+      $newimage->tag_color = $image->tag_color;
+      $newimage->save();
+    }
+  }
+
   /**
    * @return array
    */

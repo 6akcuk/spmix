@@ -14,15 +14,13 @@ input.error {
     overflow: hidden;
     z-index: 500;
 }
+#layout_wrap {
+  overflow: auto;
+}
 #layout_bg {
     filter: alpha(opacity=50);
     opacity: 0.5;
     background-color: #000;
-}
-
-#layout_wrap {
-    overflow-x: hidden;
-    overflow-y: auto;
 }
 
 /* Box */

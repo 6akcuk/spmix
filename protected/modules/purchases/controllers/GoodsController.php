@@ -106,50 +106,64 @@ class GoodsController extends Controller {
         if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
             Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('purchase' => $purchase)))
         {
-            $c = (isset($_REQUEST['c'])) ? $_REQUEST['c'] : array();
-            if (!isset($c['limit'])) $c['limit'] = 30;
+          $c = (isset($_REQUEST['c'])) ? $_REQUEST['c'] : array();
+          if (!isset($c['limit'])) $c['limit'] = 30;
 
-            $criteria = new CDbCriteria();
-            $criteria->limit = $c['limit'];
-            $criteria->offset = $offset;
-            $criteria->addCondition('t.purchase_id = :purchase_id');
-            $criteria->params[':purchase_id'] = $purchase_id;
+          $criteria = new CDbCriteria();
+          $criteria->limit = $c['limit'];
+          $criteria->offset = $offset;
+          $criteria->addCondition('t.purchase_id = :purchase_id');
+          $criteria->params[':purchase_id'] = $purchase_id;
 
-            if (isset($c['id'])) {
-                $criteria->addSearchCondition('t.good_id', $c['id']);
-            }
-            if (isset($c['artikul'])) {
-                $criteria->addSearchCondition('t.artikul', $c['artikul']);
-            }
-            if (isset($c['name'])) {
-                $criteria->addSearchCondition('t.name', $c['name']);
-            }
-            if (isset($c['price'])) {
-                $criteria->addSearchCondition('t.price', $c['price']);
-            }
+          if (isset($c['id'])) {
+              $criteria->addSearchCondition('t.good_id', $c['id']);
+          }
+          if (isset($c['artikul'])) {
+              $criteria->addSearchCondition('t.artikul', $c['artikul']);
+          }
+          if (isset($c['name'])) {
+              $criteria->addSearchCondition('t.name', $c['name']);
+          }
+          if (isset($c['price'])) {
+              $criteria->addSearchCondition('t.price', $c['price']);
+          }
 
-            $goods = Good::model()->findAll($criteria);
+          $goods = Good::model()->findAll($criteria);
 
-            $this->wideScreen = true;
-            if (Yii::app()->request->isAjaxRequest) {
-                $this->pageHtml = $this->renderPartial(
-                    'purchase',
-                    array(
-                        'purchase' => $purchase,
-                        'goods' => $goods,
-                        'c' => $c,
-                    ),
-                    true);
+          $criteria->limit = 0;
+          $goodsNum = Good::model()->count($criteria);
+
+          $this->wideScreen = true;
+          if (Yii::app()->request->isAjaxRequest) {
+            if (isset($_POST['pages'])) {
+              $this->pageHtml = $this->renderPartial('_goods', array(
+                'goods' => $goods,
+                'offset' => $offset,
+                'c' => $c,
+              ), true);
             }
-            else
-                $this->render(
-                    'purchase',
-                    array(
-                        'purchase' => $purchase,
-                        'goods' => $goods,
-                        'c' => $c,
-                    )
-                );
+            else $this->pageHtml = $this->renderPartial(
+              'purchase',
+              array(
+                'purchase' => $purchase,
+                'goods' => $goods,
+                'c' => $c,
+                'offset' => $offset,
+                'offsets' => $goodsNum,
+              ),
+              true);
+          }
+          else
+            $this->render(
+              'purchase',
+              array(
+                'purchase' => $purchase,
+                'goods' => $goods,
+                'c' => $c,
+                'offset' => $offset,
+                'offsets' => $goodsNum,
+              )
+            );
         }
         else
             throw new CHttpException(403, 'В доступе отказано');

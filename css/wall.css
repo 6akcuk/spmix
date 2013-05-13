@@ -319,6 +319,9 @@ div.wall_post_attaches, div.reply_attaches {
 .wide_wall .post_info {
   width: 640px;
 }
+.wide_wall .reply_info {
+  width: 580px;
+}
 .wide_wall .wall_text, .wide_wall .wall_post_text {
   width: 640px;
 }

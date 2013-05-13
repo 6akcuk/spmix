@@ -5,7 +5,7 @@
 
 ?>
 <?php foreach ($messages as $message): ?>
-<tr class="<?php if ($message->isNew) echo "new_msg" ?>" read="<?php if (!$message->isNew) echo "1" ?>" id="mess<?php echo $message->message_id ?>">
+<tr class="<?php if ($message->isNew) echo "new_msg" ?>" read="<?php if (!$message->isNew) echo "1" ?>" id="mess<?php echo $message->message_id ?>" onmousedown="return nav.go('/mail?act=show&id=<?php echo $message->message_id ?>', event, {})">
   <td class="mail_check" onclick="mail.select()" onmousedown="event.cancelBubble = true;">
     <input type="checkbox" name="checkMsg[]" value="<?php echo $message->message_id ?>" />
   </td>

@@ -62,6 +62,7 @@ class PostController extends Controller
       if (isset($_POST['pages'])) {
         $this->pageHtml = $this->renderPartial('_posts', array(
           '_post' => $post,
+          'theme' => $theme,
           'posts' => $posts,
           'offset' => $offset
         ), true);
@@ -106,6 +107,9 @@ class PostController extends Controller
     if ($theme->forum_id != $forum_id)
       throw new CHttpException(500, 'Ошибка синхронизации');
 
+    if ($theme->closed == 1)
+      throw new CHttpException(500, 'Тема закрыта и не принимает больше сообщения');
+
     if (isset($_POST['post'])) {
       $post = new DiscussPost();
       $post->forum_id = $forum_id;
@@ -144,7 +148,7 @@ class PostController extends Controller
 
   public function actionEdit($post_id) {
     /** @var DiscussPost $post */
-    $post = DiscussPost::model()->findByPk($post_id);
+    $post = DiscussPost::model()->with('theme')->findByPk($post_id);
 
     if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('post' => $post))) {
       if (isset($_POST['post'])) {
@@ -152,7 +156,7 @@ class PostController extends Controller
         $post->attaches = json_encode(isset($_POST['attaches']) ? $_POST['attaches'] : array());
 
         if ($post->save()) {
-          echo json_encode(array('post_id' => $post_id, 'html' => $this->renderPartial('_posts', array('_post' => 0, 'posts' => array($post), 'offset' => 0), true)));
+          echo json_encode(array('post_id' => $post_id, 'html' => $this->renderPartial('_posts', array('_post' => 0, 'theme' => $post->theme, 'posts' => array($post), 'offset' => 0), true)));
           exit;
         }
       }
@@ -239,5 +243,20 @@ class PostController extends Controller
 
     unset($_SESSION['dc_post.delete'][$post->author_id]['items'][$post->post_id]);
     $_SESSION['dc_post.delete'][$post->author_id]['count']--;
+  }
+
+  public function actionMore($forum_id, $theme_id) {
+    $criteria = new CDbCriteria();
+    $criteria->compare('forum_id', $forum_id);
+    $criteria->compare('theme_id', $theme_id);
+    $criteria->addCondition('post_id < :id');
+    $criteria->params[':id'] = intval($_POST['first_id']);
+
+    $criteria->limit = 97;
+
+    $posts = DiscussPost::model()->findAll($criteria);
+
+    echo json_encode(array('html' => $this->renderPartial('_feedlikereplies', array('posts' => $posts), true)));
+    exit;
   }
 }

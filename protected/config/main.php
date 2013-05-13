@@ -109,6 +109,7 @@ return array(
         'orders/<action:\w+>' => 'purchases/orders/<action>',
         'payment<payment_id:\d+>' => 'purchases/orders/payment',
         'orgpayment<id:\d+>' => 'purchases/orders/orgPayment',
+        'smsdeliveries' => 'purchases/orders/smsdeliveries',
         '<controller:(purchases)>' => 'purchases/purchases',
         '<controller:(purchases)>/<action:\w+>' => 'purchases/purchases/<action>',
         '<controller:(purchases)>/<action:\w+>/<id:\d+>' => 'purchases/purchases/<action>',

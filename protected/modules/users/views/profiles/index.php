@@ -164,7 +164,6 @@ $this->pageTitle = $title;
     <?php endif; ?>
     </div>
     <div class="left profile-right">
-      <?php if (Yii::app()->user->getId() == 1): ?>
         <?php if (($userinfo->id != Yii::app()->user->getId() && $userinfo->profile->status) || (Yii::app()->user->getId() == $userinfo->id)): ?>
       <div class="profile-info profile-status-container">
         <?php if (Yii::app()->user->getId() == $userinfo->id): ?>
@@ -180,8 +179,7 @@ $this->pageTitle = $title;
         <?php endif; ?>
       </div>
         <?php endif; ?>
-      <?php endif; ?>
-        <div class="profile-info">
+      <div class="profile-info">
             <div class="clearfix">
                 <div class="label left">
                     Город:
@@ -330,10 +328,6 @@ $this->pageTitle = $title;
                 <?php echo nl2br($userinfo->profile->about) ?>
             </div>
         </div>
-      <?php if (Yii::app()->user->getId() == 1): ?>
-      <?php
-
-        ?>
       <div class="module">
         <div class="module-header">
           <a id="wall_header" href="/wall<?php echo $userinfo->id ?>" onclick="return nav.go(this, event, null)" class="header-top clearfix">
@@ -402,7 +396,5 @@ $this->pageTitle = $title;
           <? if (0 + Yii::app()->getModule('users')->wallPostsPerPage < $postsNum && $postsNum > Yii::app()->getModule('users')->wallPostsPerPage): ?><a id="pg_more" class="pg_more" onclick="Paginator.showMore()">Еще записи</a><? endif; ?>
         </div>
       </div>
-
-      <?php endif; ?>
     </div>
 </div>

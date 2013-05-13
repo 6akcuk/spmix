@@ -108,10 +108,8 @@ $delta = Yii::app()->controller->module->goodsPerPage;
         <?php endif; ?>
     </div>
     <div class="right purchase_links">
-    <?php if (Yii::app()->user->getId() == 1): ?>
       <a id="subscribe<?php echo $purchase->purchase_id ?>" onclick="Purchase.subscribe(<?php echo $purchase->purchase_id ?>)"><span class="icon-check"></span> <?php echo ($subscription) ? "Отписаться от новостей" : "Подписаться на новости" ?></a>
       <a onclick="Purchase.shareToFriends(<?php echo $purchase->purchase_id ?>)"><span class="icon-comment"></span> Рассказать друзьям</a>
-    <?php endif; ?>
     <?php if (Yii::app()->user->checkAccess('purchases.purchases.edit') &&
               (Yii::app()->user->checkAccess('purchases.purchases.editSuper') ||
                Yii::app()->user->checkAccess('purchases.purchases.editOwn', array('purchase' => $purchase)))): ?>

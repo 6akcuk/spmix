@@ -233,7 +233,7 @@ class CommentController extends Controller {
     $result = array('items' => array(), 'count' => 0, 'last_id' => $last_id);
     $comments = Comment::model()->with('reply')->findAll($criteria);
     foreach ($comments as $comment) {
-      if ($_POST['feed'] === true) $result['items'][] = $this->renderPartial('_feedlikereplies', array('comments' => array($comment), 'hoop' => $hoop), true);
+      if (isset($_POST['feed']) && $_POST['feed'] === true) $result['items'][] = $this->renderPartial('_feedlikereplies', array('comments' => array($comment), 'hoop' => $hoop), true);
       else $result['items'][] = $this->renderPartial('_comment', array('comment' => $comment, 'hoop' => $hoop), true);
     }
 

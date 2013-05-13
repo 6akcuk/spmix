@@ -279,7 +279,13 @@ class OrdersController extends Controller {
       );
   }
 
-    public function actionPurchase2Excel($purchase_id) {
+  /**
+   * Сохранить список заказов в файл Excel
+   *
+   * @param $purchase_id
+   * @throws CHttpException
+   */
+  public function actionPurchase2Excel($purchase_id) {
         /** @var $purchase Purchase */
         $purchase = Purchase::model()->findByPk($purchase_id);
 
@@ -329,7 +335,14 @@ class OrdersController extends Controller {
             throw new CHttpException(403, 'В доступе отказано');
     }
 
-    public function actionPurchase($purchase_id, $offset = 0) {
+  /**
+   * Список заказов в закупке
+   *
+   * @param $purchase_id
+   * @param int $offset
+   * @throws CHttpException
+   */
+  public function actionPurchase($purchase_id, $offset = 0) {
       $purchase = Purchase::model()->findByPk($purchase_id);
 
       if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
@@ -422,7 +435,13 @@ class OrdersController extends Controller {
           throw new CHttpException(403, 'В доступе отказано');
     }
 
-    public function actionShow($order_id) {
+  /**
+   * Отобразить заказ для покупателя
+   *
+   * @param $order_id
+   * @throws CHttpException
+   */
+  public function actionShow($order_id) {
       /** @var $order Order */
       $order = Order::model()->with('good', 'good.sizes', 'good.colors', 'purchase', 'oic')->findByPk($order_id);
 
@@ -530,6 +549,12 @@ class OrdersController extends Controller {
             throw new CHttpException(403, 'В доступе отказано');
     }
 
+  /**
+   * Отобразить заказ для организатора закупки
+   *
+   * @param $id
+   * @throws CHttpException
+   */
   public function actionShowForOrg($id) {
     /** @var $order Order */
     $order = Order::model()->with('good', 'good.sizes', 'good.colors', 'purchase')->findByPk($id);
@@ -627,6 +652,11 @@ class OrdersController extends Controller {
       throw new CHttpException(403, 'В доступе отказано');
   }
 
+  /**
+   * Удалить заказ
+   *
+   * @throws CHttpException
+   */
   public function actionDeleteOrder() {
     /** @var $order Order */
     $order = Order::model()->with('purchase')->findByPk($_POST['id']);
@@ -653,6 +683,11 @@ class OrdersController extends Controller {
       throw new CHttpException(403, 'В доступе отказано');
   }
 
+  /**
+   * Отметить заказ как полученный
+   *
+   * @throws CHttpException
+   */
   public function actionMarkOrderAsDelivered() {
     /** @var $order Order */
     $order = Order::model()->with('purchase')->findByPk($_POST['id']);
@@ -678,6 +713,12 @@ class OrdersController extends Controller {
       throw new CHttpException(403, 'В доступе отказано');
   }
 
+  /**
+   * Массовое изменение статуса заказов в закупке
+   *
+   * @param $id
+   * @throws CHttpException
+   */
   public function actionMassChangeStatus($id) {
     $purchase = Purchase::model()->findByPk($id);
 
@@ -717,6 +758,12 @@ class OrdersController extends Controller {
       throw new CHttpException(403, 'В доступе отказано');
   }
 
+  /**
+   * Массовая рассылка личных сообщений
+   *
+   * @param $id
+   * @throws CHttpException
+   */
   public function actionMassSendMessage($id) {
     $purchase = Purchase::model()->findByPk($id);
 
@@ -747,6 +794,105 @@ class OrdersController extends Controller {
 
       echo json_encode(array('success' => true, 'msg' => 'Успешно отправлено сообщений: '. $msg_counter .' из '. sizeof($cache)));
       exit;
+    }
+    else
+      throw new CHttpException(403, 'В доступе отказано');
+  }
+
+  /**
+   * Отобразить форму для массовой рассылки СМС по заказам
+   *
+   * @param $purchase_id
+   * @throws CHttpException
+   */
+  public function actionMassSendSMS($purchase_id) {
+    $purchase = Purchase::model()->findByPk($purchase_id);
+
+    if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
+      Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('purchase' => $purchase))) {
+      /** @var CDbConnection $db */
+      $db = Yii::app()->db;
+      $command = $db->createCommand("
+SELECT COUNT(p.phone) AS num FROM profiles p
+WHERE user_id IN
+(
+  SELECT o.customer_id FROM orders o WHERE o.purchase_id = ". $purchase_id ." AND o.order_id IN (". implode(", ", $_POST['ids']) .") GROUP BY o.customer_id
+)");
+
+      $phonesNum = $command->queryRow();
+      $phonesNum = $phonesNum['num'];
+
+      $result = array();
+
+      if (isset($_POST['message'])) {
+        $smsNum = ceil(mb_strlen(trim($_POST['message']), 'utf-8') / 70);
+
+        $delivery = new OrderSmsDelivery();
+        $delivery->author_id = Yii::app()->user->getId();
+        $delivery->purchase_id = $purchase_id;
+        $delivery->message = $_POST['message'];
+        $delivery->users_num = $phonesNum;
+        $delivery->sms_num = $smsNum;
+        if ($delivery->save()) {
+          $command = $db->createCommand("
+            SELECT p.phone FROM profiles p
+            WHERE user_id IN
+            (
+              SELECT o.customer_id FROM orders o WHERE o.purchase_id = ". $purchase_id ." AND o.order_id IN (". implode(", ", $_POST['ids']) .") GROUP BY o.customer_id
+            )");
+
+          $data = $command->query();
+          while (($row = $data->read()) !== false) {
+            $log = new OrderSmsDeliveryLog();
+            $log->delivery_id = $delivery->delivery_id;
+            $log->phone = $row['phone'];
+            $log->message_id = 0;
+            $log->status = OrderSmsDeliveryLog::STATUS_QUEUE;
+            $log->save();
+          }
+
+          $result['delivery_id'] = $delivery->delivery_id;
+        }
+        else
+          throw new CHttpException(500, 'Не удается создать рассылку СМС. Попробуйте позже');
+      }
+      else $result['html'] = $this->renderPartial('sendsms_box', array('purchase_id' => $purchase_id, 'ids' => $_POST['ids'], 'phonesNum' => $phonesNum), true);
+
+      echo json_encode($result);
+      exit;
+    }
+    else
+      throw new CHttpException(403, 'В доступе отказано');
+  }
+
+  /**
+   * Отобразить список всех рассылок СМС, созданных в данной закупке
+   *
+   * @param $purchase_id
+   * @throws CHttpException
+   */
+  public function actionSmsDeliveries($purchase_id, $delivery_id = 0) {
+    /** @var Purchase $purchase */
+    $purchase = Purchase::model()->findByPk($purchase_id);
+
+    if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
+      Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('purchase' => $purchase))) {
+      $result = array();
+
+      if ($delivery_id == 0) {
+        $criteria = new CDbCriteria();
+        $criteria->compare('purchase_id', $purchase_id);
+
+        $deliveries = OrderSmsDelivery::model()->findAll($criteria);
+
+        $this->pageHtml = $this->renderPartial('smsdeliveries_box', array('deliveries' => $deliveries), true);
+      }
+      else {
+        $delivery = OrderSmsDelivery::model()->findByPk($delivery_id);
+        $logs = OrderSmsDeliveryLog::model()->findAll(array('condition' => 'delivery_id = :did', 'params' => array(':did' => $delivery_id)));
+
+        $this->pageHtml = $this->renderPartial('smsdelivery_box', array('delivery' => $delivery, 'logs' => $logs), true);
+      }
     }
     else
       throw new CHttpException(403, 'В доступе отказано');

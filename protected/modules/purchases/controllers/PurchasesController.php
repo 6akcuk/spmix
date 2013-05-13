@@ -20,13 +20,21 @@ class PurchasesController extends Controller {
     }
 
     public function init() {
-        parent::init();
+      parent::init();
 
-        if (isset($_GET['action']))
-            $this->defaultAction = $_GET['action'];
+      if (isset($_GET['act']))
+        $this->defaultAction = $_GET['act'];
+
+      if (isset($_GET['action']))
+        $this->defaultAction = $_GET['action'];
     }
 
-    public function actionAcquire($offset = 0) {
+  /**
+   * Утвердить закупку
+   *
+   * @param int $offset
+   */
+  public function actionAcquire($offset = 0) {
         if (isset($_POST['confirm'])) {
             /** @var $purchase Purchase */
             $purchase = Purchase::model()->resetScope()->with('mod_request')->findByPk($_POST['id']);
@@ -132,7 +140,12 @@ class PurchasesController extends Controller {
         else $this->render('acquire', array('purchases' => $purchases, 'offset' => $offset, 'offsets' => $purchasesNum,));
     }
 
-    public function actionIndex($offset = 0) {
+  /**
+   * Список всех закупок
+   *
+   * @param int $offset
+   */
+  public function actionIndex($offset = 0) {
         $cookies = Yii::app()->getRequest()->getCookies();
         $c = (isset($_REQUEST['c'])) ? $_REQUEST['c'] : array();
         if (isset($_POST['offset'])) $offset = $_POST['offset'];
@@ -192,7 +205,12 @@ class PurchasesController extends Controller {
         else $this->render('index', array('purchases' => $purchases, 'c' => $c, 'offset' => $offset, 'offsets' => $purchasesNum,));
     }
 
-    public function actionMy($offset = 0) {
+  /**
+   * Список закупок организатора
+   *
+   * @param int $offset
+   */
+  public function actionMy($offset = 0) {
         $c = (isset($_REQUEST['c'])) ? $_REQUEST['c'] : array();
         if (!isset($c['limit'])) $c['limit'] = 30;
 
@@ -267,7 +285,15 @@ class PurchasesController extends Controller {
       ));
     }
 
-    public function actionShow($id, $offset = 0, $reply = null) {
+  /**
+   * Просмотр закупки
+   *
+   * @param $id
+   * @param int $offset
+   * @param null $reply
+   * @throws CHttpException
+   */
+  public function actionShow($id, $offset = 0, $reply = null) {
       $purchase = Purchase::model()->with('city', 'author', 'category', 'ordersNum', 'ordersSum')->findByPk($id);
       if (isset($_POST['offset'])) $offset = $_POST['offset'];
 
@@ -326,6 +352,11 @@ class PurchasesController extends Controller {
       ));
     }
 
+  /**
+   * Подписаться на новости закупки
+   *
+   * @param $id
+   */
   public function actionSubscribe($id) {
     $result = array();
     $purchase = Purchase::model()->findByPk($id);
@@ -351,6 +382,11 @@ class PurchasesController extends Controller {
     exit;
   }
 
+  /**
+   * Рассказать друзьям про закупку
+   *
+   * @param $id
+   */
   public function actionShareToFriends($id) {
     $result = array();
     $purchase = Purchase::model()->findByPk($id);
@@ -371,7 +407,10 @@ class PurchasesController extends Controller {
     exit;
   }
 
-    public function actionCreate() {
+  /**
+   * Создать новую закупку
+   */
+  public function actionCreate() {
         $model = new Purchase('create');
 
         if(isset($_POST['Purchase']))
@@ -402,7 +441,13 @@ class PurchasesController extends Controller {
         else $this->render('create', array('model' => $model));
     }
 
-    public function actionUpdateState($id) {
+  /**
+   * Изменить статус закупки
+   *
+   * @param $id
+   * @throws CHttpException
+   */
+  public function actionUpdateState($id) {
       /** @var $model Purchase */
       $model = Purchase::model()->findByPk($id);
 
@@ -433,7 +478,13 @@ class PurchasesController extends Controller {
         throw new CHttpException(403, 'В доступе отказано');
     }
 
-    public function actionEdit($id) {
+  /**
+   * Редактирование закупки
+   *
+   * @param $id
+   * @throws CHttpException
+   */
+  public function actionEdit($id) {
         /** @var $model Purchase */
         $model = Purchase::model()->resetScope()->with('mod_request')->findByPk($id);
 
@@ -552,7 +603,14 @@ class PurchasesController extends Controller {
             throw new CHttpException(403, 'В доступе отказано');
     }
 
-    public function actionDelete($id) {
+  /**
+   * Удаление закупки
+   *
+   * @deprecated
+   * @param $id
+   * @throws CHttpException
+   */
+  public function actionDelete($id) {
         $purchase = Purchase::model()->findByPk($id);
 
         if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
@@ -571,7 +629,14 @@ class PurchasesController extends Controller {
             throw new CHttpException(403, 'В доступе отказано');
     }
 
-    public function actionRestore($id) {
+  /**
+   * Восстановление закупки
+   *
+   * @deprecated
+   * @param $id
+   * @throws CHttpException
+   */
+  public function actionRestore($id) {
         $purchase = Purchase::model()->resetScope()->findByPk($id);
 
         if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
@@ -587,7 +652,13 @@ class PurchasesController extends Controller {
             throw new CHttpException(403, 'В доступе отказано');
     }
 
-    public function actionOic($id) {
+  /**
+   * Места выдачи закупки
+   *
+   * @param $id
+   * @throws CHttpException
+   */
+  public function actionOic($id) {
         $purchase = Purchase::model()->with('oic')->findByPk($id);
 
         if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
@@ -638,7 +709,12 @@ class PurchasesController extends Controller {
             throw new CHttpException(403, 'В доступе отказано');
     }
 
-    public function actionUpdateFullstory() {
+  /**
+   * Обновить полное описание закупки
+   *
+   * @throws CHttpException
+   */
+  public function actionUpdateFullstory() {
         $id = intval($_POST['id']);
 
         $purchase = Purchase::model()->findByPk($id);
@@ -670,7 +746,13 @@ class PurchasesController extends Controller {
             throw new CHttpException(403, 'В доступе отказано');
     }
 
-    public function actionQuick($id) {
+  /**
+   * Быстрый заказ
+   *
+   * @param $id
+   * @throws CHttpException
+   */
+  public function actionQuick($id) {
       $purchase = Purchase::model()->findByPk($id);
       $good = new Good('quick');
       $order = new Order('quick');
@@ -753,7 +835,13 @@ class PurchasesController extends Controller {
       ));
     }
 
-    public function actionAddGood($id) {
+  /**
+   * Добавить один товар
+   *
+   * @param $id
+   * @throws CHttpException
+   */
+  public function actionAddGood($id) {
       /** @var $purchase Purchase */
         $purchase = Purchase::model()->findByPk($id);
 
@@ -861,6 +949,111 @@ class PurchasesController extends Controller {
       throw new CHttpException(403, 'В доступе отказано');
   }
 
+  public function actionAddFromAnother($id, $from_id = 0, $good_id = 0, $all = 1, $offset = 0) {
+    /** @var $purchase Purchase */
+    $purchase = Purchase::model()->findByPk($id);
+
+    if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
+      Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('purchase' => $purchase)))
+    {
+      if ($good_id) {
+        /** @var Good $good */
+        $good = Good::model()->findByPk($good_id);
+
+        $newgood = new Good();
+        $newgood->attributes = $_POST['Good'];
+        $newgood->purchase_id = $id;
+        $newgood->artikul = $good->artikul;
+        $newgood->currency = $good->currency;
+        $newgood->is_quick = $good->is_quick;
+        $newgood->is_range = $good->is_range;
+        $newgood->range = $good->range;
+
+        if ($newgood->save()) {
+          $newgood->copyFromAnother($good_id);
+        }
+        else
+          throw new CHttpException(500, 'Не удалось сохранить товар');
+      }
+
+      if ($from_id) {
+        $from = Purchase::model()->findByPk($from_id);
+
+        $criteria = new CDbCriteria();
+        $criteria->compare('purchase_id', $from_id);
+        $criteria->offset = $offset;
+
+        $model = Good::model();
+        if ($all == 1) $model->resetScope();
+
+        $goodsNum = $model->count($criteria);
+
+        $criteria->limit = Yii::app()->getModule('purchases')->goodsPerPage;
+        $goods = $model->findAll($criteria);
+      }
+      else {
+        $from = null;
+        $goods = array();
+        $goodsNum = 0;
+      }
+
+      if (Yii::app()->request->isAjaxRequest) {
+        if (isset($_POST['pages'])) {
+          $this->pageHtml = $this->renderPartial('_addgoodsfromanother', array(
+            'purchase' => $purchase,
+            'goods' => $goods,
+            'offset' => $offset,
+          ), true);
+        }
+        else $this->pageHtml = $this->renderPartial('addfromanother', array(
+          'from' => $from,
+          'from_id' => $from_id,
+          'purchase' => $purchase,
+          'goods' => $goods,
+          'goodsNum' => $goodsNum,
+          'all' => $all,
+          'offset' => $offset,
+        ), true);
+      }
+      else $this->render('addfromanother', array(
+        'from' => $from,
+        'from_id' => $from_id,
+        'purchase' => $purchase,
+        'goods' => $goods,
+        'goodsNum' => $goodsNum,
+        'all' => $all,
+        'offset' => $offset,
+      ));
+    }
+    else
+      throw new CHttpException(403, 'В доступе отказано');
+  }
+
+  /**
+   * Полное копирование закупки
+   *
+   * @param $id
+   * @param $from_id
+   */
+  public function actionCopyAA($id, $from_id) {
+    /** @var $purchase Purchase */
+    $purchase = Purchase::model()->findByPk($id);
+
+    if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
+      Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('purchase' => $purchase)))
+    {
+
+    }
+    else
+      throw new CHttpException(403, 'В доступе отказано');
+  }
+
+  /**
+   * Закупки пользователя
+   *
+   * @param $id
+   * @param int $offset
+   */
   public function actionUserList($id, $offset = 0) {
     $user = User::model()->with('profile')->findByPk($id);
     $section = (isset($_GET['section'])) ? $_GET['section'] : 'active';

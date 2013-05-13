@@ -25,6 +25,8 @@ return array(
     'Proceeding' => 'В обработке',
     'Refused' => 'Отказ',
     'Accepted' => 'Принят орг-ом',
+    'Range Accepted' => 'Принят орг-ом в ряд',
+    'Out of Stock' => 'Нет в наличии',
     'Awaiting' => 'Ожидание оплаты',
     'Paid' => 'Оплачен',
     'Wait For Deliver' => 'Ожидание выдачи',

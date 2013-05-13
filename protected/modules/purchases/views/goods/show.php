@@ -138,12 +138,10 @@ if ($good->oic) {
           <?php echo ActiveHtml::link('Информация о товаре на сайте поставщика', $good->url, array('target' => '_blank')) ?>
         </div>
         <?php endif; ?>
-      <?php if (Yii::app()->user->getId() == 1): ?>
       <div class="row purchase_links" style="margin-left: -4px">
         <a id="subscribe<?php echo $good->good_id ?>" onclick="Purchase.subscribeGood(<?php echo $good->good_id ?>)"><span class="icon-check"></span> <?php echo ($subscription) ? "Отписаться от новостей" : "Подписаться на новости" ?></a>
         <a onclick="Purchase.shareGoodToFriends(<?php echo $good->good_id ?>)"><span class="icon-comment"></span> Рассказать друзьям</a>
       </div>
-      <?php endif; ?>
     </div>
 </div>
 <div data-link="#tabs_content" class="tabs">

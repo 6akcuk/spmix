@@ -896,6 +896,7 @@ $.fn.activeTabs = function()
         var $this = $(this);
         $(this).children('a').click(function()
         {
+          if ($(this).hasClass('right')) return;
             var $link = $($this.attr('data-link'));
             $this.children('a').removeClass('selected');
             $link.children('div').hide();
@@ -913,9 +914,19 @@ $.fn.quickMenu = function()
     var $this = $(this);
     $(this).click(function()
     {
-      $this.next().show().css({
-        top: $this.position().top + $this.outerHeight(),
-        left: $this.position().left
+      var $nxt = $this.next(), top = 0, left = 0;
+
+      if ($nxt.hasClass('qmenu')) {
+        top = $this.position().top - 3;
+        left = $this.position().left - 7;
+      }
+      else {
+        top = $this.position().top + $this.outerHeight();
+        left = $this.position().left;
+      }
+      $nxt.show().css({
+        top: top,
+        left: left
       });
 
       setTimeout(function() {
@@ -1044,7 +1055,7 @@ function Box(opts, dark) {
       width: 410,
       height: 'auto',
       selfDestruct: true,
-      progress: false,
+      progress: true,
       hideButtons: false,
       hideOnBGClick: false,
       onShow: false,
@@ -1696,9 +1707,10 @@ var nav = {
                 nav.objLoc = nav.q2obj(q);
             }
           // paginator fix offset
+          // них не помню зачем ввел
             if (opts.search) {
               q = nav.revoke(q, 'pages=1');
-              q = nav.revoke(q, 'offset=x');
+              //q = nav.revoke(q, 'offset=x');
               nav.objLoc = nav.q2obj(q);
             }
             a[1] = q;

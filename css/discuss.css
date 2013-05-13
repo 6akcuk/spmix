@@ -11,6 +11,39 @@
   margin: 0px 10px;
 }
 
+#discuss_theme_menu {
+  position: absolute;
+  border: 1px solid #508033;
+  background: #fff;
+  z-index: 2000;
+}
+#discuss_theme_menu a {
+  display: block;
+  padding: 5px 7px;
+  color: #508033;
+  border: 0px;
+  border-radius: 0px;
+  margin: 0px;
+  white-space: nowrap;
+}
+#discuss_theme_menu a:hover {
+  background-color: #508033;
+  color: #fff;
+}
+
+.dce_label {
+  color: #777;
+  width: 120px;
+  padding: 4px 10px 0px;
+}
+#dce_title {
+  width: 210px;
+}
+
+#dc_msg {
+  margin: 20px 20px 0px;
+}
+
 /* Forums */
 .discuss_forum_header {
   color: #777;

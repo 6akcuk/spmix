@@ -63,7 +63,7 @@ switch ($hoop_type) {
           <div id="replies<?php echo $hoop_type ?>_<?php echo $hoop_id ?>">
             <?php if ($offsets > 3): ?>
               <a class="wr_header" onclick="Comment.showMore(<?php echo $hoop_id ?>, '<?php echo $hoop_type ?>', <?php echo $comments[0]->comment_id ?>, true)">
-                <div class="wrh_text" id="wrh_text<?php echo $hoop_type ?>_<?php echo $hoop_id ?>">Показать все <?php echo Yii::t('app', '{n} комментарий|{n} комментария|{n} комментариев', $offsets) ?></div>
+                <div class="wrh_text" id="wrh_text<?php echo $hoop_type ?>_<?php echo $hoop_id ?>"><?php if ($offsets > 100): ?>Показать последние 100 комментариев из <?php echo $offsets ?><?php else: ?>Показать все <?php echo Yii::t('app', '{n} комментарий|{n} комментария|{n} комментариев', $offsets) ?><?php endif; ?></div>
                 <div class="wrh_prg" id="wrh_prg<?php echo $hoop_type ?>_<?php echo $hoop_id ?>"><img src="/images/upload.gif" /></div>
               </a>
             <?php endif; ?>
