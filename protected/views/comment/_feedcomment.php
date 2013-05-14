@@ -40,11 +40,11 @@ $el_id = $feed->content->comment_id;
                 <?php
                 if ($feed->content->hoop_type == 'purchase'):
                   $name = $feed->content->purchase->name;
-                  $name = (mb_strlen($name) > 70) ? mb_substr($name, 0, 70) .'..' : $name;
+                  $name = (mb_strlen($name) > 70) ? mb_substr($name, 0, 70, 'utf-8') .'..' : $name;
                   echo ActiveHtml::link($name, $comment_url);
                 elseif ($feed->content->hoop_type == 'good'):
                   $name = $feed->content->good->name;
-                  $name = (mb_strlen($name) > 70) ? mb_substr($name, 0, 70) .'..' : $name;
+                  $name = (mb_strlen($name) > 70) ? mb_substr($name, 0, 70, 'utf-8') .'..' : $name;
                   echo ActiveHtml::link($name, $comment_url);
                 endif;
                 ?>

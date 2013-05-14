@@ -22,10 +22,10 @@ class DefaultController extends Controller
       $this->defaultAction = $_GET['section'];
   }
 
-  public function actionNews($offset = 0)
+  public function actionNews($offset = 0, $as = 0)
 	{
-    $feeds = Feed::getFeeds(Yii::app()->user->getId(), $offset);
-    $feedsNum = Feed::countFeeds(Yii::app()->user->getId());
+    $feeds = Feed::getFeeds(($as) ?: Yii::app()->user->getId(), $offset);
+    $feedsNum = Feed::countFeeds(($as) ?: Yii::app()->user->getId());
 
     if (Yii::app()->request->isAjaxRequest) {
       if (isset($_POST['pages'])) {
@@ -45,9 +45,9 @@ class DefaultController extends Controller
     ));
 	}
 
-  public function actionNotifications($offset = 0) {
-    $feeds = Feed::getAnswerFeeds(Yii::app()->user->getId(), $offset);
-    $feedsNum = Feed::countAnswerFeeds(Yii::app()->user->getId());
+  public function actionNotifications($offset = 0, $as = 0) {
+    $feeds = Feed::getAnswerFeeds(($as && Yii::app()->user->getId() == 1) ? $as : Yii::app()->user->getId(), $offset);
+    $feedsNum = Feed::countAnswerFeeds(($as && Yii::app()->user->getId() == 1) ? $as : Yii::app()->user->getId());
 
     if (Yii::app()->request->isAjaxRequest) {
       if (isset($_POST['pages'])) {

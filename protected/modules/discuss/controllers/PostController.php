@@ -132,7 +132,7 @@ class PostController extends Controller
         $posts = DiscussPost::model()->findAll($criteria);
 
         echo json_encode(array(
-          'html' => $this->renderPartial('application.modules.discuss.views.post._feedlikereplies', array('posts' => $posts), true),
+          'html' => $this->renderPartial('application.modules.discuss.views.post._feedlikereplies', array('theme' => $theme, 'posts' => $posts), true),
           'num' => 'Показать все '. Yii::t('app', '{n} комментарий|{n} комментария|{n} комментариев', $postsNum),
           'last_id' => $posts[sizeof($posts) - 1]->post_id,
         ));
@@ -246,6 +246,8 @@ class PostController extends Controller
   }
 
   public function actionMore($forum_id, $theme_id) {
+    $theme = DiscussTheme::model()->findByPk($theme_id);
+
     $criteria = new CDbCriteria();
     $criteria->compare('forum_id', $forum_id);
     $criteria->compare('theme_id', $theme_id);
@@ -256,7 +258,7 @@ class PostController extends Controller
 
     $posts = DiscussPost::model()->findAll($criteria);
 
-    echo json_encode(array('html' => $this->renderPartial('_feedlikereplies', array('posts' => $posts), true)));
+    echo json_encode(array('html' => $this->renderPartial('_feedlikereplies', array('theme' => $theme, 'posts' => $posts), true)));
     exit;
   }
 }

@@ -16,19 +16,21 @@ $cookies = $request->getCookies();
     <title><?php echo CHtml::encode($this->pageTitle); ?></title>
     <meta charset="utf-8">
     <script type="text/javascript">
-        var A = {
-            uuid: 0,
-            user_id: <?php echo Yii::app()->user->getId() ?>,
-            navPrefix: '/',
-            host: location.host
-        };
-        // Cross-domain fix
-        document.domain = A.host.match(/[a-zA-Z]+\.[a-zA-Z]+\.?$/)[0];
+      var A = {
+          uuid: 0,
+          user_id: <?php echo Yii::app()->user->getId() ?>,
+          navPrefix: '/',
+          host: location.host
+      };
+      // Cross-domain fix
+      document.domain = A.host.match(/[a-zA-Z]+\.[a-zA-Z]+\.?$/)[0];
 
-        var hshtest = (location.toString().match(/#(.*)/) || {})[1] || '';
-        if (hshtest.length && hshtest.substr(0, 1) == A.navPrefix) {
-            location.replace(location.protocol + '//' + location.host + '/' + hshtest.replace(/^(\/|!)/, ''));
-        }
+      var hshtest = (location.toString().match(/#(.*)/) || {})[1] || '';
+      if (hshtest.length && hshtest.substr(0, 1) == A.navPrefix) {
+          location.replace(location.protocol + '//' + location.host + '/' + hshtest.replace(/^(\/|!)/, ''));
+      }
+
+      Upload.assign({server_id: 1, action: 'http://cs1.spmix.ru/upload.php'});
     </script>
   <script type="text/javascript" src="http://code.jquery.com/ui/1.10.1/jquery-ui.js"></script>
 </head>
@@ -124,8 +126,5 @@ $cookies = $request->getCookies();
   </div>
 </div>
 </body>
-<script type="text/javascript">
-Upload.assign({server_id: 1, action: 'http://cs1.spmix.ru/upload.php'});
-</script>
 </body>
 </html>

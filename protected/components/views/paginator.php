@@ -6,7 +6,11 @@ $maxpage = ($page < $pages - 2) ? $page + 2 : $pages;
 $prevoffset = ($page > 1) ? $this->offset - $this->delta : 0;
 $nextoffset = ($page < $maxpage) ? $this->offset + $this->delta : $this->offsets - $this->delta;
 
+if (!$this->url)
+  $this->url = $_SERVER['REQUEST_URI'];
+
 $delim = (stristr($this->url, '?')) ? '&' : '?';
+
 ?>
 <div class="pagination clearfix">
 <?php if ($pages > 1): ?>

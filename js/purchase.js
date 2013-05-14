@@ -380,7 +380,8 @@ var Purchase = {
     $('#purchase_aa_copy_btn').hide();
 
     ajax.post('/purchase'+ target_id +'/copyaa?from_id='+ from_id, {type: (A.aaCopyType) ? 1 : 0}, function(r) {
-
+      $('#purchase_aa_copy_progress').hide();
+      boxPopup(r.msg);
     }, function() {
       $('#purchase_aa_copy_progress').hide();
       $('#purchase_aa_copy_btn').show();

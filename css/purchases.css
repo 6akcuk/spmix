@@ -631,7 +631,7 @@ table.ordertable td {
 }
 .good_many .photo {
   position: absolute;
-  top: 0px;
+  top: 5px;
   width: 100px;
 }
 .good_many .info {

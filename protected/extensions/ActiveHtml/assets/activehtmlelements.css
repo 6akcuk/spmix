@@ -651,3 +651,66 @@ div.olcm li a:hover {
     margin-right: 31px;
     font-weight: bold;
 }
+
+/* Addon as Multiple File Upload */
+.fileupload.multiple {
+  display: block;
+}
+.fileupload.multiple .attach {
+  display: block;
+  padding: 20px 0px;
+  text-align: center;
+  font-size: 18px;
+}
+
+#upload-preview {
+}
+#upload-preview .filepreview {
+  display: block;
+  padding: 10px;
+  background: #f2f2f2;
+  cursor: pointer;
+}
+.filepreview .filename {
+  overflow: hidden;
+  width: 200px;
+}
+.filepreview .filestate {
+  display: none;
+  color: #999;
+}
+.filepreview .fileprogress {
+  display: none;
+  position: relative;
+  min-width: 0px;
+  width: 100px;
+  height: 10px;
+  background: #e0e0e0;
+  margin-top: 5px;
+  margin-left: 10px;
+}
+.filepreview .fileprogress .fileprogressbg {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  height: 10px;
+  background: #404040;
+}
+.filepreview .filenumprogress {
+  display: none;
+  font-size: 11px;
+  padding-top: 3px;
+  margin-left: 10px;
+}
+#upload-preview .filepreview:hover {
+  background: #dae1e8;
+}
+.filepreview:hover .filestate {
+  display: block;
+}
+.filepreview .filesuccess {
+  color: #005b01;
+}
+.filepreview .fileerror {
+  color: #cc0000;
+}

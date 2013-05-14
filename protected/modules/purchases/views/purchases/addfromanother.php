@@ -43,7 +43,6 @@ $delta = Yii::app()->getModule('purchases')->goodsPerPage;
 <div class="summary_wrap clearfix">
   <div class="right">
     <?php $this->widget('Paginator', array(
-      'url' => '/purchase'. $purchase->purchase_id .'/addfromanother?from_id='. $from_id,
       'offset' => $offset,
       'offsets' => $goodsNum,
       'delta' => $delta,

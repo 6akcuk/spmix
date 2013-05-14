@@ -963,6 +963,8 @@ class PurchasesController extends Controller {
         $newgood = new Good();
         $newgood->attributes = $_POST['Good'];
         $newgood->purchase_id = $id;
+        $newgood->url = $good->url;
+        $newgood->description = $good->description;
         $newgood->artikul = $good->artikul;
         $newgood->currency = $good->currency;
         $newgood->is_quick = $good->is_quick;
@@ -1042,7 +1044,37 @@ class PurchasesController extends Controller {
     if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
       Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('purchase' => $purchase)))
     {
+      $criteria = new CDbCriteria();
+      $criteria->compare('purchase_id', $from_id);
 
+      $model = Good::model();
+      if ($_POST['type'] == 0) $model->resetScope();
+
+      $items = 0;
+      $goods = $model->findAll($criteria);
+      foreach ($goods as $good) {
+        /** @var Good $good */
+        $newgood = new Good();
+        $newgood->name = $good->name;
+        $newgood->purchase_id = $id;
+        $newgood->artikul = $good->artikul;
+        $newgood->price = $good->price;
+        $newgood->delivery = $good->delivery;
+        $newgood->url = $good->url;
+        $newgood->description = $good->description;
+        $newgood->currency = $good->currency;
+        $newgood->is_quick = $good->is_quick;
+        $newgood->is_range = $good->is_range;
+        $newgood->range = $good->range;
+
+        if ($newgood->save()) {
+          $newgood->copyFromAnother($good->good_id);
+          $items++;
+        }
+      }
+
+      echo json_encode(array('msg' => Yii::t('app', 'Скопирован {n} товар|Скопировано {n} товара|Скопировано {n} товаров', $items) .' из '. sizeof($goods)));
+      exit;
     }
     else
       throw new CHttpException(403, 'В доступе отказано');

@@ -91,7 +91,7 @@ class Order extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
       'customer' => array(self::BELONGS_TO, 'User', 'customer_id', 'with' => 'profile'),
-      'good' => array(self::BELONGS_TO, 'Good', 'good_id', 'condition' => 'good_delete IS NULL'),
+      'good' => array(self::BELONGS_TO, 'Good', 'good_id', 'condition' => 'good_hidden IS NULL'),
       'purchase' => array(self::BELONGS_TO, 'Purchase', 'purchase_id'),
       'payment' => array(self::HAS_ONE, 'OrderPayment', 'order_id'),
       'history' => array(self::HAS_MANY, 'OrderHistory', 'order_id', 'with' => 'author'),

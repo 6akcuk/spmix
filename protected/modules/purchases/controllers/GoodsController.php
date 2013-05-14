@@ -382,10 +382,10 @@ class GoodsController extends Controller {
         {
             $good = Good::model()->findByPk($good_id);
 
-            $good->good_delete = new CDbExpression('NOW()');
-            $good->save(true, array('good_delete'));
+            $good->good_hidden = new CDbExpression('NOW()');
+            $good->save(true, array('good_hidden'));
 
-            echo json_encode(array('html' => 'Товар удален. <a onclick="Purchase.restoregood('. $purchase_id .', '. $good_id .')">Восстановить</a>'));
+            echo json_encode(array('html' => 'Товар скрыт. <a onclick="Purchase.restoregood('. $purchase_id .', '. $good_id .')">Открыть</a>'));
             exit;
         }
         else
@@ -400,8 +400,8 @@ class GoodsController extends Controller {
         {
             $good = Good::model()->resetScope()->findByPk($good_id);
 
-            $good->good_delete = NULL;
-            if ($good->save(true, array('good_delete')))
+            $good->good_hidden = NULL;
+            if ($good->save(true, array('good_hidden')))
                 echo json_encode(array('success' => true));
             else
                 echo json_encode(array('success' => false, 'html' => ''));

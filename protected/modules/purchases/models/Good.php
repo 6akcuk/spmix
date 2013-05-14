@@ -16,7 +16,7 @@
  * @property string $artikul
  * @property string $url
  * @property string $range
- * @property string $good_delete
+ * @property string $good_hidden
  *
  * @property Purchase $purchase
  * @property array|GoodSize $sizes
@@ -78,7 +78,7 @@ class Good extends CActiveRecord
 
     public function defaultScope() {
         return array(
-            'condition' => 'good_delete IS NULL',
+            'condition' => 'good_hidden IS NULL',
         );
     }
 

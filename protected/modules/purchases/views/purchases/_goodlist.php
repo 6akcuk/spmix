@@ -42,7 +42,7 @@
                         <div class="icon-pencil icon-white" onclick="return Purchase.goEditGood(this, '<?php echo $good->purchase_id ?>_<?php echo $good->good_id ?>', event)" onmouseover="Purchase.overIcon(this)" onmouseout="Purchase.outIcon(this)" ></div>
                     </div>
                     <div class="left good_row_icon">
-                        <div class="icon-remove icon-white" onclick="return Purchase.deletegood(this, '<?php echo $good->purchase_id ?>_<?php echo $good->good_id ?>', event)" onmouseover="Purchase.overIcon(this)" onmouseout="Purchase.outIcon(this)" ></div>
+                        <div class="icon-eye-close icon-white" onclick="return Purchase.deletegood(this, '<?php echo $good->purchase_id ?>_<?php echo $good->good_id ?>', event)" onmouseover="Purchase.overIcon(this)" onmouseout="Purchase.outIcon(this)" ></div>
                     </div>
                 </div>
             </div>

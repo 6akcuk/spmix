@@ -52,8 +52,10 @@ WHERE twin.member_id = 111 AND t.member_id = 1 AND dialog.type = 0");
     var_dump($row);
   }
 
-  public function actionBstn() {
-    echo CConsoleApplication::commandPath;
+  public function _actionBstn() {
+    $goods = Good::model()->findAll(array('limit' => 500));
+
+    var_dump($goods);
   }
 
   public function actionViewMailTpl($template) {
@@ -64,7 +66,7 @@ WHERE twin.member_id = 111 AND t.member_id = 1 AND dialog.type = 0");
   /**
    * Подписать всех на их города, закупки и друзей/подписчиков
    */
-  public function actionPatch7() {
+  public function _actionPatch7() {
     $c = 0;
 
     /*$profiles = Profile::model()->findAll();

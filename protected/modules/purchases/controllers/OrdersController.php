@@ -319,9 +319,9 @@ class OrdersController extends Controller {
                     $order->color, ActiveHtml::date($order->creation_date, true, true),
                     (($order->anonymous) ? 'Да' : 'Нет'), $order->customer->login,
                     $order->customer->profile->firstname, $order->customer->profile->lastname,
-                    $order->customer->profile->city->name, $order->good->price, $purchase->org_tax,
-                    $purchase->getPriceWithTax($order->good->price), $order->amount, ($order->good->price * $order->amount),
-                    $purchase->getPriceWithTax($order->good->price * $order->amount),
+                    $order->customer->profile->city->name, $order->price, $purchase->org_tax,
+                    $purchase->getPriceWithTax($order->price), $order->amount, ($order->price * $order->amount),
+                    $purchase->getPriceWithTax($order->price * $order->amount),
                     $order->payed, $order->custom_oic->oic_name .' '. $order->custom_oic->oic_price,
                     $order->org_comment, $order->client_comment, $order->customer->profile->phone, 0, '',
                     $order->good->url, $order->customer->profile->phone, Yii::t('purchase', $order->status)

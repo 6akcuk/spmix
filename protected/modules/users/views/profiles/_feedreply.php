@@ -26,7 +26,7 @@
                 в комментариях к записи
                 <?php
                 if ($feed->content->replyPost->post):
-                  echo ActiveHtml::link(mb_substr($feed->content->replyPost->post, 0, 40) .'..', '/wall'. $feed->content->wall_id .'_'. $feed->content->replyPost->post_id);
+                  echo ActiveHtml::link(mb_substr($feed->content->replyPost->post, 0, 40, 'utf-8') .'..', '/wall'. $feed->content->wall_id .'_'. $feed->content->replyPost->post_id);
                 else:
                   echo 'от '. ActiveHtml::link(ActiveHtml::date($feed->content->replyPost->add_date, true, true), '/wall'. $feed->content->wall_id .'_'. $feed->content->replyPost->post_id);
                 endif;
