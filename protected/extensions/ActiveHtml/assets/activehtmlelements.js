@@ -1852,7 +1852,10 @@ var nav = {
                   box.show();
                 }
 
-                $('#content').trigger('contentChanged');
+              // ScrollFix Clear
+              ScrollFix.removeAll();
+
+              $('#content').trigger('contentChanged');
             });
             nav.request.fail(function(xhr, textStatus, errorThrown) {
               try {
@@ -2087,6 +2090,7 @@ $().ready(function() {
     WideDropdown.setup();
 
   $('[rel="menu"]').quickMenu();
+  $('div[rel="scrollfix"]').scrollfix();
 
     // content updates with ajax
     $('#content').on('contentChanged', function(ev, opts) {
@@ -2108,16 +2112,17 @@ $().ready(function() {
         WideDropdown.setup();
 
       $('[rel="menu"]').quickMenu();
+      $('div[rel="scrollfix"]').scrollfix();
 
-        $(window).resize();
-        if (!$('body').hasClass('im_fixed')) {
-          if (A.pageScroll) {
-            A.pageScroll = false;
-          }
-          else if (!opts || !opts.noscroll) $(window).scrollTop(0);
+      $(window).resize();
+      if (!$('body').hasClass('im_fixed')) {
+        if (A.pageScroll) {
+          A.pageScroll = false;
         }
+        else if (!opts || !opts.noscroll) $(window).scrollTop(0);
+      }
 
-        cur = {};
+      cur = {};
     });
 
   $(window).resize();

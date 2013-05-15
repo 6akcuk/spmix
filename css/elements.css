@@ -339,3 +339,75 @@ table.data th.right, table.data td.right {
     display: block;
     padding: 5px 10px
 }
+
+/* Photos */
+.photos_upload_area_wrap {
+  position: relative;
+}
+
+#photos_add_bar {
+  width: 750px;
+  z-index: 200;
+  top: 0px;
+}
+.photos_add_bar_shadow {
+  position: absolute;
+  width: 750px;
+  height: 3px;
+  z-index: 100;
+  background: #555;
+  opacity: 0.12;
+  filter: alpha(opacity=12);
+  bottom: 0px;
+  display: none;
+}
+#photos_add_bar.fixed .photos_add_bar_shadow {
+  display: block;
+}
+#photos_add_bar_progress {
+  display: none;
+  position: absolute;
+  padding: 10px 0px;
+  width: 750px;
+  height: 44px;
+  text-align: center;
+}
+#photos_add_p_line {
+  background: #fff;
+  border: 1px solid #c8d3dd;
+  height: 11px;
+  width: 175px;
+  margin-left: 285px;
+  margin-top: 8px;
+}
+#photos_add_p_inner {
+  position: absolute;
+  border: 1px solid #577799;
+  height: 11px;
+  width: 0px;
+  margin: -1px 0px 0px -1px;
+  background: url('/images/photos_add_progress.gif') 0px 0px;
+}
+#photos_add_p_text {
+  color: #798999;
+  padding-top: 8px;
+}
+
+/* Upload */
+
+
+.swfupload_wrap {
+  position: relative;
+}
+.swfupload {
+  position: absolute;
+  z-index: 1;
+}
+
+.upload_field {
+  background: #e9edf1;
+  color: #777;
+  font-size: 13px;
+  padding: 20px 0px;
+  text-align: center;
+}

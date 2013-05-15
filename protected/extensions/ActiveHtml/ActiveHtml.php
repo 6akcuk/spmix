@@ -12,12 +12,16 @@ class ActiveHtml extends CHtml {
     static $uploadId = 0;
 
     public static function publishAssets() {
-        if (!self::$assetPublished) {
-            $path = Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('ext.ActiveHtml.assets'), false, -1, true);
-            Yii::app()->getClientScript()->registerScriptFile($path .'/activehtmlelements.js', CClientScript::POS_HEAD, 'after jquery-');
-            Yii::app()->getClientScript()->registerCssFile($path .'/activehtmlelements.css');
-            ActiveHtml::$assetPublished = true;
-        }
+      if (!self::$assetPublished) {
+        $path = Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('ext.ActiveHtml.assets'), false, -1, true);
+        Yii::app()->getClientScript()->registerScriptFile($path .'/activehtmlelements.js', CClientScript::POS_HEAD, 'after jquery-');
+        Yii::app()->getClientScript()->registerCssFile($path .'/activehtmlelements.css');
+
+        // Scroll Fix
+        Yii::app()->getClientScript()->registerScriptFile($path .'/scrollfix.js', CClientScript::POS_HEAD, 'before activehtmlelements, after jquery-');
+
+        ActiveHtml::$assetPublished = true;
+      }
     }
 
     public static function addClass($class, $htmlOptions = array()) {
