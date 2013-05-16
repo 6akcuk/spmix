@@ -87,10 +87,32 @@ $cookies = $request->getCookies();
                 <?php if (Yii::app()->user->checkAccess('purchases.purchases.create')): ?>
                   <li>
                     <a rel="menu">Организатор</a>
-                    <div id="org_menu" style="display: none">
-                      <?php echo ActiveHtml::link('Создать закупку', '/purchases/create') ?>
-                      <?php echo ActiveHtml::link('Мои закупки', '/purchases/my') ?>
-                      <?php echo ActiveHtml::link('Поступившая оплата', '/orders/orgPayments') ?>
+                    <div class="dd_menu dd_menu_act">
+                      <div class="dd_menu_body">
+                        <table>
+                          <tr>
+                            <td class="dd_menu_shad_l">
+                              <div></div>
+                            </td>
+                            <td>
+                              <div class="dd_menu_shad_t2"></div>
+                              <div class="dd_menu_shad_t"></div>
+                              <div class="dd_menu_rows">
+                                <div class="dd_menu_rows2">
+                                  <?php echo ActiveHtml::link('Создать закупку', '/purchases/create') ?>
+                                  <?php echo ActiveHtml::link('Мои закупки', '/purchases/my') ?>
+                                  <?php echo ActiveHtml::link('Поступившая оплата', '/orders/orgPayments') ?>
+                                </div>
+                              </div>
+                              <div class="dd_menu_shad_b"></div>
+                              <div class="dd_menu_shad_b2"></div>
+                            </td>
+                            <td class="dd_menu_shad_r">
+                              <div></div>
+                            </td>
+                          </tr>
+                        </table>
+                      </div>
                     </div>
                   </li>
                 <?php endif; ?>

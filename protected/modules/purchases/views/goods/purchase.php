@@ -18,18 +18,43 @@ $this->pageTitle = Yii::app()->name .' - Товары к закупке #'. $pur
   Товары к закупке #<?php echo $purchase->purchase_id ?>
 </div>
 
-<div class="goods_purchases">
 <h1>
   Товары к закупке #<?php echo $purchase->purchase_id ?> "<?php echo $purchase->name ?>"
   <div class="right">
-    <?php echo ActiveHtml::link('Добавить товар', '/purchase'. $purchase->purchase_id .'/addgood', array('class' => 'button')) ?>
-  <?php if (Yii::app()->user->getId() == 1): ?>
-    <?php echo ActiveHtml::link('Добавить несколько товаров', '/purchase'. $purchase->purchase_id .'/addmany', array('class' => 'button')) ?>
-    <?php echo ActiveHtml::link('Добавить из другой', '/purchase'. $purchase->purchase_id .'/addfromanother', array('class' => 'button')) ?>
-  <?php endif; ?>
+    <div class="button_submit button_menu">
+      <button rel="menu">Добавить товар</button>
+      <div class="dd_menu dd_menu_act">
+        <div class="dd_menu_body">
+          <table>
+            <tr>
+              <td class="dd_menu_shad_l">
+                <div></div>
+              </td>
+              <td>
+                <div class="dd_menu_shad_t2"></div>
+                <div class="dd_menu_shad_t"></div>
+                <div class="dd_menu_rows">
+                  <div class="dd_menu_rows2">
+                    <?php echo ActiveHtml::link('Добавить один товар', '/purchase'. $purchase->purchase_id .'/addgood') ?>
+                    <?php echo ActiveHtml::link('Добавить несколько товаров', '/purchase'. $purchase->purchase_id .'/addmany') ?>
+                    <?php echo ActiveHtml::link('Добавить из другой закупки', '/purchase'. $purchase->purchase_id .'/addfromanother') ?>
+                  </div>
+                </div>
+                <div class="dd_menu_shad_b"></div>
+                <div class="dd_menu_shad_b2"></div>
+              </td>
+              <td class="dd_menu_shad_r">
+                <div></div>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
   </div>
 </h1>
 
+<div class="goods_purchases">
 <div class="clearfix">
   <div class="left sortlimit">
     Выводить по:

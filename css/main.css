@@ -136,30 +136,32 @@ table td {
 }
 
 h1, h2, h3, h4, h5, h6 {
-    margin: 0 0 10px;
-    color: #456;
-    font-weight: 700;
-    line-height: 1.2em
+  margin: 0 0 10px;
+  color: #456;
+  font-weight: 700;
+  line-height: 1.2em
 }
 
 h1 {
-    font-size: 20px
+  font-size: 14px;
+  padding: 0px 0px 3px;
+  border-bottom: 1px solid #dae1e8;
 }
 
 h2 {
-    font-size: 24px
+    font-size: 13px
 }
 
 h3 {
-    font-size: 18px
+    font-size: 12px
 }
 
 h4 {
-    font-size: 16px
+    font-size: 12px
 }
 
 h5 {
-    font-size: 14px
+    font-size: 12px
 }
 
 h6 {
@@ -528,16 +530,16 @@ div.progress {
     background: #fff;
     padding: 30px 0px
 }
-#edge_content h1, #content h1 {
-    padding: 0px 0 10px;
-    font-weight: normal;
-    color: #33454e;
-    border-bottom: 3px solid #ededf0
+#edge_content h1 {
+  padding: 0px 0 10px;
+  font-weight: normal;
+  color: #33454e;
+  border-bottom: 3px solid #ededf0
 }
 #edge_footer {
-    background: #33454e;
-    padding: 30px 0 10px;
-    border-top: 8px solid #95b84d;
+  background: #33454e;
+  padding: 30px 0 10px;
+  border-top: 8px solid #95b84d;
 }
 
 #legal {
@@ -795,16 +797,15 @@ div.ls_columns div.column.options div {
 
 }
 
-.main_a li a  {
+.main_a ul li > a  {
     padding: 8px 20px 8px 20px;
     display: block;
     color: #fff;
     }
 
-.main_a li a:hover  {
+.main_a ul li > a:hover  {
     background: #00641c;
     color: #fff;
-
 }
 
 .mainorders {
@@ -1009,6 +1010,99 @@ div.ls_columns div.column.options div {
   border: 1px solid #d4bc4c;
   background: #f9f6e7;
   line-height: 1.54em;
+}
+
+/* DD Menu */
+.dd_menu {
+  display: none;
+  position: absolute;
+  z-index: 1500;
+  font-size: 11px;
+  font-weight: normal;
+  line-height: 13px;
+  text-align: left;
+}
+.dd_menu table td {
+  padding: 0px;
+  border: 0px;
+}
+.dd_menu_header {
+  border: 1px solid #3B6798;
+  position: absolute;
+  z-index: 1500;
+  cursor: pointer;
+}
+.dd_menu_header div {
+  padding: 2px 5px;
+  color: #fff;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #7E9CBC #5C82AB #6D8FB3;
+  white-space: nowrap;
+  background: #6D8FB3 url(/images/flydead.gif) no-repeat right -15px;
+}
+.dd_menu_act .dd_menu_header {
+  border-radius: 2px 2px 0px 0px;
+}
+.dd_menu_act .dd_menu_header div {
+  height: 11px;
+  border-color: #6D8FB3;
+  line-height: 9px;
+  background-image: none;
+  text-align: center;
+  padding: 5px 14px;
+  margin: 0px;
+}
+.dd_menu_body {
+  position: absolute;
+  z-index: 1499;
+  margin-left: -1px;
+}
+.dd_menu_rows {
+  border: 1px solid #96AABE;
+  position: relative;
+  margin: 0px;
+  background: #fff;
+  z-index: 1499;
+}
+.dd_menu_rows a {
+  display: block;
+  background: #fff;
+  line-height: 1.09em;
+  height: 18px;
+  padding: 4px 6px 0px 6px;
+  white-space: nowrap;
+  cursor: pointer;
+  background-repeat: no-repeat;
+}
+.dd_menu_rows a:hover {
+  background-color: #dbe6d8;
+  text-decoration: none;
+  color: #123;
+}
+.dd_menu_shad_l, .dd_menu_shad_r {
+  background: #000;
+  overflow: hidden;
+  width: 1px;
+  opacity: 0.06;
+  filter: alpha(opacity=6);
+}
+.dd_menu_shad_l div, .dd_menu_shad_r div {
+  width: 1px;
+}
+.dd_menu_shad_b, .dd_menu_shad_b2 {
+  background: #000;
+  height: 2px;
+  margin-top: -1px;
+  opacity: 0.07;
+  filter: alpha(opacity=7);
+  overflow: hidden;
+  position: relative;
+  z-index: 148;
+}
+.dd_menu_shad_b2 {
+  opacity: 0.05;
+  filter: alpha(opacity=5);
 }
 
 /* Quick Menu */

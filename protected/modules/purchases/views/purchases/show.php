@@ -15,16 +15,65 @@ $delta = Yii::app()->controller->module->goodsPerPage;
 
 <h1>
   <?php echo $purchase->name ?>
-  <?php if (Yii::app()->user->checkAccess('purchases.purchases.edit') &&
-    (Yii::app()->user->checkAccess('purchases.purchases.editSuper') ||
-      Yii::app()->user->checkAccess('purchases.purchases.editOwn', array('purchase' => $purchase)))): ?>
-    <?php echo ActiveHtml::link('Редактировать', '/purchase'. $purchase->purchase_id .'/edit', array('class' => 'button right')) ?>
-  <?php endif; ?>
 </h1>
 <div class="purchase_table clearfix">
     <div class="clearfix">
-        <div class="left photo">
+      <div class="left photo">
             <?php echo ActiveHtml::showUploadImage($purchase->image, 'a') ?>
+      </div>
+      <div class="left">
+        <div class="purchase_control clearfix">
+          <?php if (Yii::app()->user->checkAccess('purchases.purchases.edit') &&
+            (Yii::app()->user->checkAccess('purchases.purchases.editSuper') ||
+              Yii::app()->user->checkAccess('purchases.purchases.editOwn', array('purchase' => $purchase)))): ?>
+          <div class="button_submit">
+            <button onclick="return nav.go('/purchase<?php echo $purchase->purchase_id ?>/edit', event)">Редактировать</button>
+          </div>
+          <?php endif; ?>
+          <?php if (Yii::app()->user->checkAccess('purchases.purchases.addGoodSuper') ||
+            Yii::app()->user->checkAccess('purchases.purchases.addGoodOwn', array('purchase' => $purchase)) ||
+            Yii::app()->user->checkAccess('purchases.purchases.addGoodAccepted', array('purchase' => $purchase))): ?>
+          <div class="button_submit button_menu">
+            <button rel="menu">Добавить товар</button>
+            <div class="dd_menu dd_menu_act">
+              <div class="dd_menu_body">
+                <table>
+                  <tr>
+                    <td class="dd_menu_shad_l">
+                      <div></div>
+                    </td>
+                    <td>
+                      <div class="dd_menu_shad_t2"></div>
+                      <div class="dd_menu_shad_t"></div>
+                      <div class="dd_menu_rows">
+                        <div class="dd_menu_rows2">
+                        <?php if (Yii::app()->user->checkAccess('purchases.purchases.addGoodSuper') ||
+                          Yii::app()->user->checkAccess('purchases.purchases.addGoodOwn', array('purchase' => $purchase)) ||
+                          Yii::app()->user->checkAccess('purchases.purchases.addGoodAccepted', array('purchase' => $purchase))): ?>
+                          <?php echo ActiveHtml::link('Добавить один товар', '/purchase'. $purchase->purchase_id .'/addgood') ?>
+                        <?php endif; ?>
+                        <?php if (Yii::app()->user->checkAccess('purchases.purchases.addManySuper') ||
+                          Yii::app()->user->checkAccess('purchases.purchases.addManyOwn', array('purchase' => $purchase))): ?>
+                          <?php echo ActiveHtml::link('Добавить несколько товаров', '/purchase'. $purchase->purchase_id .'/addmany') ?>
+                        <?php endif; ?>
+                        <?php if (Yii::app()->user->checkAccess('purchases.purchases.addFromAnotherSuper') ||
+                          Yii::app()->user->checkAccess('purchases.purchases.addFromAnotherOwn', array('purchase' => $purchase))): ?>
+                          <?php echo ActiveHtml::link('Добавить из другой закупки', '/purchase'. $purchase->purchase_id .'/addfromanother') ?>
+                        <?php endif; ?>
+                        </div>
+                      </div>
+                      <div class="dd_menu_shad_b"></div>
+                      <div class="dd_menu_shad_b2"></div>
+                    </td>
+                    <td class="dd_menu_shad_r">
+                      <div></div>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+          <?php endif; ?>
         </div>
         <div class="left td">
             <div class="clearfix">
@@ -98,6 +147,7 @@ $delta = Yii::app()->controller->module->goodsPerPage;
                 <div class="left labeled"><?php echo $purchase->author->profile->positive_rep ?> | <?php echo $purchase->author->profile->negative_rep ?></div>
             </div>
         </div>
+      </div>
     </div>
     <div class="left">
         <?php if ($purchase->getMinimalPercentage() > 0): ?>
@@ -156,19 +206,20 @@ $delta = Yii::app()->controller->module->goodsPerPage;
   <?php endif; ?>
     <div class="purchase_goods"<?php if ($reply): ?> style="display:none" <?php endif; ?>>
       <?php echo ActiveHtml::link('Быстрый заказ товара', '/purchase'. $purchase->purchase_id .'/quick', array('class' => 'purchase_quick_link')) ?>
-        <div class="clearfix">
-            <h2 class="left"><?php echo Yii::t('purchase', '{n} товар|{n} товара|{n} товаров', $offsets) ?></h2>
-            <a href="/purchase<?php echo $purchase->purchase_id ?>/addgood" onclick="return nav.go(this, null)" class="left button add_good" rel="tooltip" title="Добавить товар"><span class="icon-plus icon-white"></span></a>
-            <div class="right">
-                <?php $this->widget('Paginator', array(
-                'url' => '/purchase'. $purchase->purchase_id,
-                'offset' => $offset,
-                'offsets' => $offsets,
-                'delta' => $delta,
+        <div class="summary_wrap">
+          <div class="right">
+            <?php $this->widget('Paginator', array(
+              'url' => '/purchase'. $purchase->purchase_id,
+              'offset' => $offset,
+              'offsets' => $offsets,
+              'delta' => $delta,
             )); ?>
-            </div>
+          </div>
+          <div class="summary">
+            <span><?php echo Yii::t('purchase', '{n} товар|{n} товара|{n} товаров', $offsets) ?></span>
+          </div>
         </div>
-        <div class="list clearfix" rel="pagination">
+        <div class="good_rows clearfix" rel="pagination">
             <?php $this->renderPartial('_goodlist', array('goods' => $goods, 'offset' => $offset)) ?>
         </div>
         <? if ($offset + $delta < $offsets && $offsets > $delta): ?><a id="pg_more" class="pg_more" onclick="Paginator.showMore()">Еще товары</a><? endif; ?>

@@ -20,8 +20,9 @@ if ($configs) {
 
 ?>
 <div class="breadcrumbs">
-    <?php echo ActiveHtml::link($purchase->name, '/purchase'. $purchase->purchase_id) ?> &raquo;
-    Добавить новый товар
+  <?php echo ActiveHtml::link($purchase->name, '/purchase'. $purchase->purchase_id) ?> &raquo;
+  <?php echo ActiveHtml::link('Список товаров закупки', '/goods'. $purchase->purchase_id) ?> &raquo;
+  Добавить новый товар
 </div>
 
 <div class="create">

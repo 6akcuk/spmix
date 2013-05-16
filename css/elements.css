@@ -141,6 +141,7 @@ a.input_calendar span {
   border-radius: 2px;
   border: 1px solid #508033;
   border-top-color: #70973f;
+  line-height: 13px;
 }
 .button_submit button {
   margin: 0px;
@@ -151,6 +152,8 @@ a.input_calendar span {
   overflow: visible;
   vertical-align: top;
   line-height: 13px;
+  font-size: 11px;
+  font-weight: normal;
 }
 .button_submit button {
   color: #fff;
@@ -160,6 +163,14 @@ a.input_calendar span {
 }
 .button_submit:hover button {
   background: #7ea64b;
+}
+
+.button_menu button {
+  padding-right: 20px;
+  background: url(/images/flydead.gif) no-repeat 100% -13px #6e953e;
+}
+.button_menu:hover button {
+  background: url(/images/flydead.gif) no-repeat 100% -13px #7ea64b;
 }
 
 .button_cancel {

@@ -12,6 +12,7 @@ $delta = Yii::app()->getModule('purchases')->goodsPerPage;
 ?>
 <div class="breadcrumbs">
   <?php echo ActiveHtml::link($purchase->name, '/purchase'. $purchase->purchase_id) ?> &raquo;
+  <?php echo ActiveHtml::link('Список товаров закупки', '/goods'. $purchase->purchase_id) ?> &raquo;
   Добавить товары из другой закупки
 </div>
 <div>
