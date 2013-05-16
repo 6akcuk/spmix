@@ -33,11 +33,11 @@ class ThemeController extends Controller
 
     $criteria = new CDbCriteria();
     $criteria->compare('t.forum_id', $forum_id);
-    $criteria->order = 't.fixed DESC, lastPost.add_date DESC';
+    $criteria->order = 't.fixed DESC';
     $criteria->offset = $offset;
     $criteria->limit = Yii::app()->getModule('discuss')->themesPerPage;
 
-    $themes = DiscussTheme::model()->with('postsNum', array('lastPost' => array('limit' => 1)), 'lastPost.author.profile')->findAll($criteria);
+    $themes = DiscussTheme::model()->with('postsNum')->findAll($criteria);
 
     $criteria->limit = 0;
     $themesNum = DiscussTheme::model()->count($criteria);

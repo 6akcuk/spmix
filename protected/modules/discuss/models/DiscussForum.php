@@ -76,6 +76,7 @@ class DiscussForum extends CActiveRecord
         'parent_id',
         'condition' => '(subforums.access_city = 0 OR subforums.access_city = :city) AND (subforums.access_rights <= :rights)',
         'params' => array(':city' => self::getUserCity(), ':rights' => self::getNumericRight()),
+        'joinType' => 'LEFT JOIN',
       ),
       'themes' => array(self::HAS_MANY, 'DiscussTheme', 'forum_id'),
       'themesNum' => array(self::STAT, 'DiscussTheme', 'forum_id'),

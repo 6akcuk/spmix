@@ -30,7 +30,7 @@ class ForumController extends Controller
     $criteria->addCondition('t.access_rights <= :rights');
     $criteria->params[':rights'] = DiscussForum::getNumericRight();
 
-    $forums = DiscussForum::model()->with('subforums', 'subforums.themesNum', 'subforums.postsNum')->findAll($criteria);
+    $forums = DiscussForum::model()->findAll($criteria);
 
     if (Yii::app()->request->isAjaxRequest) {
       $this->pageHtml = $this->renderPartial('index', array(
@@ -134,7 +134,7 @@ class ForumController extends Controller
 
   public function actionManage()
   {
-    $forums = DiscussForum::model()->with('subforums', 'subforums.themesNum', 'subforums.postsNum')->findAll('t.parent_id IS NULL');
+    $forums = DiscussForum::model()->findAll('t.parent_id IS NULL');
 
     if (Yii::app()->request->isAjaxRequest) {
       $this->pageHtml = $this->renderPartial('manage', array(

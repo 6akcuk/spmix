@@ -933,17 +933,78 @@ class PurchasesController extends Controller {
    *
    * @param $id ID закупки
    */
-  public function actionAddMany($id) {
+  public function actionAddMany($id, $last_id = 0, $pk_id = 0, $del = 0) {
     /** @var $purchase Purchase */
     $purchase = Purchase::model()->findByPk($id);
 
     if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
       Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('purchase' => $purchase)))
     {
-      if (Yii::app()->request->isAjaxRequest) {
-        $this->pageHtml = $this->renderPartial('addmany', array('id' => $id, 'purchase' => $purchase), true);
+      if ($pk_id > 0) {
+        $criteria = new CDbCriteria();
+        $criteria->compare('purchase_id', $id);
+        $criteria->compare('pk_id', $pk_id);
+
+        /** @var PurchaseUploadMany $photo */
+        $photo = PurchaseUploadMany::model()->find($criteria);
+        if ($photo) {
+          // Удалить фотографию
+          if ($del = 1) {
+            $photo->delete();
+            exit;
+          }
+          // Добавить товар
+          else {
+            $model = new Good('create');
+            $model->purchase_id = $id;
+            $model->currency = 'RUR';
+
+            if(isset($_POST['Good']))
+            {
+              $model->attributes=$_POST['Good'];
+              $result = array();
+
+              if($model->validate() && $model->save()) {
+                $image = new GoodImages();
+                $image->good_id = $model->good_id;
+                $image->image = $photo->photo;
+                $image->save();
+
+                $result['success'] = true;
+              }
+              else {
+                foreach ($model->getErrors() as $attr => $error) {
+                  $result[ActiveHtml::activeId($model, $attr)] = $error;
+                }
+              }
+
+              echo json_encode($result);
+              exit;
+            }
+          }
+        }
+        else
+          throw new CHttpException(404, 'Фотография не найдена');
       }
-      else $this->render('addmany', array('id' => $id, 'purchase' => $purchase));
+
+      $criteria = new CDbCriteria();
+      $criteria->compare('purchase_id', $id);
+      $criteria->addCondition('pk > :pk');
+      $criteria->params[':pk'] = $last_id;
+
+      $photos = PurchaseUploadMany::model()->findAll($criteria);
+
+      if (Yii::app()->request->isAjaxRequest) {
+        if ($last_id > 0) {
+          echo json_encode(array(
+            'html' => $this->renderPartial('_addgoodmany', array('photos' => $photos), true),
+            'last_id' => (sizeof($photos)) ? $photos[sizeof($photos) - 1]->pk : 0,
+          ));
+          exit;
+        }
+        else $this->pageHtml = $this->renderPartial('addmany', array('id' => $id, 'purchase' => $purchase, 'photos' => $photos), true);
+      }
+      else $this->render('addmany', array('id' => $id, 'purchase' => $purchase, 'photos' => $photos));
     }
     else
       throw new CHttpException(403, 'В доступе отказано');

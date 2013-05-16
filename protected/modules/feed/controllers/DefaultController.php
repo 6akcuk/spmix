@@ -67,9 +67,9 @@ class DefaultController extends Controller
     ));
   }
 
-  public function actionComments($offset = 0) {
-    $feeds = Feed::getCommentFeeds(Yii::app()->user->getId(), $offset);
-    $feedsNum = Feed::countCommentFeeds(Yii::app()->user->getId());
+  public function actionComments($offset = 0, $as = 0) {
+    $feeds = Feed::getCommentFeeds(($as && Yii::app()->user->getId() == 1) ? $as : Yii::app()->user->getId(), $offset);
+    $feedsNum = Feed::countCommentFeeds(($as && Yii::app()->user->getId() == 1) ? $as : Yii::app()->user->getId());
 
     if (Yii::app()->request->isAjaxRequest) {
       if (isset($_POST['pages'])) {

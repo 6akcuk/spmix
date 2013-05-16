@@ -15,6 +15,19 @@ Yii::app()->getClientScript()->registerCssFile('/css/icons.css');
 <!DOCTYPE html>
 <html lang="en">
     <head>
+      <script type="text/javascript">
+        var A = {
+          uuid: 0,
+          user_id: 0,
+          navPrefix: '/',
+          host: location.host
+        };
+
+        var hshtest = (location.toString().match(/#(.*)/) || {})[1] || '';
+        if (hshtest.length && hshtest.substr(0, 1) == A.navPrefix) {
+          location.replace(location.protocol + '//' + location.host + '/' + hshtest.replace(/^(\/|!)/, ''));
+        }
+      </script>
         <meta charset="utf-8">
         <title><?php echo CHtml::encode($this->pageTitle); ?></title>
         <link rel="stylesheet" href="<?php  echo Yii::app()->request->baseUrl; ?>/css/nivo.css" type="text/css" media="screen" />
@@ -23,19 +36,6 @@ Yii::app()->getClientScript()->registerCssFile('/css/icons.css');
             $(window).load(function() {
                 $('#slider').nivoSlider();
             });
-        </script>
-        <script type="text/javascript">
-            var A = {
-                uuid: 0,
-                user_id: 0,
-                navPrefix: '/',
-                host: location.host
-            };
-
-            var hshtest = (location.toString().match(/#(.*)/) || {})[1] || '';
-            if (hshtest.length && hshtest.substr(0, 1) == A.navPrefix) {
-                location.replace(location.protocol + '//' + location.host + '/' + hshtest.replace(/^(\/|!)/, ''));
-            }
         </script>
     </head>
     <body>

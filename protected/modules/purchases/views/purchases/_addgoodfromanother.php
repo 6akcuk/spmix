@@ -7,7 +7,7 @@
     <?php echo ActiveHtml::showUploadImage(($good->image) ? $good->image->image : '') ?>
   </div>
   <div class="info">
-  <form id="good<?php echo $good->good_id ?>_form" action="/purchase<?php ?>" method="post">
+  <form id="good<?php echo $good->good_id ?>_form" method="post">
     <div class="good_many_row clearfix">
       <div class="left good_many_label">Название:</div>
       <div class="left"><?php echo ActiveHtml::textField('Good[name]', $good->name) ?></div>

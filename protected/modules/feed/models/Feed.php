@@ -347,13 +347,24 @@ class Feed extends CActiveRecord
     /** @var CDbConnection $db */
     $db = Yii::app()->db;
 
-    $command = $db->createCommand("
-    SELECT * FROM `subscriptions` s
-      INNER JOIN `feed` f ON f.owner_type = s.sub_type AND f.owner_id = s.sub_link_id
-      WHERE s.user_id = ". $user_id ." AND f.event_type IN ('new comment', 'new reply', 'new theme post')
-      GROUP BY f.owner_id
-      ORDER BY f.add_date DESC
+    $sub_id = array();
+
+    $subcommand = $db->createCommand("
+    SELECT MAX(feed_id) AS feed_id FROM `subscriptions` s
+      INNER JOIN `feed` mf ON mf.owner_type = s.sub_type AND mf.owner_id = s.sub_link_id
+      WHERE s.user_id = ". $user_id ." AND mf.event_type IN ('new comment', 'new reply', 'new theme post')
+        AND mf.feed_ondelete IS NULL
+      GROUP BY mf.owner_id
       LIMIT ". $offset .", ". Yii::app()->getModule('feed')->newsPerPage);
+    $subreader = $subcommand->query();
+    while (($row = $subreader->read()) !== false) {
+      $sub_id[] = $row['feed_id'];
+    }
+
+    $command = $db->createCommand("
+    SELECT * FROM `feed`
+      WHERE feed_id IN (". implode(", ", $sub_id) .")
+      ORDER BY add_date DESC");
 
     /** @var CDbDataReader $reader */
     $reader = $command->query();

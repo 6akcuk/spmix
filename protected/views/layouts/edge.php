@@ -7,8 +7,6 @@ Yii::app()->getClientScript()->registerCssFile('/css/elements.css');
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title><?php echo CHtml::encode($this->pageTitle); ?></title>
-    <meta charset="utf-8">
     <script type="text/javascript">
       var A = {
         uuid: 0,
@@ -22,6 +20,8 @@ Yii::app()->getClientScript()->registerCssFile('/css/elements.css');
         location.replace(location.protocol + '//' + location.host + '/' + hshtest.replace(/^(\/|!)/, ''));
       }
     </script>
+    <title><?php echo CHtml::encode($this->pageTitle); ?></title>
+    <meta charset="utf-8">
   </head>
   <body>
     <div id="utils"></div>

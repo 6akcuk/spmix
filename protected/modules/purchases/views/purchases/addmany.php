@@ -8,6 +8,9 @@ Yii::app()->getClientScript()->registerCssFile('/css/pagination.css');
 Yii::app()->getClientScript()->registerScriptFile('/js/pagination.js');
 
 Yii::app()->getClientScript()->registerScriptFile('/js/swfupload.js');
+Yii::app()->getClientScript()->registerScriptFile('/js/swfupload.queue.js');
+
+Yii::app()->getClientScript()->registerScriptFile('/js/purchase_photos.js');
 
 $this->pageTitle = Yii::app()->name .' - Добавление нескольких товаров';
 $delta = Yii::app()->getModule('purchases')->goodsPerPage;
@@ -33,7 +36,13 @@ $delta = Yii::app()->getModule('purchases')->goodsPerPage;
     </div>
   </div>
 </div>
+<div id="photos_list">
+  <?php $this->renderPartial('_addgoodmany', array('photos' => $photos)) ?>
+</div>
 <script type="text/javascript">
+  A.purchasePhotosCur = <?php echo $id ?>;
+  A.purchasePhotosLastId = <?php echo (sizeof($photos)) ? $photos[sizeof($photos) - 1]->pk : 0 ?>;
+
   var swfu, settings = {
     flash_url : "http://<?php echo Yii::app()->params['domain'] ?>/assets/swfupload.swf",
     upload_url: A.uploadMap.action,
@@ -44,12 +53,22 @@ $delta = Yii::app()->getModule('purchases')->goodsPerPage;
     file_upload_limit : 20,
     file_queue_limit : 0,
 
+    debug: true,
+
     // Button settings
     button_placeholder_id: "swfupload_button",
     button_width: "750",
     button_height: "57",
     button_window_mode: SWFUpload.WINDOW_MODE.TRANSPARENT,
-    button_cursor: SWFUpload.CURSOR.HAND
+    button_cursor: SWFUpload.CURSOR.HAND,
+
+    // Events
+    file_dialog_complete_handler : PurchasePhotos.fileDialogComplete,
+    upload_start_handler : PurchasePhotos.uploadStart,
+    upload_progress_handler : PurchasePhotos.uploadProgress,
+    upload_error_handler : PurchasePhotos.uploadError,
+    upload_success_handler : PurchasePhotos.uploadSuccess,
+    queue_complete_handler : PurchasePhotos.queueComplete	// Queue plugin event
   };
 
   swfu = new SWFUpload(settings);

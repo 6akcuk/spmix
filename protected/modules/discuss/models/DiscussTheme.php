@@ -63,7 +63,7 @@ class DiscussTheme extends CActiveRecord
 		return array(
       'forum' => array(self::BELONGS_TO, 'DiscussForum', 'forum_id'),
       'author' => array(self::BELONGS_TO, 'User', 'author_id'),
-      'lastPost' => array(self::HAS_ONE, 'DiscussPost', 'theme_id', 'order' => 'add_date DESC'),
+      'lastPost' => array(self::HAS_ONE, 'DiscussPost', 'theme_id', 'condition' => 'lastPost.post_ondelete IS NULL', 'order' => 'lastPost.add_date DESC'),
       'postsNum' => array(self::STAT, 'DiscussPost', 'theme_id'),
 		);
 	}
@@ -105,6 +105,32 @@ class DiscussTheme extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+
+  public static function getForumThemes($forum_id) {
+    $result = array();
+    $ids = array();
+    /** @var CDbConnection $db */
+    $db = Yii::app()->db;
+
+    $sub_id = array();
+
+    $subcommand = $db->createCommand("
+    SELECT MAX(post_id) AS post_id FROM `discuss_themes` t
+      LEFT JOIN `feed` mf ON mf.owner_type = s.sub_type AND mf.owner_id = s.sub_link_id
+      WHERE s.user_id = ". $user_id ." AND mf.event_type IN ('new comment', 'new reply', 'new theme post')
+        AND mf.feed_ondelete IS NULL
+      GROUP BY mf.owner_id
+      LIMIT ". $offset .", ". Yii::app()->getModule('feed')->newsPerPage);
+    $subreader = $subcommand->query();
+    while (($row = $subreader->read()) !== false) {
+      $sub_id[] = $row['feed_id'];
+    }
+
+    $command = $db->createCommand("
+    SELECT * FROM `feed`
+      WHERE feed_id IN (". implode(", ", $sub_id) .")
+      ORDER BY add_date DESC");
+  }
 
   public function destroyTheme()
   {
