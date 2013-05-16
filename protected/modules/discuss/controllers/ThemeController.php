@@ -31,16 +31,37 @@ class ThemeController extends Controller
     if ($forum->access_rights > DiscussForum::getNumericRight())
       throw new CHttpException(403, 'В доступе отказано. Вы не состоите в нужной группе');
 
+    $subcriteria = new CDbCriteria();
+    $subcriteria->compare('t.forum_id', $forum_id);
+    $subcriteria->select = 'MAX(t.post_id) AS post_id';
+    $subcriteria->group = 't.theme_id';
+    $subcriteria->offset = $offset;
+    $subcriteria->limit = Yii::app()->getModule('discuss')->themesPerPage;
+
+    $posts = DiscussPost::model()->findAll($subcriteria);
+    $post_ids = array();
+
+    foreach ($posts as $post) {
+      $post_ids[] = $post->post_id;
+    }
+
     $criteria = new CDbCriteria();
-    $criteria->compare('t.forum_id', $forum_id);
-    $criteria->order = 't.fixed DESC';
+    $criteria->addInCondition('t.post_id', $post_ids);
+    $criteria->order = 'theme.fixed DESC, t.add_date DESC';
     $criteria->offset = $offset;
     $criteria->limit = Yii::app()->getModule('discuss')->themesPerPage;
 
-    $themes = DiscussTheme::model()->with('postsNum')->findAll($criteria);
+    $posts = DiscussPost::model()->with('theme')->findAll($criteria);
+    $themes = array();
+
+    foreach ($posts as $post) {
+      $post->theme->lastPost = $post;
+      $themes[] = $post->theme;
+    }
+    //$themes = DiscussTheme::model()->with('postsNum', 'lastPost')->findAll($criteria);
 
     $criteria->limit = 0;
-    $themesNum = DiscussTheme::model()->count($criteria);
+    $themesNum = DiscussPost::model()->count($criteria);
 
     if (Yii::app()->request->isAjaxRequest) {
       if (isset($_POST['pages'])) {

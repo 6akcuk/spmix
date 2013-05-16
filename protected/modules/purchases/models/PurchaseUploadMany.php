@@ -37,7 +37,7 @@ class PurchaseUploadMany extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('pk, purchase_id, photo, timestamp', 'required'),
+			array('purchase_id, photo', 'required'),
 			array('purchase_id', 'numerical', 'integerOnly'=>true),
 			array('pk', 'length', 'max'=>10),
 			// The following rule is used by search().
@@ -90,4 +90,14 @@ class PurchaseUploadMany extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+
+  public function beforeSave() {
+    if (parent::beforeSave()) {
+      if ($this->isNewRecord)
+        $this->timestamp = date("Y-m-d H:i:s");
+
+      return true;
+    }
+    else return false;
+  }
 }

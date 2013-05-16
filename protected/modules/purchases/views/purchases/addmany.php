@@ -36,7 +36,7 @@ $delta = Yii::app()->getModule('purchases')->goodsPerPage;
     </div>
   </div>
 </div>
-<div id="photos_list">
+<div id="photos_list" style="padding-top: 10px">
   <?php $this->renderPartial('_addgoodmany', array('photos' => $photos)) ?>
 </div>
 <script type="text/javascript">
@@ -52,8 +52,6 @@ $delta = Yii::app()->getModule('purchases')->goodsPerPage;
     file_types_description : "Images",
     file_upload_limit : 20,
     file_queue_limit : 0,
-
-    debug: true,
 
     // Button settings
     button_placeholder_id: "swfupload_button",

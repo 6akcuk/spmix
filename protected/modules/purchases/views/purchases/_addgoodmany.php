@@ -24,9 +24,9 @@
         </div>
         <div class="good_many_buttons clearfix">
           <div class="button_submit left">
-            <button onclick="return PurchasePhotos.addGood(<?php echo $purchase->purchase_id ?>, <?php echo $photo->pk ?>)">Добавить</button>
+            <button onclick="return PurchasePhotos.addGood(<?php echo $photo->purchase_id ?>, <?php echo $photo->pk ?>)">Добавить</button>
           </div>
-          <a class="button_cancel left" onclick="PurchasePhotos.deleteGood(<?php echo $photo->pk ?>)">Удалить</a>
+          <a class="button_cancel left" onclick="PurchasePhotos.deleteGood(<?php echo $photo->purchase_id ?>, <?php echo $photo->pk ?>)">Удалить</a>
           <div id="photo<?php echo $photo->pk ?>_progress" class="left progress"></div>
         </div>
       </form>

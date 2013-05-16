@@ -933,7 +933,7 @@ class PurchasesController extends Controller {
    *
    * @param $id ID закупки
    */
-  public function actionAddMany($id, $last_id = 0, $pk_id = 0, $del = 0) {
+  public function actionAddMany($id, $last_id = -1, $pk_id = 0, $del = 0) {
     /** @var $purchase Purchase */
     $purchase = Purchase::model()->findByPk($id);
 
@@ -943,13 +943,13 @@ class PurchasesController extends Controller {
       if ($pk_id > 0) {
         $criteria = new CDbCriteria();
         $criteria->compare('purchase_id', $id);
-        $criteria->compare('pk_id', $pk_id);
+        $criteria->compare('pk', $pk_id);
 
         /** @var PurchaseUploadMany $photo */
         $photo = PurchaseUploadMany::model()->find($criteria);
         if ($photo) {
           // Удалить фотографию
-          if ($del = 1) {
+          if ($del == 1) {
             $photo->delete();
             exit;
           }
@@ -969,6 +969,8 @@ class PurchasesController extends Controller {
                 $image->good_id = $model->good_id;
                 $image->image = $photo->photo;
                 $image->save();
+
+                $photo->delete();
 
                 $result['success'] = true;
               }
@@ -995,7 +997,7 @@ class PurchasesController extends Controller {
       $photos = PurchaseUploadMany::model()->findAll($criteria);
 
       if (Yii::app()->request->isAjaxRequest) {
-        if ($last_id > 0) {
+        if ($last_id >= 0) {
           echo json_encode(array(
             'html' => $this->renderPartial('_addgoodmany', array('photos' => $photos), true),
             'last_id' => (sizeof($photos)) ? $photos[sizeof($photos) - 1]->pk : 0,

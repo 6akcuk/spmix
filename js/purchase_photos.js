@@ -1,6 +1,8 @@
 var PurchasePhotos = {
   fileDialogComplete: function(numFilesSelected, numFilesQueued) {
     try {
+      cur.photosUploaded = 0;
+      cur.photosUploadNum = numFilesSelected;
       this.startUpload();
     }
     catch (ex) {}
@@ -9,6 +11,7 @@ var PurchasePhotos = {
   uploadStart: function(file) {
     $('#photos_add_bar .swfupload_wrap').css({position: 'absolute', visibility: 'hidden'});
     $('#photos_add_bar_progress').show();
+    $('#photos_add_bar').css({height: 57});
 
     return true;
   },
@@ -16,7 +19,7 @@ var PurchasePhotos = {
   uploadProgress: function(file, bytesLoaded, bytesTotal) {
     var p = Math.floor(bytesLoaded / bytesTotal * 100);
     $('#photos_add_p_inner').css({width: p * 175 / 100});
-    $('#photos_add_p_text').html('Загружено фотографий: <b>'+ this.getStats().successful_uploads + '</b> из <b>'+ this.getStats().files_queued +'</b>');
+    $('#photos_add_p_text').html('Загружено фотографий: <b>'+ cur.photosUploaded + '</b> из <b>'+ cur.photosUploadNum +'</b>');
   },
 
   uploadError: function(file, errorCode, message) {
@@ -56,12 +59,16 @@ var PurchasePhotos = {
   },
 
   uploadSuccess: function(file) {
-    $('#photos_add_p_text').html('Загружено фотографий: <b>'+ this.getStats().successful_uploads + '</b> из <b>'+ this.getStats().files_queued +'</b>');
+    cur.photosUploaded++;
+    $('#photos_add_p_text').html('Загружено фотографий: <b>'+ this.getStats().successful_uploads + '</b> из <b>'+ cur.photosUploadNum +'</b>');
   },
 
   queueComplete: function(numFilesUploaded) {
     $('#photos_add_bar .swfupload_wrap').css({position: 'relative', visibility: 'visible'});;
     $('#photos_add_bar_progress').hide();
+    $('#photos_add_bar').css({height: 'auto'});
+
+    cur.photosUploadNum = 0;
 
     PurchasePhotos.getMore();
   },
@@ -69,8 +76,8 @@ var PurchasePhotos = {
   getMore: function() {
     ajax.post('/purchase'+ A.purchasePhotosCur +'/addmany?last_id='+ A.purchasePhotosLastId, {}, function(r) {
       if (r.html && r.last_id) {
-        $(r.html).appendTo('#purchase_photos_list');
-        A.purchasePhotosLastId = r.last_id;
+        $(r.html).appendTo('#photos_list');
+        A.purchasePhotosLastId = parseInt(r.last_id);
       }
     });
   },
@@ -78,6 +85,8 @@ var PurchasePhotos = {
   addGood: function(purchase_id, pk_id) {
     var $form = $('#photo'+ pk_id + '_form');
     $('#photo'+ pk_id +'_progress').show();
+
+    $form.find('.input_error').remove();
 
     ajax.post('/purchase'+ purchase_id +'/addmany?pk_id='+ pk_id, $form.serialize(), function(r) {
       $('#photo'+ pk_id +'_progress').hide();
@@ -89,7 +98,7 @@ var PurchasePhotos = {
         $('<div class="dld">Товар добавлен в закупку</div>').insertAfter('#photo' + pk_id + ' .info form');
       }
       else {
-        $.each(response, function(i, v) {
+        $.each(r, function(i, v) {
           $('#'+ i).addClass('error');
           if ($.isArray(v)) {
             var string = [];
@@ -108,10 +117,10 @@ var PurchasePhotos = {
     return false;
   },
 
-  deleteGood: function(pk_id) {
+  deleteGood: function(purchase_id, pk_id) {
     $('#photo'+ pk_id +'_progress').show();
 
-    ajax.post('/purchase'+ purchase_id +'/addmany?pk_id='+ pk_id + '&del=1', $form.serialize(), function(r) {
+    ajax.post('/purchase'+ purchase_id +'/addmany?pk_id='+ pk_id + '&del=1', {}, function(r) {
       $('#photo'+ pk_id +'_progress').hide();
 
       $('#photo'+ pk_id +' .photo img').hide();

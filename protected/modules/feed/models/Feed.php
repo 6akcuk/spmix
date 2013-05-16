@@ -331,11 +331,11 @@ class Feed extends CActiveRecord
     $db = Yii::app()->db;
 
     $command = $db->createCommand("
-    SELECT COUNT(*) AS num FROM `subscriptions` s
-      INNER JOIN `feed` f ON f.owner_type = s.sub_type AND f.owner_id = s.sub_link_id
-      WHERE s.user_id = ". $user_id ." AND f.event_type IN ('new comment', 'new reply', 'new theme post')
-      GROUP BY f.owner_id
-      ORDER BY f.add_date DESC");
+    SELECT COUNT(feed_id) AS num FROM `subscriptions` s
+      INNER JOIN `feed` mf ON mf.owner_type = s.sub_type AND mf.owner_id = s.sub_link_id
+      WHERE s.user_id = ". $user_id ." AND mf.event_type IN ('new comment', 'new reply', 'new theme post')
+        AND mf.feed_ondelete IS NULL
+      GROUP BY mf.owner_id");
 
     $result = $command->queryRow();
     return $result['num'];

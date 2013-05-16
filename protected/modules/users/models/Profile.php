@@ -196,14 +196,14 @@ class Profile extends CActiveRecord
                 INNER JOIN `profiles` AS profile ON profile.user_id = friend.id
                 INNER JOIN `cities` AS city ON city.id = profile.city_id
                 INNER JOIN `rbac_assignments` AS rbac ON rbac.userid = friend.id
-                    WHERE '. implode(' AND ', array_merge($where, array('t.from_id = '. $this->user_id))) .' '. (($c != null) ? ' LIMIT '. $offset .', '. Yii::app()->getModule('users')->friendsPerPage : '') .'
+                    WHERE '. implode(' AND ', array_merge($where, array('t.from_id = '. $this->user_id))) .' LIMIT '. $offset .', '. Yii::app()->getModule('users')->friendsPerPage .'
             UNION
                 SELECT t.*, friend.*, profile.*, city.id AS city_id, city.name AS city_name, rbac.* FROM `profile_relationships` AS t
                     INNER JOIN `users` AS friend ON friend.id = t.from_id
                         INNER JOIN `profiles` AS profile ON profile.user_id = friend.id
                         INNER JOIN `cities` AS city ON city.id = profile.city_id
                         INNER JOIN `rbac_assignments` AS rbac ON rbac.userid = friend.id
-                            WHERE '. implode(' AND ', array_merge($where, array('t.to_id = '. $this->user_id))) .' '. (($c != null) ? ' LIMIT '. $offset .', '. Yii::app()->getModule('users')->friendsPerPage : ''));
+                            WHERE '. implode(' AND ', array_merge($where, array('t.to_id = '. $this->user_id))) .' LIMIT '. $offset .', '. Yii::app()->getModule('users')->friendsPerPage);
 
         return $this->_friendReader($command->query());
     }
