@@ -429,6 +429,31 @@ WHERE twin.member_id = 111 AND t.member_id = 1 AND dialog.type = 0");
     $this->redirect('/register');
   }
 
+  public function actionRegisterNew($step = 1) {
+    /** @var $user WebUser */
+    $user = Yii::app()->user;
+    $this->layout = '//layouts/edge_new';
+    if (isset($_POST['step'])) $step = intval($_POST['step']);
+
+    $model = new RegisterForm('step'. $step);
+    $model->attributes = $user->getState('regform', null);
+
+    switch ($step) {
+      case 1:
+        $cities = City::model()->findAll();
+        $array = array('model' => $model, 'cities' => $cities);
+        break;
+      default:
+        $array = array('model' => $model);
+        break;
+    }
+
+    if (Yii::app()->request->isAjaxRequest) {
+      $this->pageHtml = $this->renderPartial('register_new/step'. $step, $array, true);
+    }
+    else $this->render('register_new/step'. $step, $array);
+  }
+
     public function actionRegister($step = 1) {
         /** @var $user WebUser */
         $user = Yii::app()->user;

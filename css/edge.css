@@ -1,0 +1,19 @@
+#sidebar .label {
+  font-weight: bold;
+  padding: 1px 0px 8px;
+}
+#sidebar .labeled {
+  padding-bottom: 7px;
+}
+#sidebar .errorMessage {
+  padding-bottom: 7px;
+}
+
+.button_wide button {
+  width: 173px;
+}
+
+.login_row {
+  margin: 5px 0px;
+  text-align: center;
+}
