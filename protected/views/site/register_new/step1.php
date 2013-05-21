@@ -1,52 +1,67 @@
-<?php Yii::app()->getClientScript()->registerScriptFile('/js/register.js'); ?>
+<?php
+Yii::app()->getClientScript()->registerScriptFile('/js/register.js');
+Yii::app()->getClientScript()->registerCssFile('/css/register.css');
+?>
 <?php
 foreach ($cities as $city) {
     $cityList[$city->name] = $city->id;
 }
 ?>
-<h1>Регистрация на сайте</h1>
+<div id="register_content">
+  <div class="tabs">
+    <?php echo ActiveHtml::link('Личные данные', '/registernew/step1', array('class' => 'selected')) ?>
+    <?php echo ActiveHtml::link('Данные для входа', '/registernew/step2') ?>
+    <?php echo ActiveHtml::link('Соглашение', '/registernew/step3') ?>
+    <?php echo ActiveHtml::link('Завершение регистрации', '/registernew/step4') ?>
+  </div>
 
-<div id="stepcolumns" class="clearfix">
-    <div class="left">
-        <ul>
-            <li>
-                <?php echo ActiveHtml::link('Родной город', '/register/step1', array('class' => 'selected')) ?>
-            </li>
-            <li>
-                <?php echo ActiveHtml::link('Личные данные', '/register/step2') ?>
-            </li>
-            <li>
-                <?php echo ActiveHtml::link('Данные для входа', '/register/step3') ?>
-            </li>
-            <li>
-                <?php echo ActiveHtml::link('Соглашение', '/register/step4') ?>
-            </li>
-            <li>
-                <?php echo ActiveHtml::link('Завершение регистрации', '/register/step5') ?>
-            </li>
-        </ul>
+  <div class="reg_header_wrap">
+    <h1>Шаг 1. Укажите свои личные данные</h1>
+  </div>
+  <div class="reg_text_wrap">
+    <p>
+      Нам потребуется информация о Вашем реальном местоположении для корректировки информации
+      по вашему региону.
+    </p>
+  </div>
+  <div class="reg_input_wrap">
+    <?php /** @var $form ActiveForm */
+    $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
+    'id' => 'regform',
+    'action' => $this->createUrl('/register'),
+    )); ?>
+    <input type="hidden" name="step" value="1" />
+    <div class="reg_input_row clearfix">
+      <div class="reg_input_label left">Родной город:</div>
+      <div class="reg_input_labeled left"><?php echo $form->dropdown($model, 'city', $cityList) ?></div>
     </div>
-    <div class="right">
-        <h3>Укажите свой родной город</h3>
-        <p>
-            Нам потребуется информация о Вашем реальном местоположении для корректировки информации
-            по вашему региону.
-        </p>
-        <?php /** @var $form ActiveForm */
-        $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
-        'id' => 'regform',
-        'action' => $this->createUrl('/register'),
-        )); ?>
-            <input type="hidden" name="step" value="1" />
-            <?php echo $form->dropdown($model, 'city', $cityList) ?>
-        <?php $this->endWidget(); ?>
-        <div class="buttons clearfix">
-            <div class="right">
-                <a class="btn light_green" onclick="register.next()">
-                    Далее
-                    <span class="iconify_next_a"></span>
-                </a>
-            </div>
-        </div>
+    <div class="reg_input_row clearfix">
+      <div class="reg_input_label left">Пол:</div>
+      <div class="reg_input_labeled left">
+        <?php echo $form->dropdown($model, 'gender', array('Мужской' => 'Male', 'Женский' => 'Female')) ?>
+      </div>
     </div>
+    <div class="reg_input_row clearfix">
+      <div class="reg_input_label left">Фамилия:</div>
+      <div class="reg_input_labeled left"><?php echo $form->textField($model, 'lastname') ?></div>
+    </div>
+    <div class="reg_input_row clearfix">
+      <div class="reg_input_label left">Имя:</div>
+      <div class="reg_input_labeled left"><?php echo $form->textField($model, 'firstname') ?></div>
+    </div>
+    <div class="reg_input_row clearfix">
+      <div class="reg_input_label left">Отчество:</div>
+      <div class="reg_input_labeled left"><?php echo $form->textField($model, 'middlename') ?></div>
+    </div>
+    <div class="reg_input_row clearfix">
+      <div class="reg_input_label left">Номер приглашения:</div>
+      <div class="reg_input_labeled left"><?php echo $form->textField($model, 'invite_code') ?></div>
+    </div>
+  </div>
+  <div class="reg_next_wrap">
+    <?php $this->endWidget(); ?>
+    <div class="button_submit reg_next_button">
+      <button onclick="register.next()"><span class="with_arr">Далее</span></button>
+    </div>
+  </div>
 </div>

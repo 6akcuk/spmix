@@ -107,9 +107,9 @@ class ActiveHtml extends CHtml {
     }
 
     public static function dropdown($name, $default = '', $value = '', $data = array(), $htmlOptions = array()) {
-        ActiveHtml::publishAssets();
+      ActiveHtml::publishAssets();
 
-        $items = array();
+      $items = array();
 
       $data = array_flip($data);
       //array_unshift($data, '- '. $default .' -');

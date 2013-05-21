@@ -89,7 +89,7 @@ $cookies = $request->getCookies();
       }
       ?>
     </div>
-    <div id="content" class="fl_l largecolumn wrap">
+    <div id="content" class="fl_l largecolumn">
       <?php echo $content ?>
     </div>
   </div>

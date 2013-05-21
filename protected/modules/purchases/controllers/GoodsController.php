@@ -171,8 +171,19 @@ class GoodsController extends Controller {
 
     public function actionShow($purchase_id, $good_id, $reply = null) {
       /** @var $good Good */
-      $good = Good::model()->with('image', 'sizes', 'colors', 'purchase', 'oic', 'orders', 'orders.customer', 'ordersNum')->findByPk($good_id);
+      $good = Good::model()->with('image', 'sizes', 'purchase', 'oic', 'orders', 'orders.customer', 'ordersNum')->findByPk($good_id);
       $orderc = new Order('create');
+
+      /** @var CDbConnection $db */
+      $db = Yii::app()->db;
+      $cmd = $db->createCommand("SELECT * FROM `good_colors` WHERE good_id = ". $good_id);
+      $colors = array();
+      $reader = $cmd->query();
+      while (($row = $reader->read()) !== false) {
+        $colors[] = $row['color'];
+      }
+
+      $good->colors = $colors;
 
       if (!$good)
         throw new CHttpException(404, 'Товар не найден');

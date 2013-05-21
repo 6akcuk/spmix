@@ -76,6 +76,8 @@ return array(
         'setcity' => 'site/setcity',
         'login' => 'site/login',
         'logout' => 'site/logout',
+        'registernew' => 'site/registernew',
+        'registernew/step<step:\d+>' => 'site/registernew',
         'register' => 'site/register',
         'register/step<step:\d+>' => 'site/register',
         'register/sendSMS' => 'site/sendSMSRegister',

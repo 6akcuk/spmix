@@ -36,9 +36,9 @@ if ($good->sizes) {
 
 if ($good->colors) {
   foreach ($good->colors as $color) {
-    if (!$orderc->color) $orderc->color = $color->color;
-    $dd_colors[$color->color] = $color->color;
-    $row_colors[] = $color->color;
+    if (!$orderc->color) $orderc->color = $color;
+    $dd_colors[$color] = $color;
+    //$row_colors[] = $color->color;
   }
 }
 
@@ -92,7 +92,7 @@ if ($good->oic) {
         <div class="clearfix row">
           <?php echo $form->dropdown($orderc, 'color', $dd_colors) ?>
         </div>
-        <div class="row small">цвета: <?php echo implode('; ', $row_colors) ?></div>
+        <div class="row small">цвета: <?php echo implode('; ', $dd_colors) ?></div>
         <?php endif; ?>
         <div class="row">
             <?php echo $form->inputPlaceholder($orderc, 'amount') ?>

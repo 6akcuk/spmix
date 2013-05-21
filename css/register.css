@@ -1,0 +1,48 @@
+#register_css {
+
+}
+
+.with_arr {
+  padding-right: 25px;
+  background: url(/images/backlink.gif) no-repeat right -127px;
+}
+
+#register_content {
+  padding: 10px 0px;
+  background: #fff;
+}
+
+.reg_header_wrap {
+  padding: 25px 30px 10px;
+}
+.reg_text_wrap {
+  padding: 14px 130px;
+  font-size: 1.09em;
+  color: #777;
+  line-height: 160%;
+  text-align: center;
+}
+.reg_input_wrap {
+  padding: 15px 30px 10px;
+}
+.reg_input_row {
+  width: 500px;
+  margin-bottom: 10px;
+}
+.reg_input_label {
+  font-weight: bold;
+  padding: 5px 13px 0px;
+  width: 309px;
+  text-align: right;
+}
+.reg_input_labeled {
+  width: 160px;
+}
+
+.reg_next_wrap {
+  padding: 0px 0px 20px;
+  text-align: center;
+}
+.reg_next_button button {
+  padding-right: 2px !important;
+}
