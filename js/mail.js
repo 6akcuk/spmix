@@ -324,6 +324,11 @@ var mail = {
       mail.attachPhoto(file_id);
     });
 
+    if (!json.x) {
+      ajex.show('Можно прикреплять только фотографии');
+      return;
+    }
+
     $('<input/>').attr({type: 'hidden', id: file_id +'_attach', name: 'Mail[attach][]'}).val(filedata).prependTo('#mail_form');
     var cont = $('<div/>').attr({class: 'left mail_attach_photo'}).appendTo('#mail_attaches');
     cont.html('<img src="http://cs'+ json['b'][2] +'.'+ A.host +'/'+ json['b'][0] +'/'+ json['b'][1] +'" alt=""/><a class="tt photo_attach_delete" title="Удалить фотографию"><span class="icon-remove icon-white"></span></a>');

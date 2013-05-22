@@ -35,7 +35,7 @@ class WebUser extends CApplicationComponent implements IWebUser {
     }
 
     public function getId() {
-        return $this->getState('__id');
+        return $this->getState('__id', 0);
     }
     public function setId($id) {
         $this->setState('__id', $id);

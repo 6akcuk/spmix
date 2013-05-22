@@ -1,62 +1,46 @@
-<?php Yii::app()->getClientScript()->registerScriptFile('/js/register.js'); ?>
+<?php
+Yii::app()->getClientScript()->registerScriptFile('/js/registernew.js');
+Yii::app()->getClientScript()->registerCssFile('/css/register.css');
+?>
+<div id="register_content">
+  <div class="tabs">
+    <?php echo ActiveHtml::link('Личные данные', '/registernew/step1') ?>
+    <?php echo ActiveHtml::link('Данные для входа', '/registernew/step2') ?>
+    <?php echo ActiveHtml::link('Соглашение', '/registernew/step3') ?>
+    <?php echo ActiveHtml::link('Завершение регистрации', '/registernew/step4', array('class' => 'selected')) ?>
+  </div>
 
-<h1>Регистрация на сайте</h1>
-
-<div id="stepcolumns" class="clearfix">
-    <div class="left">
-        <ul>
-            <li>
-                <?php echo ActiveHtml::link('Родной город', '/register/step1') ?>
-            </li>
-            <li>
-                <?php echo ActiveHtml::link('Личные данные', '/register/step2') ?>
-            </li>
-            <li>
-                <?php echo ActiveHtml::link('Данные для входа', '/register/step3') ?>
-            </li>
-            <li>
-                <?php echo ActiveHtml::link('Соглашение', '/register/step4', array('class' => 'selected')) ?>
-            </li>
-            <li>
-                <?php echo ActiveHtml::link('Завершение регистрации', '/register/step5') ?>
-            </li>
-        </ul>
+  <div class="reg_header_wrap">
+    <h1>Шаг 4. Завершение регистрации</h1>
+  </div>
+  <div class="reg_text_wrap">
+    <p>
+      На указанный вами мобильный телефон, было отправлено SMS-сообщение с кодом подтверждения
+    </p>
+  </div>
+  <div class="reg_input_wrap">
+    <?php /** @var $form ActiveForm */
+    $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
+      'id' => 'regform',
+      'action' => $this->createUrl('/register'),
+    )); ?>
+    <input type="hidden" name="step" value="4" />
+    <div class="reg_input_row clearfix">
+      <div class="reg_input_label left">Код сессии:</div>
+      <div class="reg_input_labeled left"></div>
     </div>
-    <div class="right">
-        <h3>Соглашение</h3>
-        <p>
-            Настоящим соглашением подтверждается, что Абонент, персональные данные которого являются предметом
-            соглашения, выражает свое согласие на получение сообщений информационного и рекламного содержания.
-        </p>
-        <p>
-            Для отзыва согласия необходимо в настройках аккаунта отключить отправку смс сообщений или же по запросу в
-            техническую поддержку.
-        </p>
-        <?php /** @var $form ActiveForm */
-        $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
-          'id' => 'regform',
-          'action' => $this->createUrl('/register'),
-          'htmlOptions' => array(
-            'onsubmit' => 'register.next(); return false',
-          )
-        )); ?>
-        <input type="hidden" name="step" value="4" />
-        <div class="row">
-            +7 <?php echo $form->inputPlaceholder($model, 'phone') ?>
-            <a id="sendCodeLink" onclick="register.sendCode(true)" title="Повторно отправить код подтверждения" class="tt iconify_refresh_a" style="display:none"></a>
-        </div>
-        <div class="row">
-            <input type="checkbox" name="RegisterForm[agreement]" value="1"<?php if($model->agreement) echo " checked" ?>/>
-            <?php echo $form->label($model, 'agreement') ?>
-        </div>
-        <?php $this->endWidget(); ?>
-        <div class="buttons clearfix">
-            <div class="right">
-                <a class="btn light_green" onclick="register.next()">
-                    Далее
-                    <span class="iconify_next_a"></span>
-                </a>
-            </div>
-        </div>
+    <div class="reg_input_row clearfix">
+      <div class="reg_input_label left">Код подтверждения<span class="required">*</span>:</div>
+      <div class="reg_input_labeled left"><?php echo $form->textField($model, 'confirm') ?></div>
     </div>
+    <div class="reg_input_row reg_input_link clearfix">
+      <a onclick="register.sendCode(true)">Получить код повторно</a>
+    </div>
+  </div>
+  <div class="reg_next_wrap">
+    <?php $this->endWidget(); ?>
+    <div class="button_submit">
+      <button onclick="register.next()">Завершить регистрацию</button>
+    </div>
+  </div>
 </div>

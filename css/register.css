@@ -1,5 +1,5 @@
 #register_css {
-
+  display: none;
 }
 
 .with_arr {
@@ -37,6 +37,15 @@
 }
 .reg_input_labeled {
   width: 160px;
+}
+
+.reg_input_link {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+.reg_input_link a:hover {
+  text-decoration: underline;
 }
 
 .reg_next_wrap {

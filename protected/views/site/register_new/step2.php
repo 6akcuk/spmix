@@ -1,61 +1,47 @@
-<?php Yii::app()->getClientScript()->registerScriptFile('/js/register.js'); ?>
+<?php
+Yii::app()->getClientScript()->registerScriptFile('/js/registernew.js');
+Yii::app()->getClientScript()->registerCssFile('/css/register.css');
+?>
+<div id="register_content">
+  <div class="tabs">
+    <?php echo ActiveHtml::link('Личные данные', '/registernew/step1') ?>
+    <?php echo ActiveHtml::link('Данные для входа', '/registernew/step2', array('class' => 'selected')) ?>
+    <?php echo ActiveHtml::link('Соглашение', '/registernew/step3') ?>
+    <?php echo ActiveHtml::link('Завершение регистрации', '/registernew/step4') ?>
+  </div>
 
-<h1>Регистрация на сайте</h1>
-
-<div id="stepcolumns" class="clearfix">
-    <div class="left">
-        <ul>
-            <li>
-                <?php echo ActiveHtml::link('Родной город', '/register/step1') ?>
-            </li>
-            <li>
-                <?php echo ActiveHtml::link('Личные данные', '/register/step2', array('class' => 'selected')) ?>
-            </li>
-            <li>
-                <?php echo ActiveHtml::link('Данные для входа', '/register/step3') ?>
-            </li>
-            <li>
-                <?php echo ActiveHtml::link('Соглашение', '/register/step4') ?>
-            </li>
-            <li>
-                <?php echo ActiveHtml::link('Завершение регистрации', '/register/step5') ?>
-            </li>
-        </ul>
+  <div class="reg_header_wrap">
+    <h1>Шаг 2. Укажите данные для входа</h1>
+  </div>
+  <div class="reg_text_wrap">
+    <p>
+      С помощью этих данных вы сможете входить на данный сайт.
+    </p>
+  </div>
+  <div class="reg_input_wrap">
+    <?php /** @var $form ActiveForm */
+    $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
+      'id' => 'regform',
+      'action' => $this->createUrl('/register'),
+    )); ?>
+    <input type="hidden" name="step" value="2" />
+    <div class="reg_input_row clearfix">
+      <div class="reg_input_label left">Логин<span class="required">*</span>:</div>
+      <div class="reg_input_labeled left"><?php echo $form->textField($model, 'login') ?></div>
     </div>
-    <div class="right">
-        <h3>Укажите личные данные</h3>
-        <p>
-            ФИО требуется для идентификация вашей личности при проведении платежей. <b>Поле Код приглашения не является обязательным.</b>
-        </p>
-        <?php /** @var $form ActiveForm */
-        $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
-            'id' => 'regform',
-            'action' => $this->createUrl('/register'),
-        )); ?>
-        <input type="hidden" name="step" value="2" />
-        <div class="clearfix">
-          <?php echo $form->dropdown($model, 'gender', array('Мужской' => 'Male', 'Женский' => 'Female')) ?>
-        </div>
-        <div class="row">
-            <?php echo $form->inputPlaceholder($model, 'lastname') ?>
-        </div>
-        <div class="row">
-            <?php echo $form->inputPlaceholder($model, 'firstname') ?>
-        </div>
-        <div class="row">
-            <?php echo $form->inputPlaceholder($model, 'middlename') ?>
-        </div>
-        <div class="row">
-          <?php echo $form->inputPlaceholder($model, 'invite_code') ?>
-        </div>
-        <?php $this->endWidget(); ?>
-        <div class="buttons clearfix">
-            <div class="right">
-                <a class="btn light_green" onclick="register.next()">
-                    Далее
-                    <span class="iconify_next_a"></span>
-                </a>
-            </div>
-        </div>
+    <div class="reg_input_row clearfix">
+      <div class="reg_input_label left">E-Mail<span class="required">*</span>:</div>
+      <div class="reg_input_labeled left"><?php echo $form->textField($model, 'email') ?></div>
     </div>
+    <div class="reg_input_row clearfix">
+      <div class="reg_input_label left">Пароль<span class="required">*</span>:</div>
+      <div class="reg_input_labeled left"><?php echo $form->textField($model, 'password') ?></div>
+    </div>
+  </div>
+  <div class="reg_next_wrap">
+    <?php $this->endWidget(); ?>
+    <div class="button_submit reg_next_button">
+      <button onclick="register.next()"><span class="with_arr">Далее</span></button>
+    </div>
+  </div>
 </div>

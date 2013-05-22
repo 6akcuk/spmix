@@ -1,5 +1,5 @@
 <?php
-Yii::app()->getClientScript()->registerScriptFile('/js/register.js');
+Yii::app()->getClientScript()->registerScriptFile('/js/registernew.js');
 Yii::app()->getClientScript()->registerCssFile('/css/register.css');
 ?>
 <?php
@@ -32,25 +32,25 @@ foreach ($cities as $city) {
     )); ?>
     <input type="hidden" name="step" value="1" />
     <div class="reg_input_row clearfix">
-      <div class="reg_input_label left">Родной город:</div>
+      <div class="reg_input_label left">Родной город<span class="required">*</span>:</div>
       <div class="reg_input_labeled left"><?php echo $form->dropdown($model, 'city', $cityList) ?></div>
     </div>
     <div class="reg_input_row clearfix">
-      <div class="reg_input_label left">Пол:</div>
+      <div class="reg_input_label left">Пол<span class="required">*</span>:</div>
       <div class="reg_input_labeled left">
         <?php echo $form->dropdown($model, 'gender', array('Мужской' => 'Male', 'Женский' => 'Female')) ?>
       </div>
     </div>
     <div class="reg_input_row clearfix">
-      <div class="reg_input_label left">Фамилия:</div>
+      <div class="reg_input_label left">Фамилия<span class="required">*</span>:</div>
       <div class="reg_input_labeled left"><?php echo $form->textField($model, 'lastname') ?></div>
     </div>
     <div class="reg_input_row clearfix">
-      <div class="reg_input_label left">Имя:</div>
+      <div class="reg_input_label left">Имя<span class="required">*</span>:</div>
       <div class="reg_input_labeled left"><?php echo $form->textField($model, 'firstname') ?></div>
     </div>
     <div class="reg_input_row clearfix">
-      <div class="reg_input_label left">Отчество:</div>
+      <div class="reg_input_label left">Отчество<span class="required">*</span>:</div>
       <div class="reg_input_labeled left"><?php echo $form->textField($model, 'middlename') ?></div>
     </div>
     <div class="reg_input_row clearfix">

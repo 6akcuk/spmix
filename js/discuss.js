@@ -303,6 +303,11 @@ var Discuss = {
       Discuss.attachPhoto(file_id);
     });
 
+    if (!json.x) {
+      ajex.show('Можно прикреплять только фотографии');
+      return;
+    }
+
     $('<input/>').attr({type: 'hidden', id: uid + file_id +'_attach', name: 'DiscussPost[attach][]'}).val(filedata).prependTo(cont_id);
     var cont = $('<div/>').attr({class: 'left post_attach_photo'}).appendTo(cont_id);
     cont.html('<img src="http://cs'+ json['b'][2] +'.'+ A.host +'/'+ json['b'][0] +'/'+ json['b'][1] +'" alt=""/><a class="tt photo_attach_delete" title="Удалить фотографию"><span class="icon-remove icon-white"></span></a>');

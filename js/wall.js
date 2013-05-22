@@ -33,6 +33,11 @@ var Wall = {
       Wall.attachPhoto(file_id);
     });
 
+    if (!json.x) {
+      ajex.show('Можно прикреплять только фотографии');
+      return;
+    }
+
     $('<input/>').attr({type: 'hidden', id: 'wall_'+ file_id +'_attach', name: 'Wall[attach][photo][]'}).val(filedata).prependTo('#wall_post_btn');
     var cont = $('<div/>').attr({class: 'left wall_attach_photo'}).appendTo('#wall_attaches');
     cont.html('<img src="http://cs'+ json['b'][2] +'.'+ A.host +'/'+ json['b'][0] +'/'+ json['b'][1] +'" alt=""/><a class="tt photo_attach_delete" title="Удалить фотографию"><span class="icon-remove icon-white"></span></a>');
