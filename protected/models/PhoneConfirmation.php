@@ -6,6 +6,7 @@
  * The followings are the available columns in table 'phone_confirmations':
  * @property integer $id
  * @property string $phone
+ * @property integer $session
  * @property string $code
  */
 class PhoneConfirmation extends CActiveRecord
@@ -38,6 +39,7 @@ class PhoneConfirmation extends CActiveRecord
 		return array(
 			array('phone, code', 'required'),
 			array('phone, code', 'length', 'max'=>25),
+      array('session', 'numerical'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, phone, code', 'safe', 'on'=>'search'),
@@ -87,8 +89,12 @@ class PhoneConfirmation extends CActiveRecord
 		));
 	}
 
-    public function generateCode()
-    {
-        $this->code = rand(100000, 999999);
-    }
+  public function generateSession()
+  {
+    $this->session = rand(10000, 99999);
+  }
+  public function generateCode()
+  {
+    $this->code = rand(100000, 999999);
+  }
 }

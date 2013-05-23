@@ -27,12 +27,16 @@ Yii::app()->getClientScript()->registerCssFile('/css/register.css');
     <?php /** @var $form ActiveForm */
     $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
       'id' => 'regform',
-      'action' => $this->createUrl('/register'),
+      'action' => $this->createUrl('/registernew'),
     )); ?>
     <input type="hidden" name="step" value="3" />
     <div class="reg_input_row clearfix">
       <div class="reg_input_label left">Мобильный телефон<span class="required">*</span>:</div>
       <div class="reg_input_labeled left"><?php echo $form->textField($model, 'phone') ?></div>
+    </div>
+    <div class="reg_input_row reg_input_link clearfix">
+      <input type="checkbox" id="RegisterNewForm_agreement" name="RegisterNewForm[agreement]" value="1"<?php if($model->agreement) echo " checked" ?>/>
+      <?php echo $form->label($model, 'agreement') ?>
     </div>
   </div>
   <div class="reg_next_wrap">

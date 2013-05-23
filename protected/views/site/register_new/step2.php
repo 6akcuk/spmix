@@ -22,7 +22,7 @@ Yii::app()->getClientScript()->registerCssFile('/css/register.css');
     <?php /** @var $form ActiveForm */
     $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
       'id' => 'regform',
-      'action' => $this->createUrl('/register'),
+      'action' => $this->createUrl('/registernew'),
     )); ?>
     <input type="hidden" name="step" value="2" />
     <div class="reg_input_row clearfix">
@@ -35,7 +35,7 @@ Yii::app()->getClientScript()->registerCssFile('/css/register.css');
     </div>
     <div class="reg_input_row clearfix">
       <div class="reg_input_label left">Пароль<span class="required">*</span>:</div>
-      <div class="reg_input_labeled left"><?php echo $form->textField($model, 'password') ?></div>
+      <div class="reg_input_labeled left"><?php echo $form->passwordField($model, 'password') ?></div>
     </div>
   </div>
   <div class="reg_next_wrap">

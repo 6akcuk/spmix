@@ -78,6 +78,7 @@ return array(
         'logout' => 'site/logout',
         'registernew' => 'site/registernew',
         'registernew/step<step:\d+>' => 'site/registernew',
+        'registernew/sendSMS' => 'site/sendSMSRegisterNew',
         'register' => 'site/register',
         'register/step<step:\d+>' => 'site/register',
         'register/sendSMS' => 'site/sendSMSRegister',

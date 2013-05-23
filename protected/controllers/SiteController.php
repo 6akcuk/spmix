@@ -435,15 +435,149 @@ WHERE twin.member_id = 111 AND t.member_id = 1 AND dialog.type = 0");
   }
 
   public function actionRegisterNew($step = 1) {
-    $this->redirect('/bizzy');
-
     /** @var $user WebUser */
     $user = Yii::app()->user;
     $this->layout = '//layouts/edge_new';
     if (isset($_POST['step'])) $step = intval($_POST['step']);
 
-    $model = new RegisterForm('step'. $step);
+    $model = new RegisterNewForm('step'. $step);
     $model->attributes = $user->getState('regform', null);
+
+    if (isset($_SESSION['invite.id']) && !$model->invite_code) $model->invite_code = $_SESSION['invite.id'];
+
+    if (isset($_POST['RegisterNewForm'])) {
+      $model->attributes = $_POST['RegisterNewForm'];
+      $model->phone = preg_replace('#[^\+0-9]#', '', $model->phone);
+      $result = array();
+
+      if($model->validate()) {
+        $user->setState('regform', $model->attributes);
+
+        // Непосредственно регистрируем пользователя
+        if ($step == 4) {
+          $user->clearStates();
+
+          $user = new User();
+          /** @var $user User */
+          $user->email = $model->email;
+          $user->login = $model->login;
+          $salt = $user->generateSalt();
+          $password = $model->password;
+          $user->password = $user->hashPassword($password, $salt);
+          $user->salt = $salt;
+          $ustatus = $user->save();
+
+          if ($ustatus) {
+            $profile = new Profile();
+            $profile->city_id = $model->city;
+            $profile->attributes = $model->attributes;
+            $profile->phone = $profile->phone;
+            $profile->user_id = $user->id;
+            $profile->sms_notify = 1;
+            $profile->email_notify = 1;
+            $pstatus = $profile->save();
+
+            if ($pstatus) {
+              /** @var $auth IAuthManager */
+              $auth = Yii::app()->getAuthManager();
+              $auth->assign('Пользователь', $user->id);
+
+              $loginform = new LoginForm();
+              $loginform->email = $model->email;
+              $loginform->password = $password;
+              $loginform->login();
+
+              $notify = new ProfileNotify();
+              $notify->user_id = $user->id;
+              $notify->save();
+
+              $cookies = Yii::app()->getRequest()->getCookies();
+              $cookies->remove('cur_city');
+
+              $city = new CHttpCookie('cur_city', intval($profile->city_id));
+              $city->expire = time() + (60 * 60 * 24 * 30 * 12 * 20);
+              $cookies->add('cur_city', $city);
+
+              // Подписка на обновления в городе
+              $sub = new Subscription();
+              $sub->sub_type = Subscription::TYPE_CITY;
+              $sub->sub_link_id = $profile->city_id;
+              $sub->user_id = $user->id;
+              $sub->save();
+
+              // Подписка на самого себя
+              $sub = new Subscription();
+              $sub->sub_type = Subscription::TYPE_USER;
+              $sub->sub_link_id = $user->id;
+              $sub->user_id = $user->id;
+              $sub->save();
+
+              if ($model->invite_code) {
+                $invite = new UserInvite();
+                $invite->master_id = $model->invite_code;
+                $invite->child_id = $user->id;
+                $invite->datetime = date("Y-m-d H:i:s");
+                $invite->save();
+
+                $reputation = new ProfileReputation();
+                $reputation->author_id = $user->id;
+                $reputation->owner_id = $model->invite_code;
+                $reputation->value = Yii::app()->getModule('users')->inviteReputationBonus;
+                $reputation->comment = 'За приглашение пользователя '. $user->login .' #'. $invite->invite_id;
+
+                if ($reputation->save()) {
+                  $conn = $reputation->getDbConnection();
+                  $command = $conn->createCommand("UPDATE `profiles` SET positive_rep = positive_rep + ". $reputation->value ." WHERE `user_id` = ". $reputation->owner_id);
+                  $command->execute();
+
+                  ProfileRelationship::addToFriend($user, $reputation->owner_id);
+                }
+              }
+
+              $result['success'] = true;
+              $result['step'] = 4;
+              $result['id'] = $user->id;
+
+              if (isset($_SESSION['global.jumper'])) {
+                $this->redirect($_SESSION['global.jumper']);
+                unset($_SESSION['global.jumper']);
+                Yii::app()->end();
+              }
+            }
+            else {
+              $user->delete();
+
+              foreach ($pstatus->getErrors() as $attr => $error) {
+                $result[$attr] = $error;
+              }
+            }
+          }
+          else {
+            foreach ($user->getErrors() as $attr => $error) {
+              $result[$attr] = $error;
+            }
+          }
+        }
+        else {
+          if ($step == 3) {
+            $this->actionSendSMSRegisterNew();
+          }
+
+          $result['success'] = true;
+          $result['step'] = $step;
+        }
+      }
+      else {
+        foreach ($model->getErrors() as $attr => $error) {
+          $result[ActiveHtml::activeId($model, $attr)] = $error;
+        }
+      }
+
+      echo json_encode($result);
+      exit;
+    }
+
+    if (!$model->phone) $model->phone = '+7';
 
     switch ($step) {
       case 1:
@@ -619,6 +753,39 @@ WHERE twin.member_id = 111 AND t.member_id = 1 AND dialog.type = 0");
         }
         else $this->render('register/step'. $step, $array);
     }
+
+  public function actionSendSMSRegisterNew() {
+    $user = Yii::app()->user;
+    $model = new RegisterNewForm('step3');
+    $model->attributes = $user->getState('regform', null);
+
+    if ($model->phone) {
+      PhoneConfirmation::model()->deleteAll('phone = :phone', array(':phone' => $model->phone));
+      $pc = new PhoneConfirmation();
+      $pc->phone = $model->phone;
+      $pc->generateSession();
+      $pc->generateCode();
+      $pc->save();
+
+      $sms = new SmsDelivery(Yii::app()->params['smsUsername'], Yii::app()->params['smsPassword']);
+      $sms->SendMessage($pc->phone, Yii::app()->params['smsNumber'], 'Ваш код подтверждения: '. $pc->code .'. Сессия '. $pc->session);
+
+      $_SESSION['pc.session'] = $pc->session;
+
+      echo json_encode(array(
+        'success' => 'true',
+        'step' => 3,
+        'message' => 'Код отправлен',
+        'session' => $pc->session,
+      ));
+    }
+    else {
+      echo json_encode(array(
+        'message' => 'Данные неверны',
+      ));
+    }
+    exit;
+  }
 
     public function actionSendSMSRegister() {
         $user = Yii::app()->user;

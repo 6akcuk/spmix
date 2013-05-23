@@ -361,69 +361,71 @@ class Feed extends CActiveRecord
       $sub_id[] = $row['feed_id'];
     }
 
-    $command = $db->createCommand("
-    SELECT * FROM `feed`
-      WHERE feed_id IN (". implode(", ", $sub_id) .")
-      ORDER BY add_date DESC");
+    if (sizeof($sub_id)) {
+      $command = $db->createCommand("
+      SELECT * FROM `feed`
+        WHERE feed_id IN (". implode(", ", $sub_id) .")
+        ORDER BY add_date DESC");
 
-    /** @var CDbDataReader $reader */
-    $reader = $command->query();
-    while (($row = $reader->read()) !== false) {
-      $feed = new Feed();
-      $feed->feed_id = $row['feed_id'];
-      $feed->add_date = $row['add_date'];
-      $feed->feed_ondelete = $row['feed_ondelete'];
-      $feed->event_text = $row['event_text'];
-      $feed->event_type = $row['event_type'];
-      $feed->event_link_id = $row['event_link_id'];
-      $feed->owner_id = $row['owner_id'];
-      $feed->owner_type = $row['owner_type'];
+      /** @var CDbDataReader $reader */
+      $reader = $command->query();
+      while (($row = $reader->read()) !== false) {
+        $feed = new Feed();
+        $feed->feed_id = $row['feed_id'];
+        $feed->add_date = $row['add_date'];
+        $feed->feed_ondelete = $row['feed_ondelete'];
+        $feed->event_text = $row['event_text'];
+        $feed->event_type = $row['event_type'];
+        $feed->event_link_id = $row['event_link_id'];
+        $feed->owner_id = $row['owner_id'];
+        $feed->owner_type = $row['owner_type'];
 
-      switch ($feed->event_type) {
-        case 'new theme post':
-          $criteria = new CDbCriteria();
-          $criteria->compare('post_id', $feed->event_link_id);
-          $criteria->select = 'forum_id, theme_id';
+        switch ($feed->event_type) {
+          case 'new theme post':
+            $criteria = new CDbCriteria();
+            $criteria->compare('post_id', $feed->event_link_id);
+            $criteria->select = 'forum_id, theme_id';
 
-          $nullpost = DiscussPost::model()->with('theme', 'theme.forum')->findByPk($feed->event_link_id);
-          if (!$nullpost) continue 2;
+            $nullpost = DiscussPost::model()->with('theme', 'theme.forum')->findByPk($feed->event_link_id);
+            if (!$nullpost) continue 2;
 
-          $criteria = new CDbCriteria();
-          $criteria->order = 'add_date DESC';
-          $criteria->compare('forum_id', $nullpost->forum_id);
-          $criteria->compare('theme_id', $nullpost->theme_id);
+            $criteria = new CDbCriteria();
+            $criteria->order = 'add_date DESC';
+            $criteria->compare('forum_id', $nullpost->forum_id);
+            $criteria->compare('theme_id', $nullpost->theme_id);
 
-          $offsets = DiscussPost::model()->count($criteria);
-          $criteria->limit = 3;
+            $offsets = DiscussPost::model()->count($criteria);
+            $criteria->limit = 3;
 
-          $posts = array_reverse(DiscussPost::model()->with('author.profile')->findAll($criteria));
+            $posts = array_reverse(DiscussPost::model()->with('author.profile')->findAll($criteria));
 
-          $feed->content = array('nullpost' => $nullpost, 'offsets' => $offsets, 'posts' => $posts);
-          break;
-        case 'new reply':
-          $reply = ProfileWallPost::model()->with('replyPost', array('replyPost.last_replies' => array('limit' => 3)), 'replyPost.author.profile')->findByPk($feed->event_link_id);
-          if (!$reply) continue 2;
-          $feed->content = $reply->replyPost;
-          break;
-        case 'new comment':
-          $nullcomment = Comment::model()->findByPk($feed->event_link_id);
-          if (!$nullcomment) continue 2;
+            $feed->content = array('nullpost' => $nullpost, 'offsets' => $offsets, 'posts' => $posts);
+            break;
+          case 'new reply':
+            $reply = ProfileWallPost::model()->with('replyPost', array('replyPost.last_replies' => array('limit' => 3)), 'replyPost.author.profile')->findByPk($feed->event_link_id);
+            if (!$reply) continue 2;
+            $feed->content = $reply->replyPost;
+            break;
+          case 'new comment':
+            $nullcomment = Comment::model()->findByPk($feed->event_link_id);
+            if (!$nullcomment) continue 2;
 
-          $criteria = new CDbCriteria();
-          $criteria->order = 'creation_date DESC';
-          $criteria->compare('hoop_id', $nullcomment->hoop_id);
-          $criteria->compare('hoop_type', $nullcomment->hoop_type);
+            $criteria = new CDbCriteria();
+            $criteria->order = 'creation_date DESC';
+            $criteria->compare('hoop_id', $nullcomment->hoop_id);
+            $criteria->compare('hoop_type', $nullcomment->hoop_type);
 
-          $commentsNum = Comment::model()->with('reply')->count($criteria);
-          $criteria->limit = 3;
+            $commentsNum = Comment::model()->with('reply')->count($criteria);
+            $criteria->limit = 3;
 
-          $comments = array_reverse(Comment::model()->with('author', 'author.profile', 'reply')->findAll($criteria));
+            $comments = array_reverse(Comment::model()->with('author', 'author.profile', 'reply')->findAll($criteria));
 
-          $feed->content = array('hoop_id' => $nullcomment->hoop_id, 'hoop_type' => $nullcomment->hoop_type, 'offsets' => $commentsNum, 'comments' => $comments);
-          break;
+            $feed->content = array('hoop_id' => $nullcomment->hoop_id, 'hoop_type' => $nullcomment->hoop_type, 'offsets' => $commentsNum, 'comments' => $comments);
+            break;
+        }
+
+        $result[] = $feed;
       }
-
-      $result[] = $feed;
     }
 
     return $result;

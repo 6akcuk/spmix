@@ -1,3 +1,3 @@
-<div class="op_report" style="text-align: center">
+<h2 class="empty">
   Данный раздел сайта временно недоступен
-</div>
+</h2>

@@ -28,7 +28,7 @@ foreach ($cities as $city) {
     <?php /** @var $form ActiveForm */
     $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
     'id' => 'regform',
-    'action' => $this->createUrl('/register'),
+    'action' => $this->createUrl('/registernew'),
     )); ?>
     <input type="hidden" name="step" value="1" />
     <div class="reg_input_row clearfix">

@@ -14,7 +14,8 @@ var register = {
   },
   sendCode: function(force) {
     ajax.post('/registernew/sendSMS', null, function(r) {
-      msi.show(r.message);
+      boxPopup(r.message);
+      $('#pc_session').text(r.session);
     });
   }
 };

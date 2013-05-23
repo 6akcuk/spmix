@@ -38,6 +38,9 @@
 .reg_input_labeled {
   width: 160px;
 }
+.reg_input_labeled_text {
+  padding-top: 5px;
+}
 
 .reg_input_link {
   margin-left: auto;

@@ -22,12 +22,12 @@ Yii::app()->getClientScript()->registerCssFile('/css/register.css');
     <?php /** @var $form ActiveForm */
     $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
       'id' => 'regform',
-      'action' => $this->createUrl('/register'),
+      'action' => $this->createUrl('/registernew'),
     )); ?>
     <input type="hidden" name="step" value="4" />
     <div class="reg_input_row clearfix">
       <div class="reg_input_label left">Код сессии:</div>
-      <div class="reg_input_labeled left"></div>
+      <div id="pc_session" class="reg_input_labeled reg_input_labeled_text left"><?php echo (isset($_SESSION['pc.session'])) ? $_SESSION['pc.session'] : 'Код еще не был отослан' ?></div>
     </div>
     <div class="reg_input_row clearfix">
       <div class="reg_input_label left">Код подтверждения<span class="required">*</span>:</div>
