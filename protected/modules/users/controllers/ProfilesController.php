@@ -610,7 +610,7 @@ class ProfilesController extends Controller {
                 $phone->owner_id = Yii::app()->user->getId();
                 $phone->date = date("Y-m-d H:i:s");
                 $phone->old_phone = Yii::app()->user->model->profile->phone;
-                $phone->new_phone = str_replace('+', '', $changephonemdl->phone);
+                $phone->new_phone = $changephonemdl->phone;
                 $phone->ip = ip2long($_SERVER['REMOTE_ADDR']);
                 $phone->code = $phone->generateCode();
                 $phone->save();

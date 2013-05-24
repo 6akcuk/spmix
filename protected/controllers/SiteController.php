@@ -596,6 +596,8 @@ WHERE twin.member_id = 111 AND t.member_id = 1 AND dialog.type = 0");
   }
 
     public function actionRegister($step = 1) {
+      $this->redirect('/registernew');
+
         /** @var $user WebUser */
         $user = Yii::app()->user;
         $this->layout = '//layouts/edge';
