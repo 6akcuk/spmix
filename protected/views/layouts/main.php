@@ -120,7 +120,7 @@ $cookies = $request->getCookies();
                     <?php echo ActiveHtml::link('Моя страница', '/id'. Yii::app()->user->getId()) ?>
                   </li>
                   <li>
-                    <?php echo ActiveHtml::link('Закупки', '/purchases') ?>
+                    <?php echo ActiveHtml::link('Закупки', '/purchases', array('nav' => array('ignoreCache' => true))) ?>
                   </li>
                   <li>
                     <?php echo ActiveHtml::link('Обсуждения', '/discuss') ?>

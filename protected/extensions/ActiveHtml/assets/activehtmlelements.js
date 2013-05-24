@@ -1571,7 +1571,7 @@ $.fn.filters = function() {
         if ($el.hasClass('input_placeholder')) {
             var $this = $el.find('input');
             $this.blur(function() {
-                nav.go('?'+ $this.attr('name') +'='+ $this.val(), event, {search: true, revoke: ($this.val() == '')});
+                nav.go('?'+ $this.attr('name') +'='+ $this.val(), event, {clearOffset: true, search: true, revoke: ($this.val() == '')});
             }).keypress(function(ev) {
                 if (ev.keyCode == 13) nav.go('?'+ $this.attr('name') +'='+ $this.val(), event, {search: true});
             });
@@ -1579,13 +1579,13 @@ $.fn.filters = function() {
         else if ($el.hasClass('input_calendar')) {
             var $this = $el.find('input');
             $this.blur(function() {
-                nav.go('?'+ $this.attr('name') +'='+ $this.val(), event, {search: true, revoke: ($this.val() == '')});
+                nav.go('?'+ $this.attr('name') +'='+ $this.val(), event, {clearOffset: true, search: true, revoke: ($this.val() == '')});
             });
         }
         else if ($el.attr('tag', 'select')) {
             var $this = $el;
             $this.change(function() {
-                nav.go('?'+ $this.attr('name') +'='+ $this.val(), event, {search: true, revoke: ($this.val() == '')});
+                nav.go('?'+ $this.attr('name') +'='+ $this.val(), event, {clearOffset: true, search: true, revoke: ($this.val() == '')});
             });
         }
     });
@@ -1708,11 +1708,15 @@ var nav = {
             }
           // paginator fix offset
           // них не помню зачем ввел
+          // вспомнил, не сразу, но вспомнил
             if (opts.search) {
               q = nav.revoke(q, 'pages=1');
               //q = nav.revoke(q, 'offset=x');
               nav.objLoc = nav.q2obj(q);
             }
+          if (opts.clearOffset) {
+            q = nav.revoke(q, 'offset=x');
+          }
             a[1] = q;
             return a.join('?');
         }
@@ -1767,7 +1771,49 @@ var nav = {
                 clearTimeout(nav._tmPage);
                 nav.request.abort();
             }
-            nav.request = $.ajax({
+          /*
+          if (opts.useCache) {
+            if (!A.navCache) A.navCache = {};
+            A.navCache[nav.curLoc] = {
+              title: $('title').text(),
+              html: $('#content').html(),
+              scroll: $(window).scrollTop(),
+              pgFixed: ($('#pg_fixed').length) ? $('#pg_fixed').html() : null,
+              pgOpts: Paginator.opts
+            };
+          }
+          if (!opts.ignoreCache && A.navCache && A.navCache[where.url]) {
+            var nc = A.navCache[where.url];
+
+            if (typeof Paginator !== "undefined")
+              Paginator.onNavGo();
+
+            $('title').text(nc.title);
+            $('#content').html(nc.html);
+            if (nc.pgFixed) {
+              $('#pg_fixed').html(nc.pgFixed);
+              A.pgFixedVisible = false;
+              A.pgFixed = $('#pg_fixed');
+              A.pgFixedBg = $('#pg_fixed div.pg_fixed_bg');
+              A.pgFixedContent = $('#pg_fixed div.pg_fixed_content');
+              Paginator.init(nc.pgOpts);
+              Paginator.scrollResize();
+            }
+
+            nav.curLoc = (!opts.box) ? loc : nav.curLoc.replace(/\?z=.*//*, '') + '?z='+ loc.replace(/\//, '');
+            /*location.hash = (!opts.box) ? loc : nav.curLoc;
+            (!opts.box) ? $('body').removeClass('progress') : hideGlobalPrg();
+
+            // ScrollFix Clear
+            ScrollFix.removeAll();
+            $('#content').trigger('contentChanged', {scroll: nc.scroll});
+
+            delete nc;
+            delete A.navCache[where.url];
+            return false;
+          }
+*/
+          nav.request = $.ajax({
                 type: 'POST',
                 dataType: 'json',
                 url: where.url,
@@ -1785,8 +1831,8 @@ var nav = {
                     return;
                 }
 
-                nav.curLoc = (!opts.box) ? loc : nav.curLoc.replace(/\?z=.*/, '') + '?z='+ loc.replace(/\//, '');
-                location.hash = (!opts.box) ? loc : nav.curLoc;
+              nav.curLoc = (!opts.box) ? loc : nav.curLoc.replace(/\?z=.*/, '') + '?z='+ loc.replace(/\//, '');
+              location.hash = (!opts.box) ? loc : nav.curLoc;
 
                 (!opts.box) ? $('body').removeClass('progress') : hideGlobalPrg();
                 clearTimeout(nav._tmPage);
@@ -2119,7 +2165,8 @@ $().ready(function() {
         if (A.pageScroll) {
           A.pageScroll = false;
         }
-        else if (!opts || !opts.noscroll) $(window).scrollTop(0);
+        else if (!opts || (!opts.noscroll && !opts.scroll)) $(window).scrollTop(0);
+        else if (opts.scroll) $(window).scrollTop(opts.scroll)
       }
 
       cur = {};

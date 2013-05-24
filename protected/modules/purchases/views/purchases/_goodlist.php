@@ -5,7 +5,7 @@
 <?php foreach ($goods as $good): ?>
 <div id="good<?php echo $good->purchase_id ?>_<?php echo $good->good_id ?>"<?php if(!$added) { echo ' rel="page-'. $page .'"'; $added = true; } ?> class="good_row_cont">
     <div class="good_row_inner_cont">
-        <a class="good_row_relative" onmouseover="Purchase.overGood(this, event)" onmouseout="Purchase.outGood(this, event)" href="/good<?php echo $good->purchase_id ?>_<?php echo $good->good_id ?>" onclick="if(A.glCancelClick) return (A.glCancelClick = false); return nav.go(this, null)">
+        <a class="good_row_relative<?php if($good->good_hidden) echo " good_row_deleted" ?>" onmouseover="Purchase.overGood(this, event)" onmouseout="Purchase.outGood(this, event)" href="/good<?php echo $good->purchase_id ?>_<?php echo $good->good_id ?>" onclick="if(A.glCancelClick) return (A.glCancelClick = false); return nav.go(this, null, {useCache: true})">
         <?php if ($good->is_range && $good->range): ?>
             <div class="good_row_ranges_wrap <?php if ($good->ordersNum > 0): ?>good_row_ranges_wrap_orders<?php endif; ?>">
                 <div class="good_row_ranges_bg"></div>
@@ -47,7 +47,12 @@
                 </div>
             </div>
         <?php endif; ?>
-            <div class="good_image_div"<?php if ($good->image): ?> style="background-image: url('<?php echo ActiveHtml::getImageUrl($good->image->image, 'd') ?>')"<?php endif; ?>></div>
+          <div class="good_image_div"<?php if ($good->image): ?> style="background-image: url('<?php echo ActiveHtml::getImageUrl($good->image->image, 'd') ?>')"<?php endif; ?>></div>
+        <?php if ($good->good_hidden): ?>
+          <div class="good_row_deleted_msg" style="top: 80px;">
+            Товар скрыт. <span onclick="Purchase.restoregood(<?php echo $good->purchase_id ?>, <?php echo $good->good_id ?>); return false">Открыть</span>
+          </div>
+        <?php endif; ?>
         </a>
     </div>
 </div>

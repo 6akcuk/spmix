@@ -76,11 +76,11 @@ class Good extends CActiveRecord
 		);
 	}
 
-    public function defaultScope() {
-        return array(
-            'condition' => 'good_hidden IS NULL',
-        );
-    }
+  public function defaultScope() {
+    return array(
+      'condition' => 'good_hidden IS NULL',
+    );
+  }
 
     public function scopes() {
         return array(

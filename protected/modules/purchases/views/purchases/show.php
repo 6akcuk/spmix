@@ -205,11 +205,10 @@ $delta = Yii::app()->controller->module->goodsPerPage;
     </div>
   <?php endif; ?>
     <div class="purchase_goods"<?php if ($reply): ?> style="display:none" <?php endif; ?>>
-      <?php echo ActiveHtml::link('Быстрый заказ товара', '/purchase'. $purchase->purchase_id .'/quick', array('class' => 'purchase_quick_link')) ?>
+      <?php echo ActiveHtml::link('Форма быстрого заказа', '/purchase'. $purchase->purchase_id .'/quick', array('class' => 'purchase_quick_link')) ?>
         <div class="summary_wrap">
           <div class="right">
             <?php $this->widget('Paginator', array(
-              'url' => '/purchase'. $purchase->purchase_id,
               'offset' => $offset,
               'offsets' => $offsets,
               'delta' => $delta,
@@ -217,6 +216,14 @@ $delta = Yii::app()->controller->module->goodsPerPage;
           </div>
           <div class="summary">
             <span><?php echo Yii::t('purchase', '{n} товар|{n} товара|{n} товаров', $offsets) ?></span>
+            <?php if (Yii::app()->user->checkAccess('purchases.purchases.editSuper') ||
+              Yii::app()->user->checkAccess('purchases.purchases.editOwn', array('purchase' => $purchase))): ?>
+            <span class="divide">|</span>
+              <?php echo ActiveHtml::qVKMenu(($all == 1) ? 'Показывать все товары' : 'Показывать только видимые',
+                ActiveHtml::link('Показывать все товары', '/purchase'. $purchase->purchase_id .'?all=1') .
+                ActiveHtml::link('Показывать только видимые', '/purchase'. $purchase->purchase_id .'?all=0')
+              ) ?>
+            <?php endif; ?>
           </div>
         </div>
         <div class="good_rows clearfix" rel="pagination">

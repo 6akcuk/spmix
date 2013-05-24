@@ -291,9 +291,10 @@ class PurchasesController extends Controller {
    * @param $id
    * @param int $offset
    * @param null $reply
+   * @param int $all
    * @throws CHttpException
    */
-  public function actionShow($id, $offset = 0, $reply = null) {
+  public function actionShow($id, $offset = 0, $reply = null, $all = 0) {
       $purchase = Purchase::model()->with('city', 'author', 'category', 'ordersNum', 'ordersSum')->findByPk($id);
       if (isset($_POST['offset'])) $offset = $_POST['offset'];
 
@@ -301,16 +302,27 @@ class PurchasesController extends Controller {
           throw new CHttpException(500, 'Закупка не обнаружена');
 
       $criteria = new CDbCriteria();
-      $criteria->limit = Yii::app()->controller->module->goodsPerPage;
       $criteria->offset = $offset;
       $criteria->addCondition('purchase_id = :purchase_id');
       $criteria->params[':purchase_id'] = $id;
 
       if (!in_array($purchase->state, array(Purchase::STATE_PAY, Purchase::STATE_CARGO_FORWARD, Purchase::STATE_DISTRIBUTION))) {
-        $goods = Good::model()->quick()->with(array('image' => array('joinType' => 'LEFT JOIN', 'group' => 'image.good_id')), 'ordersNum')->findAll($criteria);
+        $mdl = Good::model();
+        $mdl->quick();
+        if ((Yii::app()->user->checkAccess('purchases.purchases.editSuper') ||
+          Yii::app()->user->checkAccess('purchases.purchases.editOwn', array('purchase' => $purchase))) &&
+          $all == 1)
+          $mdl->resetScope();
 
-        $criteria->limit = 0;
-        $goodsNum = Good::model()->quick()->count($criteria);
+        $goodsNum = $mdl->count($criteria);
+
+        if ((Yii::app()->user->checkAccess('purchases.purchases.editSuper') ||
+            Yii::app()->user->checkAccess('purchases.purchases.editOwn', array('purchase' => $purchase))) &&
+          $all == 1)
+          $mdl->resetScope();
+
+        $criteria->limit = Yii::app()->controller->module->goodsPerPage;
+        $goods = $mdl->with(array('image' => array('joinType' => 'LEFT JOIN', 'group' => 'image.good_id')), 'ordersNum')->findAll($criteria);
       }
       else {
         $goods = null;
@@ -339,6 +351,7 @@ class PurchasesController extends Controller {
             'commentsNum' => $commentsNum,
             'subscription' => $subscription,
             'reply' => $reply,
+            'all' => $all,
           ), true);
       }
       else $this->render('show', array(
@@ -349,6 +362,7 @@ class PurchasesController extends Controller {
         'commentsNum' => $commentsNum,
         'subscription' => $subscription,
         'reply' => $reply,
+        'all' => $all,
       ));
     }
 

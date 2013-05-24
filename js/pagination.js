@@ -24,73 +24,78 @@ var Paginator = {
       A.pgNoPages = false;
       A.pgFixedNoMore = false;
       if (A.pgFixedContent) A.pgFixedContent.html('');
+      if (A.pgFixed) A.pgFixed.hide();
     },
 
     init: function(opts) {
-        var $pg = $('div.pagination'),
-            ofs = $pg.offset();
-        Paginator.opts = $.extend(Paginator.opts, opts || {});
+      var $pg = $('div.pagination'),
+          ofs = $pg.offset();
+      Paginator.opts = $.extend(Paginator.opts, opts || {});
 
-        if (!ofs) return;
+      if (!ofs) return;
 
-        A.pgTarget = opts.target;
-        A.pgUrl = opts.url;
-        A.pgForceUrl = opts.forceUrl;
-        A.pgDelta = opts.delta;
-        A.offset = opts.offset;
-        A.pgPage = (A.offset + A.pgDelta) / A.pgDelta;
-        A.pgPages = opts.pages;
-        A.pgNoPages = opts.nopages;
-        A.pgFixedNoMore = false;
+      A.pgTarget = opts.target;
+      A.pgUrl = opts.url;
+      A.pgForceUrl = opts.forceUrl;
+      A.pgDelta = opts.delta;
+      A.offset = opts.offset;
+      A.pgPage = (A.offset + A.pgDelta) / A.pgDelta;
+      A.pgPages = opts.pages;
+      A.pgNoPages = opts.nopages;
+      A.pgFixedNoMore = false;
+      A.pgFixedTop = ofs.top;
 
-        if (!A.pgInit) {
-            A.pgFixed = $('<div/>').addClass('pg_fixed')
-                .attr('id', 'pg_fixed')
-                .css({
-                    display: 'none',
-                    left: ofs.left
-                });
-            A.pgFixed.html('<div class="pg_fixed_bg"></div><div class="pg_fixed_content"></div>');
-            A.pgFixedBg = A.pgFixed.find('div.pg_fixed_bg');
-            A.pgFixedContent = A.pgFixed.find('div.pg_fixed_content');
+      if (!A.pgInit) {
+        A.pgFixed = $('<div/>').addClass('pg_fixed')
+          .attr('id', 'pg_fixed')
+          .css({
+            display: 'none',
+            left: ofs.left
+          });
+        A.pgFixed.html('<div class="pg_fixed_bg"></div><div class="pg_fixed_content"></div>');
+        A.pgFixedBg = A.pgFixed.find('div.pg_fixed_bg');
+        A.pgFixedContent = A.pgFixed.find('div.pg_fixed_content');
 
-            A.pgFixed.appendTo(document.body);
+        A.pgFixed.appendTo(document.body);
 
-            A.pgFixedTop = ofs.top;
-            A.pgBusy = false;
-            A.pgInit = true;
+        A.pgBusy = false;
+        A.pgInit = true;
 
-            Paginator.attach();
-        }
+        Paginator.attach();
+      }
 
-        Paginator.scanLandmarks();
-        Paginator.initPages();
+      Paginator.scanLandmarks();
+      Paginator.initPages();
     },
 
     initPages: function() {
-        if (typeof A.pgFixedContent == 'undefined' || A.pgNoPages) return;
+      if (typeof A.pgFixedContent == 'undefined' || A.pgNoPages) {
+        if (A.pgFixedContent) A.pgFixedContent.html('');
+        return;
+      }
 
-        var page = parseInt(A.pgPage);// (A.offset + A.pgDelta) / A.pgDelta,
-            html = [],
-            minPage = 1, maxPage = 1;
+      var page = parseInt(A.pgPage);// (A.offset + A.pgDelta) / A.pgDelta,
+          html = [],
+          minPage = 1, maxPage = 1;
 
-        if (page > 3 && Paginator.opts.pages > 5) minPage = page - 2;
-        maxPage = (page < Paginator.opts.pages - 2) ? page + 2 : Paginator.opts.pages;
+      if (page > 3 && Paginator.opts.pages > 5) minPage = page - 2;
+      maxPage = (page < Paginator.opts.pages - 2) ? page + 2 : Paginator.opts.pages;
 
-        if (page > 3 && Paginator.opts.pages > 5) html.push('<a class="pg_fixed_arr" href="'+ Paginator.opts.url +'?offset=0" onclick="return nav.go(this, event, {paginator: true})">&laquo;</a>');
-        for(var i=minPage; i<=maxPage; i++) {
-            var offset = i * A.pgDelta - A.pgDelta,
-                cls = (i == A.pgPage) ? 'pg_fixed_lnk_sel' : 'pg_fixed_lnk';
-            if (cls == 'pg_fixed_lnk' && Paginator.landmarks[i] && Paginator.landmarks[i].top) cls = 'pg_fixed_lnk_fill';
-            html.push('<a class="'+ cls +'" href="'+ Paginator.opts.url +'?offset='+ offset +'" onclick="return nav.go(this, event, {paginator: true})">'+ i +'</a>');
-        }
-        if (Paginator.opts.pages > maxPage) {
-            var offset = maxPage * A.pgDelta - A.pgDelta;
-            html.push('<a class="pg_fixed_arr" href="'+ Paginator.opts.url +'?offset='+ offset +'" onclick="return nav.go(this, event, {paginator: true})">&raquo;</a>');
-        }
+      if (page > 3 && Paginator.opts.pages > 5) html.push('<a class="pg_fixed_arr" href="'+ Paginator.opts.url +'?offset=0" onclick="return nav.go(this, event, {paginator: true})">&laquo;</a>');
+      for(var i=minPage; i<=maxPage; i++) {
+          var offset = i * A.pgDelta - A.pgDelta,
+              cls = (i == A.pgPage) ? 'pg_fixed_lnk_sel' : 'pg_fixed_lnk';
+          if (cls == 'pg_fixed_lnk' && Paginator.landmarks[i] && Paginator.landmarks[i].top) cls = 'pg_fixed_lnk_fill';
+          html.push('<a class="'+ cls +'" href="'+ Paginator.opts.url +'?offset='+ offset +'" onclick="return nav.go(this, event, {paginator: true})">'+ i +'</a>');
+      }
+      if (Paginator.opts.pages > maxPage) {
+          var offset = maxPage * A.pgDelta - A.pgDelta;
+          html.push('<a class="pg_fixed_arr" href="'+ Paginator.opts.url +'?offset='+ offset +'" onclick="return nav.go(this, event, {paginator: true})">&raquo;</a>');
+      }
 
-        A.pgFixedContent.html(html.join(''));
-        A.pgFixedBg.css({width: A.pgFixedContent.outerWidth(), height: A.pgFixedContent.outerHeight()});
+      A.pgFixedContent.html(html.join(''));
+      A.pgFixedBg.css({width: A.pgFixedContent.outerWidth(), height: A.pgFixedContent.outerHeight()});
+      A.pgFixed.attr('pages', Paginator.opts.pages);
     },
 
     scanLandmarks: function() {

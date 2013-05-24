@@ -4,7 +4,7 @@
     <?php echo ActiveHtml::link('ред.', '/edit', array('class' => 'right')) ?>
   </li>
   <li id="friends_link" class="clearfix">
-    <?php echo ActiveHtml::link('Мои друзья', '/friends', array('class' => 'left')) ?>
+    <?php echo ActiveHtml::link('Мои друзья', '/friends', array('class' => 'left', 'nav' => array('ignoreCache' => true))) ?>
     <?php
     if ($this->pageCounters['friends'])
       echo ActiveHtml::link('+'. $this->pageCounters['friends'], '/friends?section=requests', array('class' => 'right lm-counter'))

@@ -7,7 +7,7 @@
             <?php echo ActiveHtml::showUploadImage($purchase->image) ?>
         </div>
         <div class="left info">
-          <div class="purchase_labeled name"><?php echo ActiveHtml::link($purchase->name, '/purchase'. $purchase->purchase_id) ?></div>
+          <div class="purchase_labeled name"><?php echo ActiveHtml::link($purchase->name, '/purchase'. $purchase->purchase_id, array('nav' => array('useCache' => true))) ?></div>
           <div class="purchase_labeled">Организатор: <?php echo ActiveHtml::link($purchase->author->login, '/id'. $purchase->author_id) ?></div>
           <div class="purchase_labeled">Город: <?php echo $purchase->city->name ?></div>
           <div class="purchase_labeled">Дата стопа: <?php echo ActiveHtml::date($purchase->stop_date, false) ?></div>
