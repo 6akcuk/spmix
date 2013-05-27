@@ -90,7 +90,7 @@ class MarketGood extends CActiveRecord
 			'color' => 'Цвет',
 			'delivery' => 'Доставка',
 			'phone' => 'Телефон',
-			'is_used' => 'Is Used',
+			'is_used' => 'Поместить в раздел "Барахолка"',
 			'is_org' => 'Is Org',
 		);
 	}

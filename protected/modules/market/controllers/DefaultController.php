@@ -62,6 +62,7 @@ class DefaultController extends Controller
 
   public function actionAdd() {
     $good = new MarketGood();
+    $good->phone = Yii::app()->user->model->profile->phone;
     $categories = PurchaseCategory::model()->findAll();
 
     if (Yii::app()->request->isAjaxRequest) {

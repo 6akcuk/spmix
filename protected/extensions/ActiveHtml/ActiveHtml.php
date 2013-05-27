@@ -97,13 +97,18 @@ class ActiveHtml extends CHtml {
     }
 
     public static function activeSmartTextarea($model, $attribute, $htmlOptions = array()) {
-        ActiveHtml::publishAssets();
+      ActiveHtml::publishAssets();
 
-        self::resolveNameID($model, $attribute, $htmlOptions);
-        return self::openTag('span', array('class' => 'input_placeholder smarttext')) .
-            self::activeTextArea($model, $attribute, $htmlOptions) .
-            self::activeLabel($model, $attribute) .
-            self::closeTag('span');
+      if (isset($htmlOptions['rm_placeholder'])) {
+        $rm_p = true;
+        unset($htmlOptions['rm_placeholder']);
+      }
+
+      self::resolveNameID($model, $attribute, $htmlOptions);
+      return self::openTag('span', array('class' => 'input_placeholder smarttext')) .
+        self::activeTextArea($model, $attribute, $htmlOptions) .
+        ((isset($rm_p)) ? '' : self::activeLabel($model, $attribute)) .
+        self::closeTag('span');
     }
 
     public static function dropdown($name, $default = '', $value = '', $data = array(), $htmlOptions = array()) {

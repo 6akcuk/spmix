@@ -27,14 +27,14 @@ foreach ($categories as $category) {
   'action' => $this->createUrl('/market?act=add'),
   )); ?>
   <div class="fl_l market_add_image_col">
-    <?php echo $form->upload($good, 'image', 'Добавить фотографию') ?>
+    <?php echo $form->upload($good, 'image', 'Добавить фотографию', array('data-image' => 'e')) ?>
   </div>
   <div class="fl_l market_add_wide_col">
     <div class="market_add_header">Название:</div>
     <?php echo $form->textField($good, 'name', array('class' => 'market_add_wide_input')) ?>
     <div class="market_add_header">Категории:</div>
-    <div id="market_wdd" class="wdd clearfix" onclick="WideDropdown.show('market_wdd', event)">
-      <div class="wdd_lwrap" style="width: 420px">
+    <div id="market_wdd" class="wdd clearfix" style="width: 562px" onclick="WideDropdown.show('market_wdd', event)">
+      <div class="wdd_lwrap" style="width: 400px">
         <div class="wdd_list"></div>
       </div>
       <div class="right wdd_arrow"></div>
@@ -74,9 +74,30 @@ foreach ($categories as $category) {
   <div class="fl_l market_add_left_col">
     <div class="market_add_header">Размер:</div>
     <?php echo $form->textField($good, 'size', array('class' => 'market_add_input')) ?>
+    <div class="market_add_header">Цвет:</div>
+    <?php echo $form->textField($good, 'color', array('class' => 'market_add_input')) ?>
+    <div class="market_add_header">Барахолка:</div>
+    <div class="market_add_check">
+      <?php echo $form->checkBox($good, 'is_used') ?>
+      <?php echo $form->label($good, 'is_used') ?>
+    </div>
   </div>
   <div class="fl_l market_add_right_col">
+    <div class="market_add_header">Цена:</div>
+    <?php echo $form->textField($good, 'price', array('class' => 'market_add_input')) ?>
+    <div class="market_add_header">Доставка:</div>
+    <?php echo $form->textField($good, 'delivery', array('class' => 'market_add_input')) ?>
+    <div class="market_add_header">Контактный телефон:</div>
+    <?php echo $form->textField($good, 'phone', array('class' => 'market_add_input')) ?>
+  </div>
+  <div class="clear"></div>
+  <div class="market_add_header">Описание:</div>
+  <?php echo $form->smartTextarea($good, 'description', array('class' => 'market_add_descr', 'rm_placeholder' => true)) ?>
 
+  <div class="left">
+    <div class="button_submit">
+      <button>Добавить</button>
+    </div>
   </div>
   <?php $this->endWidget(); ?>
 </div>
