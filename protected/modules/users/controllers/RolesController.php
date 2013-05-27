@@ -13,9 +13,9 @@ class RolesController extends Controller {
             array(
                 'ext.AjaxFilter.AjaxFilter'
             ),
-            /*array(
+            array(
                 'ext.RBACFilter.RBACFilter'
-            )*/
+            )
         );
     }
 
