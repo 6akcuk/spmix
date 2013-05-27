@@ -433,11 +433,11 @@ var WideDropdown = {
 
         $('\
 <div class="wddi" id="wddi'+ value +'_'+ id +'" onmousedown="WideDropdown.select(\''+ id +'\', event, \''+ value +'\')" onmouseover="WideDropdown.over(\''+ id +'\', \''+ value +'\')">\
-<div class="wddi_data">\
-    <b class="left wddi_thumb"><img class="wddi_img" src="'+ item.img +'" /></b>\
+  <div class="wddi_data">\
+    '+ ((item.img) ? '<b class="left wddi_thumb"><img class="wddi_img" src="'+ item.img +'" /></b>' : '') +'\
     <div class="wddi_text">'+ item.text +'</div>\
-<div class="wddi_sub">'+ item.sub +'</div>\
-</div>\
+    '+ ((item.sub) ? '<div class="wddi_sub">'+ item.sub +'</div>' : '') +'\
+  </div>\
 </div>').appendTo($list);
     },
     renderBubble: function(id, value) {

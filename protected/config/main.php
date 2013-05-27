@@ -45,6 +45,7 @@ return array(
     'mail',
     'feed',
     'discuss',
+    'market',
   ),
 
 	// application components

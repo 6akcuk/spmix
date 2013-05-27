@@ -1,0 +1,50 @@
+#market_css {
+  display: none;
+}
+
+#market_goods {
+  padding: 10px 0px;
+}
+
+.market_add_wrap {
+  padding: 10px;
+}
+.market_add_image_col {
+  width: 130px;
+}
+.market_add_wide_col {
+  padding-left: 20px;
+  width: 580px;
+}
+.market_add_wide_input {
+  width: 555px !important;
+}
+.market_add_input {
+  width: 320px !important;
+}
+.market_add_input, .market_add_wide_input {
+  margin-bottom: 9px;
+}
+
+.market_add_left_col, .market_add_right_col {
+  width: 350px;
+}
+.market_add_right_col {
+  padding-left: 20px;
+}
+
+.market_add_wrap .filebutton .attach {
+  min-width: 130px;
+  padding: 40px 0px 30px;
+  text-align: center;
+  background: #e9edf1;
+  color: #777;
+}
+
+.market_add_header {
+  font-weight: bold;
+  font-size: 1.09em;
+  color: #508033;
+  line-height: 140%;
+  margin: 0px 0px 5px;
+}
