@@ -109,4 +109,13 @@ class DefaultController extends Controller
       'categories' => $categories,
     ));
   }
+
+  public function actionShowGood($owner_id, $good_id) {
+    if (Yii::app()->request->isAjaxRequest) {
+      $this->pageHtml = $this->renderPartial('show_good', array(
+      ), true);
+    }
+    else $this->render('show_good', array(
+    ));
+  }
 }

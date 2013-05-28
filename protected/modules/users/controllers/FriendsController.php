@@ -204,35 +204,35 @@ class FriendsController extends Controller {
     }
 
     public function actionKeep() {
-        /** @var $friend User  */
-        $friend_id = intval($_POST['friend_id']);
-        $friend = User::model()->findByPk($friend_id);
+      /** @var $friend User  */
+      $friend_id = intval($_POST['friend_id']);
+      $friend = User::model()->findByPk($friend_id);
 
-        if (!$friend) {
-            echo json_encode(array('success' => false, 'message' => 'Пользователь не найден'));
-            exit;
-        }
+      if (!$friend) {
+          echo json_encode(array('success' => false, 'message' => 'Пользователь не найден'));
+          exit;
+      }
 
-        $relation = $friend->profile->getProfileRelation();
+      $relation = $friend->profile->getProfileRelation();
 
-        if ($relation) {
-            if(Yii::app()->user->model->profile->isProfileRelationIncome($relation)) {
-                $request = ProfileRequest::model()->find('owner_id = :id AND req_type = :type AND req_link_id = :link_id', array(
-                    ':id' => $friend->id,
-                    ':type' => ProfileRequest::TYPE_FRIEND,
-                    ':link_id' => $relation->rel_id,
-                ));
-                if ($request) $request->delete();
+      if ($relation) {
+          if(Yii::app()->user->model->profile->isProfileRelationIncome($relation)) {
+              $request = ProfileRequest::model()->find('((owner_id = :id AND req_link_id = :link_id) OR (owner_id = :link_id AND req_link_id = :id)) AND req_type = :type ', array(
+                  ':id' => $friend->id,
+                  ':type' => ProfileRequest::TYPE_FRIEND,
+                  ':link_id' => $relation->rel_id,
+              ));
+              if ($request) $request->delete();
 
-                echo json_encode(array(
-                    'success' => true, 'message' => $friend->login .' '. Yii::t('user', '0#оставлен|1#оставлена', $friend->profile->genderToInt()) .' в подписчиках',
-                ));
-                exit;
-            }
-        }
-        else {
-            echo json_encode(array('success' => false, 'message' => 'Вы не связаны'));
-            exit;
-        }
+              echo json_encode(array(
+                  'success' => true, 'message' => $friend->login .' '. Yii::t('user', '0#оставлен|1#оставлена', $friend->profile->genderToInt()) .' в подписчиках',
+              ));
+              exit;
+          }
+      }
+      else {
+          echo json_encode(array('success' => false, 'message' => 'Вы не связаны'));
+          exit;
+      }
     }
 }

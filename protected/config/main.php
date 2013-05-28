@@ -120,6 +120,8 @@ return array(
         'discuss' => 'discuss/forum',
         'discuss<forum_id:\d+>' => 'discuss/theme',
         'discuss<forum_id:\d+>_<theme_id:\d+>' => 'discuss/post',
+        'market<owner_id:\d+>' => 'market/default/show',
+        'market<owner_id:\d+>_<good_id:\d+>' => 'market/default/showGood',
         '<controller:\w+>/<id:\d+>'=>'<controller>/view',
 				'<controller:\w+>/<action:\w+>/<id:\d+>'=>'<controller>/<action>',
 				'<controller:\w+>/<action:\w+>'=>'<controller>/<action>',
