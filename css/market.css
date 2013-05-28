@@ -6,6 +6,7 @@
   padding: 10px 0px;
 }
 
+/* Add */
 .market_add_wrap {
   padding: 10px;
 }
@@ -61,4 +62,80 @@
   color: #508033;
   line-height: 140%;
   margin: 0px 0px 5px;
+}
+
+.market_add_buttons {
+  padding-top: 10px;
+}
+
+/* Goods */
+.market_good {
+  width: 240px;
+  padding-right: 10px;
+}
+.market_good_name {
+  display: block;
+  padding: 5px 0px;
+  font-weight: bold;
+  font-size: 1.18em;
+  width: 240px;
+  overflow: hidden;
+}
+.market_good_name:hover {
+  text-decoration: underline;
+}
+
+.market_good_photo_wrap {
+  position: relative;
+  height: 100px;
+  overflow: hidden;
+}
+.market_good_photo_wrap .img {
+  display: block;
+  overflow: hidden;
+  width: 100px;
+  height: 100px;
+}
+.market_good_bigph {
+  position: absolute;
+  color: #fff;
+  margin-top: 100px;
+  background: rgba(0, 0, 0, 0.5);
+  width: 100px;
+  height: 15px;
+  line-height: 15px;
+  padding: 4px 0px 6px 0px;
+  text-align: center;
+}
+.market_good_bigph_label {
+  opacity: 0.75;
+  padding: 0px 0px 1px 20px;
+  background: url(/images/photo_icons.png) no-repeat left -62px;
+}
+.market_good_img {
+  width: 100px;
+}
+.market_good_info {
+  padding-left: 14px;
+  padding-top: 4px;
+  width: 124px;
+}
+.market_good_price {
+  padding-bottom: 5px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #8a1f11;
+}
+.market_good_author {
+  padding-bottom: 8px;
+}
+.market_good_label {
+  width: 50px;
+  color: #666;
+  padding-bottom: 4px;
+}
+.market_good_labeled {
+  width: 74px;
+  overflow: hidden;
+  word-break: normal;
 }

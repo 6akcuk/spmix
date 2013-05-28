@@ -9,6 +9,7 @@ Yii::app()->getClientScript()->registerScriptFile('/js/pagination.js');
 Yii::app()->getClientScript()->registerScriptFile('/js/market.js');
 
 $this->pageTitle = Yii::app()->name .' - Пристрой';
+
 $delta = Yii::app()->getModule('market')->goodsPerPage;
 ?>
 <div class="tabs">
@@ -22,6 +23,13 @@ $delta = Yii::app()->getModule('market')->goodsPerPage;
 <div class="summary_wrap">
   <div class="summary">
     <?php echo Yii::t('user', '{n} товар|{n} товара|{n} товаров', $offsets) ?>
+  </div>
+  <div class="right">
+    <?php $this->widget('Paginator', array(
+      'offset' => $offset,
+      'offsets' => $offsets,
+      'delta' => $delta,
+    )); ?>
   </div>
 </div>
 <div id="market_goods" rel="pagination">

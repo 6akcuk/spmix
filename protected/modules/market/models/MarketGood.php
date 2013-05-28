@@ -19,6 +19,8 @@
  * @property string $phone
  * @property integer $is_used
  * @property integer $is_org
+ *
+ * @property User $author
  */
 class MarketGood extends CActiveRecord
 {
@@ -48,7 +50,7 @@ class MarketGood extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('author_id, add_date, name, description, price, currency, size, color, delivery, phone, is_used, is_org', 'required'),
+			array('author_id, image, name, price, currency, size, color, phone, is_used, is_org', 'required'),
 			array('author_id, is_used, is_org', 'numerical', 'integerOnly'=>true),
 			array('name', 'length', 'max'=>200),
 			array('price, delivery', 'length', 'max'=>10),
@@ -124,4 +126,18 @@ class MarketGood extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+
+  public function showPrice() {
+    return ($this->delivery) ? floatval($this->price + $this->delivery) : $this->price;
+  }
+
+  public function beforeSave() {
+    if (parent::beforeSave()) {
+      if ($this->isNewRecord)
+        $this->add_date = date("Y-m-d H:i:s");
+
+      return true;
+    }
+    else return false;
+  }
 }

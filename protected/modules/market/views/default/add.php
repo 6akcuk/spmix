@@ -23,8 +23,11 @@ foreach ($categories as $category) {
   <?php
   /** @var $form ActiveForm */
   $form = $this->beginWidget('ext.ActiveHtml.ActiveForm', array(
-  'id' => 'market_add_form',
-  'action' => $this->createUrl('/market?act=add'),
+    'id' => 'market_add_form',
+    'action' => $this->createUrl('/market?act=add'),
+    'htmlOptions' => array(
+      'onsubmit' => 'return Market.add()'
+    )
   )); ?>
   <div class="fl_l market_add_image_col">
     <?php echo $form->upload($good, 'image', 'Добавить фотографию', array('data-image' => 'e')) ?>
@@ -94,10 +97,11 @@ foreach ($categories as $category) {
   <div class="market_add_header">Описание:</div>
   <?php echo $form->smartTextarea($good, 'description', array('class' => 'market_add_descr', 'rm_placeholder' => true)) ?>
 
-  <div class="left">
-    <div class="button_submit">
-      <button>Добавить</button>
+  <div class="clearfix market_add_buttons">
+    <div class="fl_l button_submit">
+      <button id="market_add" onclick="return Market.add()">Добавить</button>
     </div>
+    <div id="market_add_progress" class="fl_l progress post_progress"></div>
   </div>
   <?php $this->endWidget(); ?>
 </div>

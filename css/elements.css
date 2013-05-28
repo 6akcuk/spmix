@@ -155,14 +155,21 @@ a.input_calendar span {
   font-size: 11px;
   font-weight: normal;
 }
-.button_submit button {
+.button_submit button,
+.button_submit.button_disabled button:hover,
+.button_submit.button_disabled button:active {
   color: #fff;
+  text-shadow: 0px 1px 0px #508033;
   background: #6e953e;
   border-color: #5f8f42;
   border-top-color: #7ab058;
 }
-.button_submit:hover button {
+.button_submit button:hover {
   background: #7ea64b;
+}
+.button_submit button:active {
+  background: #5f8f42;
+  border-top-color: #5f8f42;
 }
 
 .button_menu button {
