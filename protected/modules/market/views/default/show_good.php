@@ -12,9 +12,15 @@ Yii::app()->getClientScript()->registerScriptFile('/js/photoview.js');
 
 $this->pageTitle = Yii::app()->name .' - '. $good->name;
 ?>
-<h1>
-  <?php echo $good->name ?>
-</h1>
+<div class="market_good_header_wrap clearfix">
+  <div class="fl_l market_good_header"><?php echo $good->name ?></div>
+  <div class="right">
+  <?php echo ActiveHtml::qVKMenu('Редактировать', array(
+    ActiveHtml::link('Редактировать', '/market?act=edit&id='. $good->good_id),
+    '<a onclick="Market.deleteGood('. $good->good_id .')">Удалить</a>',
+  ), array('class' => 'right market_act_menu')) ?>
+  </div>
+</div>
 <div class="market_good_table clearfix">
   <div class="left mgs_photo_wrap">
     <?php if($good->image): ?>

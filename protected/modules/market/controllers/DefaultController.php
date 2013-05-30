@@ -110,6 +110,60 @@ class DefaultController extends Controller
     ));
   }
 
+  public function actionEdit($id) {
+    $good = MarketGood::model()->findByPk($id);
+    if (!$good)
+      throw new CHttpException(404, 'Товар не найден');
+
+    if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('good' => $good)) ||
+      Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super')) {
+      /** @var PurchaseCategory $category */
+      $categories = PurchaseCategory::model()->findAll();
+
+      if (isset($_POST['MarketGood'])) {
+        $result = array();
+        $good->attributes = $_POST['MarketGood'];
+
+        if ($good->save()) {
+          foreach ($_POST['market_wdd'] as $wdd) {
+            foreach ($categories as $category) {
+              if ($category->category_id == $wdd) {
+                $c = new MarketGoodCategory();
+                $c->good_id = $good->good_id;
+                $c->category_id = $wdd;
+                $c->save();
+              }
+            }
+          }
+
+          $result['success'] = true;
+          $result['msg'] = 'Товар успешно добавлен';
+        }
+        else {
+          foreach ($good->getErrors() as $attr => $error) {
+            $result[ActiveHtml::activeId($good, $attr)] = $error;
+          }
+        }
+
+        echo json_encode($result);
+        exit;
+      }
+
+      if (Yii::app()->request->isAjaxRequest) {
+        $this->pageHtml = $this->renderPartial('edit', array(
+          'good' => $good,
+          'categories' => $categories,
+        ), true);
+      }
+      else $this->render('edit', array(
+        'good' => $good,
+        'categories' => $categories,
+      ));
+    }
+    else
+      throw new CHttpException(403, 'У Вас нет прав на редактирование данного товара');
+  }
+
   public function actionShowGood($author_id, $good_id, $reply = null) {
     $good = MarketGood::model()->findByPk($good_id);
 

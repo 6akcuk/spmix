@@ -232,7 +232,7 @@ if ($good->oic) {
 </div>
 <script>
 function deleteOrder() {
-  showConfirmBox('Вы действительно хотите удалить заказ? Это действие необратимо.', 'Да, удалить', function() {
+  showConfirmBox('Удаление заказа', 'Вы действительно хотите удалить заказ? Это действие необратимо.', 'Да, удалить', function() {
     if (A.deleteOrder) return;
     A.deleteOrder = true;
 

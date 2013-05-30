@@ -274,6 +274,9 @@ class ActiveHtml extends CHtml {
   public static function qVKMenu($selected, $items, $htmlOptions = array()) {
     $htmlOptions['rel'] = 'menu';
 
+    if (is_array($items))
+      $items = implode('', $items);
+
     return
       self::openTag('a', $htmlOptions) . $selected . self::closeTag('a') .
       self::openTag('div', array('class' => 'qmenu')) .

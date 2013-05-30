@@ -6,6 +6,15 @@
   padding: 10px 0px;
 }
 
+.market_good_header_wrap {
+  padding-bottom: 5px;
+  border-bottom: 1px solid #dae1e8;
+}
+.market_good_header {
+  font-size: 12px;
+  font-weight: bold;
+}
+
 /* Add */
 .market_add_wrap {
   padding: 10px;
@@ -141,7 +150,7 @@
 }
 
 .market_good_table {
-
+  padding-top: 10px;
 }
 .mgs_cont {
   padding-left: 20px;

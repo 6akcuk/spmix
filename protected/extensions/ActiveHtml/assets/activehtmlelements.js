@@ -1210,8 +1210,10 @@ function Box(opts, dark) {
   return retBox;
 }
 
-function showConfirmBox(msg, yes, onYes, no, onNo) {
-  var box = new Box({buttons: [
+function showConfirmBox(title, msg, yes, onYes, no, onNo) {
+  var box = new Box({
+    title: title,
+    buttons: [
     {
       title: yes,
       onclick: onYes

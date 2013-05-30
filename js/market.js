@@ -20,6 +20,14 @@ var Market = {
     return false;
   },
 
+  deleteGood: function(id) {
+    showConfirmBox('Удаление товара', 'Вы действительно хотите удалить товар?', 'Удалить', function() {
+
+    }, 'Отмена', function() {
+      curBox().hide();
+    });
+  },
+
   subscribe: function(id) {
     ajax.post('/market?act=subscribe&id='+ id, {}, function(r) {
       $('#subscribe'+ id).html('<span class="icon-white icon-check"></span> '+ ((r.step == 0) ? 'Отписаться от новостей' : 'Подписаться на новости'));
