@@ -94,7 +94,7 @@ $cookies = $request->getCookies();
     </div>
   </div>
 </div>
-
+<?php Yii::import('ext.GoogleAnalytics', true) ?>
 </body>
 </body>
 </html>

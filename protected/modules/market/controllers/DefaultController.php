@@ -110,16 +110,71 @@ class DefaultController extends Controller
     ));
   }
 
-  public function actionShowGood($owner_id, $good_id) {
+  public function actionShowGood($author_id, $good_id, $reply = null) {
     $good = MarketGood::model()->findByPk($good_id);
+
+    $subscription = Subscription::model()->find('user_id = :id AND sub_type = :type AND sub_link_id = :lid', array(
+      ':id' => Yii::app()->user->getId(),
+      ':type' => Subscription::TYPE_MARKET_GOOD,
+      ':lid' => $good_id,
+    ));
 
     if (Yii::app()->request->isAjaxRequest) {
       $this->pageHtml = $this->renderPartial('show_good', array(
         'good' => $good,
+        'subscription' => $subscription,
+        'reply' => $reply,
       ), true);
     }
     else $this->render('show_good', array(
       'good' => $good,
+      'subscription' => $subscription,
+      'reply' => $reply,
     ));
+  }
+
+  public function actionSubscribe($id) {
+    $result = array();
+    $good = Good::model()->findByPk($id);
+    $subscription = Subscription::model()->find('user_id = :id AND sub_type = :type AND sub_link_id = :lid', array(
+      ':id' => Yii::app()->user->getId(),
+      ':type' => Subscription::TYPE_MARKET_GOOD,
+      ':lid' => $id,
+    ));
+    if ($subscription) {
+      $subscription->delete();
+      $result['step'] = 1;
+    }
+    else {
+      $subscription = new Subscription();
+      $subscription->user_id = Yii::app()->user->getId();
+      $subscription->sub_type = Subscription::TYPE_MARKET_GOOD;
+      $subscription->sub_link_id = $id;
+      $subscription->save();
+      $result['step'] = 0;
+    }
+
+    echo json_encode($result);
+    exit;
+  }
+
+  public function actionShareToFriends($id) {
+    $result = array();
+    $good = MarketGood::model()->findByPk($id);
+
+    if (isset($_POST['msg'])) {
+      $post = new ProfileWallPost();
+      $post->wall_id = Yii::app()->user->getId();
+      $post->author_id = Yii::app()->user->getId();
+      $post->reference_type = ProfileWallPost::REF_TYPE_GOOD;
+      $post->reference_id = $id;
+      $post->post = $_POST['msg'];
+      if ($post->save()) $result['success'] = true;
+      else $result['success'] = false;
+    }
+    else $result['html'] = $this->renderPartial('sharetofriends_box', array('good' => $good), true);
+
+    echo json_encode($result);
+    exit;
   }
 }

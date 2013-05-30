@@ -117,5 +117,6 @@ Yii::app()->getClientScript()->registerCssFile('/css/icons.css');
             </div>
     </div>
     <?php $this->widget('application.modules.purchases.components.NewPurchases') ?>
+  <?php Yii::import('ext.GoogleAnalytics', true) ?>
 </body>
 </html>

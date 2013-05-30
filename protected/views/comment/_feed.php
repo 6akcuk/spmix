@@ -33,6 +33,17 @@ switch ($hoop_type) {
 
     $hoop = $purchase;
     break;
+  case 'marketgood':
+    /** @var MarketGood $good */
+    $good = MarketGood::model()->findByPk($hoop_id);
+
+    $ref_image = $good->image;
+    $ref_url = '/market'. $good->author_id .'_'. $good->good_id;
+    $ref_title = '<span class="icon-briefcase"></span> Товар <span class="a">'. $good->name .'</span>';
+    $ref_text = $good->description;
+
+    $hoop = $good;
+    break;
 }
 
 ?>

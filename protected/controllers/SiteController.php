@@ -770,16 +770,22 @@ WHERE twin.member_id = 111 AND t.member_id = 1 AND dialog.type = 0");
       $pc->save();
 
       $sms = new SmsDelivery(Yii::app()->params['smsUsername'], Yii::app()->params['smsPassword']);
-      $sms->SendMessage($pc->phone, Yii::app()->params['smsNumber'], 'Ваш код подтверждения: '. $pc->code .'. Сессия '. $pc->session);
+      $result = $sms->SendMessage($pc->phone, Yii::app()->params['smsNumber'], 'Ваш код подтверждения: '. $pc->code .'. Сессия '. $pc->session);
+      if (!$result) {
+        echo json_encode(array(
+          'message' => 'Не удалось отправить СМС: '. $sms->errorMsg
+        ));
+      }
+      else {
+        $_SESSION['pc.session'] = $pc->session;
 
-      $_SESSION['pc.session'] = $pc->session;
-
-      echo json_encode(array(
-        'success' => 'true',
-        'step' => 3,
-        'message' => 'Код отправлен',
-        'session' => $pc->session,
-      ));
+        echo json_encode(array(
+          'success' => 'true',
+          'step' => 3,
+          'message' => 'Код отправлен',
+          'session' => $pc->session,
+        ));
+      }
     }
     else {
       echo json_encode(array(

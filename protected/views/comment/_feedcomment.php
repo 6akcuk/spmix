@@ -9,6 +9,10 @@ switch ($feed->content->hoop_type) {
     $basic_url = 'good'. $feed->content->good->purchase_id .'_'. $feed->content->hoop_id;
     $hoop = 'товару';
     break;
+  case 'marketgood':
+    $basic_url = 'market'. $feed->content->market_good->author_id .'_'. $feed->content->hoop_id;
+    $hoop = 'товару';
+    break;
 }
 $comment_url = $basic_url .'?reply='. $feed->content->comment_id;
 $el_id = $feed->content->comment_id;
@@ -44,6 +48,10 @@ $el_id = $feed->content->comment_id;
                   echo ActiveHtml::link($name, $comment_url);
                 elseif ($feed->content->hoop_type == 'good'):
                   $name = $feed->content->good->name;
+                  $name = (mb_strlen($name) > 70) ? mb_substr($name, 0, 70, 'utf-8') .'..' : $name;
+                  echo ActiveHtml::link($name, $comment_url);
+                elseif ($feed->content->hoop_type == 'market_good'):
+                  $name = $feed->content->market_good->name;
                   $name = (mb_strlen($name) > 70) ? mb_substr($name, 0, 70, 'utf-8') .'..' : $name;
                   echo ActiveHtml::link($name, $comment_url);
                 endif;

@@ -28,6 +28,9 @@ class CommentController extends Controller {
       case 'purchase':
         $hoop = Purchase::model()->findByPk($hoop_id);
         break;
+      case 'marketgood':
+        $hoop = MarketGood::model()->findByPk($hoop_id);
+        break;
     }
 
     $comment = new Comment();
@@ -76,6 +79,9 @@ class CommentController extends Controller {
           break;
         case 'purchase':
           $hoop = Purchase::model()->findByPk($comment->hoop_id);
+          break;
+        case 'marketgood':
+          $hoop = MarketGood::model()->findByPk($comment->hoop_id);
           break;
       }
 
@@ -126,6 +132,9 @@ class CommentController extends Controller {
       case 'purchase':
         $hoop = Purchase::model()->findByPk($comment->hoop_id);
         break;
+      case 'marketgood':
+        $hoop = MarketGood::model()->findByPk($comment->hoop_id);
+        break;
     }
 
     if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super') ||
@@ -168,6 +177,9 @@ class CommentController extends Controller {
         break;
       case 'purchase':
         $hoop = Purchase::model()->findByPk($hoop_id);
+        break;
+      case 'marketgood':
+        $hoop = MarketGood::model()->findByPk($hoop_id);
         break;
     }
 
@@ -228,6 +240,9 @@ class CommentController extends Controller {
       case 'purchase':
         $hoop = Purchase::model()->findByPk($hoop_id);
         break;
+      case 'marketgood':
+        $hoop = MarketGood::model()->findByPk($hoop_id);
+        break;
     }
 
     $result = array('items' => array(), 'count' => 0, 'last_id' => $last_id);
@@ -254,6 +269,9 @@ class CommentController extends Controller {
         break;
       case 'purchase':
         $hoop = Purchase::model()->findByPk($hoop_id);
+        break;
+      case 'marketgood':
+        $hoop = MarketGood::model()->findByPk($hoop_id);
         break;
     }
 

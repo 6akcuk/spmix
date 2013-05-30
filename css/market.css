@@ -139,3 +139,36 @@
   overflow: hidden;
   word-break: normal;
 }
+
+.market_good_table {
+
+}
+.mgs_cont {
+  padding-left: 20px;
+}
+.mgs_cont .price {
+  font-size: 14px;
+  font-weight: bold;
+  color: #8a1f11;
+  padding-bottom: 5px;
+}
+.mgs_cont .market_good_label {
+  width: 100px;
+}
+.mgs_cont .market_good_labeled {
+  width: 300px;
+}
+.mgs_buttons {
+  margin-top: 10px;
+}
+
+
+.market_good_table .share_image {
+  width: 130px;
+  padding-right: 10px;
+}
+.market_good_table .share_text {
+  overflow: hidden;
+  width: 300px;
+  height: 130px;
+}

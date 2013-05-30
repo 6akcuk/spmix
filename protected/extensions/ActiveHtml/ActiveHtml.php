@@ -266,6 +266,11 @@ class ActiveHtml extends CHtml {
         return number_format($price, 0, ',', ' ') . ' '. Yii::t('app', $currency);
     }
 
+  public static function phone($phone) {
+    preg_match("/(\d{1})(\d{3})(\d{3})(\d{2})(\d{2})/ui", $phone, $data);
+    return '+7 ('. $data[2] .') '. $data[3] .'-'. $data[4] .'-'. $data[5];
+  }
+
   public static function qVKMenu($selected, $items, $htmlOptions = array()) {
     $htmlOptions['rel'] = 'menu';
 

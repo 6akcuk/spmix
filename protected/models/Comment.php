@@ -58,7 +58,8 @@ class Comment extends CActiveRecord
 			array('author_id, hoop_id, hoop_type, text', 'required'),
       array('author_id, attaches', 'unsafe'),
 			array('author_id, reply_to', 'numerical', 'integerOnly' => true),
-			array('hoop_id, hoop_type', 'length', 'max'=>10),
+			array('hoop_id', 'length', 'max'=>10),
+      array('hoop_type', 'length', 'max' => 20),
 			array('text', 'length', 'min' => 2, 'max' => 4096),
       array('text', 'filter', 'filter' => array($obj = new CHtmlPurifier(),'purify')),
 			// The following rule is used by search().
@@ -79,6 +80,7 @@ class Comment extends CActiveRecord
       'reply' => array(self::BELONGS_TO, 'Profile', 'reply_to', 'joinType' => 'LEFT JOIN'),
       'purchase' => array(self::BELONGS_TO, 'Purchase', 'hoop_id'),
       'good' => array(self::BELONGS_TO, 'Good', 'hoop_id'),
+      'market_good' => array(self::BELONGS_TO, 'MarketGood', 'hoop_id'),
 		);
 	}
 
@@ -122,9 +124,15 @@ class Comment extends CActiveRecord
         switch ($this->hoop_type) {
           case 'purchase':
             $owner_id = $this->purchase->author_id;
+            $sub_type = Subscription::TYPE_PURCHASE;
             break;
           case 'good':
             $owner_id = $this->good->purchase->author_id;
+            $sub_type = Subscription::TYPE_GOOD;
+            break;
+          case 'marketgood':
+            $owner_id = $this->market_good->author_id;
+            $sub_type = Subscription::TYPE_MARKET_GOOD;
             break;
         }
 
@@ -151,7 +159,7 @@ class Comment extends CActiveRecord
       if (!$sub) {
         $sub = new Subscription();
         $sub->user_id = Yii::app()->user->getId();
-        $sub->sub_type = Subscription::TYPE_PURCHASE;
+        $sub->sub_type = $sub_type;
         $sub->sub_link_id = $this->hoop_id;
         $sub->save();
       }
@@ -175,9 +183,15 @@ class Comment extends CActiveRecord
       switch ($this->hoop_type) {
         case 'purchase':
           $owner_id = $this->purchase->author_id;
+          $sub_type = Subscription::TYPE_PURCHASE;
           break;
         case 'good':
           $owner_id = $this->good->purchase->author_id;
+          $sub_type = Subscription::TYPE_GOOD;
+          break;
+        case 'marketgood':
+          $owner_id = $this->market_good->author_id;
+          $sub_type = Subscription::TYPE_MARKET_GOOD;
           break;
       }
 
@@ -223,6 +237,9 @@ class Comment extends CActiveRecord
           break;
         case 'good':
           $owner_id = $this->good->purchase->author_id;
+          break;
+        case 'marketgood':
+          $owner_id = $this->market_good->author_id;
           break;
       }
 

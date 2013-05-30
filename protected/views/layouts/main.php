@@ -152,6 +152,7 @@ $cookies = $request->getCookies();
   <div id="footer">
     &copy; <?php echo date("Y") ?>
   </div>
+  <?php Yii::import('ext.GoogleAnalytics', true) ?>
 </div>
 </body>
 </body>

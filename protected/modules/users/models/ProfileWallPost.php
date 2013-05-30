@@ -26,6 +26,7 @@ class ProfileWallPost extends CActiveRecord
 {
   const REF_TYPE_PURCHASE = 'purchase';
   const REF_TYPE_GOOD = 'good';
+  const REF_TYPE_MARKET_GOOD = 'market_good';
 
 	/**
 	 * Returns the static model of the specified AR class.
