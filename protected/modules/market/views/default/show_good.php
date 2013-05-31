@@ -25,7 +25,7 @@ $this->pageTitle = Yii::app()->name .' - '. $good->name;
   <div class="left mgs_photo_wrap">
     <?php if($good->image): ?>
       <a>
-        <?php echo ActiveHtml::showUploadImage($good->image, 'd'); ?>
+        <?php echo ActiveHtml::showUploadImage($good->image, 'a'); ?>
       </a>
     <?php else: ?>
       <span>Фотография отсутствует</span>

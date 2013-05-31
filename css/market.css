@@ -152,6 +152,14 @@
 .market_good_table {
   padding-top: 10px;
 }
+.mgs_photo_wrap {
+  width: 250px;
+  overflow: hidden;
+  text-align: center;
+}
+.mgs_photo_wrap img {
+  width: 250px;
+}
 .mgs_cont {
   padding-left: 20px;
 }
