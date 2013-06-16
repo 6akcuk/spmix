@@ -70,6 +70,9 @@ foreach ($categories as $category) {
       ) ?>
       <script type="text/javascript">
         WideDropdown.addList('market_wdd', {<?php echo implode(', ', $categoryJs) ?>});
+      <?php foreach($goodCategories as $cat): ?>
+        WideDropdown.select('market_wdd', null, '<?php echo $cat->category_id ?>');
+      <?php endforeach; ?>
       </script>
     </div>
   </div>

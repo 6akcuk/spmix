@@ -115,6 +115,8 @@ class DefaultController extends Controller
     if (!$good)
       throw new CHttpException(404, 'Товар не найден');
 
+    $goodCategories = MarketGoodCategory::model()->findAll('good_id = :id', array(':id' => $id));
+
     if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('good' => $good)) ||
       Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super')) {
       /** @var PurchaseCategory $category */
@@ -152,11 +154,13 @@ class DefaultController extends Controller
       if (Yii::app()->request->isAjaxRequest) {
         $this->pageHtml = $this->renderPartial('edit', array(
           'good' => $good,
+          'goodCategories' => $goodCategories,
           'categories' => $categories,
         ), true);
       }
       else $this->render('edit', array(
         'good' => $good,
+        'goodCategories' => $goodCategories,
         'categories' => $categories,
       ));
     }
