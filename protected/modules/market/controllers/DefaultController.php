@@ -25,16 +25,29 @@ class DefaultController extends Controller
 
   public function actionIndex($org = 1, $used = 0, $offset = 0)
 	{
+    $c = (isset($_POST['c'])) ? $_POST['c'] : array();
+
     $criteria = new CDbCriteria();
     $criteria->compare('is_used', $used);
-    $criteria->compare('is_org', $org);
+    if ($used == 0) $criteria->compare('is_org', $org);
 
-    $goodsNum = MarketGood::model()->count($criteria);
+    if (isset($c['q'])) {
+      $criteria->addSearchCondition('name', $c['q']);
+      $criteria->addSearchCondition('description', $c['q'], true, 'OR');
+    }
+    if (isset($c['category_id'])) {
+      $criteria->compare('searchcat.category_id', $c['category_id']);
+    }
+
+    $criteria->order = 'add_date DESC';
+
+    $goodsNum = MarketGood::model()->with('searchcat')->count($criteria);
 
     $criteria->limit = Yii::app()->getModule('market')->goodsPerPage;
     $criteria->offset = $offset;
 
-    $goods = MarketGood::model()->with('author')->findAll($criteria);
+    $goods = MarketGood::model()->with('searchcat', 'author')->findAll($criteria);
+    $categories = PurchaseCategory::model()->findAll();
 
     if (Yii::app()->request->isAjaxRequest) {
       if (isset($_POST['pages'])) {
@@ -47,18 +60,116 @@ class DefaultController extends Controller
         'org' => $org,
         'used' => $used,
         'goods' => $goods,
+        'categories' => $categories,
         'offset' => $offset,
         'offsets' => $goodsNum,
+        'c' => $c,
       ), true);
     }
     else $this->render('index', array(
       'org' => $org,
       'used' => $used,
       'goods' => $goods,
+      'categories' => $categories,
       'offset' => $offset,
       'offsets' => $goodsNum,
+      'c' => $c,
     ));
 	}
+
+  public function actionMy($offset = 0) {
+    $c = (isset($_POST['c'])) ? $_POST['c'] : array();
+
+    $criteria = new CDbCriteria();
+    $criteria->compare('author_id', Yii::app()->user->getId());
+
+    if (isset($c['q'])) {
+      $criteria->addSearchCondition('name', $c['q']);
+      $criteria->addSearchCondition('description', $c['q'], true, 'OR');
+    }
+    if (isset($c['category_id'])) {
+      $criteria->compare('searchcat.category_id', $c['category_id']);
+    }
+
+    $goodsNum = MarketGood::model()->with('searchcat')->count($criteria);
+
+    $criteria->limit = Yii::app()->getModule('market')->goodsPerPage;
+    $criteria->offset = $offset;
+
+    $goods = MarketGood::model()->with('author', 'searchcat')->findAll($criteria);
+    $categories = PurchaseCategory::model()->findAll();
+
+    if (Yii::app()->request->isAjaxRequest) {
+      if (isset($_POST['pages'])) {
+        $this->pageHtml = $this->renderPartial('_goods', array(
+          'goods' => $goods,
+          'offset' => $offset,
+        ), true);
+      }
+      else $this->pageHtml = $this->renderPartial('my', array(
+        'goods' => $goods,
+        'categories' => $categories,
+        'offset' => $offset,
+        'offsets' => $goodsNum,
+        'c' => $c,
+      ), true);
+    }
+    else $this->render('my', array(
+      'goods' => $goods,
+      'categories' => $categories,
+      'offset' => $offset,
+      'offsets' => $goodsNum,
+      'c' => $c,
+    ));
+  }
+
+  public function actionShow($author_id, $offset = 0) {
+    $c = (isset($_POST['c'])) ? $_POST['c'] : array();
+
+    $criteria = new CDbCriteria();
+    $criteria->compare('author_id', $author_id);
+
+    if (isset($c['q'])) {
+      $criteria->addSearchCondition('name', $c['q']);
+      $criteria->addSearchCondition('description', $c['q'], true, 'OR');
+    }
+    if (isset($c['category_id'])) {
+      $criteria->compare('searchcat.category_id', $c['category_id']);
+    }
+
+    $goodsNum = MarketGood::model()->with('searchcat')->count($criteria);
+
+    $criteria->limit = Yii::app()->getModule('market')->goodsPerPage;
+    $criteria->offset = $offset;
+
+    $goods = MarketGood::model()->with('searchcat', 'author')->findAll($criteria);
+    $categories = PurchaseCategory::model()->findAll();
+
+    if (Yii::app()->request->isAjaxRequest) {
+      if (isset($_POST['pages'])) {
+        $this->pageHtml = $this->renderPartial('_goods', array(
+          'goods' => $goods,
+          'offset' => $offset,
+        ), true);
+      }
+      else $this->pageHtml = $this->renderPartial('show', array(
+        'author_id' => $author_id,
+        'goods' => $goods,
+        'categories' => $categories,
+        'offset' => $offset,
+        'offsets' => $goodsNum,
+        'c' => $c,
+      ), true);
+    }
+    else $this->render('show', array(
+      'author_id' => $author_id,
+      'goods' => $goods,
+      'categories' => $categories,
+      'offset' => $offset,
+      'offsets' => $goodsNum,
+      'c' => $c,
+    ));
+  }
 
   public function actionAdd() {
     $good = new MarketGood();
@@ -74,12 +185,12 @@ class DefaultController extends Controller
       $good->is_org = (Yii::app()->user->checkAccess('purchases.purchases.create')) ? 1 : 0;
 
       if ($good->save()) {
-        foreach ($_POST['market_wdd'] as $wdd) {
+        foreach ($_POST['categpry_id'] as $category_id => $empty) {
           foreach ($categories as $category) {
-            if ($category->category_id == $wdd) {
+            if ($category->category_id == $category_id) {
               $c = new MarketGoodCategory();
               $c->good_id = $good->good_id;
-              $c->category_id = $wdd;
+              $c->category_id = $category_id;
               $c->save();
             }
           }
@@ -127,19 +238,21 @@ class DefaultController extends Controller
         $good->attributes = $_POST['MarketGood'];
 
         if ($good->save()) {
-          foreach ($_POST['market_wdd'] as $wdd) {
+          MarketGoodCategory::model()->deleteAll('good_id = :id', array(':id' => $id));
+
+          foreach ($_POST['category_id'] as $category_id => $empty) {
             foreach ($categories as $category) {
-              if ($category->category_id == $wdd) {
+              if ($category->category_id == $category_id) {
                 $c = new MarketGoodCategory();
                 $c->good_id = $good->good_id;
-                $c->category_id = $wdd;
+                $c->category_id = $category_id;
                 $c->save();
               }
             }
           }
 
           $result['success'] = true;
-          $result['msg'] = 'Товар успешно добавлен';
+          $result['msg'] = 'Изменения успешно сохранены';
         }
         else {
           foreach ($good->getErrors() as $attr => $error) {
@@ -166,6 +279,26 @@ class DefaultController extends Controller
     }
     else
       throw new CHttpException(403, 'У Вас нет прав на редактирование данного товара');
+  }
+
+  public function actionDelete($id) {
+    $good = MarketGood::model()->findByPk($id);
+    if (!$good)
+      throw new CHttpException(404, 'Товар не найден');
+
+    if (Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Own', array('good' => $good)) ||
+      Yii::app()->user->checkAccess(RBACFilter::getHierarchy() .'Super')) {
+      MarketGoodCategory::model()->deleteAll('good_id = :id', array(':id' => $id));
+      if ($good->delete()) {
+        $result['message'] = 'Товар успешно удален';
+      }
+      else $result['message'] = 'Не удалось удалить товар';
+
+      echo json_encode($result);
+      exit;
+    }
+    else
+      throw new CHttpException(403, 'У Вас нет прав на удаление данного товара');
   }
 
   public function actionShowGood($author_id, $good_id, $reply = null) {

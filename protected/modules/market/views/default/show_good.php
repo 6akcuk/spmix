@@ -10,6 +10,11 @@ Yii::app()->getClientScript()->registerScriptFile('/js/market.js');
 Yii::app()->getClientScript()->registerCssFile('/css/photoview.css');
 Yii::app()->getClientScript()->registerScriptFile('/js/photoview.js');
 
+Yii::app()->getClientScript()->registerCssFile('/css/profile.css');
+Yii::app()->getClientScript()->registerCssFile('/css/im.css');
+
+Yii::app()->getClientScript()->registerScriptFile('/js/im.js');
+
 $this->pageTitle = Yii::app()->name .' - '. $good->name;
 ?>
 <div class="market_good_header_wrap clearfix">
@@ -65,7 +70,7 @@ $this->pageTitle = Yii::app()->name .' - '. $good->name;
 
     <div class="clearfix mgs_buttons">
       <div class="button_submit button_icon">
-        <button>
+        <button onclick="Market.buy(<?php echo $good->author_id ?>, '<?php echo urlencode("Здравствуйте. Я бы ". (Yii::t('app', '0#хотел|1#хотела', Yii::app()->user->model->profile->genderToInt())) ." купить товар ". $good->name ." в Вашем пристрое") ?>')">
           <span class="icon-white icon-shopping-cart"></span>
           Купить
         </button>

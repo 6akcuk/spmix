@@ -15,6 +15,24 @@
   font-weight: bold;
 }
 
+.market_search {
+  padding: 10px;
+}
+.market_search input {
+  width: 710px;
+}
+.market_search_categories a.left {
+  display: block;
+  padding: 7px 16px;
+  width: 210px;
+}
+.market_search_categories a.left:hover {
+  background: #f5f7f6;
+}
+.market_search_categories a.left.selected {
+  background: #dae1e8;
+}
+
 /* Add */
 .market_add_wrap {
   padding: 10px;

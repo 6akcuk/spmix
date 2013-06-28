@@ -72,6 +72,7 @@ class MarketGood extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
       'author' => array(self::BELONGS_TO, 'User', 'author_id', 'with' => 'profile'),
+      'searchcat' => array(self::HAS_ONE, 'MarketGoodCategory', 'good_id'),
 		);
 	}
 

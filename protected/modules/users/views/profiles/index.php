@@ -89,12 +89,22 @@ $this->pageTitle = $title;
     </div>
     <?php endif; ?>
     <div class="module profile-num-menu">
+    <?php if ($purchasesNum > 0): ?>
       <div>
         <?php echo ActiveHtml::link(
           '<span class="right iconify_cart_a"></span><span class="right">'. $purchasesNum .'</span> Закупки '. ActiveHtml::lex(2, $userinfo->profile->firstname),
           '/purchases'. $userinfo->id
         ) ?>
       </div>
+    <?php endif; ?>
+    <?php if (Yii::app()->user->getId() == 1): ?>
+      <div>
+        <?php echo ActiveHtml::link(
+          '<span class="right iconify_cart_a"></span><span class="right">'. $marketGoodsNum .'</span> Пристрой '. ActiveHtml::lex(2, $userinfo->profile->firstname),
+          '/market'. $userinfo->id
+        ) ?>
+      </div>
+    <?php endif; ?>
     </div>
       <div class="module">
           <a href="/friends?id=<?php echo $userinfo->id ?>" onclick="return nav.go(this, event, {noback: false})" class="module-header">

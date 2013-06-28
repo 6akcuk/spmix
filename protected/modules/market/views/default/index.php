@@ -1,5 +1,7 @@
 <?php
-/* @var $this DefaultController */
+/* @var $this DefaultController
+ * @var PurchaseCategory $category
+ */
 
 Yii::app()->getClientScript()->registerCssFile('/css/market.css');
 
@@ -19,6 +21,14 @@ $delta = Yii::app()->getModule('market')->goodsPerPage;
   <div class="right">
     <?php echo ActiveHtml::link('Добавить товар', '/market?act=add') ?>
   </div>
+</div>
+<div rel="filters" class="market_search">
+  <?php echo ActiveHtml::inputPlaceholder('c[q]', (isset($c['q'])) ? $c['q'] : '', array('placeholder' => 'Поиск по ключевым словам')) ?>
+</div>
+<div class="market_search_categories clearfix">
+<?php foreach ($categories as $category): ?>
+  <a onclick="return nav.go(this, event)" class="left<?php echo (isset($c['category_id']) && $c['category_id'] == $category->category_id) ? ' selected' : '' ?>" href="/market?org=<?php echo $org ?>&used=<?php echo $used ?>&c[q]=<?php echo (isset($c['q'])) ? $c['q'] : '' ?>&c[category_id]=<?php echo $category->category_id ?>"><?php echo $category->name ?></a>
+<?php endforeach; ?>
 </div>
 <div class="summary_wrap">
   <div class="summary">

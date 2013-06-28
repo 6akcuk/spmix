@@ -47,6 +47,7 @@ return array(
     'feed',
     'discuss',
     'market',
+    'wishlist',
   ),
 
 	// application components

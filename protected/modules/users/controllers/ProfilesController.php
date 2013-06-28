@@ -27,6 +27,7 @@ class ProfilesController extends Controller {
       $friendsOnline = $userinfo->profile->getOnlineFriends();
       $friendsOnlineNum = $userinfo->profile->countOnlineFriends();
       $purchasesNum = Purchase::model()->count('author_id = :id', array(':id' => $id));
+      $marketGoodsNum = MarketGood::model()->count('author_id = :id', array(':id' => $id));
 
       $criteria = new CDbCriteria();
       $criteria->limit = Yii::app()->getModule('users')->wallPostsPerPage;
@@ -48,6 +49,7 @@ class ProfilesController extends Controller {
             'friendsOnline' => $friendsOnline,
             'friendsOnlineNum' => $friendsOnlineNum,
             'purchasesNum' => $purchasesNum,
+            'marketGoodsNum' => $marketGoodsNum,
             'posts' => $posts,
             'postsNum' => $postsNum,
           ), true);
@@ -59,6 +61,7 @@ class ProfilesController extends Controller {
         'friendsOnline' => $friendsOnline,
         'friendsOnlineNum' => $friendsOnlineNum,
         'purchasesNum' => $purchasesNum,
+        'marketGoodsNum' => $marketGoodsNum,
         'posts' => $posts,
         'postsNum' => $postsNum,
       ));

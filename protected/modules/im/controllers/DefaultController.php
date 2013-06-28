@@ -56,24 +56,26 @@ class DefaultController extends Controller
 	}
 
     public function actionCreate($id = 0) {
-        if (isset($_POST['recipients'])) {
-            $recipients = $_POST['recipients'];
-            $title = $_POST['title'];
-            $message = $_POST['message'];
+      if (isset($_POST['recipients'])) {
+          $recipients = $_POST['recipients'];
+          $title = $_POST['title'];
+          $message = $_POST['message'];
 
-            $result = DialogMessage::send($recipients, $message, $title);
+          $result = DialogMessage::send($recipients, $message, $title);
 
-            echo json_encode($result);
-            exit;
-        }
+          echo json_encode($result);
+          exit;
+      }
 
-        $friends = Yii::app()->user->model->profile->getAllFriends(null);
-        $guest = ($id) ? User::model()->with('profile', 'profile.city')->findByPk($id) : null;
+      $friends = Yii::app()->user->model->profile->getAllFriends(null);
+      $guest = ($id) ? User::model()->with('profile', 'profile.city')->findByPk($id) : null;
+      $msg = (isset($_POST['msg'])) ? urldecode($_POST['msg']) : '';
 
-        if (Yii::app()->request->isAjaxRequest) {
-            $this->pageHtml = $this->renderPartial((isset($_POST['box_request'])) ? 'create_box' : 'create', array('friends' => $friends, 'guest' => $guest), true);
-        }
-        else $this->render('create', array('friends' => $friends, 'guest' => $guest));
+      if (Yii::app()->request->isAjaxRequest) {
+        $this->boxWidth = 502;
+        $this->pageHtml = $this->renderPartial((isset($_POST['box_request'])) ? 'create_box' : 'create', array('friends' => $friends, 'guest' => $guest, 'msg' => $msg), true);
+      }
+      else $this->render('create', array('friends' => $friends, 'guest' => $guest));
     }
 
     public function actionShow($sel, $offset = 0) {

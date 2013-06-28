@@ -127,6 +127,11 @@ $cookies = $request->getCookies();
                     <?php echo ActiveHtml::link('Пристрой', '/market', array('nav' => array('ignoreCache' => true))) ?>
                   </li>
                   <?php endif; ?>
+                  <?php if (Yii::app()->user->getId() == 1): ?>
+                    <li>
+                      <?php echo ActiveHtml::link('Хотелки', '/wishlist', array('nav' => array('ignoreCache' => true))) ?>
+                    </li>
+                  <?php endif; ?>
                   <li>
                     <?php echo ActiveHtml::link('Обсуждения', '/discuss') ?>
                   </li>

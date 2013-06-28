@@ -8,10 +8,6 @@ Yii::app()->getClientScript()->registerScriptFile('/js/market.js');
 
 $this->pageTitle = Yii::app()->name .' - Пристрой';
 
-$categoryJs = array();
-foreach ($categories as $category) {
-  $categoryJs[] = $category->category_id .": {text: '". $category->name ."'}";
-}
 ?>
 <div class="tabs">
   <?php echo ActiveHtml::link('Пристрой организаторов', '/market?org=1') ?>
@@ -36,41 +32,13 @@ foreach ($categories as $category) {
     <div class="market_add_header">Название:</div>
     <?php echo $form->textField($good, 'name', array('class' => 'market_add_wide_input')) ?>
     <div class="market_add_header">Категории:</div>
-    <div id="market_wdd" class="wdd clearfix" style="width: 562px" onclick="WideDropdown.show('market_wdd', event)">
-      <div class="wdd_lwrap" style="width: 400px">
-        <div class="wdd_list"></div>
+    <div class="clearfix" style="width: 562px">
+    <?php foreach ($categories as $category): ?>
+      <div class="fl_l" style="padding: 5px 10px 5px 0px">
+        <?php echo ActiveHtml::checkBox('category_id['. $category->category_id .']', '') ?>
+        <?php echo ActiveHtml::label($category->name, 'category_id_'. $category->category_id) ?>
       </div>
-      <div class="right wdd_arrow"></div>
-      <div class="wdd_bubbles"></div>
-      <div class="wdd_add left" style="display:none">
-        <div class="wdd_add2">
-          <table>
-            <tr>
-              <td>
-                <div class="wdd_add3">
-                  <nobr>Добавить</nobr>
-                </div>
-              </td>
-              <td>
-                <div class="wdd_add_plus"></div>
-              </td>
-            </tr>
-          </table>
-        </div>
-      </div>
-      <?php echo ActiveHtml::inputPlaceholder(
-        '',
-        '',
-        array(
-          'class' => 'left wdd_text',
-          'placeholder' => 'Выберите категорию',
-          'onfocus' => "WideDropdown.setFocused('market_wdd', event)",
-          'onblur' => "WideDropdown.setUnfocused('market_wdd', event)",
-        )
-      ) ?>
-      <script type="text/javascript">
-        WideDropdown.addList('market_wdd', {<?php echo implode(', ', $categoryJs) ?>});
-      </script>
+    <?php endforeach; ?>
     </div>
   </div>
   <div class="clear"></div>
@@ -105,6 +73,3 @@ foreach ($categories as $category) {
   </div>
   <?php $this->endWidget(); ?>
 </div>
-<script type="text/javascript">
-if (!A.wddOnSelect) A.wddOnSelect = {};
-</script>
