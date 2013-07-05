@@ -10,6 +10,9 @@
  * @property integer $type
  * @property string $add_date
  * @property string $shortstory
+ *
+ * @property City $city
+ * @property User $author
  */
 class Wishlist extends CActiveRecord
 {
@@ -39,7 +42,7 @@ class Wishlist extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('city_id, author_id, type, add_date, shortstory', 'required'),
+			array('city_id, author_id, type, shortstory', 'required'),
 			array('city_id, author_id, type', 'numerical', 'integerOnly'=>true),
 			array('shortstory', 'length', 'max'=>255),
 			// The following rule is used by search().
@@ -56,6 +59,8 @@ class Wishlist extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+      'city' => array(self::BELONGS_TO, 'City', 'city_id'),
+      'author' => array(self::BELONGS_TO, 'User', 'author_id'),
 		);
 	}
 
@@ -96,4 +101,14 @@ class Wishlist extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+
+  public function beforeSave() {
+    if (parent::beforeSave()) {
+      if ($this->getIsNewRecord())
+        $this->add_date = date("Y-m-d H:i:s");
+
+      return true;
+    }
+    else return false;
+  }
 }
