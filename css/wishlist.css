@@ -38,7 +38,7 @@
   color: #fff;
 }
 .wishlist_add {
-  padding: 10px;
+  padding: 11px;
   cursor: pointer;
 }
 
@@ -71,22 +71,29 @@
   padding: 10px 0px;
   border-bottom: 1px solid #dae1e8;
 }
+.wish_wide {
+  border-bottom: 0px;
+}
 .wish .photo {
   overflow: hidden;
   width: 50px;
 }
 .wish .photo img {
   width: 50px;
+  height: 50px;
 }
 .wish .info {
   padding-left: 10px;
   width: 310px;
 }
+.wish .info_wide {
+  width: 690px;
+}
 .wish_header {
   display: block;
   padding-bottom: 5px;
+  padding-right: 5px;
   font-weight: bold;
-  width: 240px;
   overflow: hidden;
 }
 .wish_body {

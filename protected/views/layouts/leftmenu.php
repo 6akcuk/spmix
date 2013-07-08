@@ -24,11 +24,9 @@
       echo ActiveHtml::link('+'. $this->pageCounters['orders'], '/orders', array('class' => 'right lm-counter'))
     ?>
   </li>
-  <?php if (Yii::app()->user->getId() == 1): ?>
   <li id="market_link" class="clearfix">
     <?php echo ActiveHtml::link('Мой пристрой', '/market?act=my', array('class' => 'left')) ?>
   </li>
-  <?php endif; ?>
   <li id="news_link" class="clearfix">
     <?php echo ActiveHtml::link('Мои новости', '/feed', array('class' => 'left')) ?>
     <?php

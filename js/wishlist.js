@@ -90,6 +90,37 @@ var Wishlist = {
     }, function(x) {
       $('#box_progress').hide();
     });
+  },
+  delete: function(id) {
+    showConfirmBox('Удаление пожелания', 'Вы действительно хотите удалить пожелание?', 'Удалить', function() {
+      curBox().showProgress();
+      ajax.post('/wishlist?act=delete&id='+ id, {}, function(r) {
+        curBox().hide();
+        boxPopup(r.message);
+      }, function(r) {
+        curBox().hideProgress();
+      });
+    }, 'Отмена', function() {
+      curBox().hide();
+    });
+  },
+  showMore: function(el, limit, type, act) {
+    if (!cur['wishesOffset']) cur.wishesOffset = {};
+    if (!cur.wishesOffset[type]) cur.wishesOffset[type] = limit;
+    else cur.wishesOffset[type] += limit;
+
+    if (!act) act = 'index';
+
+    $(el).html('<img src="/images/upload.gif" />');
+    ajax.post('/wishlist?act='+ act +'&offset='+ cur.wishesOffset[type], {type: type, pages: 1}, function(r) {
+      $(r.html).appendTo('#wishlist_'+ ((type == 1) ? 'wants' : 'cans'));
+      if (r.html == '') {
+        $(el).hide();
+      }
+      $(el).html('Показать еще');
+    }, function(r) {
+      $(el).html('Показать еще');
+    });
   }
 }
 

@@ -13,6 +13,10 @@ switch ($feed->content->hoop_type) {
     $basic_url = 'market'. $feed->content->market_good->author_id .'_'. $feed->content->hoop_id;
     $hoop = 'товару';
     break;
+  case 'wish':
+    $basic_url = 'wish'. $feed->content->hoop_id;
+    $hoop = 'пожеланию';
+    break;
 }
 $comment_url = $basic_url .'?reply='. $feed->content->comment_id;
 $el_id = $feed->content->comment_id;

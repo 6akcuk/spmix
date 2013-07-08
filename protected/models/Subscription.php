@@ -18,6 +18,7 @@ class Subscription extends CActiveRecord
   const TYPE_WALL_POST = 'post';
   const TYPE_THEME_POST = 'theme';
   const TYPE_MARKET_GOOD = 'marketgood';
+  const TYPE_WISH = 'wish';
 
 	/**
 	 * Returns the static model of the specified AR class.

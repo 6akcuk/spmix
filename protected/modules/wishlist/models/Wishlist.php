@@ -102,6 +102,76 @@ class Wishlist extends CActiveRecord
 		));
 	}
 
+  public static function countFriendsWishes($user_id, $type) {
+    $db = Yii::app()->db;
+
+    $command = $db->createCommand("
+    SELECT COUNT(w.wishlist_id) AS num FROM `subscriptions` s
+      INNER JOIN `wishlists` w ON w.author_id = s.sub_link_id
+      INNER JOIN `cities` c ON c.id = w.city_id
+      INNER JOIN `users` u ON u.id = w.author_id
+      INNER JOIN `profiles` p ON p.user_id = u.id
+      WHERE s.user_id = ". $user_id ."
+        AND s.sub_type = 'user'
+        AND w.type = ". $type ."
+    ORDER BY w.add_date DESC");
+
+    $result = $command->queryRow();
+    return $result['num'];
+  }
+
+  public static function getFriendsWishes($user_id, $type, $offset = 0) {
+    $result = array();
+    /** @var CDbConnection $db */
+    $db = Yii::app()->db;
+
+    $command = $db->createCommand("
+    SELECT w.*, c.name AS city_name, u.login, p.firstname, p.lastname, p.photo FROM `subscriptions` s
+      INNER JOIN `wishlists` w ON w.author_id = s.sub_link_id
+      INNER JOIN `cities` c ON c.id = w.city_id
+      INNER JOIN `users` u ON u.id = w.author_id
+      INNER JOIN `profiles` p ON p.user_id = u.id
+      WHERE s.user_id = ". $user_id ."
+        AND s.sub_type = 'user'
+        AND w.type = ". $type ."
+    ORDER BY w.add_date DESC
+    LIMIT ". $offset .", ". Yii::app()->getModule('wishlist')->wishesPerPage);
+
+    /** @var CDbDataReader $reader */
+    $reader = $command->query();
+    while (($row = $reader->read()) !== false) {
+      $wish = new Wishlist();
+      $wish->wishlist_id = $row['wishlist_id'];
+      $wish->author_id = $row['author_id'];
+      $wish->city_id = $row['city_id'];
+      $wish->shortstory = $row['shortstory'];
+      $wish->add_date = $row['add_date'];
+
+      $city = new City();
+      $city->id = $row['city_id'];
+      $city->name = $row['city_name'];
+
+      $user = new User();
+      $user->id = $row['author_id'];
+      $user->login = $row['login'];
+
+      $profile = new Profile();
+      $profile->user_id = $row['author_id'];
+      $profile->firstname = $row['firstname'];
+      $profile->lastname = $row['lastname'];
+      $profile->photo = $row['photo'];
+
+      $user->profile = $profile;
+
+      $wish->city = $city;
+      $wish->author = $user;
+
+      $result[] = $wish;
+    }
+
+    return $result;
+  }
+
   public function beforeSave() {
     if (parent::beforeSave()) {
       if ($this->getIsNewRecord())

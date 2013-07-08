@@ -10,9 +10,6 @@ class DefaultController extends Controller
       array(
         'ext.RBACFilter.RBACFilter'
       ),
-      array(
-        'ext.DevelopFilter',
-      )
     );
   }
 
@@ -357,7 +354,7 @@ class DefaultController extends Controller
       $post = new ProfileWallPost();
       $post->wall_id = Yii::app()->user->getId();
       $post->author_id = Yii::app()->user->getId();
-      $post->reference_type = ProfileWallPost::REF_TYPE_GOOD;
+      $post->reference_type = ProfileWallPost::REF_TYPE_MARKET_GOOD;
       $post->reference_id = $id;
       $post->post = $_POST['msg'];
       if ($post->save()) $result['success'] = true;

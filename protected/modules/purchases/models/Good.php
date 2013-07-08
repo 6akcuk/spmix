@@ -135,7 +135,7 @@ class Good extends CActiveRecord
 	}
 
   public function afterSave() {
-    if ($this->getIsNewRecord()) {
+    if ($this->getIsNewRecord() && !$this->is_quick) {
       $feed = new Feed();
       $feed->event_type = self::FEED_NEW_GOOD;
       $feed->event_link_id = $this->good_id;

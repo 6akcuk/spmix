@@ -44,6 +44,17 @@ switch ($hoop_type) {
 
     $hoop = $good;
     break;
+  case 'wish':
+    /** @var Wishlist $wish */
+    $wish = Wishlist::model()->with('author.profile')->findByPk($hoop_id);
+
+    $ref_image = $wish->author->profile->getProfileImage();
+    $ref_url = '/wish'. $wish->wishlist_id;
+    $ref_title = '<span class="icon-briefcase"></span> '. (($wish->type == 1) ? 'Желание' : 'Возможность') .' <span class="a">'. $wish->author->getDisplayName() .'</span>';
+    $ref_text = $wish->shortstory;
+
+    $hoop = $wish;
+    break;
 }
 
 ?>

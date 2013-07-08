@@ -81,6 +81,7 @@ class Comment extends CActiveRecord
       'purchase' => array(self::BELONGS_TO, 'Purchase', 'hoop_id'),
       'good' => array(self::BELONGS_TO, 'Good', 'hoop_id'),
       'market_good' => array(self::BELONGS_TO, 'MarketGood', 'hoop_id'),
+      'wish' => array(self::BELONGS_TO, 'Wishlist', 'hoop_id'),
 		);
 	}
 
@@ -133,6 +134,10 @@ class Comment extends CActiveRecord
           case 'marketgood':
             $owner_id = $this->market_good->author_id;
             $sub_type = Subscription::TYPE_MARKET_GOOD;
+            break;
+          case 'wish':
+            $owner_id = $this->wish->author_id;
+            $sub_type = Subscription::TYPE_WISH;
             break;
         }
 
@@ -193,6 +198,10 @@ class Comment extends CActiveRecord
           $owner_id = $this->market_good->author_id;
           $sub_type = Subscription::TYPE_MARKET_GOOD;
           break;
+        case 'wish':
+          $owner_id = $this->wish->author_id;
+          $sub_type = Subscription::TYPE_WISH;
+          break;
       }
 
       $cr = new CDbCriteria();
@@ -240,6 +249,9 @@ class Comment extends CActiveRecord
           break;
         case 'marketgood':
           $owner_id = $this->market_good->author_id;
+          break;
+        case 'wish':
+          $owner_id = $this->wish->author_id;
           break;
       }
 

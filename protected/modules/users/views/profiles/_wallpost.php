@@ -81,6 +81,16 @@ if (!isset($reply)) $reply = null;
         <?php if ($post->reference_id): ?>
           <?php
           switch ($post->reference_type) {
+            case ProfileWallPost::REF_TYPE_MARKET_GOOD:
+              /** @var MarketGood $good */
+              $good = MarketGood::model()->findByPk($post->reference_id);
+
+              $ref_image = ($good->image) ? $good->image : '';
+              $ref_url = '/market'. $good->author_id .'_'. $good->good_id;
+              $ref_title = $good->name;
+              $ref_date = $post->add_date;
+              $ref_text = $good->description;
+              break;
             case ProfileWallPost::REF_TYPE_GOOD:
               /** @var Good $good */
               $good = Good::model()->with('image')->findByPk($post->reference_id);
