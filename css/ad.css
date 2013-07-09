@@ -1,0 +1,33 @@
+#ad_css {
+  display: none;
+}
+
+.ads_ad_block {
+  padding-top: 10px;
+}
+.ads_ad_box {
+  display: block;
+  position: relative;
+  white-space: normal;
+  text-align: center;
+  padding-top: 8px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #dce3e9;
+  width: 170px;
+}
+.ads_ad_title_box {
+  color: #36638e;
+  font-weight: bold;
+}
+.ads_ad_photo_box {
+  position: relative;
+  padding-top: 9px;
+}
+.ads_ad_photo {
+  max-width: 130px;
+  margin: 0px auto;
+}
+.ads_ad_description {
+  color: #000;
+  padding-top: 10px;
+}

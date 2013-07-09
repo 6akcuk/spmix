@@ -729,7 +729,16 @@ div.ls_columns div.column.options div {
 }
 
 .top {
-    padding-top: 20px;
+  position: relative;
+  padding-top: 20px;
+}
+.top #cur_city {
+  padding: 5px;
+}
+.cur_date {
+  position: absolute;
+  right: 0px;
+  bottom: 5px;
 }
 
 .fl_l {

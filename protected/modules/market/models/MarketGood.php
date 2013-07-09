@@ -57,6 +57,7 @@ class MarketGood extends CActiveRecord
 			array('currency', 'length', 'max'=>3),
 			array('size, color', 'length', 'max'=>100),
 			array('phone', 'length', 'max'=>20),
+      array('description', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('good_id, author_id, add_date, name, description, price, currency, size, color, delivery, phone, is_used, is_org', 'safe', 'on'=>'search'),

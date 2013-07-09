@@ -11,10 +11,11 @@ class AjaxFilter extends CFilter {
     protected function postFilter($filterChain) {
         if (Yii::app()->request->isAjaxRequest) {
             $return = array(
-                'html' => Yii::app()->controller->pageHtml,
-                'title' => Yii::app()->controller->pageTitle,
-                'static' => Yii::app()->getClientScript()->renderAjax(),
-                'counters' => Yii::app()->controller->pageCounters,
+              'html' => Yii::app()->controller->pageHtml,
+              'title' => Yii::app()->controller->pageTitle,
+              'static' => Yii::app()->getClientScript()->renderAjax(),
+              'counters' => Yii::app()->controller->pageCounters,
+              'ad_blocks' => Yii::app()->controller->adBlocks,
             );
 
             if (Yii::app()->controller->wideScreen)

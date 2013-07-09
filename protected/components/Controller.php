@@ -17,6 +17,7 @@ class Controller extends CController
   public $pageHtml = '';
   public $wideScreen = false;
   public $boxWidth = 0;
+  public $adBlocks = array();
 
   public function init() {
     // Ticket authorization
@@ -84,6 +85,22 @@ class Controller extends CController
 
         if (Yii::app()->user->checkAccess('users.users.index')) {
           $this->pageCounters['users'] = User::model()->count();
+        }
+
+        // Purchase Advert Blocks
+        $cookies = Yii::app()->getRequest()->getCookies();
+
+        $criteria = new CDbCriteria();
+        $criteria->addInCondition('state', array(Purchase::STATE_ORDER_COLLECTION, Purchase::STATE_REORDER));
+        $criteria->compare('city_id', ($cookies['cur_city']) ? $cookies['cur_city']->value : Yii::app()->user->model->profile->city_id);
+        $criteria->addCondition('(stop_date >= NOW() OR stop_date IS NULL) AND image <> ""');
+        $criteria->addCondition('purchase_id > 190');
+        $criteria->order = 'RAND()';
+        $criteria->limit = 3;
+
+        $purchases = Purchase::model()->findAll($criteria);
+        foreach ($purchases as $purchase) {
+          $this->adBlocks[] = $this->renderPartial('//layouts/_adblock', array('purchase' => $purchase), true);
         }
       }
 

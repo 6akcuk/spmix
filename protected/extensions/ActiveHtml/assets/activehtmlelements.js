@@ -1903,6 +1903,9 @@ var nav = {
               // ScrollFix Clear
               ScrollFix.removeAll();
 
+              // Ad Blocks
+              $('#ads_ad').html(response.ad_blocks);
+
               $('#content').trigger('contentChanged');
             });
             nav.request.fail(function(xhr, textStatus, errorThrown) {

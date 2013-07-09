@@ -307,33 +307,38 @@ class ActiveHtml extends CHtml {
       self::closeTag('div');
   }
 
-    public static function date($date, $showTime = true, $shortMonth = false, $showYear = false, $useTimezone = false) {
-        // включение часового пояса
-        if($useTimezone) {
-            if(!Yii::app()->user->getIsGuest()) $timezone = new DateTimeZone('');
-            else $timezone = new DateTimeZone('Europe/Moscow'); //GMT - но вроде надо другой пояс использовать
+  public static function curDate($shortMonth = false, $showYear = true) {
+    $now = new DateTime('now');
+    return Yii::t('app', 'день_недели_'. $now->format('w')) .', '. intval( $now->format('d') ) .' '. Yii::t('app', 'месяц_'. (($shortMonth) ? 'к' : '') . $now->format('m')) .' '. (($showYear) ? $now->format('Y') : '') .' г.';
+  }
 
-            $now = new DateTime('now');
-            $now->setTimezone( $timezone );
+  public static function date($date, $showTime = true, $shortMonth = false, $showYear = false, $useTimezone = false) {
+      // включение часового пояса
+      if($useTimezone) {
+          if(!Yii::app()->user->getIsGuest()) $timezone = new DateTimeZone('');
+          else $timezone = new DateTimeZone('Europe/Moscow'); //GMT - но вроде надо другой пояс использовать
 
-            $yes = new DateTime('yesterday', $timezone );
+          $now = new DateTime('now');
+          $now->setTimezone( $timezone );
 
-            $md = new DateTime($date);
-            $md->setTimezone( $timezone );
-        }
-        else {
-            $now = new DateTime('now');
-            $yes = new DateTime('yesterday');
-            $md = new DateTime($date);
-        }
+          $yes = new DateTime('yesterday', $timezone );
 
-        if ($date)  {
-            if($md->format('Y-m-d') == $now->format('Y-m-d')) return Yii::t('app', 'сегодня') . (($showTime) ? ' '. Yii::t('app', 'в') .' '. $md->format('H:i') : '');
-            elseif($md->format('Y-m-d') == $yes->format('Y-m-d')) return Yii::t('app', 'вчера') . (($showTime) ? ' '. Yii::t('app', 'в') .' '. $md->format('H:i') : '');
-            else return intval( $md->format('d') ) .' '. Yii::t('app', 'месяц_'. (($shortMonth) ? 'к' : '') . $md->format('m')) .' '. (($showYear) ? $md->format('Y') : '') . (($showTime) ? ' '. Yii::t('app', 'в') .' '. $md->format('H:i') : '');
-        }
-        else return '';
-    }
+          $md = new DateTime($date);
+          $md->setTimezone( $timezone );
+      }
+      else {
+          $now = new DateTime('now');
+          $yes = new DateTime('yesterday');
+          $md = new DateTime($date);
+      }
+
+      if ($date)  {
+          if($md->format('Y-m-d') == $now->format('Y-m-d')) return Yii::t('app', 'сегодня') . (($showTime) ? ' '. Yii::t('app', 'в') .' '. $md->format('H:i') : '');
+          elseif($md->format('Y-m-d') == $yes->format('Y-m-d')) return Yii::t('app', 'вчера') . (($showTime) ? ' '. Yii::t('app', 'в') .' '. $md->format('H:i') : '');
+          else return intval( $md->format('d') ) .' '. Yii::t('app', 'месяц_'. (($shortMonth) ? 'к' : '') . $md->format('m')) .' '. (($showYear) ? $md->format('Y') : '') . (($showTime) ? ' '. Yii::t('app', 'в') .' '. $md->format('H:i') : '');
+      }
+      else return '';
+  }
 
     // время назад
     public static function timeback($date, $useTimezone = false)

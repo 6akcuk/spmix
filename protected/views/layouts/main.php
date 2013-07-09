@@ -4,6 +4,7 @@ Yii::app()->getClientScript()->registerScriptFile('/js/main.js');
 Yii::app()->getClientScript()->registerCssFile('/css/main.css', '', 'before purchases.css');
 Yii::app()->getClientScript()->registerCssFile('/css/elements.css', '', 'before main.css');
 Yii::app()->getClientScript()->registerCssFile('/css/icons.css');
+Yii::app()->getClientScript()->registerCssFile('/css/ad.css');
 
 $app=Yii::app();
 $request = $app->getRequest();
@@ -78,6 +79,7 @@ $cookies = $request->getCookies();
                 </div>
             </div>
             <div class="clear"></div>
+          <div class="cur_date"><?php echo ActiveHtml::curDate() ?></div>
         </div>
         <div class="main">
             <div class="wrapper">

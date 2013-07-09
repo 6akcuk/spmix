@@ -179,10 +179,14 @@ class DefaultController extends Controller
       $good->attributes = $_POST['MarketGood'];
       $good->currency = 'RUR';
       $good->author_id = Yii::app()->user->getId();
+      $good->city_id = Yii::app()->user->model->profile->city_id;
       $good->is_org = (Yii::app()->user->checkAccess('purchases.purchases.create')) ? 1 : 0;
 
+      if (!isset($_POST['category_id']))
+        throw new CHttpException(500, 'Укажите хотя бы одну категорию товара');
+
       if ($good->save()) {
-        foreach ($_POST['categpry_id'] as $category_id => $empty) {
+        foreach ($_POST['category_id'] as $category_id => $empty) {
           foreach ($categories as $category) {
             if ($category->category_id == $category_id) {
               $c = new MarketGoodCategory();
