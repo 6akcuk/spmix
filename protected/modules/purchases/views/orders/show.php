@@ -127,7 +127,7 @@ if ($good->oic) {
         <?php if ($order->customer_id == Yii::app()->user->getId() && $order->canEdit()): ?>
         <?php echo $form->textField($order, 'amount') ?>
         <?php else: ?>
-        <?php echo $order->color ?>
+        <?php echo $order->amount ?>
         <?php endif; ?>
       </div>
     </div>

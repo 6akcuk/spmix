@@ -630,9 +630,10 @@ div.olcm li a:hover {
     cursor: pointer
 }
 #stl_left {
-    top: 0;
-    left: 0;
-    z-index: 3
+  top: 0;
+  left: 0;
+  z-index: 3;
+  overflow: hidden;
 }
 #stl_bg {
     width: 100px;
