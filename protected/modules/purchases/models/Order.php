@@ -76,7 +76,7 @@ class Order extends CActiveRecord
       array('price, delivery, total_price, status, org_comment, payed, org_tax', 'unsafe', 'on' => 'create, edit_own, quick'),
 
       array('org_tax', 'numerical', 'integerOnly' => true, 'on' => 'edit_org'),
-      array('price, payed, status', 'length', 'max' => 12, 'on' => 'edit_org'),
+      array('price, payed, status', 'length', 'max' => 20, 'on' => 'edit_org'),
       array('delivery', 'length', 'max' => 9, 'on' => 'edit_org'),
       array('org_comment', 'length', 'max' => 200, 'on' => 'edit_org'),
 	    );

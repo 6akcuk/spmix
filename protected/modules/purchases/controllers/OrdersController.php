@@ -30,6 +30,7 @@ class OrdersController extends Controller {
       Order::STATUS_PROCEEDING,
       Order::STATUS_RANGE_ACCEPTED,
       Order::STATUS_PAID,
+      Order::STATUS_OUT_OF_STOCK,
     ));
 
     $purchases = array();
@@ -830,7 +831,7 @@ WHERE user_id IN
         $delivery = new OrderSmsDelivery();
         $delivery->author_id = Yii::app()->user->getId();
         $delivery->purchase_id = $purchase_id;
-        $delivery->message = $_POST['message'];
+        $delivery->message = $_POST['message'] ." ". Yii::app()->user->model->login;
         $delivery->users_num = $phonesNum;
         $delivery->sms_num = $smsNum;
         if ($delivery->save()) {
