@@ -72,11 +72,8 @@
 <?php if (in_array(Yii::app()->user->model->role->itemname, array('Администратор', 'Модератор'))): ?>
 </ul>
 <?php endif; ?>
-
-<?php if (Yii::app()->user->getId() == 1): ?>
 <div id="ads_ad" class="ads_ad_block">
   <?php foreach ($this->adBlocks as $ad): ?>
   <?php echo $ad ?>
   <?php endforeach; ?>
 </div>
-<?php endif; ?>

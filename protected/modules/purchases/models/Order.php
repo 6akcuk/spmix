@@ -173,7 +173,7 @@ class Order extends CActiveRecord
     if (in_array($this->purchase->state, array(Purchase::STATE_DRAFT, Purchase::STATE_CALL_STUDY)) ||
       (
         $this->purchase->state == Purchase::STATE_ORDER_COLLECTION &&
-          in_array($this->status, array(Order::STATUS_PROCEEDING, Order::STATUS_REFUSED, Order::STATUS_ACCEPTED))
+          in_array($this->status, array(Order::STATUS_PROCEEDING, Order::STATUS_OUT_OF_STOCK, Order::STATUS_REFUSED, Order::STATUS_ACCEPTED))
       ) ||
       (
         in_array($this->purchase->state, array(
@@ -183,7 +183,7 @@ class Order extends CActiveRecord
           Purchase::STATE_DISTRIBUTION,
           Purchase::STATE_COMPLETED
         )) &&
-          in_array($this->status, array(Order::STATUS_PROCEEDING, Order::STATUS_REFUSED))
+          in_array($this->status, array(Order::STATUS_PROCEEDING, Order::STATUS_OUT_OF_STOCK, Order::STATUS_REFUSED))
       )
     )
       return true;
