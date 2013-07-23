@@ -173,8 +173,8 @@ return array(
     'noreplymail' => 'noreply@spmix.ru',
     'noreplyname' => 'SPMIX.ru',
     'domain' => 'spmix.ru',
-    'smsUsername' => '24314_spmix',
-    'smsPassword' => 'jbS!D?z',
+    'smsUsername' => '26984_lavenue',
+    'smsPassword' => '@Hwo?y6',
     'smsNumber' => 'SPMIX',
 	),
 );
