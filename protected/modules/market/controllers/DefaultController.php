@@ -181,6 +181,7 @@ class DefaultController extends Controller
       $good->author_id = Yii::app()->user->getId();
       $good->city_id = Yii::app()->user->model->profile->city_id;
       $good->is_org = (Yii::app()->user->checkAccess('purchases.purchases.create')) ? 1 : 0;
+      $good->is_used = (isset($_POST['is_used']) && $_POST['is_used'] == 1) ? 1 : 0;
 
       if (!isset($_POST['category_id']))
         throw new CHttpException(500, 'Укажите хотя бы одну категорию товара');
