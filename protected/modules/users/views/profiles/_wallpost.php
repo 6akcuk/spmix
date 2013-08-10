@@ -85,11 +85,19 @@ if (!isset($reply)) $reply = null;
               /** @var MarketGood $good */
               $good = MarketGood::model()->findByPk($post->reference_id);
 
-              $ref_image = ($good->image) ? $good->image : '';
-              $ref_url = '/market'. $good->author_id .'_'. $good->good_id;
-              $ref_title = $good->name;
-              $ref_date = $post->add_date;
-              $ref_text = $good->description;
+              if ($good) {
+                $ref_image = ($good->image) ? $good->image : '';
+                $ref_url = '/market'. $good->author_id .'_'. $good->good_id;
+                $ref_title = $good->name;
+                $ref_date = $post->add_date;
+                $ref_text = $good->description;
+              } else {
+                $ref_image = '';
+                $ref_url = '';
+                $ref_title = 'Товар удален';
+                $ref_date = '';
+                $ref_text = '';
+              }
               break;
             case ProfileWallPost::REF_TYPE_GOOD:
               /** @var Good $good */
